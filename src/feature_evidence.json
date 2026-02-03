@@ -1,0 +1,101 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-create-and-publish-the-next-institutional-documentation-page-section-after-the-dao-governance-review-implement-a-new-treasury-monetary-policy-page-using-the-existing-luxury-black-gold-styling-written-in-an-institutional-neutral-tone-and-explicitly-conceptual-non-operational-no-on-chain-execution-no-financial-logic-no-token-interaction-no-swaps-bridges",
+      "featureTitle": "Create and publish the next institutional documentation page/section after the DAO & Governance review: implement a new \"Treasury & Monetary Policy\" page using the existing luxury black/gold styling, written in an institutional, neutral tone and explicitly conceptual/non-operational (no on-chain execution, no financial logic, no token interaction, no swaps/bridges).",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-navigation-access-to-the-new-treasury-monetary-policy-page-in-the-global-header-navigation-desktop-and-mobile-following-existing-tanstack-router-link-patterns-and-existing-bilingual-language-behavior-pt-en-with-all-user-facing-text-available-in-english",
+      "featureTitle": "Add navigation access to the new \"Treasury & Monetary Policy\" page in the global header navigation (desktop and mobile), following existing TanStack Router link patterns and existing bilingual language behavior (PT/EN), with all user-facing text available in English.",
+      "files": [
+        "frontend/src/components/Header.tsx",
+        "frontend/src/contexts/LanguageContext.tsx",
+        "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-ensure-the-dao-governance-documentation-remains-explicitly-conceptual-and-does-not-interfere-with-or-connect-to-the-game-layer-by-avoiding-any-shared-interactive-flows-shared-state-or-backend-endpoints-between-governance-pages-and-gameplay-features",
+      "featureTitle": "Ensure the DAO/governance documentation remains explicitly conceptual and does not interfere with or connect to the game layer by avoiding any shared interactive flows, shared state, or backend endpoints between governance pages and gameplay features.",
+      "files": [
+        "frontend/src/pages/DAOPage.tsx",
+        "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-fix-the-react-query-provider-duplication-by-removing-the-nested-duplicate-queryclientprovider-usage-from-the-application-so-there-is-only-one-queryclientprovider-in-the-runtime-tree-without-modifying-immutable-files-including-frontend-src-main-tsx",
+      "featureTitle": "Fix the React Query provider duplication by removing the nested/duplicate QueryClientProvider usage from the application so there is only one QueryClientProvider in the runtime tree, without modifying immutable files (including frontend/src/main.tsx).",
+      "files": [
+        "frontend/src/App.tsx"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

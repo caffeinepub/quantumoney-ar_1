@@ -1,0 +1,97 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-03T19:51:20.296Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 4,
+    "implemented": 4,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Create and publish the next institutional documentation page/section after the DAO & Governance review: implement a new \"Treasury & Monetary Policy\" page using the existing luxury black/gold styling, written in an institutional, neutral tone and explicitly conceptual/non-operational (no on-chain execution, no financial logic, no token interaction, no swaps/bridges).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Add navigation access to the new \"Treasury & Monetary Policy\" page in the global header navigation (desktop and mobile), following existing TanStack Router link patterns and existing bilingual language behavior (PT/EN), with all user-facing text available in English.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/contexts/LanguageContext.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/contexts/LanguageContext.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Ensure the DAO/governance documentation remains explicitly conceptual and does not interfere with or connect to the game layer by avoiding any shared interactive flows, shared state, or backend endpoints between governance pages and gameplay features.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/DAOPage.tsx",
+          "frontend/src/pages/GoldPaper.tsx",
+          "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/DAOPage.tsx",
+          "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Fix the React Query provider duplication by removing the nested/duplicate QueryClientProvider usage from the application so there is only one QueryClientProvider in the runtime tree, without modifying immutable files (including frontend/src/main.tsx).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/App.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/main.mo",
+    "build-request.json",
+    "build-template/Dockerfile",
+    "build-template/LICENSE",
+    "build-template/README.md",
+    "build-template/deploy.sh",
+    "build-template/icp.yaml",
+    "build-template/src/backend/canister.yaml",
+    "build-template/src/frontend/canister.yaml",
+    "caffeine.lock.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/Header.tsx",
+    "frontend/src/contexts/LanguageContext.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/pages/DAOPage.tsx",
+    "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

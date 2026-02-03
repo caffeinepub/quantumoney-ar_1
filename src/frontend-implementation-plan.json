@@ -1,0 +1,93 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Institutional documentation: Treasury & Monetary Policy page + React Query provider fix",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Add a new institutional documentation page titled \"Treasury & Monetary Policy\" with existing luxury black/gold styling, written in a neutral, conceptual/non-operational tone with an explicit disclaimer and no backend interactions.",
+      "acceptanceCriteria": [
+        "A new route exists for the Treasury & Monetary Policy page and it renders without errors",
+        "The page content includes an explicit disclaimer that it is conceptual/non-operational and does not execute transactions, token issuance, swaps, bridges, or financial operations",
+        "No backend calls or canister methods are invoked by this page"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
+          "operation": "create",
+          "description": "Create the new \"Treasury & Monetary Policy\" institutional documentation page using the existing luxury black/gold styling patterns (layout sections, glass-card styling, typography) and include a prominent explicit disclaimer that the content is conceptual/non-operational (no transactions, token issuance, swaps/bridges, or any financial execution), with strictly static rendering (no React Query, no actor hooks, no network calls)."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Register a new TanStack Router route for the \"Treasury & Monetary Policy\" page and wire it into the route tree so it is navigable and renders within the existing Layout."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Add header navigation access to the new \"Treasury & Monetary Policy\" page for desktop and mobile, following existing TanStack Router link patterns and bilingual (PT/EN) behavior with English support.",
+      "acceptanceCriteria": [
+        "Header navigation shows a working link to the new page on desktop and in the mobile sheet menu",
+        "When language is set to English, the nav label and page headings are shown in English"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/contexts/LanguageContext.tsx",
+          "operation": "modify",
+          "description": "Add new bilingual nav label translation keys for the \"Treasury & Monetary Policy\" page (PT/EN) so the header can render the correct label under the existing language behavior, ensuring an English label is available."
+        },
+        {
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "modify",
+          "description": "Add a new navigation item (desktop and mobile sheet) linking to the \"Treasury & Monetary Policy\" route, using the existing TanStack Router <Link> patterns and LanguageContext translation keys to support PT/EN behavior with English text available."
+        },
+        {
+          "path": "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
+          "operation": "modify",
+          "description": "Ensure the page headings and user-facing labels are sourced from the existing language state (PT/EN) and include English headings when language is set to English, while keeping the page documentation-only and non-interactive."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Keep DAO/governance documentation explicitly conceptual and isolated from gameplay by avoiding shared interactive flows, shared state, or backend-backed execution connections between governance docs and the game layer.",
+      "acceptanceCriteria": [
+        "No new backend endpoints are added for DAO/governance execution, token operations, treasury operations, swapping, bridging, or payments as part of this change",
+        "Gameplay-related routes and existing game backend features continue to function as before"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/DAOPage.tsx",
+          "operation": "modify",
+          "description": "Revise DAO/governance page copy to be explicitly conceptual/non-operational (no execution language, no transactional or token-operation implications) and add/strengthen a visible disclaimer stating it is documentation-only and does not connect to gameplay flows or execute any treasury/token/swap/bridge actions."
+        },
+        {
+          "path": "frontend/src/pages/GoldPaper.tsx",
+          "operation": "modify",
+          "description": "Tighten DAO/governance and related treasury narrative phrasing where needed to reinforce documentation-only conceptual intent (no operational promises or execution framing) and ensure no governance content introduces shared interactive flows/state with gameplay (keep sections informational and static)."
+        },
+        {
+          "path": "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
+          "operation": "modify",
+          "description": "Ensure the new treasury/monetary policy documentation page remains fully isolated from gameplay features by remaining static, avoiding shared state hooks used by game features, and containing a clear statement that it does not integrate with or trigger gameplay capabilities."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Remove the nested/duplicate React Query QueryClientProvider so only one QueryClientProvider exists at runtime, without modifying immutable files (including frontend/src/main.tsx).",
+      "acceptanceCriteria": [
+        "The app renders with a single React Query QueryClientProvider in the component tree",
+        "React Query caching/invalidation continues to work (no runtime errors; existing queries still resolve)"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Remove the QueryClientProvider wrapper and local QueryClient instance from App so that the single QueryClientProvider defined in the immutable frontend/src/main.tsx is the only provider in the runtime tree; keep routing, theming, and Toaster rendering intact."
+        }
+      ]
+    }
+  ]
+}

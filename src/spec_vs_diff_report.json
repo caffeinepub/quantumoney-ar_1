@@ -1,0 +1,101 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-03T19:51:20.250Z",
+  "summary": "The diff adds a new Treasury & Monetary Policy page and route, and adds a corresponding header nav item with bilingual nav labels. However, the Treasury page’s English content/heading behavior is not evidenced in the shown code (only PT content is visible). The diff also includes numerous unrequested gameplay/React Query/game-map/AR changes per frontend-file-summaries.txt, plus an unrequested backend/main.mo modification and addition of project_state.json.",
+  "missing_requirements": [
+    {
+      "id": "REQ-1",
+      "requirement": "Implement a new \"Treasury & Monetary Policy\" page that is explicitly conceptual/non-operational and renders without errors; include an explicit disclaimer; no backend calls.",
+      "reason": "While the new page file and route exist and PT disclaimer text is present, the diff is truncated and does not conclusively show the full page implementation (including that no backend/canister calls are invoked anywhere in the page) and does not show the full rendered component.",
+      "evidence": [
+        "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "When language is set to English, the new page headings are shown in English (and all user-facing text available in English).",
+      "reason": "Header nav label uses bilingual strings (t.nav.treasury), but the Treasury page content shown defines only a `pt` object in the visible truncated portion; no `en` content is evidenced for the page headings/body.",
+      "evidence": [
+        "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
+        "frontend/src/components/Header.tsx",
+        "frontend/src/contexts/LanguageContext.tsx"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "requirement": "Remove nested/duplicate QueryClientProvider so only one QueryClientProvider exists in the runtime tree (without modifying immutable files like frontend/src/main.tsx).",
+      "reason": "The provided diffs do not show where QueryClientProvider(s) are defined/removed (e.g., in Layout or another wrapper). A text summary claims it was removed, but there is insufficient direct code evidence in the diff to confirm the duplication was fixed across the entire app tree.",
+      "evidence": [
+        "frontend/src/App.tsx",
+        "frontend-file-summaries.txt"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Large, detailed changes to React Query hooks including real-time synchronization, global monster distribution system, and wallet-per-spot enforcement logic.",
+      "reason": "Not requested; REQs focus on adding a conceptual documentation page, navigation, keeping governance conceptual, and fixing QueryClientProvider duplication. These gameplay/data-sync features go beyond scope and may violate the constraint to avoid interfering with gameplay features.",
+      "evidence": [
+        "frontend-file-summaries.txt (frontend/src/hooks/useQueries.ts entry)"
+      ]
+    },
+    {
+      "description": "Major MapMode changes: OpenStreetMap + clustering, bounds-based loading, Évora spots always visible, progress indicators, and extensive cleanup logic.",
+      "reason": "Not requested; constitutes significant gameplay/map refactoring outside the documentation/navigation/QueryClientProvider fix scope.",
+      "evidence": [
+        "frontend-file-summaries.txt (frontend/src/pages/MapMode.tsx entry)"
+      ]
+    },
+    {
+      "description": "Major ARMode changes: unrestricted monster capture, spawn timing, rewards, and lifecycle cleanup.",
+      "reason": "Not requested; constitutes gameplay behavior changes outside scope.",
+      "evidence": [
+        "frontend-file-summaries.txt (frontend/src/pages/ARMode.tsx entry)"
+      ]
+    },
+    {
+      "description": "Financial dashboard (BancoCentral) additions: admin force initialize, DAO canister status polling indicator, mainnet canister IDs, BigInt sanitization, and English-only text changes.",
+      "reason": "Not requested and conflicts with constraints emphasizing no financial logic/CTAs for DAO/governance documentation updates; also represents unrelated gameplay/app dashboard modifications.",
+      "evidence": [
+        "frontend-file-summaries.txt (frontend/src/pages/BancoCentral.tsx entry)"
+      ]
+    },
+    {
+      "description": "Enhancements to Plant/Rescue confirmation modals and TokenInfoModal (print + social sharing).",
+      "reason": "Not requested; unrelated UI/game flow changes.",
+      "evidence": [
+        "frontend-file-summaries.txt (frontend/src/components/PlantConfirmationModal.tsx entry)",
+        "frontend-file-summaries.txt (frontend/src/components/RescueConfirmationModal.tsx entry)",
+        "frontend-file-summaries.txt (frontend/src/components/TokenInfoModal.tsx entry)"
+      ]
+    },
+    {
+      "description": "Backend canister code modifications unrelated to the documentation-only frontend change.",
+      "reason": "Not requested; BuildRequest expects documentation-only update and specifically calls out avoiding governance/treasury/token execution endpoints. Any backend change is out-of-scope unless strictly necessary (no state migration expected).",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Addition of project_state.json tracking project direction/features.",
+      "reason": "Not requested as part of implementing the Treasury documentation page or fixing QueryClientProvider duplication.",
+      "evidence": [
+        "project_state.json"
+      ]
+    }
+  ],
+  "confidence": 0.62,
+  "changed_files": [
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/src/App.tsx",
+    "frontend/src/components/Header.tsx",
+    "frontend/src/contexts/LanguageContext.tsx",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/pages/DAOPage.tsx",
+    "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
+    "project_state.json"
+  ]
+}

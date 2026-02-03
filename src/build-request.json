@@ -1,0 +1,92 @@
+{
+  "kind": "build_request",
+  "title": "Add the next institutional documentation section and keep DAO strictly conceptual",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Create and publish the next institutional documentation page/section after the DAO & Governance review: implement a new \"Treasury & Monetary Policy\" page using the existing luxury black/gold styling, written in an institutional, neutral tone and explicitly conceptual/non-operational (no on-chain execution, no financial logic, no token interaction, no swaps/bridges).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "You may proceed to the next section."
+        ]
+      },
+      "acceptanceCriteria": [
+        "A new route exists for the Treasury & Monetary Policy page and it renders without errors",
+        "The page content includes an explicit disclaimer that it is conceptual/non-operational and does not execute transactions, token issuance, swaps, bridges, or financial operations",
+        "No backend calls or canister methods are invoked by this page"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Add navigation access to the new \"Treasury & Monetary Policy\" page in the global header navigation (desktop and mobile), following existing TanStack Router link patterns and existing bilingual language behavior (PT/EN), with all user-facing text available in English.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Use English for any user-facing text in the build request."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Header navigation shows a working link to the new page on desktop and in the mobile sheet menu",
+        "When language is set to English, the nav label and page headings are shown in English"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Ensure the DAO/governance documentation remains explicitly conceptual and does not interfere with or connect to the game layer by avoiding any shared interactive flows, shared state, or backend endpoints between governance pages and gameplay features.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "The DAO and governance model meet expectations at a conceptual and visual level only.",
+          "It is clearly non-operational, with no on-chain execution, no financial logic, and no token interaction.",
+          "The structure is suitable for institutional documentation and does not interfere with the game layer."
+        ]
+      },
+      "acceptanceCriteria": [
+        "No new backend endpoints are added for DAO/governance execution, token operations, treasury operations, swapping, bridging, or payments as part of this change",
+        "Gameplay-related routes and existing game backend features continue to function as before"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Fix the React Query provider duplication by removing the nested/duplicate QueryClientProvider usage from the application so there is only one QueryClientProvider in the runtime tree, without modifying immutable files (including frontend/src/main.tsx).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Ensure the game layer remains fully functional and isolated from any crypto, DAO, swap, bridge, or token logic."
+        ]
+      },
+      "acceptanceCriteria": [
+        "The app renders with a single React Query QueryClientProvider in the component tree",
+        "React Query caching/invalidation continues to work (no runtime errors; existing queries still resolve)"
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not implement on-chain execution, treasury execution, financial logic, swap logic, bridge logic, or token interaction for DAO/governance pages; they must remain conceptual/documentation-only.",
+    "Do not modify files under frontend.immutablePaths (including frontend/src/main.tsx).",
+    "Keep the backend as a single Motoko actor in backend/main.mo; add backend migration only if state schema must change (not expected for this documentation-only update)."
+  ],
+  "nonGoals": [
+    "Implementing real DAO proposal submission, voting, quorum enforcement, token-weighted voting, or any form of on-chain governance execution",
+    "Implementing token issuance, token transfers, treasury accounting, payments, swap/bridge functionality, or price/returns/financial CTAs",
+    "Refactoring unrelated game mechanics (energy, capture, planting/rescue, AR spot claims) beyond ensuring they remain unaffected"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}
