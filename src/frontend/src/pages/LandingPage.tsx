@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Coins, Smartphone, Trophy, BarChart3 } from 'lucide-react';
+import { BookOpen, Map, Users } from 'lucide-react';
 import { SiFacebook, SiX, SiInstagram, SiLinkedin } from 'react-icons/si';
 
 export default function LandingPage() {
@@ -33,12 +33,13 @@ export default function LandingPage() {
 
           {/* Main Title */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold mb-6 text-gold-500 drop-shadow-[0_0_20px_rgba(217,165,32,0.5)] animate-fade-in">
-            O primeiro jogo do mundo que une AR, metaverso e blockchain em tempo real
+            Quantumoney AR
           </h1>
 
           {/* Subtitle */}
           <p className="text-lg md:text-xl lg:text-2xl mb-12 text-gray-300 max-w-4xl mx-auto animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            Explore o universo de Quantumoney AR, ganhe tokens QMY e participe da inovação financeira.
+            Institutional documentation and educational resources for the Quantumoney AR ecosystem. 
+            Explore tokenomics, technical architecture, and governance models.
           </p>
 
           {/* CTA Button */}
@@ -46,9 +47,9 @@ export default function LandingPage() {
             size="lg"
             className="bg-gold-500 hover:bg-gold-600 text-black font-bold text-lg px-12 py-6 rounded-full shadow-gold transition-all duration-300 hover:scale-105 animate-fade-in"
             style={{ animationDelay: '0.4s' }}
-            onClick={() => window.location.href = 'https://quantumoneyar.app'}
+            onClick={() => window.open('https://quantumoneyar.app', '_blank')}
           >
-            Criar Conta / Jogar Agora
+            Explore Quantumoney AR
           </Button>
         </div>
 
@@ -64,66 +65,54 @@ export default function LandingPage() {
       <section className="py-20 px-4 relative">
         <div className="container mx-auto">
           <h2 className="text-3xl md:text-5xl font-serif font-bold text-center mb-16 text-gold-500">
-            Recursos Principais
+            Institutional Resources
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {/* Ganhe QMY */}
+            {/* Documentation */}
             <Card className="glass-card bg-black/40 border-gold-500/30 hover:border-gold-500 transition-all duration-300 hover:scale-105 hover:shadow-gold group">
               <CardContent className="p-8 text-center">
                 <div className="mb-6 flex justify-center">
                   <div className="w-24 h-24 rounded-full bg-gold-500/10 flex items-center justify-center group-hover:bg-gold-500/20 transition-all duration-300">
-                    <img 
-                      src="/assets/generated/earn-qmy-icon.dim_128x128.png" 
-                      alt="Ganhe QMY" 
-                      className="w-16 h-16"
-                    />
+                    <BookOpen className="w-16 h-16 text-gold-500" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-serif font-bold mb-4 text-gold-500">Ganhe QMY</h3>
+                <h3 className="text-2xl font-serif font-bold mb-4 text-gold-500">Documentation</h3>
                 <p className="text-gray-300 leading-relaxed">
-                  Capture monstros em realidade aumentada, complete missões e ganhe tokens QMY. 
-                  Cada ação no jogo é recompensada com criptomoeda real.
+                  Access comprehensive technical documentation, Gold Paper, tokenomics models, 
+                  and architectural specifications for educational purposes.
                 </p>
               </CardContent>
             </Card>
 
-            {/* Jogue em AR */}
+            {/* Educational AR Concepts */}
             <Card className="glass-card bg-black/40 border-gold-500/30 hover:border-gold-500 transition-all duration-300 hover:scale-105 hover:shadow-gold group">
               <CardContent className="p-8 text-center">
                 <div className="mb-6 flex justify-center">
                   <div className="w-24 h-24 rounded-full bg-gold-500/10 flex items-center justify-center group-hover:bg-gold-500/20 transition-all duration-300">
-                    <img 
-                      src="/assets/generated/play-ar-icon.dim_128x128.png" 
-                      alt="Jogue em AR" 
-                      className="w-16 h-16"
-                    />
+                    <Map className="w-16 h-16 text-gold-500" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-serif font-bold mb-4 text-gold-500">Jogue em AR</h3>
+                <h3 className="text-2xl font-serif font-bold mb-4 text-gold-500">AR Distribution Model</h3>
                 <p className="text-gray-300 leading-relaxed">
-                  Experiência imersiva de realidade aumentada. Explore o mundo real enquanto 
-                  interage com o metaverso cripto em tempo real.
+                  Learn about the conceptual global AR distribution system with 60,000 theoretical 
+                  spots across six geographic regions for educational exploration.
                 </p>
               </CardContent>
             </Card>
 
-            {/* Ranking e Missões */}
+            {/* Governance Models */}
             <Card className="glass-card bg-black/40 border-gold-500/30 hover:border-gold-500 transition-all duration-300 hover:scale-105 hover:shadow-gold group">
               <CardContent className="p-8 text-center">
                 <div className="mb-6 flex justify-center">
                   <div className="w-24 h-24 rounded-full bg-gold-500/10 flex items-center justify-center group-hover:bg-gold-500/20 transition-all duration-300">
-                    <img 
-                      src="/assets/generated/ranking-missions-icon.dim_128x128.png" 
-                      alt="Ranking e Missões" 
-                      className="w-16 h-16"
-                    />
+                    <Users className="w-16 h-16 text-gold-500" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-serif font-bold mb-4 text-gold-500">Ranking e Missões</h3>
+                <h3 className="text-2xl font-serif font-bold mb-4 text-gold-500">Governance Framework</h3>
                 <p className="text-gray-300 leading-relaxed">
-                  Compete com jogadores globais, sobe no ranking e desbloqueia missões exclusivas. 
-                  Quanto mais joga, mais recompensas ganha.
+                  Explore theoretical governance structures, DAO models, and treasury management 
+                  concepts for institutional understanding and research.
                 </p>
               </CardContent>
             </Card>
@@ -131,40 +120,27 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Dashboard Callout Section */}
+      {/* Information Callout Section */}
       <section className="py-20 px-4 bg-gradient-to-b from-black to-gold-900/10">
         <div className="container mx-auto max-w-5xl">
           <Card className="glass-card bg-black/60 border-gold-500/50 shadow-gold">
             <CardContent className="p-12">
-              <div className="flex flex-col md:flex-row items-center gap-8">
-                <div className="flex-shrink-0">
-                  <div className="w-32 h-32 rounded-full bg-gold-500/20 flex items-center justify-center">
-                    <img 
-                      src="/assets/generated/dashboard-icon.dim_128x128.png" 
-                      alt="Dashboard" 
-                      className="w-20 h-20"
-                    />
-                  </div>
-                </div>
-                <div className="flex-1 text-center md:text-left">
-                  <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4 text-gold-500">
-                    Dashboard Personalizado
-                  </h2>
-                  <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-                    Monitore seus saldos de QMY em tempo real, acompanhe o valor dos seus tokens, 
-                    visualize estatísticas de jogo detalhadas e gerencie sua carteira cripto. 
-                    Tudo num painel intuitivo e profissional.
+              <div className="text-center space-y-6">
+                <h2 className="text-3xl md:text-4xl font-serif font-bold text-gold-500">
+                  Educational & Institutional Platform
+                </h2>
+                <p className="text-lg text-gray-300 leading-relaxed">
+                  This website provides institutional documentation, technical specifications, 
+                  and educational resources about the Quantumoney AR ecosystem. All content is 
+                  informational and conceptual in nature.
+                </p>
+                <div className="pt-6 border-t border-gold-500/20">
+                  <p className="text-sm text-gray-400 italic">
+                    No operational crypto features • No wallets • No token execution • No financial transactions
                   </p>
-                  <Button 
-                    size="lg"
-                    className="bg-gold-500 hover:bg-gold-600 text-black font-bold rounded-full transition-all duration-300 hover:scale-105"
-                    onClick={() => {
-                      // TODO: Add dashboard routing when implemented
-                      console.log('Navigate to dashboard');
-                    }}
-                  >
-                    Aceder ao Dashboard
-                  </Button>
+                  <p className="text-xs text-gray-500 mt-2">
+                    MiCA (EU) & GDPR Compliant • For educational and institutional purposes only
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -184,32 +160,32 @@ export default function LandingPage() {
                 className="w-16 h-16 mb-4 mx-auto md:mx-0"
               />
               <p className="text-gray-400 text-sm">
-                O futuro da inovação financeira em realidade aumentada.
+                Institutional documentation and educational resources.
               </p>
             </div>
 
             {/* Quick Links */}
             <div className="text-center md:text-left">
-              <h3 className="text-gold-500 font-bold mb-4">Links Rápidos</h3>
+              <h3 className="text-gold-500 font-bold mb-4">Resources</h3>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-gray-400 hover:text-gold-500 transition-colors">
+                  <a href="/tokenomics" className="text-gray-400 hover:text-gold-500 transition-colors">
                     Tokenomics
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-400 hover:text-gold-500 transition-colors">
-                    Conversão
+                  <a href="/technical" className="text-gray-400 hover:text-gold-500 transition-colors">
+                    Technical Architecture
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-400 hover:text-gold-500 transition-colors">
-                    KYC
+                  <a href="/dao" className="text-gray-400 hover:text-gold-500 transition-colors">
+                    Governance Models
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-400 hover:text-gold-500 transition-colors">
-                    FAQ / Suporte
+                  <a href="/legal" className="text-gray-400 hover:text-gold-500 transition-colors">
+                    Legal & Compliance
                   </a>
                 </li>
               </ul>
@@ -217,7 +193,7 @@ export default function LandingPage() {
 
             {/* Contact */}
             <div className="text-center md:text-left">
-              <h3 className="text-gold-500 font-bold mb-4">Contacto</h3>
+              <h3 className="text-gold-500 font-bold mb-4">Contact</h3>
               <ul className="space-y-2 text-gray-400 text-sm">
                 <li>
                   <a href="mailto:helpdesk@quantumoney.net" className="hover:text-gold-500 transition-colors">
@@ -234,7 +210,7 @@ export default function LandingPage() {
 
             {/* Social Media */}
             <div className="text-center md:text-left">
-              <h3 className="text-gold-500 font-bold mb-4">Redes Sociais</h3>
+              <h3 className="text-gold-500 font-bold mb-4">Connect</h3>
               <div className="flex gap-4 justify-center md:justify-start">
                 <a 
                   href="#" 
@@ -279,8 +255,11 @@ export default function LandingPage() {
                 www.quantumoney.net
               </a>
             </p>
-            <p className="text-gray-500 text-xs">
-              Compliant com GDPR e MiCA EU 2025
+            <p className="text-gray-500 text-xs mb-2">
+              MiCA (EU) & GDPR Compliant
+            </p>
+            <p className="text-gray-500 text-xs italic">
+              Informational only - No operational crypto features, wallets, or financial transactions
             </p>
           </div>
         </div>

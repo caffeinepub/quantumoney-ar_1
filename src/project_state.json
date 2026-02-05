@@ -1,7 +1,32 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 3,
-  "summary": "Project direction expanded to include an institutional, multi-section web portal for Quantumoney AR / QMY Luxury Pro (quantumoney.app) with strictly technical/neutral documentation aligned with MiCA (EU) and GDPR. The portal is being authored in phases: structured sitemap and page-by-page institutional content (Home, Gold Paper, Token QMY future/non-emitted, Treasury & Monetary Policy, DAO & Governance conceptual-only, Game page linking to quantumoneyar.app, Compliance & Legal, etc.). DAO/governance content is explicitly conceptual and non-operational (no on-chain execution, no financial logic, no token interaction). Game layer must remain isolated from crypto/protocol features during this documentation effort.",
+  "projectStateVersion": 10,
+  "summary": "Quantumoney AR / QMY Luxury Pro is a bilingual (PT/EN) React + TypeScript web portal with a luxury black/gold theme that serves (1) as an institutional/marketing and documentation site (Gold Paper, DAO & Governance, Treasury & Monetary Policy, tokenomics, legal, roadmap, etc.) and (2) as a foundation for an AR/mobile game experience backed by an Internet Computer Motoko canister supporting player registration, XP/energy progression, monster capture, GPS-based coin planting/rescue mechanics, AR spot token claims, and Stripe checkout integration via an external integrations canister. The repo now also includes Capacitor/mobile build & deep-linking setup plus offline/deep-link utilities to support app-style distribution. Governance/treasury pages are explicitly conceptual/non-operational and contain strong MiCA/GDPR disclaimers.",
+  "architectural_notes": [
+    "Frontend is a SPA built with React + TypeScript, TanStack Router for routing, TailwindCSS for styling, and next-themes for a forced dark theme.",
+    "Bilingual UI is implemented via a LanguageContext that persists language selection in localStorage and provides translated nav/footer labels.",
+    "Global app shell uses a Layout route component that wraps all pages with Header/Outlet/Footer; Header is responsive with a mobile Sheet menu.",
+    "Large long-form documentation is implemented as a single scrollable Gold Paper page with sticky section navigation and active-section tracking via scroll position.",
+    "Authentication is provided through Internet Identity (@dfinity/auth-client) in a dedicated provider/hook managing identity persistence and login state.",
+    "Backend is a single Motoko canister with in-memory Map-based state for profiles, daily limits, planted coins, and AR spot claims/distributions; access control is a shared module.",
+    "Frontend-backend actor lifecycle is managed via a React Query-powered useActor hook that recreates the actor on identity changes and invalidates other queries.",
+    "Backend composes features via mixins/includes (StripeMixin and blob-storage Mixin) to expose auxiliary service endpoints from the same canister.",
+    "Stripe integration is implemented as a Motoko module maintaining an admin-managed price catalog and delegating API calls to a separate integrations canister with cycles attached.",
+    "Capacitor configuration, build/test scripts, and mobile build guides were added to package the SPA for Android/iOS distribution."
+  ],
+  "known_issues": [
+    "Backend state (profiles, planted coins, limits, claims, distributions) is stored in non-stable in-memory Maps; canister upgrades will lose state unless an external migration/stable strategy is added.",
+    "Access control bootstrapping assigns the first non-anonymous caller as admin (initializeAccessControl); without an allowlist this can be captured by an unintended principal.",
+    "Many backend validation/business-rule failures use Runtime.trap with messages prefixed as \"Unauthorized\", conflating auth errors with user-input/state errors and complicating UX/error handling.",
+    "Storage.refillCashier uses Nat.sub(currentBalance, reservedCycles) without guarding currentBalance < reservedCycles, which can trap under low-cycle conditions.",
+    "Stripe and other backend functionality hard-depend on environment variables (FRONTEND_URL, INTEGRATIONS_CANISTER_ID, CAFFFEINE_STORAGE_CASHIER_PRINCIPAL); missing/malformed values will trap at runtime.",
+    "Monster capture allows duplicates; there is no server-side uniqueness/collection completion enforcement.",
+    "AR spot claiming tracks total distributed per spot but does not enforce a maximum cap per spot/supply; distribution totals can grow without bound as long as wallets keep claiming unique keys.",
+    "Coin IDs are derived from caller + Time.now(); while likely fine, there’s no explicit collision handling and no indexing by location for efficient spatial queries.",
+    "Frontend uses process.env.II_URL for the Internet Identity provider URL; depending on the bundler/environment, this may require explicit env wiring (e.g., Vite import.meta.env) to avoid undefined at runtime.",
+    "Several referenced gameplay/mobile/deep-link/offline related modules are indicated by repository summaries but their implementations are not present in the provided file contents; feature coverage for those areas may be incomplete in this analysis."
+  ],
+  "isFixRequest": false,
   "existing_features": [
     {
       "id": "IF-1",
@@ -11,358 +36,408 @@
         "PT/EN toggle",
         "LanguageContext"
       ],
-      "description": "Provides Portuguese/English UI strings via a React context, persists the selected language in localStorage, and exposes language + setLanguage + translation object (t) to pages/components.",
+      "description": "Provides Portuguese/English language selection via React context, persists the selected language in localStorage, and exposes translated navigation/footer labels to components.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-2",
-      "title": "Multi-page navigation with TanStack Router",
+      "title": "Multi-page SPA routing with TanStack Router",
       "synonyms": [
         "routing",
-        "SPA navigation"
+        "TanStack Router"
       ],
-      "description": "Defines a root Layout route and multiple page routes (landing, home, about, tokenomics, AR distribution, DAO, roadmap, vesting/deflation, presale, technical, game systems, legal, contact, gold paper) using @tanstack/react-router.",
+      "description": "Defines a root layout route and multiple page routes (landing, home, about, tokenomics, AR distribution, DAO, treasury/monetary policy, roadmap, vesting/deflation, presale, technical, game systems, legal, contact, gold paper) using @tanstack/react-router.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-3",
-      "title": "Global Layout with fixed header and footer",
+      "title": "Global layout shell with fixed header and footer",
       "synonyms": [
-        "Layout shell",
-        "chrome"
+        "Layout",
+        "app chrome"
       ],
-      "description": "Wraps all routed pages with LanguageProvider, a fixed top Header with navigation and language toggle, and a Footer with branding/contact/compliance messaging.",
+      "description": "Wraps routed content with a shared Layout component that provides LanguageProvider, a fixed Header, routed Outlet content, and a Footer across all pages.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-4",
-      "title": "Luxury black/gold Tailwind theme and UI styling",
+      "title": "Responsive header navigation with mobile sheet menu",
       "synonyms": [
-        "Tailwind config",
-        "OKLCH palette",
-        "glass cards"
+        "Header",
+        "navigation"
       ],
-      "description": "Tailwind configuration and global CSS define a luxury gold/black color system, typography (Playfair Display + Inter), glassmorphism utilities, animations, and custom scrollbars.",
+      "description": "Implements a fixed top header with desktop nav buttons, a mobile slide-out (Sheet) menu, and an in-header language toggle that switches PT/EN.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-5",
-      "title": "Landing page marketing funnel",
+      "title": "Footer with branding, contact links, and compliance messaging",
       "synonyms": [
-        "LandingPage",
-        "top-of-funnel"
+        "Footer",
+        "support links"
       ],
-      "description": "A public landing page with hero CTA, feature highlights, dashboard callout, and footer, linking users to the app install/play URL (quantumoneyar.app).",
+      "description": "Renders Quantumoney AR branding, helpdesk email, website link, and GDPR/MiCA compliance text using translated strings from LanguageContext.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-6",
-      "title": "Cinematic home hero with animated messaging",
+      "title": "Luxury black/gold design system (Tailwind + CSS variables)",
       "synonyms": [
-        "HomePage",
-        "hero animation"
+        "theme",
+        "OKLCH palette",
+        "glass-card"
       ],
-      "description": "Fullscreen hero section with animated galaxy background, timed bilingual message fade in/out, language toggle, and install button redirect to quantumoneyar.app.",
+      "description": "Tailwind config and global CSS define a luxury black/gold OKLCH color system, typography (Playfair Display/Inter), glassmorphism utility, custom scrollbar, and fade-in animations; app uses next-themes to force dark mode.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-7",
-      "title": "Informational/marketing pages suite",
+      "title": "Landing page marketing funnel with CTA",
       "synonyms": [
-        "About",
-        "Tokenomics",
-        "AR Distribution",
-        "DAO Framework",
-        "Roadmap",
-        "Presale Structure",
-        "Technical",
-        "Game Systems",
-        "Legal",
-        "Contact"
+        "LandingPage",
+        "marketing site"
       ],
-      "description": "Implements multiple bilingual pages that present the project narrative, tokenomics, global AR distribution, DAO governance overview, roadmap, presale, technical architecture, gameplay systems, compliance/disclaimer, and support contacts.",
+      "description": "Marketing landing page with hero section, feature highlight cards, dashboard callout, and footer; primary CTA redirects users to the external app URL (quantumoneyar.app).",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-8",
-      "title": "Gold Paper long-form documentation page",
+      "title": "Cinematic Home hero with animated text cycle",
       "synonyms": [
-        "Whitepaper",
-        "documentation portal"
+        "HomePage",
+        "hero animation"
       ],
-      "description": "A comprehensive bilingual (PT/EN) Gold Paper page with a sticky navigation bar, smooth scroll to 10 sections (including a detailed conceptual DAO section with tables/diagrams), and extensive embedded visual assets.",
+      "description": "Homepage hero with animated galaxy background, periodic bilingual text visibility (interval/timers), language toggle button, and install CTA redirecting to quantumoneyar.app.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-9",
-      "title": "Internet Identity authentication provider",
+      "title": "Informational page suite (static institutional/marketing content)",
       "synonyms": [
-        "II login",
-        "AuthClient wrapper"
+        "About",
+        "Tokenomics",
+        "AR Distribution",
+        "Roadmap",
+        "Vesting/Deflation",
+        "Presale",
+        "Technical",
+        "Game Systems",
+        "Legal",
+        "Contact"
       ],
-      "description": "Implements an InternetIdentityProvider and useInternetIdentity hook using @dfinity/auth-client, including login/logout flows, persisted identity loading, and status flags for UI state.",
+      "description": "Implements multiple bilingual informational pages describing the project vision, token distribution, global AR spot distribution, milestones, vesting/deflation visuals, presale structure, technical architecture, gameplay system overview, legal compliance, and support contacts.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-10",
-      "title": "Authenticated canister actor creation and query invalidation",
+      "title": "Gold Paper long-form documentation page with sticky section navigation",
       "synonyms": [
-        "useActor",
-        "actor lifecycle"
+        "GoldPaper",
+        "whitepaper"
       ],
-      "description": "Creates anonymous or identity-bound backend actors; when authenticated, initializes access control on the backend and invalidates/refetches non-actor React Query caches when identity/actor changes.",
+      "description": "Provides a bilingual long-form documentation page with a hero, sticky nav of 10 sections, smooth scrolling to anchors, active section tracking via scroll listener, and extensive embedded visual assets and tables.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-11",
-      "title": "Backend role-based access control (admin/user/guest)",
+      "title": "Treasury & Monetary Policy conceptual documentation page",
       "synonyms": [
-        "AccessControl",
-        "RBAC"
+        "TreasuryMonetaryPolicyPage",
+        "treasury page"
       ],
-      "description": "Motoko module that stores user roles, assigns the first initializer as admin, supports role assignment by admin, and enforces permissions in backend endpoints.",
+      "description": "Bilingual institutional page outlining a conceptual (non-operational) treasury, vesting, and deflationary monetary policy model with explicit non-execution disclaimers and compliance notes.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-12",
-      "title": "Player registration and profile management",
+      "title": "Internet Identity authentication provider/hook",
       "synonyms": [
-        "registerPlayer",
-        "PlayerProfile"
+        "Internet Identity",
+        "AuthClient",
+        "login/logout"
       ],
-      "description": "Backend supports user registration with initial energy/tokens/bonus/xp, profile storage and retrieval with permission checks, and admin-only listing/statistics utilities.",
+      "description": "Implements an InternetIdentityProvider and useInternetIdentity hook using @dfinity/auth-client, handling initialization, identity persistence, login/logout, and granular login status flags.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-13",
-      "title": "Energy system with restore capability",
+      "title": "Authenticated backend actor creation via React Query",
       "synonyms": [
-        "energy",
-        "restoreEnergy"
+        "useActor",
+        "actor lifecycle"
       ],
-      "description": "Player profile includes energy capped at 100; backend supports restoring energy to 100 with permission and registration checks.",
+      "description": "Creates an anonymous or identity-bound canister actor keyed by principal; when authenticated, calls initializeAccessControl and invalidates/refetches non-actor queries upon actor changes.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-14",
-      "title": "Monster capture and captured monsters retrieval",
+      "title": "Backend role-based access control (admin/user/guest)",
       "synonyms": [
-        "captureMonster",
-        "collection"
+        "RBAC",
+        "AccessControl"
       ],
-      "description": "Backend supports capturing monsters (stored with capture time), granting energy boosts up to 100, and querying captured monsters for self (or admin for others).",
+      "description": "Motoko access-control module assigns roles, supports admin role assignment, and provides permission checks; first initialized principal becomes admin, others default to user.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-15",
-      "title": "Coin planting at GPS coordinates with daily limits and XP rewards",
+      "title": "Player registration with welcome bonus and daily limit initialization",
       "synonyms": [
-        "plantCoin",
-        "planted coins"
+        "registerPlayer",
+        "PlayerProfile"
       ],
-      "description": "Backend allows registered users to plant coins at validated coordinates; enforces 3 plants/day and minimum 1 available token; stores planted coin data and updates balances (+10 XP, move 1 token from available to planted).",
+      "description": "Backend registration creates a new profile with initial energy=100, availableTokens=100, bonusTokens=900, xp=100, level=1 and initializes daily limits tracking for plants/rescues.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-16",
-      "title": "Coin rescue within XP-based radius with lock rules and daily limits",
+      "title": "Player profile read/write endpoints with permission checks",
       "synonyms": [
-        "rescueSingleCoin",
-        "XP radius"
+        "getUserProfile",
+        "saveCallerUserProfile"
       ],
-      "description": "Backend allows rescuing a planted coin if within a radius equal to user's XP (meters), enforces 100 rescues/day, enforces 30-day lock for rescuing own coins, applies rewards (2 if own & expired else 1), and XP cost (15 XP for rescuing others).",
+      "description": "Backend supports querying the caller’s profile, querying a specific user’s profile (self/admin), saving the caller’s profile, and admin listing of all profiles.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-17",
-      "title": "AR Spot claims with atomic per-wallet enforcement (4000 QTM)",
+      "title": "Daily limits tracking with automatic 24h reset",
       "synonyms": [
-        "claimARSpot",
-        "AR distribution claim"
+        "daily limits",
+        "resetDailyLimitsIfNeeded"
       ],
-      "description": "Backend enforces that each wallet can claim exactly 4000 QTM per spot only once by storing composite claim keys (spotId:principal), and tracks per-spot distribution totals and claim counts.",
+      "description": "Backend maintains per-player daily limits for planting and rescuing operations and resets counters when 24 hours have elapsed since last reset.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-18",
-      "title": "XP adjustment endpoint",
+      "title": "Monster capture and captured monster inventory",
       "synonyms": [
-        "updateXP",
-        "add XP"
+        "captureMonster",
+        "capturedMonsters"
       ],
-      "description": "Backend provides an endpoint to increase or decrease XP (floored at 0) for registered users with permission checks.",
+      "description": "Backend captures monsters by appending a timestamped CapturedMonster record to the player profile and restores energy up to a cap of 100 based on monster energyBoost.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-19",
-      "title": "Admin player reset and statistics",
+      "title": "GPS coin planting with limits and XP rewards",
       "synonyms": [
-        "adminResetPlayer",
-        "adminGetPlayerCount"
+        "plantCoin",
+        "plantedCoins"
       ],
-      "description": "Admin-only endpoints allow resetting a non-admin user's profile/limits and querying total player count.",
+      "description": "Backend allows planting a coin at validated coordinates, enforces 3 plants/day and at least 1 available token, stores planted coin records, and updates profile (+10 XP, move 1 token from available to planted).",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-20",
-      "title": "Stripe price catalog management (admin) and checkout creation",
+      "title": "GPS coin rescue with XP-radius, lock rules, rewards and costs",
       "synonyms": [
-        "Stripe",
-        "in-app store",
-        "payments"
+        "rescueSingleCoin",
+        "XP radius"
       ],
-      "description": "Motoko Stripe module maintains a map of Stripe prices with admin-gated add/update/remove, initializes default store SKUs, and creates checkout sessions through an integrations canister.",
+      "description": "Backend rescues a planted coin if within a radius equal to the player’s XP (meters), enforces 100 rescues/day, prevents rescuing own coins until 30 days have elapsed, grants 2 tokens for expired own coins otherwise 1, and charges 15 XP when rescuing others.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-21",
-      "title": "Stripe redirect handlers exposed to the frontend",
+      "title": "AR spot claim system with atomic per-wallet-per-spot enforcement",
       "synonyms": [
-        "paymentSuccess",
-        "paymentCancel"
+        "claimARSpot",
+        "AR distribution claim"
       ],
-      "description": "StripeMixin exposes payment success/cancel handlers (sessionId/accountId/customerId) for frontend access, delegating to integrations canister endpoints.",
+      "description": "Backend enforces each wallet can claim exactly 4000 QTM per spot once using a composite key (spotId:principal), records claims, updates per-spot distribution totals/counts, and credits QTM to player balances; includes distribution query and claim-status query endpoints.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-22",
-      "title": "ICP HTTP outcalls utility (GET/POST) with transform",
+      "title": "Energy restore endpoint",
       "synonyms": [
-        "http_request",
-        "outcall.mo"
+        "restoreEnergy"
       ],
-      "description": "Motoko module for HTTP GET/POST via IC management canister, includes a transform function to strip headers and attaches cycles for requests with a set User-Agent and idempotency key for POST.",
+      "description": "Backend endpoint restores the caller’s energy to 100 with registration and permission checks.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-23",
-      "title": "Blob storage gateway authorization and garbage collection utilities",
+      "title": "Admin player reset and player statistics",
       "synonyms": [
-        "blob storage",
-        "Storage.mo",
-        "Mixin.mo"
+        "adminResetPlayer",
+        "adminGetPlayerCount"
       ],
-      "description": "Motoko storage modules manage authorized gateway principals (fetched from a cashier canister), provide authorization checks, cycles refill to cashier, certificate creation stubs, dead blob pruning confirmation, and forced GC triggering.",
+      "description": "Admin-only endpoints support resetting a non-admin player’s profile/daily limits and retrieving total registered player count.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-24",
-      "title": "Deep linking & universal links configuration",
+      "title": "Stripe catalog and checkout session creation via integrations canister",
       "synonyms": [
-        "App Links",
-        "Universal Links"
+        "Stripe",
+        "checkout"
       ],
-      "description": "Includes Android assetlinks.json and iOS apple-app-site-association plus documentation (DEEP_LINKING_SETUP.md) and a frontend deep-link handler to map inbound URLs to routes.",
+      "description": "Motoko Stripe module maintains an admin-managed Stripe price catalog and creates checkout sessions by sending candid payloads to an external integrations canister; includes payment success/cancel callback handlers exposed via a mixin.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-25",
-      "title": "Capacitor mobile readiness and plugin wrappers",
+      "title": "ICP HTTP outcalls utility (GET/POST) with response transform",
       "synonyms": [
-        "Capacitor",
-        "hybrid app"
+        "http_request",
+        "outcall.mo"
       ],
-      "description": "Provides Capacitor configuration and a plugin wrapper layer that exposes native capabilities (camera, geolocation, network, haptics, app lifecycle, etc.) with graceful web fallbacks and build-safe dynamic imports.",
+      "description": "Provides Motoko helper functions for IC management canister HTTP GET/POST with a transform function that strips headers and includes a User-Agent plus idempotency key for POST requests.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-26",
-      "title": "Offline action queue and sync manager",
+      "title": "Blob storage gateway authorization and maintenance endpoints",
       "synonyms": [
-        "offline mode",
-        "sync queue"
+        "blob storage",
+        "Storage mixin"
       ],
-      "description": "Monitors connectivity, queues actions while offline, and automatically retries/syncs queued operations when network connectivity is restored.",
+      "description": "Includes a Motoko storage module/mixin that fetches authorized gateway principals from a cashier canister, checks authorization for pruning APIs, supports cycles refill to cashier, and exposes dead-blob listing and deletion confirmation with forced GC trigger.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-27",
-      "title": "Camera capture hook",
+      "title": "URL parameter and secret-hash utilities",
       "synonyms": [
-        "useCamera",
-        "mediaDevices"
+        "urlParams",
+        "session persistence"
       ],
-      "description": "A reusable camera hook that starts/stops streams, switches front/back cameras, captures a photo to File via canvas, and reports support/loading/errors with cleanup on unmount.",
+      "description": "Utility functions to read URL/query/hash parameters, persist them to sessionStorage, extract secrets from hash fragments, and clear sensitive hash params from the URL using history.replaceState.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-28",
-      "title": "QR scanning hook with dynamic jsQR loading",
+      "title": "Camera hook with capture and camera switching",
       "synonyms": [
-        "useQRScanner",
-        "jsQR"
+        "useCamera",
+        "getUserMedia"
       ],
-      "description": "Loads jsQR at runtime, scans frames from the camera at a configurable interval, deduplicates results, and maintains a bounded scan history with start/stop/switch camera controls.",
+      "description": "Provides start/stop camera lifecycle, switch between front/back cameras, capture photos to File via canvas, browser capability checks, and structured error reporting with cleanup on unmount.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-29",
-      "title": "SEO-ready HTML shell and branding assets",
+      "title": "QR scanner hook with dynamic jsQR loading",
       "synonyms": [
-        "index.html meta tags",
-        "OpenGraph"
+        "useQRScanner",
+        "jsQR"
       ],
-      "description": "HTML entry includes SEO metadata, OpenGraph/Twitter cards, canonical URL, and premium typography loading; uses generated branding assets/icons.",
+      "description": "Dynamically loads jsQR in the browser, scans camera frames on an interval, deduplicates results, maintains a bounded scan history, and exposes start/stop/switch camera controls via the underlying camera hook.",
       "reqIds": [],
       "version": 1
     },
     {
-      "id": "feature-create-and-publish-the-next-institutional-documentation-page-section-after-the-dao-governance-review-implement-a-new-treasury-monetary-policy-page-using-the-existing-luxury-black-gold-styling-written-in-an-institutional-neutral-tone-and-explicitly-conceptual-non-operational-no-on-chain-execution-no-financial-logic-no-token-interaction-no-swaps-bridges",
-      "title": "Create and publish the next institutional documentation page/section after the DAO & Governance review: implement a new \"Treasury & Monetary Policy\" page using the existing luxury black/gold styling, written in an institutional, neutral tone and explicitly conceptual/non-operational (no on-chain execution, no financial logic, no token interaction, no swaps/bridges).",
+      "id": "IF-30",
+      "title": "Capacitor mobile build pipeline and guides",
+      "synonyms": [
+        "Capacitor",
+        "mobile build",
+        "Android/iOS guides"
+      ],
+      "description": "Adds Capacitor configuration plus dedicated build/test scripts and documentation (build guides) to package the React SPA as a mobile app, including a reusable build-template and deployment scaffolding.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-31",
+      "title": "Deep linking and app association support (Android/iOS)",
+      "synonyms": [
+        "deep links",
+        "AASA",
+        "assetlinks"
+      ],
+      "description": "Implements deep-link handling utilities and provides platform association files (/.well-known/apple-app-site-association and /.well-known/assetlinks.json) with setup documentation to enable opening routes inside the app from external links.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-32",
+      "title": "Offline manager utility for app-like resilience",
+      "synonyms": [
+        "offline mode",
+        "connectivity handling"
+      ],
+      "description": "Introduces an offline manager utility to coordinate offline/online state and support more resilient behavior in mobile/app contexts.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-33",
+      "title": "In-app game UI shell (AR/Map modes, bottom navigation, and gameplay modals)",
+      "synonyms": [
+        "ARMode",
+        "MapMode",
+        "BottomNav",
+        "game UI"
+      ],
+      "description": "Adds dedicated gameplay-oriented pages and components (AR mode, map mode, profile/collection screens) with bottom navigation and multiple game modals/panels (plant/rescue confirmations, AR spot modal, token/monster detail, energy UI, welcome bonus banners).",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-34",
+      "title": "shadcn/ui-based component library integrated into build template",
+      "synonyms": [
+        "shadcn/ui",
+        "UI primitives",
+        "component template"
+      ],
+      "description": "Adds a build-template frontend that includes a comprehensive set of shadcn/ui component primitives, eslint rules, and supporting scripts (e.g., image prune/resize) for consistent UI development and reuse.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "feature-integrate-the-confirmed-gold-paper-expansion-text-as-new-additive-institutional-sections-in-the-existing-institutional-website-content-without-removing-renaming-or-overwriting-any-existing-sections-the-added-sections-must-remain-strictly-conceptual-non-operational-mica-gdpr-aligned-and-explicitly-separated-from-the-ar-game",
+      "title": "Integrate the confirmed Gold Paper expansion text as new, additive institutional sections in the existing institutional website content without removing, renaming, or overwriting any existing sections. The added sections must remain strictly conceptual/non-operational, MiCA/GDPR-aligned, and explicitly separated from the AR game.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-navigation-access-to-the-new-treasury-monetary-policy-page-in-the-global-header-navigation-desktop-and-mobile-following-existing-tanstack-router-link-patterns-and-existing-bilingual-language-behavior-pt-en-with-all-user-facing-text-available-in-english",
-      "title": "Add navigation access to the new \"Treasury & Monetary Policy\" page in the global header navigation (desktop and mobile), following existing TanStack Router link patterns and existing bilingual language behavior (PT/EN), with all user-facing text available in English.",
+      "id": "feature-add-the-following-conceptual-bank-style-explanatory-content-blocks-as-text-simple-visual-structure-like-tables-diagrams-rendered-in-the-page-markup-to-the-institutional-content-pages-where-they-fit-best-e-g-treasury-monetary-policy-tokenomics-dao-governance-legal-ensuring-the-content-is-purely-descriptive-and-does-not-introduce-operational-behavior-1-conceptual-token-distribution-framework-2-locked-vs-unlocked-balances-explanation-3-vesting-unlock-timelines-description-illustrative-only-4-theoretical-treasury-flow-model-inbound-outbound-inactive",
+      "title": "Add the following conceptual, bank-style explanatory content blocks (as text + simple visual structure like tables/diagrams rendered in the page markup) to the institutional content pages where they fit best (e.g., Treasury/Monetary Policy, Tokenomics, DAO/Governance, Legal), ensuring the content is purely descriptive and does not introduce operational behavior: (1) conceptual token distribution framework, (2) locked vs unlocked balances explanation, (3) vesting & unlock timelines description (illustrative only), (4) theoretical treasury flow model (inbound/outbound, inactive).",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-ensure-the-dao-governance-documentation-remains-explicitly-conceptual-and-does-not-interfere-with-or-connect-to-the-game-layer-by-avoiding-any-shared-interactive-flows-shared-state-or-backend-endpoints-between-governance-pages-and-gameplay-features",
-      "title": "Ensure the DAO/governance documentation remains explicitly conceptual and does not interfere with or connect to the game layer by avoiding any shared interactive flows, shared state, or backend endpoints between governance pages and gameplay features.",
+      "id": "feature-maintain-the-existing-premium-black-gold-institutional-presentation-while-improving-the-structural-readability-of-the-affected-institutional-pages-using-content-only-layout-refinements-e-g-clearer-headings-chapter-numbering-callout-disclaimers-simple-tables-do-not-introduce-new-routes-new-canisters-backend-endpoints-or-any-gameplay-cross-linking-within-the-new-content",
+      "title": "Maintain the existing premium black/gold institutional presentation while improving the structural readability of the affected institutional pages using content-only layout refinements (e.g., clearer headings, chapter numbering, callout disclaimers, simple tables). Do not introduce new routes, new canisters, backend endpoints, or any gameplay cross-linking within the new content.",
       "reqIds": [
         "REQ-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-fix-the-react-query-provider-duplication-by-removing-the-nested-duplicate-queryclientprovider-usage-from-the-application-so-there-is-only-one-queryclientprovider-in-the-runtime-tree-without-modifying-immutable-files-including-frontend-src-main-tsx",
-      "title": "Fix the React Query provider duplication by removing the nested/duplicate QueryClientProvider usage from the application so there is only one QueryClientProvider in the runtime tree, without modifying immutable files (including frontend/src/main.tsx).",
-      "reqIds": [
-        "REQ-4"
       ],
       "version": 1
     }
@@ -370,54 +445,19 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Institutional portal restructure for quantumoney.app with clear multi-page/section navigation (Home, Gold Paper, Token QMY future, Treasury & Monetary Policy, DAO & Governance, Game page, Compliance & Legal, Dashboard future, Swap/Bridge future) using sober black/gold styling.",
+      "summary": "Expand Gold Paper with more detailed institutional/bank-style conceptual explanations (token distribution, locked vs unlocked balances, vesting/unlock timelines, theoretical treasury flows) without removing existing sections; remain MiCA/GDPR-compliant and separate from the game",
       "reqIds": [],
-      "status": "in_progress"
+      "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Gold Paper (Documento Técnico) written in phases with strict institutional tone, max compliance (MiCA EU/GDPR), conceptual diagrams/tables only, no prices/dates/financial CTAs; reviewed section-by-section before implementation/export.",
+      "summary": "Refine institutional website content presentation (professional tone, black/gold premium look-and-feel, add conceptual-only tables/diagrams) as content/structure updates only (no code/canister/deploy changes)",
       "reqIds": [],
-      "status": "in_progress"
-    },
-    {
-      "id": "AR-3",
-      "summary": "DAO & Governance documentation section is conceptual/visual only (non-operational), explicitly separated from game layer; include structured subsections and conceptual diagrams/tables.",
-      "reqIds": [],
-      "status": "in_progress"
+      "status": "pending"
     }
   ],
-  "architecturalNotes": [
-    "Frontend: React + TypeScript with TanStack Router for multi-page routing and TailwindCSS (luxury black/gold theme, glassmorphism) for styling.",
-    "Frontend state/data: TanStack React Query used for server state, with query invalidation/refetch patterns tied to actor (identity) changes and near-real-time polling in some hooks/pages (per useQueries.ts summary).",
-    "Authentication: Internet Identity via @dfinity/auth-client wrapped in a context/provider (InternetIdentityProvider), producing an Identity used to create authenticated canister actors.",
-    "Backend: Single Motoko canister (backend/main.mo) using in-memory Map structures for player profiles, planted coins, daily limits, AR spot claims and distributions; role-based authorization via a shared AccessControl module.",
-    "Role model: First non-anonymous principal to call initializeAccessControl becomes admin; subsequent principals default to user. Permission checks are enforced on most gameplay and admin endpoints.",
-    "Gameplay rules encoded server-side: daily limits (3 plants/day, 100 rescues/day), 30-day lock on self-planted coins, XP-based rescue radius (meters == XP), XP costs/rewards (e.g., +10 XP planting, 15 XP cost for rescuing others).",
-    "AR Spot distribution: atomic per-wallet-per-spot claim enforcement via a composite claim key (spotId:principal) and fixed claim amount (exactly 4000 QTM).",
-    "Payments: Stripe catalog and checkout session creation in Motoko, posting payloads to a separate integrations canister (StripeService) with cycles budgeting; success/cancel redirect handlers exposed via StripeMixin.",
-    "Mobile readiness: Capacitor configuration and wrappers for native plugins (camera, geolocation, network, haptics, etc.) with graceful web fallbacks and dynamic imports to avoid bundler static analysis issues; deep link handler maps URLs to app routes.",
-    "Offline support: Offline manager monitors connectivity (optionally via Capacitor Network plugin), queues actions while offline, and syncs when online.",
-    "Media utilities: Camera hook (useCamera) providing start/stop/switch/capture and a QR scanning hook (useQRScanner) that dynamically loads jsQR and scans frames at an interval.",
-    "Static marketing/documentation: Multiple informational pages plus a long-form Gold Paper with sticky navigation and smooth scrolling sections; bilingual content driven by a LanguageContext persisted to localStorage.",
-    "Portal documentation workflow: content-first (FASE 1) with page/section approvals before any HTML/PDF export or UI/code (FASE 2).",
-    "Hard separation requirement: Game (Quantumoney AR app layer) must remain functional and isolated from any crypto/token/DAO/swap/bridge logic in the institutional portal."
-  ],
-  "knownIssues": [
-    "frontend/src/main.tsx wraps App in a QueryClientProvider, and frontend/src/App.tsx also wraps its content in a QueryClientProvider with a different QueryClient instance, creating nested providers and potentially inconsistent caching/invalidation behavior.",
-    "backend/main.mo stores all critical state (profiles, planted coins, daily limits, AR claims/distributions) in in-memory Maps without stable persistence in the shown actor; upgrades would lose state unless an external migration/upgrade mechanism is consistently applied.",
-    "Access control bootstrapping is centralized on initializeAccessControl; if the first caller is unintended, admin assignment could be captured by the wrong principal (no explicit admin allowlist).",
-    "Stripe integration uses a hard-coded cycles maxCost (500_000_000) with a TODO noting it should be calculated based on payload size; this can cause failures or inefficiency.",
-    "Stripe and other backend functions rely heavily on Runtime.trap with 'Unauthorized' messages for validation and business-rule failures, which conflates authorization errors with user input/state errors and complicates UX error handling.",
-    "backend/blob-storage/Storage.mo uses Nat.sub(currentBalance, reservedCycles) without guarding against currentBalance < reservedCycles, which could trap in low-cycle conditions.",
-    "Monster capture endpoint (captureMonster) does not enforce uniqueness/collection constraints; users can repeatedly capture the same monster unless prevented client-side.",
-    "Some referenced frontend files are present but contents were not provided in the snippet (e.g., many components/pages); feature detection for those relies on repository summaries rather than direct code inspection."
-  ],
-  "isFixRequest": false,
   "gameProjectType": "none",
   "projectName": "Quantumoney AR",
   "clarification_mode": "instant",
-  "clarification_rounds": 0,
-  "requiresBackendChanges": true,
-  "requiresFrontendChanges": true
+  "clarification_rounds": 0
 }

@@ -1,5 +1,9 @@
-import { Shield } from 'lucide-react';
+import { Shield, ExternalLink } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+
+// Canister configuration
+const DOCS_CANISTER_ID = 'whu4t-kiaaa-aaaah-qsc5q-cai';
+const DOCS_BASE_URL = `https://${DOCS_CANISTER_ID}.icp0.io`;
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -29,10 +33,23 @@ export default function Footer() {
               <a href="https://www.quantumoney.net" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors">
                 www.quantumoney.net
               </a>
+              <span className="hidden sm:inline">|</span>
+              <a 
+                href={DOCS_BASE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-amber-400 transition-colors flex items-center gap-1"
+              >
+                Documentation
+                <ExternalLink className="w-3 h-3" />
+              </a>
             </div>
             <p className="text-gray-400 text-sm flex items-center justify-center gap-2">
               <Shield className="w-4 h-4 text-amber-500" />
               {t.footer.compliance}
+            </p>
+            <p className="text-gray-500 text-xs italic">
+              {t.footer.informationalOnly}
             </p>
           </div>
         </div>

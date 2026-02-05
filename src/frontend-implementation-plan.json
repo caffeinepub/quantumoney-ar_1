@@ -1,91 +1,122 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Institutional documentation: Treasury & Monetary Policy page + React Query provider fix",
+  "title": "Institutional Gold Paper conceptual expansions (frontend content-only)",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Add a new institutional documentation page titled \"Treasury & Monetary Policy\" with existing luxury black/gold styling, written in a neutral, conceptual/non-operational tone with an explicit disclaimer and no backend interactions.",
+      "summary": "Add clearly separated, conceptual-only “Institutional Expansion / Conceptual Appendix” sections to existing institutional pages without removing or overwriting current content, including MiCA/GDPR-aligned non-operational disclaimers and explicit separation from the AR game.",
       "acceptanceCriteria": [
-        "A new route exists for the Treasury & Monetary Policy page and it renders without errors",
-        "The page content includes an explicit disclaimer that it is conceptual/non-operational and does not execute transactions, token issuance, swaps, bridges, or financial operations",
-        "No backend calls or canister methods are invoked by this page"
+        "Existing institutional pages retain all current headings/sections and their original text (no deletions/overwrites).",
+        "New content is added as clearly labeled expansion/refinement sections (e.g., 'Institutional Expansion' / 'Conceptual Appendix') rather than replacing current content.",
+        "All new sections include explicit non-operational language (no promises, no operational instructions, no calls to action to invest) and include MiCA/GDPR-aligned disclaimers.",
+        "No gameplay/game-reward mechanics are introduced into these institutional expansions."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
+          "path": "frontend/src/components/InstitutionalExpansionSection.tsx",
           "operation": "create",
-          "description": "Create the new \"Treasury & Monetary Policy\" institutional documentation page using the existing luxury black/gold styling patterns (layout sections, glass-card styling, typography) and include a prominent explicit disclaimer that the content is conceptual/non-operational (no transactions, token issuance, swaps/bridges, or any financial execution), with strictly static rendering (no React Query, no actor hooks, no network calls)."
+          "description": "Create a reusable presentational wrapper for additive content blocks labeled as “Institutional Expansion” / “Conceptual Appendix”, including a standard non-operational MiCA/GDPR-aligned disclaimer and an explicit “separate from AR game” note."
         },
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/pages/TokenomicsPage.tsx",
           "operation": "modify",
-          "description": "Register a new TanStack Router route for the \"Treasury & Monetary Policy\" page and wire it into the route tree so it is navigable and renders within the existing Layout."
+          "description": "Append (do not replace) a new “Institutional Expansion / Conceptual Appendix” section that frames added tokenomics explanations as conceptual/non-operational and explicitly separate from the AR game; reuse InstitutionalExpansionSection for consistent labeling and disclaimers."
+        },
+        {
+          "path": "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
+          "operation": "modify",
+          "description": "Append (do not replace) new “Institutional Expansion / Conceptual Appendix” content reinforcing conceptual/non-operational status and explicit separation from the AR game; reuse InstitutionalExpansionSection for consistent labeling and disclaimers."
+        },
+        {
+          "path": "frontend/src/pages/DAOPage.tsx",
+          "operation": "modify",
+          "description": "Append (do not replace) governance-focused “Institutional Expansion / Conceptual Appendix” content with explicit non-operational language and MiCA/GDPR-aligned disclaimers; ensure no references or links to gameplay mechanics; reuse InstitutionalExpansionSection."
+        },
+        {
+          "path": "frontend/src/pages/LegalPage.tsx",
+          "operation": "modify",
+          "description": "Append (do not replace) an “Institutional Expansion / Conceptual Appendix” clarifying that the institutional descriptions are conceptual and non-operational, include MiCA/GDPR-aligned disclaimers, and explicitly note separation from the AR game; reuse InstitutionalExpansionSection."
+        },
+        {
+          "path": "frontend/src/pages/TechnicalPage.tsx",
+          "operation": "modify",
+          "description": "Append (do not replace) an “Institutional Expansion / Conceptual Appendix” clarification that the described governance/treasury/token mechanics are conceptual-only in this institutional context, include MiCA/GDPR-aligned non-operational disclaimers, and explicitly state separation from the AR game; reuse InstitutionalExpansionSection."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Add header navigation access to the new \"Treasury & Monetary Policy\" page for desktop and mobile, following existing TanStack Router link patterns and bilingual (PT/EN) behavior with English support.",
+      "summary": "Add static, bank-style conceptual explanatory blocks (tables/diagrams in markup) for token distribution, locked vs unlocked balances, illustrative vesting/unlock timelines, and theoretical treasury flow model in appropriate institutional pages.",
       "acceptanceCriteria": [
-        "Header navigation shows a working link to the new page on desktop and in the mobile sheet menu",
-        "When language is set to English, the nav label and page headings are shown in English"
+        "Token distribution expansion is descriptive and does not introduce new numeric commitments or operational issuance details beyond what already exists on the site; any added structure is clearly marked conceptual/illustrative.",
+        "Locked vs unlocked section clearly states restrictions are conceptual and not currently executed by the system.",
+        "Vesting/unlock content is presented as illustrative models (e.g., linear/cliff/multi-stage/regulatory stop-gates) and explicitly states no real schedule is active.",
+        "Treasury flows are shown as theoretical inbound/outbound categories and explicitly state they are inactive/non-operational.",
+        "Any tables/diagrams added are static, informational UI elements only (no interactive financial tooling)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/contexts/LanguageContext.tsx",
+          "path": "frontend/src/pages/TokenomicsPage.tsx",
           "operation": "modify",
-          "description": "Add new bilingual nav label translation keys for the \"Treasury & Monetary Policy\" page (PT/EN) so the header can render the correct label under the existing language behavior, ensuring an English label is available."
-        },
-        {
-          "path": "frontend/src/components/Header.tsx",
-          "operation": "modify",
-          "description": "Add a new navigation item (desktop and mobile sheet) linking to the \"Treasury & Monetary Policy\" route, using the existing TanStack Router <Link> patterns and LanguageContext translation keys to support PT/EN behavior with English text available."
+          "description": "Add conceptual, static explanatory blocks under a new additive “Institutional Expansion” section: (1) conceptual token distribution framework table (categories + purpose + illustrative notes), (2) locked vs unlocked balances comparison table with explicit “not executed by the system” language, and (3) illustrative vesting/unlock timeline models presented as static table/diagram-like markup with explicit “no real schedule active” disclaimers."
         },
         {
           "path": "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
           "operation": "modify",
-          "description": "Ensure the page headings and user-facing labels are sourced from the existing language state (PT/EN) and include English headings when language is set to English, while keeping the page documentation-only and non-interactive."
+          "description": "Add a theoretical treasury flow model as static markup (e.g., table or simple diagram layout for inbound/outbound/inactive buckets) and an illustrative vesting/unlock model table; ensure all additions are explicitly conceptual, inactive, and non-operational."
+        },
+        {
+          "path": "frontend/src/pages/DAOPage.tsx",
+          "operation": "modify",
+          "description": "Add a governance-adjacent, bank-style conceptual block that explains how treasury oversight could be represented (descriptive only) and how locked/unlocked or vesting concepts could be *interpreted* in governance discussions without implying operational execution; present as static tables/diagrams in markup only."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Keep DAO/governance documentation explicitly conceptual and isolated from gameplay by avoiding shared interactive flows, shared state, or backend-backed execution connections between governance docs and the game layer.",
+      "summary": "Improve readability of affected institutional pages using content-only layout refinements while preserving the existing premium black/gold style, without introducing routes, backend calls, or gameplay cross-linking.",
       "acceptanceCriteria": [
-        "No new backend endpoints are added for DAO/governance execution, token operations, treasury operations, swapping, bridging, or payments as part of this change",
-        "Gameplay-related routes and existing game backend features continue to function as before"
+        "Pages keep the existing black/gold theme and institutional tone; changes are limited to content presentation (headings, spacing, callouts, tables).",
+        "No new navigation routes are added and no existing routes are removed.",
+        "No new links or sections are added that connect these institutional expansions to game mechanics or gameplay pages.",
+        "No backend calls, React Query changes, or authentication/actor usage changes are introduced as part of these content updates."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/DAOPage.tsx",
+          "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Revise DAO/governance page copy to be explicitly conceptual/non-operational (no execution language, no transactional or token-operation implications) and add/strengthen a visible disclaimer stating it is documentation-only and does not connect to gameplay flows or execute any treasury/token/swap/bridge actions."
+          "description": "Add small, theme-consistent styles for static informational tables/diagrams and disclaimer callouts used by the new conceptual expansion sections (keep black/gold premium look; no functional/interactive styling)."
         },
         {
-          "path": "frontend/src/pages/GoldPaper.tsx",
+          "path": "frontend/src/components/InstitutionalExpansionSection.tsx",
           "operation": "modify",
-          "description": "Tighten DAO/governance and related treasury narrative phrasing where needed to reinforce documentation-only conceptual intent (no operational promises or execution framing) and ensure no governance content introduces shared interactive flows/state with gameplay (keep sections informational and static)."
+          "description": "Refine typography/structure (headings, spacing, optional chapter numbering support) to improve readability of appended institutional expansion content while keeping presentation strictly informational and non-operational."
+        },
+        {
+          "path": "frontend/src/pages/TokenomicsPage.tsx",
+          "operation": "modify",
+          "description": "Apply content-only readability refinements for the newly appended conceptual blocks (clear headings, spacing, callout disclaimers, static tables) while keeping existing sections unchanged and avoiding any gameplay references or new navigation."
         },
         {
           "path": "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
           "operation": "modify",
-          "description": "Ensure the new treasury/monetary policy documentation page remains fully isolated from gameplay features by remaining static, avoiding shared state hooks used by game features, and containing a clear statement that it does not integrate with or trigger gameplay capabilities."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Remove the nested/duplicate React Query QueryClientProvider so only one QueryClientProvider exists at runtime, without modifying immutable files (including frontend/src/main.tsx).",
-      "acceptanceCriteria": [
-        "The app renders with a single React Query QueryClientProvider in the component tree",
-        "React Query caching/invalidation continues to work (no runtime errors; existing queries still resolve)"
-      ],
-      "file_operations": [
+          "description": "Apply content-only readability refinements to appended conceptual blocks (clearer subheadings, separators, static tables) while keeping existing sections intact and avoiding any backend/auth/query changes."
+        },
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/pages/DAOPage.tsx",
           "operation": "modify",
-          "description": "Remove the QueryClientProvider wrapper and local QueryClient instance from App so that the single QueryClientProvider defined in the immutable frontend/src/main.tsx is the only provider in the runtime tree; keep routing, theming, and Toaster rendering intact."
+          "description": "Apply content-only readability refinements to appended conceptual blocks (headings, spacing, static tables/diagrams) and ensure no new links/routes or gameplay cross-linking are introduced."
+        },
+        {
+          "path": "frontend/src/pages/LegalPage.tsx",
+          "operation": "modify",
+          "description": "Apply content-only readability refinements for appended conceptual disclaimer content (callouts, spacing) while keeping the existing legal cards and text unchanged."
+        },
+        {
+          "path": "frontend/src/pages/TechnicalPage.tsx",
+          "operation": "modify",
+          "description": "Apply content-only readability refinements for appended clarifications (callouts, spacing), ensuring no new links beyond existing documentation linkouts and no gameplay cross-linking."
         }
       ]
     }

@@ -2,6 +2,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { AlertCircle, Lock, TrendingDown, Calendar } from 'lucide-react';
+import InstitutionalExpansionSection from '@/components/InstitutionalExpansionSection';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const content = {
   pt: {
@@ -67,6 +69,46 @@ const content = {
       title: 'Conformidade Regulatória',
       text: 'Este modelo conceptual está em conformidade total com MiCA (Regulamento de Mercados de Criptoativos da UE) e GDPR (Regulamento Geral de Proteção de Dados da UE 2016/679). Nenhuma operação financeira real, emissão de valores mobiliários, ou promessa de retornos financeiros está presente neste documento.',
     },
+    expansion: {
+      title: 'Expansão Institucional / Apêndice Conceptual',
+      detailedVesting: {
+        title: 'Modelos Detalhados de Vesting Ilustrativos',
+        intro: 'Exemplos teóricos de como diferentes estruturas de vesting poderiam ser aplicadas em ambientes regulados:',
+        table: {
+          category: 'Categoria',
+          duration: 'Duração Ilustrativa',
+          cliff: 'Cliff Conceptual',
+          release: 'Padrão de Liberação',
+        },
+        rows: [
+          { category: 'Seed Presale', duration: '18 meses', cliff: '3 meses', release: 'Linear mensal após cliff' },
+          { category: 'Private Presale', duration: '12 meses', cliff: '2 meses', release: 'Linear mensal após cliff' },
+          { category: 'Public Presale', duration: '6 meses', cliff: '0 meses', release: 'Linear mensal' },
+          { category: 'Equipa', duration: '24 meses', cliff: '6 meses', release: 'Linear mensal após cliff' },
+          { category: 'Tesouraria DAO', duration: '60 meses', cliff: '0 meses', release: 'Aprovação por governança' },
+        ],
+        note: 'Estes são modelos puramente ilustrativos. Nenhuma liberação automática ocorre.',
+      },
+      treasuryOversight: {
+        title: 'Supervisão Conceptual de Tesouraria',
+        intro: 'Como a supervisão de tesouraria poderia ser representada num modelo de governança descentralizada:',
+        roles: [
+          {
+            role: 'Guardião de Tesouraria (conceptual)',
+            description: 'Papel teórico responsável por monitorizar saldos e propor ajustes de alocação.',
+          },
+          {
+            role: 'Comité de Auditoria (conceptual)',
+            description: 'Grupo teórico que revê relatórios de tesouraria e verifica conformidade com regras de governança.',
+          },
+          {
+            role: 'Votantes da Comunidade (conceptual)',
+            description: 'Holders teóricos de tokens que aprovam ou rejeitam propostas de desembolso de tesouraria.',
+          },
+        ],
+        note: 'Nenhum destes papéis é executado on-chain. Todos são descritivos apenas.',
+      },
+    },
   },
   en: {
     title: 'Treasury & Monetary Policy',
@@ -130,6 +172,46 @@ const content = {
     compliance: {
       title: 'Regulatory Compliance',
       text: 'This conceptual model is in full compliance with MiCA (EU Markets in Crypto-Assets Regulation) and GDPR (EU General Data Protection Regulation 2016/679). No real financial operations, securities issuance, or promise of financial returns are present in this document.',
+    },
+    expansion: {
+      title: 'Institutional Expansion / Conceptual Appendix',
+      detailedVesting: {
+        title: 'Detailed Illustrative Vesting Models',
+        intro: 'Theoretical examples of how different vesting structures could be applied in regulated environments:',
+        table: {
+          category: 'Category',
+          duration: 'Illustrative Duration',
+          cliff: 'Conceptual Cliff',
+          release: 'Release Pattern',
+        },
+        rows: [
+          { category: 'Seed Presale', duration: '18 months', cliff: '3 months', release: 'Linear monthly after cliff' },
+          { category: 'Private Presale', duration: '12 months', cliff: '2 months', release: 'Linear monthly after cliff' },
+          { category: 'Public Presale', duration: '6 months', cliff: '0 months', release: 'Linear monthly' },
+          { category: 'Team', duration: '24 months', cliff: '6 months', release: 'Linear monthly after cliff' },
+          { category: 'DAO Treasury', duration: '60 months', cliff: '0 months', release: 'Governance approval' },
+        ],
+        note: 'These are purely illustrative models. No automatic release occurs.',
+      },
+      treasuryOversight: {
+        title: 'Conceptual Treasury Oversight',
+        intro: 'How treasury oversight could be represented in a decentralized governance model:',
+        roles: [
+          {
+            role: 'Treasury Guardian (conceptual)',
+            description: 'Theoretical role responsible for monitoring balances and proposing allocation adjustments.',
+          },
+          {
+            role: 'Audit Committee (conceptual)',
+            description: 'Theoretical group that reviews treasury reports and verifies compliance with governance rules.',
+          },
+          {
+            role: 'Community Voters (conceptual)',
+            description: 'Theoretical token holders who approve or reject treasury disbursement proposals.',
+          },
+        ],
+        note: 'None of these roles are executed on-chain. All are descriptive only.',
+      },
     },
   },
 };
@@ -352,7 +434,7 @@ export default function TreasuryMonetaryPolicyPage() {
         </Card>
 
         {/* Compliance Footer */}
-        <Card className="bg-gradient-to-r from-amber-900/20 via-amber-800/30 to-amber-900/20 border-amber-500/50 glass-card">
+        <Card className="bg-gradient-to-r from-amber-900/20 via-amber-800/30 to-amber-900/20 border-amber-500/50 glass-card mb-12">
           <CardHeader>
             <CardTitle className="text-2xl font-serif text-amber-400 text-center">
               {t.compliance.title}
@@ -364,6 +446,91 @@ export default function TreasuryMonetaryPolicyPage() {
             </p>
           </CardContent>
         </Card>
+
+        {/* Institutional Expansion Section */}
+        <InstitutionalExpansionSection title={t.expansion.title}>
+          {/* Detailed Vesting Models */}
+          <Card className="bg-black/50 border-amber-500/30 glass-card">
+            <CardHeader>
+              <CardTitle className="text-3xl font-serif text-amber-400">
+                {t.expansion.detailedVesting.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <p className="text-amber-300 leading-relaxed text-justify">
+                {t.expansion.detailedVesting.intro}
+              </p>
+
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-amber-500/30">
+                    <TableHead className="text-amber-400 font-semibold">{t.expansion.detailedVesting.table.category}</TableHead>
+                    <TableHead className="text-amber-400 font-semibold">{t.expansion.detailedVesting.table.duration}</TableHead>
+                    <TableHead className="text-amber-400 font-semibold">{t.expansion.detailedVesting.table.cliff}</TableHead>
+                    <TableHead className="text-amber-400 font-semibold">{t.expansion.detailedVesting.table.release}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {t.expansion.detailedVesting.rows.map((row, idx) => (
+                    <TableRow key={idx} className="border-amber-500/20">
+                      <TableCell className="text-amber-300 font-medium">{row.category}</TableCell>
+                      <TableCell className="text-gray-300">{row.duration}</TableCell>
+                      <TableCell className="text-gray-300">{row.cliff}</TableCell>
+                      <TableCell className="text-gray-300">{row.release}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+
+              <div className="p-4 bg-gradient-to-r from-amber-900/20 via-amber-800/30 to-amber-900/20 rounded-lg border border-amber-500/30">
+                <p className="text-sm text-amber-300 italic text-center">
+                  {t.expansion.detailedVesting.note}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Treasury Oversight */}
+          <Card className="bg-black/50 border-amber-500/30 glass-card">
+            <CardHeader>
+              <CardTitle className="text-3xl font-serif text-amber-400">
+                {t.expansion.treasuryOversight.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <p className="text-amber-300 leading-relaxed text-justify">
+                {t.expansion.treasuryOversight.intro}
+              </p>
+
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-amber-500/30">
+                    <TableHead className="text-amber-400 font-semibold">
+                      {language === 'pt' ? 'Papel Conceptual' : 'Conceptual Role'}
+                    </TableHead>
+                    <TableHead className="text-amber-400 font-semibold">
+                      {language === 'pt' ? 'Descrição Teórica' : 'Theoretical Description'}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {t.expansion.treasuryOversight.roles.map((role, idx) => (
+                    <TableRow key={idx} className="border-amber-500/20">
+                      <TableCell className="text-amber-300 font-medium">{role.role}</TableCell>
+                      <TableCell className="text-gray-300">{role.description}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+
+              <div className="p-4 bg-gradient-to-r from-amber-900/20 via-amber-800/30 to-amber-900/20 rounded-lg border border-amber-500/30">
+                <p className="text-sm text-amber-300 italic text-center">
+                  {t.expansion.treasuryOversight.note}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </InstitutionalExpansionSection>
       </div>
     </section>
   );

@@ -28,6 +28,7 @@ const content = {
       builtBy: 'by HTgamers©',
       year: '2026',
       compliance: 'Conformidade com GDPR da União Europeia e MiCA EU 2025',
+      informationalOnly: 'Apenas informativo - Sem funcionalidades cripto operacionais',
     },
   },
   en: {
@@ -49,6 +50,7 @@ const content = {
       builtBy: 'by HTgamers©',
       year: '2026',
       compliance: 'Compliant with European Union GDPR and MiCA EU 2025',
+      informationalOnly: 'Informational only - No operational crypto features',
     },
   },
 };

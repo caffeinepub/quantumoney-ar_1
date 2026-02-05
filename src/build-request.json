@@ -1,92 +1,90 @@
 {
   "kind": "build_request",
-  "title": "Add the next institutional documentation section and keep DAO strictly conceptual",
+  "title": "Apply institutional Gold Paper expansions as content-only additions (no canister/backend changes)",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Create and publish the next institutional documentation page/section after the DAO & Governance review: implement a new \"Treasury & Monetary Policy\" page using the existing luxury black/gold styling, written in an institutional, neutral tone and explicitly conceptual/non-operational (no on-chain execution, no financial logic, no token interaction, no swaps/bridges).",
+      "text": "Integrate the confirmed Gold Paper expansion text as new, additive institutional sections in the existing institutional website content without removing, renaming, or overwriting any existing sections. The added sections must remain strictly conceptual/non-operational, MiCA/GDPR-aligned, and explicitly separated from the AR game.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "You may proceed to the next section."
+          "CONFIRMED: APPLY CONTENT\n\nPlease apply the proposed Gold Paper expansions as CONTENT ONLY.\n\nDo not remove or overwrite existing sections — integrate this as an institutional expansion and refinement.\n\nNo code changes.\nNo canister changes.\nNo rebuilds.\nNo deployments.\n\nKeep everything strictly conceptual, non-operational, and fully separate from the game."
         ]
       },
       "acceptanceCriteria": [
-        "A new route exists for the Treasury & Monetary Policy page and it renders without errors",
-        "The page content includes an explicit disclaimer that it is conceptual/non-operational and does not execute transactions, token issuance, swaps, bridges, or financial operations",
-        "No backend calls or canister methods are invoked by this page"
+        "Existing institutional pages retain all current headings/sections and their original text (no deletions/overwrites).",
+        "New content is added as clearly labeled expansion/refinement sections (e.g., 'Institutional Expansion' / 'Conceptual Appendix') rather than replacing current content.",
+        "All new sections include explicit non-operational language (no promises, no operational instructions, no calls to action to invest) and include MiCA/GDPR-aligned disclaimers.",
+        "No gameplay/game-reward mechanics are introduced into these institutional expansions."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Add navigation access to the new \"Treasury & Monetary Policy\" page in the global header navigation (desktop and mobile), following existing TanStack Router link patterns and existing bilingual language behavior (PT/EN), with all user-facing text available in English.",
+      "text": "Add the following conceptual, bank-style explanatory content blocks (as text + simple visual structure like tables/diagrams rendered in the page markup) to the institutional content pages where they fit best (e.g., Treasury/Monetary Policy, Tokenomics, DAO/Governance, Legal), ensuring the content is purely descriptive and does not introduce operational behavior: (1) conceptual token distribution framework, (2) locked vs unlocked balances explanation, (3) vesting & unlock timelines description (illustrative only), (4) theoretical treasury flow model (inbound/outbound, inactive).",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "Use English for any user-facing text in the build request."
+          "1) Expand the Gold Paper with more detailed, bank-style explanations:\n   - token distribution (conceptual)\n   - locked vs unlocked balances\n   - vesting and unlock timelines (descriptive only)\n   - treasury flows (theoretical)\n\n2) Improve the website pages visually and structurally:\n   - Professional, institutional tone\n   - Black/gold premium design\n   - Tables and diagrams as visual explanations only"
         ]
       },
       "acceptanceCriteria": [
-        "Header navigation shows a working link to the new page on desktop and in the mobile sheet menu",
-        "When language is set to English, the nav label and page headings are shown in English"
+        "Token distribution expansion is descriptive and does not introduce new numeric commitments or operational issuance details beyond what already exists on the site; any added structure is clearly marked conceptual/illustrative.",
+        "Locked vs unlocked section clearly states restrictions are conceptual and not currently executed by the system.",
+        "Vesting/unlock content is presented as illustrative models (e.g., linear/cliff/multi-stage/regulatory stop-gates) and explicitly states no real schedule is active.",
+        "Treasury flows are shown as theoretical inbound/outbound categories and explicitly state they are inactive/non-operational.",
+        "Any tables/diagrams added are static, informational UI elements only (no interactive financial tooling)."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Ensure the DAO/governance documentation remains explicitly conceptual and does not interfere with or connect to the game layer by avoiding any shared interactive flows, shared state, or backend endpoints between governance pages and gameplay features.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "The DAO and governance model meet expectations at a conceptual and visual level only.",
-          "It is clearly non-operational, with no on-chain execution, no financial logic, and no token interaction.",
-          "The structure is suitable for institutional documentation and does not interfere with the game layer."
-        ]
-      },
-      "acceptanceCriteria": [
-        "No new backend endpoints are added for DAO/governance execution, token operations, treasury operations, swapping, bridging, or payments as part of this change",
-        "Gameplay-related routes and existing game backend features continue to function as before"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Fix the React Query provider duplication by removing the nested/duplicate QueryClientProvider usage from the application so there is only one QueryClientProvider in the runtime tree, without modifying immutable files (including frontend/src/main.tsx).",
+      "text": "Maintain the existing premium black/gold institutional presentation while improving the structural readability of the affected institutional pages using content-only layout refinements (e.g., clearer headings, chapter numbering, callout disclaimers, simple tables). Do not introduce new routes, new canisters, backend endpoints, or any gameplay cross-linking within the new content.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "Ensure the game layer remains fully functional and isolated from any crypto, DAO, swap, bridge, or token logic."
+          "Improve the website pages visually and structurally:\n   - Professional, institutional tone\n   - Black/gold premium design\n   - Tables and diagrams as visual explanations only\n\n3) Everything must remain:\n   - Conceptual\n   - Non-operational\n   - Compliant with MiCA and GDPR\n   - Completely separate from the game"
         ]
       },
       "acceptanceCriteria": [
-        "The app renders with a single React Query QueryClientProvider in the component tree",
-        "React Query caching/invalidation continues to work (no runtime errors; existing queries still resolve)"
+        "Pages keep the existing black/gold theme and institutional tone; changes are limited to content presentation (headings, spacing, callouts, tables).",
+        "No new navigation routes are added and no existing routes are removed.",
+        "No new links or sections are added that connect these institutional expansions to game mechanics or gameplay pages.",
+        "No backend calls, React Query changes, or authentication/actor usage changes are introduced as part of these content updates."
       ]
     }
   ],
   "constraints": [
-    "Do not implement on-chain execution, treasury execution, financial logic, swap logic, bridge logic, or token interaction for DAO/governance pages; they must remain conceptual/documentation-only.",
-    "Do not modify files under frontend.immutablePaths (including frontend/src/main.tsx).",
-    "Keep the backend as a single Motoko actor in backend/main.mo; add backend migration only if state schema must change (not expected for this documentation-only update)."
+    "Do not change backend canister code (Motoko) or add any backend endpoints.",
+    "Do not perform canister changes, migrations, rebuilds, deployments, or regeneration steps as part of this request.",
+    "Content must remain strictly conceptual/non-operational and explicitly separate from the game.",
+    "Do not remove or overwrite existing institutional sections; only add integrated expansions/refinements."
   ],
   "nonGoals": [
-    "Implementing real DAO proposal submission, voting, quorum enforcement, token-weighted voting, or any form of on-chain governance execution",
-    "Implementing token issuance, token transfers, treasury accounting, payments, swap/bridge functionality, or price/returns/financial CTAs",
-    "Refactoring unrelated game mechanics (energy, capture, planting/rescue, AR spot claims) beyond ensuring they remain unaffected"
+    "Implementing real token issuance, transfers, vesting, treasury execution, swaps, bridges, or any on-chain financial operations.",
+    "Changing Internet Identity authentication, roles, or any gameplay systems/mechanics.",
+    "Reworking the documentation canister itself (e.g., whu4t-kiaaa-aaaah-qsc5q-cai) beyond referencing it as an external documentation host."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

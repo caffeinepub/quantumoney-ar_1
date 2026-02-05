@@ -2,10 +2,14 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-create-and-publish-the-next-institutional-documentation-page-section-after-the-dao-governance-review-implement-a-new-treasury-monetary-policy-page-using-the-existing-luxury-black-gold-styling-written-in-an-institutional-neutral-tone-and-explicitly-conceptual-non-operational-no-on-chain-execution-no-financial-logic-no-token-interaction-no-swaps-bridges",
-      "featureTitle": "Create and publish the next institutional documentation page/section after the DAO & Governance review: implement a new \"Treasury & Monetary Policy\" page using the existing luxury black/gold styling, written in an institutional, neutral tone and explicitly conceptual/non-operational (no on-chain execution, no financial logic, no token interaction, no swaps/bridges).",
+      "featureId": "feature-integrate-the-confirmed-gold-paper-expansion-text-as-new-additive-institutional-sections-in-the-existing-institutional-website-content-without-removing-renaming-or-overwriting-any-existing-sections-the-added-sections-must-remain-strictly-conceptual-non-operational-mica-gdpr-aligned-and-explicitly-separated-from-the-ar-game",
+      "featureTitle": "Integrate the confirmed Gold Paper expansion text as new, additive institutional sections in the existing institutional website content without removing, renaming, or overwriting any existing sections. The added sections must remain strictly conceptual/non-operational, MiCA/GDPR-aligned, and explicitly separated from the AR game.",
       "files": [
-        "frontend/src/App.tsx",
+        "frontend/src/components/InstitutionalExpansionSection.tsx",
+        "frontend/src/pages/DAOPage.tsx",
+        "frontend/src/pages/LegalPage.tsx",
+        "frontend/src/pages/TechnicalPage.tsx",
+        "frontend/src/pages/TokenomicsPage.tsx",
         "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx"
       ],
       "components": [
@@ -26,11 +30,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-navigation-access-to-the-new-treasury-monetary-policy-page-in-the-global-header-navigation-desktop-and-mobile-following-existing-tanstack-router-link-patterns-and-existing-bilingual-language-behavior-pt-en-with-all-user-facing-text-available-in-english",
-      "featureTitle": "Add navigation access to the new \"Treasury & Monetary Policy\" page in the global header navigation (desktop and mobile), following existing TanStack Router link patterns and existing bilingual language behavior (PT/EN), with all user-facing text available in English.",
+      "featureId": "feature-add-the-following-conceptual-bank-style-explanatory-content-blocks-as-text-simple-visual-structure-like-tables-diagrams-rendered-in-the-page-markup-to-the-institutional-content-pages-where-they-fit-best-e-g-treasury-monetary-policy-tokenomics-dao-governance-legal-ensuring-the-content-is-purely-descriptive-and-does-not-introduce-operational-behavior-1-conceptual-token-distribution-framework-2-locked-vs-unlocked-balances-explanation-3-vesting-unlock-timelines-description-illustrative-only-4-theoretical-treasury-flow-model-inbound-outbound-inactive",
+      "featureTitle": "Add the following conceptual, bank-style explanatory content blocks (as text + simple visual structure like tables/diagrams rendered in the page markup) to the institutional content pages where they fit best (e.g., Treasury/Monetary Policy, Tokenomics, DAO/Governance, Legal), ensuring the content is purely descriptive and does not introduce operational behavior: (1) conceptual token distribution framework, (2) locked vs unlocked balances explanation, (3) vesting & unlock timelines description (illustrative only), (4) theoretical treasury flow model (inbound/outbound, inactive).",
       "files": [
-        "frontend/src/components/Header.tsx",
-        "frontend/src/contexts/LanguageContext.tsx",
+        "frontend/src/pages/DAOPage.tsx",
+        "frontend/src/pages/TokenomicsPage.tsx",
         "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx"
       ],
       "components": [
@@ -51,10 +55,14 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-the-dao-governance-documentation-remains-explicitly-conceptual-and-does-not-interfere-with-or-connect-to-the-game-layer-by-avoiding-any-shared-interactive-flows-shared-state-or-backend-endpoints-between-governance-pages-and-gameplay-features",
-      "featureTitle": "Ensure the DAO/governance documentation remains explicitly conceptual and does not interfere with or connect to the game layer by avoiding any shared interactive flows, shared state, or backend endpoints between governance pages and gameplay features.",
+      "featureId": "feature-maintain-the-existing-premium-black-gold-institutional-presentation-while-improving-the-structural-readability-of-the-affected-institutional-pages-using-content-only-layout-refinements-e-g-clearer-headings-chapter-numbering-callout-disclaimers-simple-tables-do-not-introduce-new-routes-new-canisters-backend-endpoints-or-any-gameplay-cross-linking-within-the-new-content",
+      "featureTitle": "Maintain the existing premium black/gold institutional presentation while improving the structural readability of the affected institutional pages using content-only layout refinements (e.g., clearer headings, chapter numbering, callout disclaimers, simple tables). Do not introduce new routes, new canisters, backend endpoints, or any gameplay cross-linking within the new content.",
       "files": [
+        "frontend/src/components/InstitutionalExpansionSection.tsx",
         "frontend/src/pages/DAOPage.tsx",
+        "frontend/src/pages/LegalPage.tsx",
+        "frontend/src/pages/TechnicalPage.tsx",
+        "frontend/src/pages/TokenomicsPage.tsx",
         "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx"
       ],
       "components": [
@@ -71,29 +79,6 @@
       ],
       "testIds": [
         "REQ-3"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-fix-the-react-query-provider-duplication-by-removing-the-nested-duplicate-queryclientprovider-usage-from-the-application-so-there-is-only-one-queryclientprovider-in-the-runtime-tree-without-modifying-immutable-files-including-frontend-src-main-tsx",
-      "featureTitle": "Fix the React Query provider duplication by removing the nested/duplicate QueryClientProvider usage from the application so there is only one QueryClientProvider in the runtime tree, without modifying immutable files (including frontend/src/main.tsx).",
-      "files": [
-        "frontend/src/App.tsx"
-      ],
-      "components": [
-        "camera@1.0.0",
-        "http-outcalls@3.0.0",
-        "authorization@3.0.0",
-        "blob-storage@4.0.0",
-        "qr-code@1.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-4"
       ],
       "confidence": "high"
     }
