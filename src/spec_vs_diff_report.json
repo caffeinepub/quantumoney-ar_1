@@ -1,108 +1,41 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-05T22:32:21.512Z",
-  "summary": "The diff adds a reusable InstitutionalExpansionSection with MiCA/GDPR + non-operational disclaimers and updates several institutional pages (DAO, Legal, Technical, Tokenomics, Treasury/Monetary Policy) with conceptual expansion content and static markup tables. However, the diff also includes multiple unrequested gameplay/AR and React Query changes, SEO/meta updates, and introduces a new route per the summary, which conflicts with the content-only/no-new-routes constraint. Evidence for a dedicated “theoretical treasury flow model (inbound/outbound, inactive)” block is not clearly present in the provided truncations.",
+  "generatedAt": "2026-02-06T19:00:56.279Z",
+  "summary": "Header “Gold Paper” nav item was changed to an internal SPA route (`/gold-paper`). The `/gold-paper` page now renders the required placeholder text and does not show any redirect logic in the provided diff. Two project metadata/summary files were also modified with unrelated content.",
   "missing_requirements": [
     {
-      "id": "REQ-2",
-      "requirement": "Add a theoretical treasury flow model (inbound/outbound categories, explicitly inactive/non-operational) rendered as static informational UI (e.g., table/diagram) in appropriate institutional pages.",
-      "reason": "TreasuryMonetaryPolicyPage shows vesting and deflationary policy sections and timelines, but the provided truncated diff does not clearly show an explicit inbound/outbound treasury flow model block (with categories and an 'inactive/non-operational' statement) as required.",
+      "id": "REQ-5",
+      "requirement": "The `/gold-paper` page must display ONLY the following single line of text (exactly): “Golden Paper temporarily unavailable – content preserved”. No additional UI elements are shown on `/gold-paper`.",
+      "reason": "The updated page includes additional layout/styling wrappers (`div` containers and a styled `<p>`), so based strictly on the diff it is not demonstrably “ONLY the single line of text” with no other UI elements.",
       "evidence": [
-        "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx (truncated)"
+        "frontend/src/pages/GoldPaper.tsx"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "requirement": "Remove (or leave unused) any Gold Paper button/link implementation that routes users to the documentation canister root, ensuring there is no remaining user path from the header Gold Paper entry point(s) to `https://whu4t-kiaaa-aaaah-qsc5q-cai.icp0.io/`.",
+      "reason": "The diff shows the header link now points to `/gold-paper`, but it does not provide evidence that *all* other potential Gold Paper entry points or leftover external links/redirect code (outside Header.tsx) were removed or left unused.",
+      "evidence": [
+        "frontend/src/components/Header.tsx"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "New route added for Treasury & Monetary Policy page (navigation/routes change).",
-      "reason": "REQ-3 explicitly forbids adding new routes; diff summary claims a new /treasury-monetary-policy path was added.",
+      "description": "Unrequested updates to repository summary/metadata files describing many unrelated features (e.g., query synchronization, monster distribution system, OpenStreetMap/Leaflet details, AR mode behavior, SEO metadata, etc.).",
+      "reason": "The BuildRequest is narrowly scoped to changing the Gold Paper nav link and replacing the `/gold-paper` page with a placeholder. Modifying these summary/metadata files is not requested and includes descriptions unrelated to Gold Paper behavior.",
       "evidence": [
-        "frontend-file-summaries.txt (\"App.tsx\": \"...15 routes including new Treasury & Monetary Policy page at /treasury-monetary-policy path\")",
-        "frontend/src/App.tsx (referenced in frontend-file-summaries.txt)"
-      ]
-    },
-    {
-      "description": "Major React Query behavior changes for game systems (3s refetchInterval/staleTime, real-time synchronization, mutation invalidation) and added/expanded player/coin/AR spot logic.",
-      "reason": "BuildRequest constraints require content-only institutional additions and forbid gameplay/auth/backend-call related changes; these are functional/data-layer changes unrelated to institutional content expansions.",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/hooks/useQueries.ts\": \"...enhanced real-time synchronization... player stats, coins, and AR spots... backend...\")"
-      ]
-    },
-    {
-      "description": "Global monster distribution system with 10 million monsters at landmarks with persistent GPS coordinates and backend enforcement claims.",
-      "reason": "Not requested; additionally conflicts with the requirement to avoid gameplay system changes and to keep institutional content separate from the AR game.",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/hooks/useQueries.ts\": \"...global monster distribution system with 10 million monsters...\")"
-      ]
-    },
-    {
-      "description": "MapMode overhaul: OpenStreetMap + Leaflet.markercluster integration, bounds-based loading, 750 local Évora spots always visible, progress indicator, extensive cleanup logic.",
-      "reason": "Not requested and constitutes gameplay/map feature work rather than institutional content-only additions.",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/pages/MapMode.tsx\": \"Map view with OpenStreetMap integration... markercluster... AR spots...\")"
-      ]
-    },
-    {
-      "description": "ARMode changes: unrestricted monster capture spawning every 30 seconds with rarity-based XP rewards, coin visibility, rescue requirements, mobile touch controls, cleanup changes.",
-      "reason": "Not requested and explicitly disallowed by non-goals (no gameplay systems/mechanics changes).",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/pages/ARMode.tsx\": \"AR camera mode with unrestricted monster capture... XP rewards...\")"
-      ]
-    },
-    {
-      "description": "SEO/marketing metadata updates in index.html emphasizing a specific branded app title/OG tags.",
-      "reason": "Not requested; outside scope of institutional Gold Paper content expansions.",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/index.html\": \"updated SEO metadata...\")"
-      ]
-    },
-    {
-      "description": "Social sharing + XP reward changes in PlantConfirmationModal and RescueConfirmationModal.",
-      "reason": "Not requested and modifies gameplay reward mechanics (XP), which is explicitly out of scope.",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/components/PlantConfirmationModal.tsx\": \"social sharing with +1 XP reward\")",
-        "frontend-file-summaries.txt (\"frontend/src/components/RescueConfirmationModal.tsx\": \"social sharing with +1 XP reward\")"
-      ]
-    },
-    {
-      "description": "TokenInfoModal adds print functionality and social sharing buttons (Twitter/Facebook/WhatsApp/Telegram).",
-      "reason": "Not requested; outside institutional content expansion scope and adds new UI actions.",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/components/TokenInfoModal.tsx\": \"added print functionality and social sharing buttons...\")"
-      ]
-    },
-    {
-      "description": "BancoCentral page expanded into a financial dashboard with admin force initialize, DAO canister status polling, mainnet canister IDs updates, localStorage initialization status hook, and English-only text changes.",
-      "reason": "Not requested; constitutes gameplay/dashboard/system behavior changes rather than content-only institutional expansions.",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/pages/BancoCentral.tsx\": \"Financial dashboard... Force Initialize button for admins... DAO canister status indicator...\")"
-      ]
-    },
-    {
-      "description": "Tutorial page content expanded/changed with detailed gameplay instructions (energy, levels/XP, planting/rescuing rules) and legal warnings.",
-      "reason": "Not requested; scope is institutional content-only additions and explicitly no gameplay system/mechanic changes.",
-      "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/pages/Tutorial.tsx\": \"Tutorial page with ... energy system, levels/XP, planting..., rescuing...\")"
-      ]
-    },
-    {
-      "description": "TokenomicsPage introduces interactive hover state (hoveredAllocation) for allocations.",
-      "reason": "REQ-2 requires static informational UI elements only (no interactive financial tooling); adding hover-driven behavior is an interactive UI feature not explicitly requested.",
-      "evidence": [
-        "frontend/src/pages/TokenomicsPage.tsx (\"useState\" + \"hoveredAllocation\")"
+        "frontend-file-summaries.txt",
+        "project_state.json"
       ]
     }
   ],
-  "confidence": 0.74,
+  "confidence": 0.66,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/components/InstitutionalExpansionSection.tsx",
-    "frontend/src/pages/DAOPage.tsx",
-    "frontend/src/pages/LegalPage.tsx",
-    "frontend/src/pages/TechnicalPage.tsx",
-    "frontend/src/pages/TokenomicsPage.tsx",
-    "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
+    "frontend/src/components/Header.tsx",
+    "frontend/src/pages/GoldPaper.tsx",
     "project_state.json"
   ]
 }

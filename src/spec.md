@@ -1,12 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Add confirmed Gold Paper “institutional expansion” content to existing institutional website pages as content-only, strictly conceptual/non-operational additions that remain MiCA/GDPR-aligned and explicitly separate from the AR game.
+**Goal:** Replace the Gold Paper header link and page behavior so it routes internally to an on-site placeholder page, eliminating navigation to the external documentation canister URL and avoiding 503 errors.
 
 **Planned changes:**
-- Add new clearly labeled expansion/refinement sections (e.g., “Institutional Expansion” / “Conceptual Appendix”) to existing institutional pages without removing, renaming, or overwriting any current headings/sections or text.
-- Insert conceptual, bank-style explanatory content blocks (static text plus simple markup tables/diagrams) covering: conceptual token distribution framework, locked vs unlocked balances (conceptual/non-executed), illustrative vesting & unlock timeline models (no active schedule), and theoretical treasury flow model (inbound/outbound; explicitly inactive).
-- Improve structural readability of affected institutional pages using content-only layout refinements (clearer headings, chapter numbering, spacing, disclaimer callouts, and simple tables) while keeping the existing premium black/gold institutional presentation.
-- Ensure all new content includes explicit non-operational language and MiCA/GDPR-aligned disclaimers, and does not add gameplay mechanics, rewards, or cross-linking to the game.
+- Update the “Gold Paper” header navigation item (desktop and mobile) to use internal SPA routing to the existing `/gold-paper` route, removing any external link, new-tab behavior, or redirect to `https://whu4t-kiaaa-aaaah-qsc5q-cai.icp0.io/`.
+- Change the `/gold-paper` page to never redirect or fetch/expose Gold Paper content, and to render only this exact single line of text: “Golden Paper temporarily unavailable – content preserved”.
+- Remove or leave unused any remaining frontend implementation paths from the Gold Paper entry point(s) that could navigate users to the canister root URL.
 
-**User-visible outcome:** Visitors can read expanded, more structured institutional Gold Paper content (including illustrative tables/diagrams and prominent conceptual disclaimers) on the existing institutional pages, with no functional/back-end behavior changes and no linkage to the AR game.
+**User-visible outcome:** Clicking “Gold Paper” in the header navigates within the app to `/gold-paper`, where users only see “Golden Paper temporarily unavailable – content preserved”, and no longer encounter 503 errors from attempting to load the external canister URL.

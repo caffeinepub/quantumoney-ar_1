@@ -2,15 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-integrate-the-confirmed-gold-paper-expansion-text-as-new-additive-institutional-sections-in-the-existing-institutional-website-content-without-removing-renaming-or-overwriting-any-existing-sections-the-added-sections-must-remain-strictly-conceptual-non-operational-mica-gdpr-aligned-and-explicitly-separated-from-the-ar-game",
-      "featureTitle": "Integrate the confirmed Gold Paper expansion text as new, additive institutional sections in the existing institutional website content without removing, renaming, or overwriting any existing sections. The added sections must remain strictly conceptual/non-operational, MiCA/GDPR-aligned, and explicitly separated from the AR game.",
+      "featureId": "feature-update-the-gold-paper-navigation-entry-in-the-header-so-it-no-longer-links-or-redirects-to-the-canister-url-https-whu4t-kiaaa-aaaah-qsc5q-cai-icp0-io-and-instead-routes-internally-to-an-on-site-page-use-the-existing-route-gold-paper-the-gold-paper-nav-item-must-be-an-internal-spa-link-no-target-blank-no-external-a-href-to-the-canister-no-javascript-redirect",
+      "featureTitle": "Update the Gold Paper navigation entry in the header so it no longer links (or redirects) to the canister URL `https://whu4t-kiaaa-aaaah-qsc5q-cai.icp0.io/` and instead routes internally to an on-site page (use the existing route `/gold-paper`). The Gold Paper nav item must be an internal SPA link (no `target=\"_blank\"`, no external `<a href>` to the canister, no JavaScript redirect).",
       "files": [
-        "frontend/src/components/InstitutionalExpansionSection.tsx",
-        "frontend/src/pages/DAOPage.tsx",
-        "frontend/src/pages/LegalPage.tsx",
-        "frontend/src/pages/TechnicalPage.tsx",
-        "frontend/src/pages/TokenomicsPage.tsx",
-        "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx"
+        "frontend/src/components/Header.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -25,17 +20,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-1"
+        "REQ-4"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-the-following-conceptual-bank-style-explanatory-content-blocks-as-text-simple-visual-structure-like-tables-diagrams-rendered-in-the-page-markup-to-the-institutional-content-pages-where-they-fit-best-e-g-treasury-monetary-policy-tokenomics-dao-governance-legal-ensuring-the-content-is-purely-descriptive-and-does-not-introduce-operational-behavior-1-conceptual-token-distribution-framework-2-locked-vs-unlocked-balances-explanation-3-vesting-unlock-timelines-description-illustrative-only-4-theoretical-treasury-flow-model-inbound-outbound-inactive",
-      "featureTitle": "Add the following conceptual, bank-style explanatory content blocks (as text + simple visual structure like tables/diagrams rendered in the page markup) to the institutional content pages where they fit best (e.g., Treasury/Monetary Policy, Tokenomics, DAO/Governance, Legal), ensuring the content is purely descriptive and does not introduce operational behavior: (1) conceptual token distribution framework, (2) locked vs unlocked balances explanation, (3) vesting & unlock timelines description (illustrative only), (4) theoretical treasury flow model (inbound/outbound, inactive).",
+      "featureId": "feature-replace-the-current-gold-paper-page-behavior-so-it-does-not-perform-any-automatic-redirect-and-does-not-expose-or-attempt-to-fetch-any-gold-paper-content-the-gold-paper-page-must-display-only-the-following-single-line-of-text-english-exactly-as-provided-golden-paper-temporarily-unavailable-content-preserved",
+      "featureTitle": "Replace the current `/gold-paper` page behavior so it does not perform any automatic redirect and does not expose or attempt to fetch any Gold Paper content. The `/gold-paper` page must display ONLY the following single line of text (English, exactly as provided): “Golden Paper temporarily unavailable – content preserved”.",
       "files": [
-        "frontend/src/pages/DAOPage.tsx",
-        "frontend/src/pages/TokenomicsPage.tsx",
-        "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx"
+        "frontend/src/pages/GoldPaper.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -50,20 +43,16 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-2"
+        "REQ-5"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-maintain-the-existing-premium-black-gold-institutional-presentation-while-improving-the-structural-readability-of-the-affected-institutional-pages-using-content-only-layout-refinements-e-g-clearer-headings-chapter-numbering-callout-disclaimers-simple-tables-do-not-introduce-new-routes-new-canisters-backend-endpoints-or-any-gameplay-cross-linking-within-the-new-content",
-      "featureTitle": "Maintain the existing premium black/gold institutional presentation while improving the structural readability of the affected institutional pages using content-only layout refinements (e.g., clearer headings, chapter numbering, callout disclaimers, simple tables). Do not introduce new routes, new canisters, backend endpoints, or any gameplay cross-linking within the new content.",
+      "featureId": "feature-remove-or-leave-unused-any-gold-paper-button-link-implementation-that-routes-users-to-the-documentation-canister-root-from-the-gold-paper-entry-point-s-ensuring-the-frontend-no-longer-causes-ic0503-503-errors-via-the-gold-paper-button",
+      "featureTitle": "Remove (or leave unused) any Gold Paper button/link implementation that routes users to the documentation canister root from the Gold Paper entry point(s), ensuring the frontend no longer causes IC0503/503 errors via the Gold Paper button.",
       "files": [
-        "frontend/src/components/InstitutionalExpansionSection.tsx",
-        "frontend/src/pages/DAOPage.tsx",
-        "frontend/src/pages/LegalPage.tsx",
-        "frontend/src/pages/TechnicalPage.tsx",
-        "frontend/src/pages/TokenomicsPage.tsx",
-        "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx"
+        "frontend/src/components/Header.tsx",
+        "frontend/src/pages/GoldPaper.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -78,7 +67,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-3"
+        "REQ-6"
       ],
       "confidence": "high"
     }

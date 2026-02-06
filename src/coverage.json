@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-05T22:32:21.517Z",
+  "generatedAt": "2026-02-06T19:00:56.282Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -11,61 +11,38 @@
     "implemented": 3,
     "items": [
       {
-        "id": "REQ-1",
-        "summary": "Integrate the confirmed Gold Paper expansion text as new, additive institutional sections in the existing institutional website content without removing, renaming, or overwriting any existing sections. The added sections must remain strictly conceptual/non-operational, MiCA/GDPR-aligned, and explicitly separated from the AR game.",
+        "id": "REQ-4",
+        "summary": "Update the Gold Paper navigation entry in the header so it no longer links (or redirects) to the canister URL `https://whu4t-kiaaa-aaaah-qsc5q-cai.icp0.io/` and instead routes internally to an on-site page (use the existing route `/gold-paper`). The Gold Paper nav item must be an internal SPA link (no `target=\"_blank\"`, no external `<a href>` to the canister, no JavaScript redirect).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/InstitutionalExpansionSection.tsx",
-          "frontend/src/pages/TokenomicsPage.tsx",
-          "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
-          "frontend/src/pages/DAOPage.tsx",
-          "frontend/src/pages/LegalPage.tsx",
-          "frontend/src/pages/TechnicalPage.tsx"
+          "frontend/src/components/Header.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/InstitutionalExpansionSection.tsx",
-          "frontend/src/pages/TokenomicsPage.tsx",
-          "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
-          "frontend/src/pages/DAOPage.tsx",
-          "frontend/src/pages/LegalPage.tsx",
-          "frontend/src/pages/TechnicalPage.tsx"
+          "frontend/src/components/Header.tsx"
         ]
       },
       {
-        "id": "REQ-2",
-        "summary": "Add the following conceptual, bank-style explanatory content blocks (as text + simple visual structure like tables/diagrams rendered in the page markup) to the institutional content pages where they fit best (e.g., Treasury/Monetary Policy, Tokenomics, DAO/Governance, Legal), ensuring the content is purely descriptive and does not introduce operational behavior: (1) conceptual token distribution framework, (2) locked vs unlocked balances explanation, (3) vesting & unlock timelines description (illustrative only), (4) theoretical treasury flow model (inbound/outbound, inactive).",
+        "id": "REQ-5",
+        "summary": "Replace the current `/gold-paper` page behavior so it does not perform any automatic redirect and does not expose or attempt to fetch any Gold Paper content. The `/gold-paper` page must display ONLY the following single line of text (English, exactly as provided): “Golden Paper temporarily unavailable – content preserved”.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/TokenomicsPage.tsx",
-          "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
-          "frontend/src/pages/DAOPage.tsx"
+          "frontend/src/pages/GoldPaper.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/TokenomicsPage.tsx",
-          "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
-          "frontend/src/pages/DAOPage.tsx"
+          "frontend/src/pages/GoldPaper.tsx"
         ]
       },
       {
-        "id": "REQ-3",
-        "summary": "Maintain the existing premium black/gold institutional presentation while improving the structural readability of the affected institutional pages using content-only layout refinements (e.g., clearer headings, chapter numbering, callout disclaimers, simple tables). Do not introduce new routes, new canisters, backend endpoints, or any gameplay cross-linking within the new content.",
+        "id": "REQ-6",
+        "summary": "Remove (or leave unused) any Gold Paper button/link implementation that routes users to the documentation canister root from the Gold Paper entry point(s), ensuring the frontend no longer causes IC0503/503 errors via the Gold Paper button.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/index.css",
-          "frontend/src/components/InstitutionalExpansionSection.tsx",
-          "frontend/src/pages/TokenomicsPage.tsx",
-          "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
-          "frontend/src/pages/DAOPage.tsx",
-          "frontend/src/pages/LegalPage.tsx",
-          "frontend/src/pages/TechnicalPage.tsx"
+          "frontend/src/components/Header.tsx",
+          "frontend/src/pages/GoldPaper.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/InstitutionalExpansionSection.tsx",
-          "frontend/src/pages/TokenomicsPage.tsx",
-          "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
-          "frontend/src/pages/DAOPage.tsx",
-          "frontend/src/pages/LegalPage.tsx",
-          "frontend/src/pages/TechnicalPage.tsx"
+          "frontend/src/components/Header.tsx",
+          "frontend/src/pages/GoldPaper.tsx"
         ]
       }
     ]
@@ -76,12 +53,8 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/InstitutionalExpansionSection.tsx",
-    "frontend/src/pages/DAOPage.tsx",
-    "frontend/src/pages/LegalPage.tsx",
-    "frontend/src/pages/TechnicalPage.tsx",
-    "frontend/src/pages/TokenomicsPage.tsx",
-    "frontend/src/pages/TreasuryMonetaryPolicyPage.tsx",
+    "frontend/src/components/Header.tsx",
+    "frontend/src/pages/GoldPaper.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 10,
+  "projectStateVersion": 12,
   "summary": "Quantumoney AR / QMY Luxury Pro is a bilingual (PT/EN) React + TypeScript web portal with a luxury black/gold theme that serves (1) as an institutional/marketing and documentation site (Gold Paper, DAO & Governance, Treasury & Monetary Policy, tokenomics, legal, roadmap, etc.) and (2) as a foundation for an AR/mobile game experience backed by an Internet Computer Motoko canister supporting player registration, XP/energy progression, monster capture, GPS-based coin planting/rescue mechanics, AR spot token claims, and Stripe checkout integration via an external integrations canister. The repo now also includes Capacitor/mobile build & deep-linking setup plus offline/deep-link utilities to support app-style distribution. Governance/treasury pages are explicitly conceptual/non-operational and contain strong MiCA/GDPR disclaimers.",
   "architectural_notes": [
     "Frontend is a SPA built with React + TypeScript, TanStack Router for routing, TailwindCSS for styling, and next-themes for a forced dark theme.",
@@ -26,7 +26,7 @@
     "Frontend uses process.env.II_URL for the Internet Identity provider URL; depending on the bundler/environment, this may require explicit env wiring (e.g., Vite import.meta.env) to avoid undefined at runtime.",
     "Several referenced gameplay/mobile/deep-link/offline related modules are indicated by repository summaries but their implementations are not present in the provided file contents; feature coverage for those areas may be incomplete in this analysis."
   ],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "IF-1",
@@ -440,6 +440,30 @@
         "REQ-3"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-update-the-gold-paper-navigation-entry-in-the-header-so-it-no-longer-links-or-redirects-to-the-canister-url-https-whu4t-kiaaa-aaaah-qsc5q-cai-icp0-io-and-instead-routes-internally-to-an-on-site-page-use-the-existing-route-gold-paper-the-gold-paper-nav-item-must-be-an-internal-spa-link-no-target-blank-no-external-a-href-to-the-canister-no-javascript-redirect",
+      "title": "Update the Gold Paper navigation entry in the header so it no longer links (or redirects) to the canister URL `https://whu4t-kiaaa-aaaah-qsc5q-cai.icp0.io/` and instead routes internally to an on-site page (use the existing route `/gold-paper`). The Gold Paper nav item must be an internal SPA link (no `target=\"_blank\"`, no external `<a href>` to the canister, no JavaScript redirect).",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-current-gold-paper-page-behavior-so-it-does-not-perform-any-automatic-redirect-and-does-not-expose-or-attempt-to-fetch-any-gold-paper-content-the-gold-paper-page-must-display-only-the-following-single-line-of-text-english-exactly-as-provided-golden-paper-temporarily-unavailable-content-preserved",
+      "title": "Replace the current `/gold-paper` page behavior so it does not perform any automatic redirect and does not expose or attempt to fetch any Gold Paper content. The `/gold-paper` page must display ONLY the following single line of text (English, exactly as provided): “Golden Paper temporarily unavailable – content preserved”.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-or-leave-unused-any-gold-paper-button-link-implementation-that-routes-users-to-the-documentation-canister-root-from-the-gold-paper-entry-point-s-ensuring-the-frontend-no-longer-causes-ic0503-503-errors-via-the-gold-paper-button",
+      "title": "Remove (or leave unused) any Gold Paper button/link implementation that routes users to the documentation canister root from the Gold Paper entry point(s), ensuring the frontend no longer causes IC0503/503 errors via the Gold Paper button.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -452,6 +476,18 @@
     {
       "id": "AR-2",
       "summary": "Refine institutional website content presentation (professional tone, black/gold premium look-and-feel, add conceptual-only tables/diagrams) as content/structure updates only (no code/canister/deploy changes)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Frontend-only fix: remove Gold Paper button link/redirect to non-public canister URL (503 by design) and point to an internal placeholder route (e.g., /gold-paper-placeholder) that displays only “Golden Paper temporarily unavailable – content preserved”, with no canister/backend changes, rebuilds, migrations, or content rewrites beyond the link adjustment",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Architectural alignment (conceptual/placeholder for now): quantumoney.app is the authoritative source for real QMY issuance/supply/vesting/distribution rules; quantumoneyar.app in-game geographically distributed coins must be designed to synchronize to represent real QMY tokens once issuance is live (no immediate on-chain execution required)",
       "reqIds": [],
       "status": "pending"
     }

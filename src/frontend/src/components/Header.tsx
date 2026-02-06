@@ -3,31 +3,27 @@ import { Link } from '@tanstack/react-router';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Globe, ExternalLink } from 'lucide-react';
-
-// Canister configuration
-const DOCS_CANISTER_ID = 'whu4t-kiaaa-aaaah-qsc5q-cai';
-const DOCS_BASE_URL = `https://${DOCS_CANISTER_ID}.icp0.io`;
+import { Menu, Globe } from 'lucide-react';
 
 export default function Header() {
   const { language, setLanguage, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
-    { path: '/home', label: 'Home', external: false },
-    { path: '/about', label: t.nav.about, external: false },
-    { path: '/tokenomics', label: t.nav.tokenomics, external: false },
-    { path: '/ar-distribution', label: t.nav.arDistribution, external: false },
-    { path: '/dao', label: t.nav.dao, external: false },
-    { path: '/treasury-monetary-policy', label: t.nav.treasury, external: false },
-    { path: '/roadmap', label: t.nav.roadmap, external: false },
-    { path: '/vesting-deflation', label: t.nav.vesting, external: false },
-    { path: '/presale', label: t.nav.presale, external: false },
-    { path: '/technical', label: t.nav.technical, external: false },
-    { path: '/game-systems', label: t.nav.gameSystems, external: false },
-    { path: '/legal', label: t.nav.legal, external: false },
-    { path: '/contact', label: t.nav.contact, external: false },
-    { path: DOCS_BASE_URL, label: 'Gold Paper', external: true },
+    { path: '/home', label: 'Home' },
+    { path: '/about', label: t.nav.about },
+    { path: '/tokenomics', label: t.nav.tokenomics },
+    { path: '/ar-distribution', label: t.nav.arDistribution },
+    { path: '/dao', label: t.nav.dao },
+    { path: '/treasury-monetary-policy', label: t.nav.treasury },
+    { path: '/roadmap', label: t.nav.roadmap },
+    { path: '/vesting-deflation', label: t.nav.vesting },
+    { path: '/presale', label: t.nav.presale },
+    { path: '/technical', label: t.nav.technical },
+    { path: '/game-systems', label: t.nav.gameSystems },
+    { path: '/legal', label: t.nav.legal },
+    { path: '/contact', label: t.nav.contact },
+    { path: '/gold-paper', label: 'Gold Paper' },
   ];
 
   return (
@@ -45,25 +41,11 @@ export default function Header() {
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-1">
           {navItems.map((item) => (
-            item.external ? (
-              <a 
-                key={item.path} 
-                href={item.path}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button variant="ghost" size="sm" className="text-gold-500 hover:text-gold-400 hover:bg-gold-500/10">
-                  {item.label}
-                  <ExternalLink className="ml-1 h-3 w-3" />
-                </Button>
-              </a>
-            ) : (
-              <Link key={item.path} to={item.path}>
-                <Button variant="ghost" size="sm" className="text-gold-500 hover:text-gold-400 hover:bg-gold-500/10">
-                  {item.label}
-                </Button>
-              </Link>
-            )
+            <Link key={item.path} to={item.path}>
+              <Button variant="ghost" size="sm" className="text-gold-500 hover:text-gold-400 hover:bg-gold-500/10">
+                {item.label}
+              </Button>
+            </Link>
           ))}
         </nav>
 
@@ -88,26 +70,11 @@ export default function Header() {
             <SheetContent side="right" className="bg-black border-gold-500/20">
               <nav className="flex flex-col gap-2 mt-8">
                 {navItems.map((item) => (
-                  item.external ? (
-                    <a 
-                      key={item.path} 
-                      href={item.path}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <Button variant="ghost" className="w-full justify-start text-gold-500 hover:text-gold-400 hover:bg-gold-500/10">
-                        {item.label}
-                        <ExternalLink className="ml-1 h-3 w-3" />
-                      </Button>
-                    </a>
-                  ) : (
-                    <Link key={item.path} to={item.path} onClick={() => setIsOpen(false)}>
-                      <Button variant="ghost" className="w-full justify-start text-gold-500 hover:text-gold-400 hover:bg-gold-500/10">
-                        {item.label}
-                      </Button>
-                    </Link>
-                  )
+                  <Link key={item.path} to={item.path} onClick={() => setIsOpen(false)}>
+                    <Button variant="ghost" className="w-full justify-start text-gold-500 hover:text-gold-400 hover:bg-gold-500/10">
+                      {item.label}
+                    </Button>
+                  </Link>
                 ))}
               </nav>
             </SheetContent>

@@ -1,77 +1,78 @@
 {
   "kind": "build_request",
-  "title": "Apply institutional Gold Paper expansions as content-only additions (no canister/backend changes)",
-  "priority": "normal",
+  "title": "Replace Gold Paper canister link with internal placeholder page (frontend-only)",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-1",
-      "text": "Integrate the confirmed Gold Paper expansion text as new, additive institutional sections in the existing institutional website content without removing, renaming, or overwriting any existing sections. The added sections must remain strictly conceptual/non-operational, MiCA/GDPR-aligned, and explicitly separated from the AR game.",
+      "id": "REQ-4",
+      "text": "Update the Gold Paper navigation entry in the header so it no longer links (or redirects) to the canister URL `https://whu4t-kiaaa-aaaah-qsc5q-cai.icp0.io/` and instead routes internally to an on-site page (use the existing route `/gold-paper`). The Gold Paper nav item must be an internal SPA link (no `target=\"_blank\"`, no external `<a href>` to the canister, no JavaScript redirect).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-user-latest"
         ],
         "quotes": [
-          "CONFIRMED: APPLY CONTENT\n\nPlease apply the proposed Gold Paper expansions as CONTENT ONLY.\n\nDo not remove or overwrite existing sections — integrate this as an institutional expansion and refinement.\n\nNo code changes.\nNo canister changes.\nNo rebuilds.\nNo deployments.\n\nKeep everything strictly conceptual, non-operational, and fully separate from the game."
+          "Remove any link or redirect from the Gold Paper button to the canister URL.",
+          "Replace the Gold Paper button with an internal site page (for example /gold-paper or /gold-paper-placeholder).",
+          "This is a frontend-only href replacement to eliminate the 503 error."
         ]
       },
       "acceptanceCriteria": [
-        "Existing institutional pages retain all current headings/sections and their original text (no deletions/overwrites).",
-        "New content is added as clearly labeled expansion/refinement sections (e.g., 'Institutional Expansion' / 'Conceptual Appendix') rather than replacing current content.",
-        "All new sections include explicit non-operational language (no promises, no operational instructions, no calls to action to invest) and include MiCA/GDPR-aligned disclaimers.",
-        "No gameplay/game-reward mechanics are introduced into these institutional expansions."
+        "From the header (desktop and mobile), clicking “Gold Paper” navigates to `/gold-paper` within the app (no navigation to `https://whu4t-kiaaa-aaaah-qsc5q-cai.icp0.io/`).",
+        "The header Gold Paper item is treated as internal navigation (no external-link icon required, no new tab behavior).",
+        "No other header navigation items change behavior or styling."
       ]
     },
     {
-      "id": "REQ-2",
-      "text": "Add the following conceptual, bank-style explanatory content blocks (as text + simple visual structure like tables/diagrams rendered in the page markup) to the institutional content pages where they fit best (e.g., Treasury/Monetary Policy, Tokenomics, DAO/Governance, Legal), ensuring the content is purely descriptive and does not introduce operational behavior: (1) conceptual token distribution framework, (2) locked vs unlocked balances explanation, (3) vesting & unlock timelines description (illustrative only), (4) theoretical treasury flow model (inbound/outbound, inactive).",
+      "id": "REQ-5",
+      "text": "Replace the current `/gold-paper` page behavior so it does not perform any automatic redirect and does not expose or attempt to fetch any Gold Paper content. The `/gold-paper` page must display ONLY the following single line of text (English, exactly as provided): “Golden Paper temporarily unavailable – content preserved”.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-user-latest"
         ],
         "quotes": [
-          "1) Expand the Gold Paper with more detailed, bank-style explanations:\n   - token distribution (conceptual)\n   - locked vs unlocked balances\n   - vesting and unlock timelines (descriptive only)\n   - treasury flows (theoretical)\n\n2) Improve the website pages visually and structurally:\n   - Professional, institutional tone\n   - Black/gold premium design\n   - Tables and diagrams as visual explanations only"
+          "That page should display only:\n  “Golden Paper temporarily unavailable – content preserved”.",
+          "No rebuilds, no migrations, no backend changes."
         ]
       },
       "acceptanceCriteria": [
-        "Token distribution expansion is descriptive and does not introduce new numeric commitments or operational issuance details beyond what already exists on the site; any added structure is clearly marked conceptual/illustrative.",
-        "Locked vs unlocked section clearly states restrictions are conceptual and not currently executed by the system.",
-        "Vesting/unlock content is presented as illustrative models (e.g., linear/cliff/multi-stage/regulatory stop-gates) and explicitly states no real schedule is active.",
-        "Treasury flows are shown as theoretical inbound/outbound categories and explicitly state they are inactive/non-operational.",
-        "Any tables/diagrams added are static, informational UI elements only (no interactive financial tooling)."
+        "Visiting `/gold-paper` never triggers `window.location.href` changes, timed redirects, or any link to the canister URL.",
+        "The page renders only the exact text: “Golden Paper temporarily unavailable – content preserved”.",
+        "No additional explanatory text, buttons, canister URLs, spinners, or other UI elements are shown on `/gold-paper`."
       ]
     },
     {
-      "id": "REQ-3",
-      "text": "Maintain the existing premium black/gold institutional presentation while improving the structural readability of the affected institutional pages using content-only layout refinements (e.g., clearer headings, chapter numbering, callout disclaimers, simple tables). Do not introduce new routes, new canisters, backend endpoints, or any gameplay cross-linking within the new content.",
+      "id": "REQ-6",
+      "text": "Remove (or leave unused) any Gold Paper button/link implementation that routes users to the documentation canister root from the Gold Paper entry point(s), ensuring the frontend no longer causes IC0503/503 errors via the Gold Paper button.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-user-latest"
         ],
         "quotes": [
-          "Improve the website pages visually and structurally:\n   - Professional, institutional tone\n   - Black/gold premium design\n   - Tables and diagrams as visual explanations only\n\n3) Everything must remain:\n   - Conceptual\n   - Non-operational\n   - Compliant with MiCA and GDPR\n   - Completely separate from the game"
+          "The issue is only the frontend link.",
+          "Remove any link or redirect from the Gold Paper button to the canister URL."
         ]
       },
       "acceptanceCriteria": [
-        "Pages keep the existing black/gold theme and institutional tone; changes are limited to content presentation (headings, spacing, callouts, tables).",
-        "No new navigation routes are added and no existing routes are removed.",
-        "No new links or sections are added that connect these institutional expansions to game mechanics or gameplay pages.",
-        "No backend calls, React Query changes, or authentication/actor usage changes are introduced as part of these content updates."
+        "There is no remaining user path from the “Gold Paper” button in the header that can navigate to `https://whu4t-kiaaa-aaaah-qsc5q-cai.icp0.io/`.",
+        "Clicking “Gold Paper” does not produce a 503 error because it does not attempt to load the non-public canister URL."
       ]
     }
   ],
   "constraints": [
-    "Do not change backend canister code (Motoko) or add any backend endpoints.",
-    "Do not perform canister changes, migrations, rebuilds, deployments, or regeneration steps as part of this request.",
-    "Content must remain strictly conceptual/non-operational and explicitly separate from the game.",
-    "Do not remove or overwrite existing institutional sections; only add integrated expansions/refinements."
+    "Frontend-only change: do not modify backend code (Motoko) or add backend endpoints.",
+    "Do not touch any canisters (including `whu4t-kiaaa-aaaah-qsc5q-cai`).",
+    "No migrations.",
+    "Do not change or rewrite any existing Gold Paper content; preserve it by not exposing it (placeholder-only).",
+    "Keep all existing site pages, layout, and styling intact aside from the Gold Paper link/placeholder behavior."
   ],
   "nonGoals": [
-    "Implementing real token issuance, transfers, vesting, treasury execution, swaps, bridges, or any on-chain financial operations.",
-    "Changing Internet Identity authentication, roles, or any gameplay systems/mechanics.",
-    "Reworking the documentation canister itself (e.g., whu4t-kiaaa-aaaah-qsc5q-cai) beyond referencing it as an external documentation host."
+    "Making the documentation canister public or changing its asset configuration.",
+    "Discovering or validating internal public asset paths inside the documentation canister.",
+    "Publishing or reintroducing the full Gold Paper content at this time.",
+    "Any rebuild/redeploy workflow changes or infrastructure changes."
   ],
   "imageRequirements": {
     "required": [],
@@ -80,7 +81,9 @@
   "userProfileUpdate": {
     "goalsToAdd": [],
     "goalsToRemove": [],
-    "preferencesToAdd": [],
+    "preferencesToAdd": [
+      "Use English for any user-facing text in the build request."
+    ],
     "preferencesToRemove": [],
     "miscToAdd": [],
     "miscToRemove": [],
