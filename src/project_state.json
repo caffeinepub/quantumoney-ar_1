@@ -1,45 +1,22 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Quantumoney.app: Wallet & Identity Infrastructure milestone validated; project entering frontend-only layout adjustment phase with a full visual redesign across all pages.",
+  "summary": "Initialize a minimal, stable Internet Computer workspace foundation (no full app regeneration) to recover from missing persisted project files and prepare for later deployment stabilization.",
   "architectural_notes": [
-    "Wallet & Identity Infrastructure milestone validated/approved before starting layout work.",
-    "Layout corrections are strictly frontend/presentation only: no canister/backend changes, no token minting/transfers/simulations; maintain existing content, navigation, and functionality."
+    "Do not regenerate a full application; only initialize minimal scaffold files (package.json, dfx.json, index.html, frontend main entry).",
+    "After initialization, stop and confirm file presence before any build/deploy attempt.",
+    "No redesign, no new features, and no backend changes during this initialization."
   ],
   "known_issues": [
-    "Current site pages appear visually mispositioned ('too high/subidas') and need layout redesign for professional, balanced, consistent UI."
+    "Workspace currently missing persisted project files from the previously generated/working build; requires controlled re-initialization of minimal structure."
   ],
   "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-implement-a-consistent-global-layout-system-that-prevents-content-from-appearing-too-high-under-the-fixed-header-by-introducing-a-uniform-top-offset-for-page-content-and-consistent-vertical-rhythm-spacing-across-the-site-without-changing-navigation-content-or-functionality",
-      "title": "Implement a consistent global layout system that prevents content from appearing too high under the fixed header, by introducing a uniform top offset for page content and consistent vertical rhythm (spacing) across the site, without changing navigation, content, or functionality.",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-perform-a-full-visual-redesign-spacing-alignment-typography-component-layout-for-the-critical-pages-home-login-entry-points-header-login-button-any-auth-required-screens-ar-page-s-map-page-s-profile-page-s-and-rules-page-s-ensuring-a-cohesive-and-professional-presentation-while-preserving-existing-content-and-interactions",
-      "title": "Perform a full visual redesign (spacing, alignment, typography, component layout) for the critical pages: Home, Login entry points (header login button + any auth-required screens), AR page(s), Map page(s), Profile page(s), and Rules page(s), ensuring a cohesive and professional presentation while preserving existing content and interactions.",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-unify-typography-spacing-tokens-and-component-composition-across-pages-by-standardizing-headings-body-text-max-width-containers-and-card-badge-button-layout-rules-to-eliminate-inconsistent-margins-paddings-and-improve-readability",
-      "title": "Unify typography, spacing tokens, and component composition across pages by standardizing headings, body text, max-width containers, and card/badge/button layout rules to eliminate inconsistent margins/paddings and improve readability.",
+      "id": "feature-ensure-the-frontend-entry-files-exist-and-are-valid-frontend-index-html-and-frontend-src-main-tsx-if-they-already-exist-do-not-modify-them-only-create-them-if-missing",
+      "title": "Ensure the frontend entry files exist and are valid: frontend/index.html and frontend/src/main.tsx. If they already exist, do not modify them; only create them if missing.",
       "reqIds": [
         "REQ-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-apply-a-single-cohesive-visual-theme-colors-typography-layout-style-across-all-pages-and-components-to-make-the-ui-feel-deliberate-and-consistent-keep-the-existing-dark-gold-direction-but-refine-it-into-a-polished-editorial-dark-luxury-system-with-consistent-surfaces-borders-and-hover-focus-states",
-      "title": "Apply a single cohesive visual theme (colors, typography, layout style) across all pages and components to make the UI feel deliberate and consistent. Keep the existing dark + gold direction but refine it into a polished, editorial 'dark-luxury' system with consistent surfaces, borders, and hover/focus states.",
-      "reqIds": [
-        "REQ-4"
       ],
       "version": 1
     }
@@ -47,12 +24,36 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Frontend-only full visual redesign across all pages (spacing, alignment, typography, component layout), prioritizing Home, Login, AR, Map, Profile, Rules; keep content/navigation/functionality unchanged",
+      "summary": "Create a controlled minimal valid project structure (package.json, dfx.json, frontend index.html + main entry) and stop after confirming files exist; no redesign, no new features, no backend changes, no deployment attempt yet.",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Create a minimal root-level package.json that is sufficient to install and build the existing React+TypeScript frontend without regenerating or rewriting any existing application source files.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Create a minimal root-level dfx.json defining canisters for the existing backend and frontend assets, without changing any backend code and without attempting deployment.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "After creating only the minimal structure files (package.json, dfx.json, and ensuring the frontend entry files exist), STOP and provide an explicit confirmation that these files physically exist in the workspace before any build attempt or further changes.",
+      "reqIds": [
+        "REQ-4"
+      ],
       "status": "pending"
     }
   ],
-  "projectName": "Quantumoney.app",
+  "projectName": "Controlled clean initialization: add minimal IC project files and stop for validation",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

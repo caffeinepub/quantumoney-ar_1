@@ -1,127 +1,66 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-10T18:24:30.529Z",
+  "generatedAt": "2026-02-11T22:54:06.238Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
     "total": 4,
-    "implemented": 4,
+    "implemented": 1,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Implement a consistent global layout system that prevents content from appearing too high under the fixed header, by introducing a uniform top offset for page content and consistent vertical rhythm (spacing) across the site, without changing navigation, content, or functionality.",
-        "status": "implemented",
+        "summary": "Create a minimal root-level package.json that is sufficient to install and build the existing React+TypeScript frontend without regenerating or rewriting any existing application source files.",
+        "status": "missing",
         "plannedFiles": [
-          "frontend/src/components/PageShell.tsx",
-          "frontend/src/components/Layout.tsx",
-          "frontend/src/index.css"
+          "frontend/../package.json"
         ],
-        "matchedFiles": [
-          "frontend/src/components/PageShell.tsx",
-          "frontend/src/index.css"
-        ]
+        "matchedFiles": []
       },
       {
         "id": "REQ-2",
-        "summary": "Perform a full visual redesign (spacing, alignment, typography, component layout) for the critical pages: Home, Login entry points (header login button + any auth-required screens), AR page(s), Map page(s), Profile page(s), and Rules page(s), ensuring a cohesive and professional presentation while preserving existing content and interactions.",
-        "status": "implemented",
+        "summary": "Create a minimal root-level dfx.json defining canisters for the existing backend and frontend assets, without changing any backend code and without attempting deployment.",
+        "status": "missing",
         "plannedFiles": [
-          "frontend/src/pages/HomePage.tsx",
-          "frontend/src/components/Header.tsx",
-          "frontend/src/components/LoginButton.tsx",
-          "frontend/src/pages/WalletPage.tsx",
-          "frontend/src/pages/SwapPage.tsx",
-          "frontend/src/pages/ARDistributionPage.tsx",
-          "frontend/src/pages/ARMode.tsx",
-          "frontend/src/pages/MapMode.tsx",
-          "frontend/src/pages/Perfil.tsx",
-          "frontend/src/pages/QTMRules.tsx"
+          "frontend/../dfx.json"
         ],
-        "matchedFiles": [
-          "frontend/src/pages/HomePage.tsx",
-          "frontend/src/components/Header.tsx",
-          "frontend/src/components/LoginButton.tsx",
-          "frontend/src/pages/WalletPage.tsx",
-          "frontend/src/pages/SwapPage.tsx",
-          "frontend/src/pages/ARMode.tsx",
-          "frontend/src/pages/MapMode.tsx",
-          "frontend/src/pages/Perfil.tsx",
-          "frontend/src/pages/QTMRules.tsx"
-        ]
+        "matchedFiles": []
       },
       {
         "id": "REQ-3",
-        "summary": "Unify typography, spacing tokens, and component composition across pages by standardizing headings, body text, max-width containers, and card/badge/button layout rules to eliminate inconsistent margins/paddings and improve readability.",
+        "summary": "Ensure the frontend entry files exist and are valid: frontend/index.html and frontend/src/main.tsx. If they already exist, do not modify them; only create them if missing.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/Container.tsx",
-          "frontend/src/components/Typography.tsx",
-          "frontend/src/components/ReadOnlyBanner.tsx",
-          "frontend/src/pages/LandingPage.tsx",
-          "frontend/src/pages/DocsPage.tsx",
-          "frontend/src/pages/GoldPaper.tsx",
-          "frontend/src/pages/QMYTokenPage.tsx",
-          "frontend/src/pages/WalletPage.tsx",
-          "frontend/src/pages/SwapPage.tsx"
+          "frontend/index.html",
+          "frontend/src/main.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/Container.tsx",
-          "frontend/src/components/Typography.tsx",
-          "frontend/src/components/ReadOnlyBanner.tsx",
-          "frontend/src/pages/LandingPage.tsx",
-          "frontend/src/pages/DocsPage.tsx",
-          "frontend/src/pages/WalletPage.tsx",
-          "frontend/src/pages/SwapPage.tsx"
+          "frontend/index.html"
         ]
       },
       {
         "id": "REQ-4",
-        "summary": "Apply a single cohesive visual theme (colors, typography, layout style) across all pages and components to make the UI feel deliberate and consistent. Keep the existing dark + gold direction but refine it into a polished, editorial 'dark-luxury' system with consistent surfaces, borders, and hover/focus states.",
-        "status": "implemented",
+        "summary": "After creating only the minimal structure files (package.json, dfx.json, and ensuring the frontend entry files exist), STOP and provide an explicit confirmation that these files physically exist in the workspace before any build attempt or further changes.",
+        "status": "missing",
         "plannedFiles": [
-          "frontend/src/index.css",
-          "frontend/tailwind.config.js",
-          "frontend/src/components/Header.tsx",
-          "frontend/src/components/Footer.tsx",
-          "frontend/src/components/StatusBadge.tsx"
+          "frontend/STRUCTURE_CONFIRMATION.md",
+          "frontend/src/VALIDATION_REQUIRED.md"
         ],
-        "matchedFiles": [
-          "frontend/src/index.css",
-          "frontend/tailwind.config.js",
-          "frontend/src/components/Header.tsx",
-          "frontend/src/components/Footer.tsx",
-          "frontend/src/components/StatusBadge.tsx"
-        ]
+        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/Container.tsx",
-    "frontend/src/components/Footer.tsx",
-    "frontend/src/components/Header.tsx",
-    "frontend/src/components/LoginButton.tsx",
-    "frontend/src/components/PageShell.tsx",
-    "frontend/src/components/ReadOnlyBanner.tsx",
-    "frontend/src/components/StatusBadge.tsx",
-    "frontend/src/components/Typography.tsx",
+    "frontend/index.html",
+    "frontend/src/backend.d.ts",
     "frontend/src/index.css",
-    "frontend/src/pages/ARMode.tsx",
-    "frontend/src/pages/DocsPage.tsx",
-    "frontend/src/pages/HomePage.tsx",
-    "frontend/src/pages/LandingPage.tsx",
-    "frontend/src/pages/MapMode.tsx",
-    "frontend/src/pages/Perfil.tsx",
-    "frontend/src/pages/QTMRules.tsx",
-    "frontend/src/pages/SwapPage.tsx",
-    "frontend/src/pages/WalletPage.tsx",
-    "frontend/tailwind.config.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

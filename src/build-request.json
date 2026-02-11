@@ -1,94 +1,96 @@
 {
   "kind": "build_request",
-  "title": "Frontend-only full visual redesign and layout rebalancing across key pages",
-  "priority": "high",
+  "title": "Controlled clean initialization: add minimal IC project files and stop for validation",
+  "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Implement a consistent global layout system that prevents content from appearing too high under the fixed header, by introducing a uniform top offset for page content and consistent vertical rhythm (spacing) across the site, without changing navigation, content, or functionality.",
+      "text": "Create a minimal root-level package.json that is sufficient to install and build the existing React+TypeScript frontend without regenerating or rewriting any existing application source files.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "Please proceed with the layout‑adjustment phase immediately... to ensure the interface is professional, visually balanced, and consistent across the entire site."
+          "Create a minimal valid project structure only:\n- package.json"
         ]
       },
       "acceptanceCriteria": [
-        "All routed pages render their first meaningful content below the fixed header (no overlap).",
-        "A single, consistent approach is used site-wide (e.g., a shared page wrapper / page shell) rather than ad-hoc per-page fixes.",
-        "No text content, routes, or functional behavior changes (authentication flow, wallet read-only labels, links) are introduced as part of this change."
+        "A root-level package.json exists.",
+        "package.json contains scripts needed to install dependencies and build the frontend (e.g., dev/build/preview or equivalent).",
+        "No existing frontend source files are rewritten as part of creating package.json."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Perform a full visual redesign (spacing, alignment, typography, component layout) for the critical pages: Home, Login entry points (header login button + any auth-required screens), AR page(s), Map page(s), Profile page(s), and Rules page(s), ensuring a cohesive and professional presentation while preserving existing content and interactions.",
-      "target": "frontend",
+      "text": "Create a minimal root-level dfx.json defining canisters for the existing backend and frontend assets, without changing any backend code and without attempting deployment.",
+      "target": "both",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "I confirm Option 2: a full visual redesign across all pages, including spacing, alignment, typography, and component layout.",
-          "prioritizing critical pages such as Home, Login, AR, Map, Profile, and Rules"
+          "Create a minimal valid project structure only:\n- dfx.json",
+          "- no backend changes",
+          "Do not attempt deployment yet."
         ]
       },
       "acceptanceCriteria": [
-        "Home page layout is visually balanced on mobile and desktop: consistent padding, aligned center content, and no elements clipped by the viewport or header.",
-        "Login entry points are visually consistent: the Header login button styling matches the new system, and auth-required screens (e.g., Wallet/Swap unauthenticated states) match the same typography/spacing rules.",
-        "If AR/Map/Profile/Rules pages exist in the codebase (including placeholder pages), they use the same redesigned page shell, typography scale, and spacing system as Home/Wallet/Swap.",
-        "No backend calls, React Query behavior, or identity logic is changed."
+        "A root-level dfx.json exists.",
+        "dfx.json references the existing backend canister entrypoint at backend/main.mo (no edits to backend/main.mo).",
+        "dfx.json includes an assets canister that serves the existing frontend build output.",
+        "No dfx deploy (or equivalent deployment attempt) is performed as part of this work."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Unify typography, spacing tokens, and component composition across pages by standardizing headings, body text, max-width containers, and card/badge/button layout rules to eliminate inconsistent margins/paddings and improve readability.",
+      "text": "Ensure the frontend entry files exist and are valid: frontend/index.html and frontend/src/main.tsx. If they already exist, do not modify them; only create them if missing.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "full visual redesign across all pages, including spacing, alignment, typography, and component layout"
+          "Create a minimal valid project structure only:\n- frontend entry (index.html + main file)",
+          "Do not generate full application code."
         ]
       },
       "acceptanceCriteria": [
-        "Heading hierarchy is consistent across pages (e.g., H1/H2 sizing and font usage) and does not vary arbitrarily between Home, Wallet, Swap, Landing, Docs/Legal pages.",
-        "All primary page sections use consistent max-width and horizontal padding conventions (e.g., container usage) for mobile/tablet/desktop.",
-        "Buttons, cards, and banners (including the 'Read-Only – Transfers Disabled' banners) maintain their wording but have consistent spacing, alignment, and responsive behavior.",
-        "No Shadcn UI component source files under frontend/src/components/ui are modified (compose instead)."
+        "frontend/index.html exists.",
+        "frontend/src/main.tsx exists.",
+        "If either file already existed in the workspace prior to this change, its contents remain unchanged (no reformatting or rewriting)."
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Apply a single cohesive visual theme (colors, typography, layout style) across all pages and components to make the UI feel deliberate and consistent. Keep the existing dark + gold direction but refine it into a polished, editorial 'dark-luxury' system with consistent surfaces, borders, and hover/focus states.",
-      "target": "frontend",
+      "text": "After creating only the minimal structure files (package.json, dfx.json, and ensuring the frontend entry files exist), STOP and provide an explicit confirmation that these files physically exist in the workspace before any build attempt or further changes.",
+      "target": "unknown",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "ensure the interface is professional, visually balanced, and consistent across the entire site"
+          "After creating the structure, STOP and confirm file existence before any build attempt."
         ]
       },
       "acceptanceCriteria": [
-        "The site uses a consistent set of surface styles (backgrounds, glass cards, borders) and interaction states (hover/focus/disabled) across Header, Footer, and main page content.",
-        "No new product features are introduced; only visual/presentation improvements are made.",
-        "Theme changes do not reduce accessibility (text contrast remains readable on dark backgrounds)."
+        "Work concludes with a confirmation step listing the presence of: package.json, dfx.json, frontend/index.html, and frontend/src/main.tsx.",
+        "No build, bundling, or deployment steps are initiated after the confirmation."
       ]
     }
   ],
   "constraints": [
-    "Frontend-only changes: no canister changes, no backend modifications, no token minting, no transfers, no simulations.",
-    "Maintain all current content, navigation, and functionality (presentation changes only).",
-    "Do not edit immutable frontend paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, and any sources under frontend/src/components/ui."
+    "Do not redesign UI.",
+    "Do not add new features.",
+    "Do not change backend logic or files (including backend/main.mo).",
+    "Do not regenerate the full application codebase.",
+    "Do not attempt deployment yet.",
+    "Do not attempt a build yet; stop after confirming required files exist."
   ],
   "nonGoals": [
-    "Adding new backend endpoints or changing Motoko state/schema.",
-    "Implementing new AR/Map/game functionality beyond visual/layout work.",
-    "Changing routing structure or adding new navigation items not already present.",
-    "Replacing existing generated images/logos (unless explicitly requested later)."
+    "Fixing the original deployment failure (requires logs / later step).",
+    "Adding or modifying routes, pages, or components beyond ensuring the entry files exist.",
+    "Changing dependencies beyond what is strictly required for a minimal valid workspace foundation."
   ],
   "imageRequirements": {
     "required": [],

@@ -1,186 +1,79 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Frontend-only dark-luxury visual redesign with unified page shell and typography system",
+  "title": "Controlled clean initialization: minimal IC + React workspace scaffolding (frontend-only)",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Introduce a shared page shell to enforce a consistent top offset under the fixed header and a uniform vertical rhythm across all routed pages without altering navigation/content/functionality.",
+      "summary": "Add a minimal root-level package.json to install and build the existing React+TypeScript frontend without touching existing source files.",
       "acceptanceCriteria": [
-        "All routed pages render their first meaningful content below the fixed header (no overlap).",
-        "A single, consistent approach is used site-wide (e.g., a shared page wrapper / page shell) rather than ad-hoc per-page fixes.",
-        "No text content, routes, or functional behavior changes (authentication flow, wallet read-only labels, links) are introduced as part of this change."
+        "A root-level package.json exists.",
+        "package.json contains scripts needed to install dependencies and build the frontend (e.g., dev/build/preview or equivalent).",
+        "No existing frontend source files are rewritten as part of creating package.json."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/PageShell.tsx",
+          "path": "frontend/../package.json",
           "operation": "create",
-          "description": "Create a shared PageShell component that applies a uniform top offset (accounting for the fixed header) and standard vertical spacing for page content; keep it presentation-only (no behavior changes)."
-        },
-        {
-          "path": "frontend/src/components/Layout.tsx",
-          "operation": "modify",
-          "description": "Wire PageShell into the global layout so the routed Outlet content always renders below the fixed header using a single site-wide approach (no per-page header-offset hacks)."
-        },
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Add/standardize global layout tokens (e.g., CSS variables for header height and page gutters) and shared utilities used by PageShell to ensure consistent vertical rhythm across the app."
+          "description": "Create a minimal root-level package.json (via this relative path) with only essential scripts (dev/build/preview) and dependencies required by the existing frontend codebase; do not modify any existing frontend source files."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Visually redesign the critical pages (Home, login entry points and unauth screens, AR, Map, Profile, Rules) for cohesive spacing/alignment/typography while preserving existing content and interactions.",
+      "summary": "Add a minimal root-level dfx.json defining backend and frontend assets canisters, pointing at existing backend/main.mo and serving the existing frontend build output, without deploying.",
       "acceptanceCriteria": [
-        "Home page layout is visually balanced on mobile and desktop: consistent padding, aligned center content, and no elements clipped by the viewport or header.",
-        "Login entry points are visually consistent: the Header login button styling matches the new system, and auth-required screens (e.g., Wallet/Swap unauthenticated states) match the same typography/spacing rules.",
-        "If AR/Map/Profile/Rules pages exist in the codebase (including placeholder pages), they use the same redesigned page shell, typography scale, and spacing system as Home/Wallet/Swap.",
-        "No backend calls, React Query behavior, or identity logic is changed."
+        "A root-level dfx.json exists.",
+        "dfx.json references the existing backend canister entrypoint at backend/main.mo (no edits to backend/main.mo).",
+        "dfx.json includes an assets canister that serves the existing frontend build output.",
+        "No dfx deploy (or equivalent deployment attempt) is performed as part of this work."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/HomePage.tsx",
-          "operation": "modify",
-          "description": "Refactor Home page layout to use the redesigned spacing/typography system and ensure its hero content sits comfortably below the fixed header on all breakpoints; preserve all existing text and interactions."
-        },
-        {
-          "path": "frontend/src/components/Header.tsx",
-          "operation": "modify",
-          "description": "Adjust header presentation (spacing, alignment, hover/focus styling) to match the redesigned dark-luxury system while keeping existing navigation items and behavior unchanged."
-        },
-        {
-          "path": "frontend/src/components/LoginButton.tsx",
-          "operation": "modify",
-          "description": "Update only the Login button presentation (spacing/typography/interaction states) to align with the new design system; do not change authentication logic, labels, or query cache clearing behavior."
-        },
-        {
-          "path": "frontend/src/pages/WalletPage.tsx",
-          "operation": "modify",
-          "description": "Redesign Wallet page visual layout (including unauthenticated screen and read-only banner) to use the shared PageShell/container/typography rules; preserve all wording, links, and behaviors."
-        },
-        {
-          "path": "frontend/src/pages/SwapPage.tsx",
-          "operation": "modify",
-          "description": "Redesign Swap page visual layout (including unauthenticated screen and read-only banner) to use the shared PageShell/container/typography rules; preserve all wording, links, and behaviors."
-        },
-        {
-          "path": "frontend/src/pages/ARDistributionPage.tsx",
-          "operation": "modify",
-          "description": "Align AR Distribution page spacing/typography and section structure with the redesigned page shell and component composition; preserve all existing educational/disclaimer text."
-        },
-        {
-          "path": "frontend/src/pages/ARMode.tsx",
-          "operation": "modify",
-          "description": "Apply the redesigned page shell, typography scale, and spacing system to this AR placeholder page (presentation-only), without adding new AR functionality."
-        },
-        {
-          "path": "frontend/src/pages/MapMode.tsx",
-          "operation": "modify",
-          "description": "Apply the redesigned page shell, typography scale, and spacing system to this Map placeholder page (presentation-only), without adding new Map functionality."
-        },
-        {
-          "path": "frontend/src/pages/Perfil.tsx",
-          "operation": "modify",
-          "description": "Apply the redesigned page shell, typography scale, and spacing system to this Profile placeholder page (presentation-only), without adding new profile functionality."
-        },
-        {
-          "path": "frontend/src/pages/QTMRules.tsx",
-          "operation": "modify",
-          "description": "Apply the redesigned page shell, typography scale, and spacing system to this Rules placeholder page (presentation-only), without adding new rules content beyond existing placeholders."
+          "path": "frontend/../dfx.json",
+          "operation": "create",
+          "description": "Create a minimal root-level dfx.json (via this relative path) that declares a backend canister referencing backend/main.mo and an assets canister serving the frontend build output directory; do not perform any deployment actions."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Standardize typography scale, spacing tokens, containers, and composition rules (cards/badges/buttons/banners) across pages without modifying shadcn/ui source files.",
+      "summary": "Ensure frontend entry files exist (index.html and main.tsx) without modifying them if already present.",
       "acceptanceCriteria": [
-        "Heading hierarchy is consistent across pages (e.g., H1/H2 sizing and font usage) and does not vary arbitrarily between Home, Wallet, Swap, Landing, Docs/Legal pages.",
-        "All primary page sections use consistent max-width and horizontal padding conventions (e.g., container usage) for mobile/tablet/desktop.",
-        "Buttons, cards, and banners (including the 'Read-Only – Transfers Disabled' banners) maintain their wording but have consistent spacing, alignment, and responsive behavior.",
-        "No Shadcn UI component source files under frontend/src/components/ui are modified (compose instead)."
+        "frontend/index.html exists.",
+        "frontend/src/main.tsx exists.",
+        "If either file already existed in the workspace prior to this change, its contents remain unchanged (no reformatting or rewriting)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/Container.tsx",
+          "path": "frontend/index.html",
           "operation": "create",
-          "description": "Create a small Container component (composition-only) to standardize max-width and horizontal padding rules for page sections across the site."
+          "description": "Only if missing: create a valid frontend/index.html with a root mount element and module script loading /src/main.tsx; if the file already exists, do not modify it."
         },
         {
-          "path": "frontend/src/components/Typography.tsx",
+          "path": "frontend/src/main.tsx",
           "operation": "create",
-          "description": "Create shared Typography helpers (e.g., PageTitle/SectionTitle/BodyText class presets) to enforce consistent heading hierarchy and body text styling across pages (composition-only; no shadcn/ui edits)."
-        },
-        {
-          "path": "frontend/src/components/ReadOnlyBanner.tsx",
-          "operation": "create",
-          "description": "Create a shared ReadOnlyBanner component to unify spacing/alignment for the existing 'Read-Only – Transfers Disabled' banner across pages while preserving the exact wording."
-        },
-        {
-          "path": "frontend/src/pages/LandingPage.tsx",
-          "operation": "modify",
-          "description": "Update Landing page to use the shared Container/Typography components and consistent spacing rules; preserve content and existing links/interactions."
-        },
-        {
-          "path": "frontend/src/pages/DocsPage.tsx",
-          "operation": "modify",
-          "description": "Standardize Docs hub layout using the shared Container/Typography components and consistent card grid spacing; preserve all section titles, descriptions, and links."
-        },
-        {
-          "path": "frontend/src/pages/GoldPaper.tsx",
-          "operation": "modify",
-          "description": "Standardize Gold Paper page typography hierarchy (H1/H2/section titles), spacing rhythm, and container widths using the shared design primitives; preserve all existing text and anchor links."
-        },
-        {
-          "path": "frontend/src/pages/QMYTokenPage.tsx",
-          "operation": "modify",
-          "description": "Align QMY Token page typography scale, card spacing, and container usage with the shared design system; preserve all existing content."
-        },
-        {
-          "path": "frontend/src/pages/WalletPage.tsx",
-          "operation": "modify",
-          "description": "Replace page-specific container/padding patterns with shared Container/Typography and reuse ReadOnlyBanner for consistent composition while keeping content and behavior unchanged."
-        },
-        {
-          "path": "frontend/src/pages/SwapPage.tsx",
-          "operation": "modify",
-          "description": "Replace page-specific container/padding patterns with shared Container/Typography and reuse ReadOnlyBanner for consistent composition while keeping content and behavior unchanged."
+          "description": "Only if missing: create a valid React+TypeScript bootstrap file that mounts the app into #root; if the file already exists, do not modify it."
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Refine the existing dark+gold theme into a cohesive dark-luxury system with consistent surfaces, borders, and interaction states across header/footer/pages while maintaining accessibility.",
+      "summary": "Stop after creating the minimal structure and add an explicit confirmation step that the required files exist, with no build/deploy initiated afterward.",
       "acceptanceCriteria": [
-        "The site uses a consistent set of surface styles (backgrounds, glass cards, borders) and interaction states (hover/focus/disabled) across Header, Footer, and main page content.",
-        "No new product features are introduced; only visual/presentation improvements are made.",
-        "Theme changes do not reduce accessibility (text contrast remains readable on dark backgrounds)."
+        "Work concludes with a confirmation step listing the presence of: package.json, dfx.json, frontend/index.html, and frontend/src/main.tsx.",
+        "No build, bundling, or deployment steps are initiated after the confirmation."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Refine theme tokens for a polished dark-luxury system (surface layers, borders, text tones, focus rings) and add shared utility classes for consistent surfaces/interactions across the app."
+          "path": "frontend/STRUCTURE_CONFIRMATION.md",
+          "operation": "create",
+          "description": "Create a short, explicit confirmation checklist instructing the operator to verify that frontend/../package.json, frontend/../dfx.json, frontend/index.html, and frontend/src/main.tsx physically exist in the workspace, and to STOP before any build/bundle/deploy."
         },
         {
-          "path": "frontend/tailwind.config.js",
+          "path": "frontend/src/VALIDATION_REQUIRED.md",
           "operation": "modify",
-          "description": "Adjust/extend Tailwind theme mappings (colors/shadows/typography) to reflect the refined dark-luxury palette and consistent interaction states, keeping existing dark+gold direction."
-        },
-        {
-          "path": "frontend/src/components/Header.tsx",
-          "operation": "modify",
-          "description": "Apply the refined surface/border/hover/focus styling to the fixed header so it matches the new theme system while keeping navigation and behavior unchanged."
-        },
-        {
-          "path": "frontend/src/components/Footer.tsx",
-          "operation": "modify",
-          "description": "Apply the refined surface/border/typography styling to the footer to match the new theme system while preserving all links and content."
-        },
-        {
-          "path": "frontend/src/components/StatusBadge.tsx",
-          "operation": "modify",
-          "description": "Unify StatusBadge presentation (spacing, typography, surface/border treatment) to align with the dark-luxury system while preserving statuses and their meaning."
+          "description": "Append a new 'Controlled clean initialization' validation section that requires explicitly confirming the presence of the four required files and reiterates that no build/bundling/deployment should be attempted after confirmation."
         }
       ]
     }

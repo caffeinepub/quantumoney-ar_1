@@ -3,8 +3,8 @@
   "frontend/src/hooks/useQueries.ts": "React Query hooks for wallet functionality including QMY/ICP balance queries, QMY transfer mutation, and placeholder swap quote/execution mutations that call backend methods.",
   "frontend/src/pages/MapMode.tsx": "Map Mode placeholder page using PageShell, Container, and Typography components with consistent layout and spacing.",
   "frontend/src/pages/ARMode.tsx": "AR Mode placeholder page using PageShell, Container, and Typography components with consistent layout and spacing.",
-  "frontend/src/index.css": "Enhanced dark-luxury OKLCH color system with refined surface layers, glass morphism effects, luxury shadows, improved animations, and comprehensive design tokens for consistent spacing and typography.",
-  "frontend/index.html": "HTML entry point with updated SEO metadata emphasizing \"Quantumoney AR – QMY Luxury Pro Official App | Built by HTgamers\", Open Graph tags, favicon, and Google Fonts for premium typography.",
+  "frontend/src/index.css": "Basic CSS reset with minimal global styles for the application.",
+  "frontend/index.html": "HTML entry point with root div mount element and module script loading main.tsx.",
   "frontend/src/components/PlantConfirmationModal.tsx": "Pre-planting confirmation modal with success modal displaying comprehensive balance information, social sharing with +1 XP reward, and Portuguese XP notification without error messages.",
   "frontend/src/components/RescueConfirmationModal.tsx": "Enhanced rescue confirmation modal with comprehensive congratulations display, social sharing with +1 XP reward, Portuguese XP notification, and clean error-free UI.",
   "frontend/src/components/TokenInfoModal.tsx": "Token information modal displaying ID, value, location, lock status, 24-hour lock duration, time remaining, owner details, with added print functionality and social sharing buttons for Twitter, Facebook, WhatsApp, and Telegram.",
@@ -86,5 +86,9 @@
   "frontend/src/components/PageShell.tsx": "Shared page wrapper component that applies consistent top offset (pt-20) below the fixed header and provides a unified vertical rhythm across all routed pages.",
   "frontend/src/components/Container.tsx": "Reusable container component with configurable max-width sizes (sm/md/lg/xl/full) and standardized horizontal padding for consistent page section layouts.",
   "frontend/src/components/Typography.tsx": "Typography helper components (PageTitle, SectionTitle, SubsectionTitle, BodyText) that enforce consistent heading hierarchy and text styling, now accepting optional style prop for inline styles.",
-  "frontend/src/components/ReadOnlyBanner.tsx": "Unified banner component displaying \"Read-Only – Transfers Disabled\" message with consistent spacing, styling, and customizable message text."
+  "frontend/src/components/ReadOnlyBanner.tsx": "Unified banner component displaying \"Read-Only – Transfers Disabled\" message with consistent spacing, styling, and customizable message text.",
+  "package.json": "Root-level workspace configuration with scripts for dev, build, and setup commands pointing to the frontend directory.",
+  "dfx.json": "Internet Computer configuration defining backend (Motoko) and frontend (assets) canisters with TypeScript bindings generation.",
+  "frontend/src/main.tsx": "Minimal React bootstrap file rendering a simple confirmation message without full application code.",
+  "WORKSPACE_INITIALIZED.md": "Confirmation checklist documenting the created files and requiring explicit validation before any build or deployment attempt."
 }

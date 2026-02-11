@@ -2,71 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-implement-a-consistent-global-layout-system-that-prevents-content-from-appearing-too-high-under-the-fixed-header-by-introducing-a-uniform-top-offset-for-page-content-and-consistent-vertical-rhythm-spacing-across-the-site-without-changing-navigation-content-or-functionality",
-      "featureTitle": "Implement a consistent global layout system that prevents content from appearing too high under the fixed header, by introducing a uniform top offset for page content and consistent vertical rhythm (spacing) across the site, without changing navigation, content, or functionality.",
+      "featureId": "feature-ensure-the-frontend-entry-files-exist-and-are-valid-frontend-index-html-and-frontend-src-main-tsx-if-they-already-exist-do-not-modify-them-only-create-them-if-missing",
+      "featureTitle": "Ensure the frontend entry files exist and are valid: frontend/index.html and frontend/src/main.tsx. If they already exist, do not modify them; only create them if missing.",
       "files": [
-        "frontend/src/components/PageShell.tsx",
-        "frontend/src/index.css"
-      ],
-      "components": [
-        "camera@1.0.0",
-        "http-outcalls@3.0.0",
-        "authorization@3.0.0",
-        "blob-storage@4.0.0",
-        "qr-code@1.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-1"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-perform-a-full-visual-redesign-spacing-alignment-typography-component-layout-for-the-critical-pages-home-login-entry-points-header-login-button-any-auth-required-screens-ar-page-s-map-page-s-profile-page-s-and-rules-page-s-ensuring-a-cohesive-and-professional-presentation-while-preserving-existing-content-and-interactions",
-      "featureTitle": "Perform a full visual redesign (spacing, alignment, typography, component layout) for the critical pages: Home, Login entry points (header login button + any auth-required screens), AR page(s), Map page(s), Profile page(s), and Rules page(s), ensuring a cohesive and professional presentation while preserving existing content and interactions.",
-      "files": [
-        "frontend/src/components/Header.tsx",
-        "frontend/src/components/LoginButton.tsx",
-        "frontend/src/pages/ARMode.tsx",
-        "frontend/src/pages/HomePage.tsx",
-        "frontend/src/pages/MapMode.tsx",
-        "frontend/src/pages/Perfil.tsx",
-        "frontend/src/pages/QTMRules.tsx",
-        "frontend/src/pages/SwapPage.tsx",
-        "frontend/src/pages/WalletPage.tsx"
-      ],
-      "components": [
-        "camera@1.0.0",
-        "http-outcalls@3.0.0",
-        "authorization@3.0.0",
-        "blob-storage@4.0.0",
-        "qr-code@1.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-2"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-unify-typography-spacing-tokens-and-component-composition-across-pages-by-standardizing-headings-body-text-max-width-containers-and-card-badge-button-layout-rules-to-eliminate-inconsistent-margins-paddings-and-improve-readability",
-      "featureTitle": "Unify typography, spacing tokens, and component composition across pages by standardizing headings, body text, max-width containers, and card/badge/button layout rules to eliminate inconsistent margins/paddings and improve readability.",
-      "files": [
-        "frontend/src/components/Container.tsx",
-        "frontend/src/components/ReadOnlyBanner.tsx",
-        "frontend/src/components/Typography.tsx",
-        "frontend/src/pages/DocsPage.tsx",
-        "frontend/src/pages/LandingPage.tsx",
-        "frontend/src/pages/SwapPage.tsx",
-        "frontend/src/pages/WalletPage.tsx"
+        "frontend/index.html"
       ],
       "components": [
         "camera@1.0.0",
@@ -82,33 +21,6 @@
       ],
       "testIds": [
         "REQ-3"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-apply-a-single-cohesive-visual-theme-colors-typography-layout-style-across-all-pages-and-components-to-make-the-ui-feel-deliberate-and-consistent-keep-the-existing-dark-gold-direction-but-refine-it-into-a-polished-editorial-dark-luxury-system-with-consistent-surfaces-borders-and-hover-focus-states",
-      "featureTitle": "Apply a single cohesive visual theme (colors, typography, layout style) across all pages and components to make the UI feel deliberate and consistent. Keep the existing dark + gold direction but refine it into a polished, editorial 'dark-luxury' system with consistent surfaces, borders, and hover/focus states.",
-      "files": [
-        "frontend/src/components/Footer.tsx",
-        "frontend/src/components/Header.tsx",
-        "frontend/src/components/StatusBadge.tsx",
-        "frontend/src/index.css",
-        "frontend/tailwind.config.js"
-      ],
-      "components": [
-        "camera@1.0.0",
-        "http-outcalls@3.0.0",
-        "authorization@3.0.0",
-        "blob-storage@4.0.0",
-        "qr-code@1.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-4"
       ],
       "confidence": "high"
     }

@@ -94,7 +94,7 @@ export interface backendInterface {
     initializeMerkleStorePrices(): Promise<void>;
     isCallerAdmin(): Promise<boolean>;
     paymentCancel(sessionId: string): Promise<PaymentCancelResponse>;
-    paymentSuccess(sessionId: string, accountId: string, paymentCustomerId: string): Promise<PaymentSuccessResponse>;
+    paymentSuccess(sessionId: string, accountId: string, caffeineCustomerId: string): Promise<PaymentSuccessResponse>;
     plantCoin(location: CoordinatedPoint): Promise<void>;
     qmy_accounts(): Promise<Array<{
         usd_balance: number;

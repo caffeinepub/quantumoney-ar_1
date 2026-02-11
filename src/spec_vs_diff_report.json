@@ -1,92 +1,86 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-10T18:24:30.525Z",
-  "summary": "Diff implements a new PageShell/Container/Typography system and applies a dark-luxury theme across many pages/components (Header/Footer, Wallet/Swap, AR/Map/Profile/Rules, Docs/Landing). However, the diff also appears to introduce multiple non-requested product/features (DAO backend-style interactions, gamification/social sharing/XP, new bottom navigation) and may not apply the global PageShell offset consistently to all routed pages (notably HomePage).",
+  "generatedAt": "2026-02-11T22:54:06.235Z",
+  "summary": "The diff does not implement the requested minimal IC workspace scaffold. No new root-level package.json or dfx.json was added, and backend code was modified despite the explicit constraint not to change backend files. The diff also includes unrelated frontend/style and metadata changes beyond the requested minimal file presence checks.",
   "missing_requirements": [
     {
       "id": "REQ-1",
-      "requirement": "All routed pages should render their first meaningful content below the fixed header using a single consistent site-wide approach (shared page wrapper/page shell).",
-      "reason": "A PageShell with pt-20 is added and used in many pages, but HomePage.tsx (a critical routed page) does not show use of PageShell/Container and still uses a full-screen section with absolute-positioned elements, so the global/top-offset approach is not evidenced as applied site-wide to all routes.",
+      "requirement": "Create a minimal root-level package.json with scripts needed to install and build the existing React+TypeScript frontend.",
+      "reason": "No package.json was added (and none is shown as modified), so the required root-level package.json and build scripts cannot be verified as implemented.",
       "evidence": [
-        "frontend/src/components/PageShell.tsx",
-        "frontend/src/pages/HomePage.tsx"
+        "<file-diff>: ADDED FILES: none",
+        "<file-diff>: MODIFIED FILES list does not include package.json"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "Create a minimal root-level dfx.json defining backend and frontend assets canisters; reference backend/main.mo; do not change backend code; no deployment attempt.",
+      "reason": "No dfx.json was added (and none is shown as modified). Additionally, backend/main.mo was modified, violating the constraint/AC that backend code not be edited as part of this work.",
+      "evidence": [
+        "<file-diff>: ADDED FILES: none",
+        "<file-diff>: MODIFIED FILES list does not include dfx.json",
+        "backend/main.mo (modified)"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "Ensure frontend entry files exist and are valid: frontend/index.html and frontend/src/main.tsx; if they already existed, do not modify them.",
+      "reason": "frontend/index.html was modified (not just ensured/created if missing), and there is no evidence that frontend/src/main.tsx exists or was created (it is not listed as added or modified).",
+      "evidence": [
+        "frontend/index.html (modified)",
+        "<file-diff>: ADDED FILES: none",
+        "<file-diff>: MODIFIED FILES list does not include frontend/src/main.tsx"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "requirement": "Stop after creating only minimal structure files and provide explicit confirmation that package.json, dfx.json, frontend/index.html, and frontend/src/main.tsx exist; no build/deploy initiated.",
+      "reason": "The diff summary contains no confirmation step/output listing those files as present; also the required files (package.json, dfx.json, frontend/src/main.tsx) are not evidenced as created/ensured by the diff.",
+      "evidence": [
+        "<file-diff>: no package.json present",
+        "<file-diff>: no dfx.json present",
+        "<file-diff>: no frontend/src/main.tsx present"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "DAO governance functionality with creating proposals, listing proposals, voting system, real-time updates/auth checks (i.e., new/expanded product capability rather than purely visual/layout changes).",
-      "reason": "BuildRequest explicitly limits scope to frontend-only visual/layout changes and forbids new functionality changes; the diff summary states DAO now has full backend integration-style behavior.",
+      "description": "Backend code changes in backend/main.mo despite the requirement/constraint to not change backend logic or files.",
+      "reason": "BuildRequest explicitly forbids changing backend files (including backend/main.mo), but the diff modifies backend/main.mo.",
       "evidence": [
-        "frontend-file-summaries.txt"
+        "backend/main.mo (modified)"
       ]
     },
     {
-      "description": "Gamification/social sharing flows with +1 XP reward notifications in Plant/Rescue confirmation modals.",
-      "reason": "Not requested; violates “presentation changes only” constraint by adding new reward/XP/social-sharing behaviors.",
+      "description": "Unrequested frontend styling change to frontend/src/index.css.",
+      "reason": "BuildRequest limits changes to minimal structure files and explicitly avoids modifying components/pages beyond ensuring entry files exist; modifying index.css is outside those requirements.",
       "evidence": [
-        "frontend-file-summaries.txt"
+        "frontend/src/index.css (modified)"
       ]
     },
     {
-      "description": "TokenInfoModal print functionality and social sharing buttons (Twitter/Facebook/WhatsApp/Telegram).",
-      "reason": "Not requested; adds new user actions/features beyond visual redesign.",
+      "description": "Added/updated metadata files (frontend-file-summaries.txt and project_state.json) not requested in the BuildRequest.",
+      "reason": "These files are not part of the required minimal scaffold (package.json, dfx.json, frontend/index.html, frontend/src/main.tsx).",
       "evidence": [
-        "frontend-file-summaries.txt"
+        "frontend-file-summaries.txt (modified)",
+        "project_state.json (modified)"
       ]
     },
     {
-      "description": "New/expanded BancoCentral dashboard behaviors including persistent AR Distribution Initialized status stored in localStorage, Force Initialize admin button, DAO canister status indicator with polling, updated mainnet canister IDs, BigInt sanitization.",
-      "reason": "Not requested and goes beyond visual/layout work into new behaviors/state persistence and canister/environment-related configuration changes.",
+      "description": "App feature additions/changes described in frontend-file-summaries.txt (e.g., DAO governance integration, modals, navigation, tutorial content).",
+      "reason": "BuildRequest explicitly says not to add new features or redesign UI; the summaries describe substantial feature/UI work. (Even if the underlying code changes are truncated/not shown, the diff includes this file asserting those changes.)",
       "evidence": [
-        "frontend-file-summaries.txt"
-      ]
-    },
-    {
-      "description": "New fixed BottomNav with 7 tabs and translated labels / corrected route path.",
-      "reason": "BuildRequest non-goals include not changing routing structure or adding new navigation items; adding a new bottom navigation bar with multiple tabs is a navigation/IA change.",
-      "evidence": [
-        "frontend-file-summaries.txt"
-      ]
-    },
-    {
-      "description": "New/expanded Tutorial page content and accordion instructions (login/bonus, energy/levels/XP, planting/rescuing rules, legal warnings, etc.).",
-      "reason": "BuildRequest requires maintaining current content and functionality; adding/expanding tutorial instruction content is not evidenced as purely visual/layout refactor.",
-      "evidence": [
-        "frontend-file-summaries.txt"
-      ]
-    },
-    {
-      "description": "SEO/metadata changes in index.html emphasizing new marketing positioning text (title/OG tags).",
-      "reason": "Not requested; BuildRequest scope is visual/layout redesign while maintaining current content/presentation, and SEO copy changes are content changes.",
-      "evidence": [
-        "frontend-file-summaries.txt"
+        "frontend-file-summaries.txt (modified)"
       ]
     }
   ],
-  "confidence": 0.66,
+  "confidence": 0.84,
   "changed_files": [
+    "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/components/Container.tsx",
-    "frontend/src/components/Footer.tsx",
-    "frontend/src/components/Header.tsx",
-    "frontend/src/components/LoginButton.tsx",
-    "frontend/src/components/PageShell.tsx",
-    "frontend/src/components/ReadOnlyBanner.tsx",
-    "frontend/src/components/StatusBadge.tsx",
-    "frontend/src/components/Typography.tsx",
+    "frontend/index.html",
     "frontend/src/index.css",
-    "frontend/src/pages/ARMode.tsx",
-    "frontend/src/pages/DocsPage.tsx",
-    "frontend/src/pages/HomePage.tsx",
-    "frontend/src/pages/LandingPage.tsx",
-    "frontend/src/pages/MapMode.tsx",
-    "frontend/src/pages/Perfil.tsx",
-    "frontend/src/pages/QTMRules.tsx",
-    "frontend/src/pages/SwapPage.tsx",
-    "frontend/src/pages/WalletPage.tsx",
-    "frontend/tailwind.config.js",
     "project_state.json"
   ]
 }
