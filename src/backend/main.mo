@@ -4,10 +4,15 @@ import StripeMixin "stripe/StripeMixin";
 import MixinStorage "blob-storage/Mixin";
 import Map "mo:core/Map";
 import Nat "mo:core/Nat";
+import Float "mo:core/Float";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
+import Text "mo:core/Text";
+import Array "mo:core/Array";
 import Time "mo:core/Time";
-import Float "mo:core/Float";
+import Int "mo:core/Int";
+
+
 
 actor {
   include MixinStorage();
@@ -60,6 +65,18 @@ actor {
     claimCount : Nat;
   };
 
+  type CoordinatedPoint = {
+    latitude : Float;
+    longitude : Float;
+    address : Text;
+  };
+
+  type QMYPurchaseRequest = {
+    buyer : Principal;
+    tokensRequested : Nat;
+    timestamp : Int;
+  };
+
   let accessControlState = AccessControl.initState();
   let stripe = Stripe.init(accessControlState, "usd");
 
@@ -68,6 +85,9 @@ actor {
   let plantedCoins = Map.empty<Text, PlantedCoin>();
   let arSpotClaims = Map.empty<Text, ARSpotClaim>();
   let arSpotDistributions = Map.empty<Text, ARSpotDistribution>();
+  var qmyPurchaseRequests = Map.empty<Principal, QMYPurchaseRequest>();
+
+  var fixedQmyPrice : Float = 0.02;
 
   include StripeMixin(stripe);
 
@@ -194,7 +214,6 @@ actor {
     if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
       Runtime.trap("Unauthorized: Only authenticated users can check state");
     };
-    // Only return caller's own profile
     playerProfiles.get(caller);
   };
 
@@ -221,12 +240,6 @@ actor {
         Runtime.trap("Unauthorized: Player not registered");
       };
     };
-  };
-
-  public type CoordinatedPoint = {
-    latitude : Float;
-    longitude : Float;
-    address : Text;
   };
 
   public shared ({ caller }) func plantCoin(location : CoordinatedPoint) : async () {
@@ -392,7 +405,6 @@ actor {
       Runtime.trap("Unauthorized: Only registered users can claim AR spots");
     };
 
-    // Verify player is registered
     switch (playerProfiles.get(caller)) {
       case (?profile) {
         if (not profile.registered) {
@@ -404,23 +416,19 @@ actor {
       };
     };
 
-    // FIXED: Enforce exactly 4000 QTM per wallet per spot
     if (qtmAmount != 4000) {
       Runtime.trap("Unauthorized: Each wallet must claim exactly 4000 QTM per spot");
     };
 
-    // Check if this wallet has already claimed from this spot (atomic enforcement)
     let claimKey = spotId # ":" # caller.toText();
     switch (arSpotClaims.get(claimKey)) {
       case (?_) {
         Runtime.trap("Unauthorized: This wallet has already claimed 4000 QTM from this spot");
       };
       case (null) {
-        // Proceed with claim - wallet has not claimed from this spot yet
       };
     };
 
-    // Record the claim atomically
     let claim : ARSpotClaim = {
       spotId = spotId;
       claimedBy = caller;
@@ -429,7 +437,6 @@ actor {
     };
     arSpotClaims.add(claimKey, claim);
 
-    // Update spot distribution statistics
     let currentDistribution = switch (arSpotDistributions.get(spotId)) {
       case (?dist) { dist };
       case (null) {
@@ -448,7 +455,6 @@ actor {
     };
     arSpotDistributions.add(spotId, updatedDistribution);
 
-    // Credit the QTM to the player's account
     switch (playerProfiles.get(caller)) {
       case (?profile) {
         let updatedProfile = {
@@ -463,7 +469,6 @@ actor {
   };
 
   public query ({ caller }) func getARSpotDistribution(spotId : Text) : async ?ARSpotDistribution {
-    // Require authentication to view AR spot distribution data
     if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
       Runtime.trap("Unauthorized: Only registered users can view AR spot distributions");
     };
@@ -475,7 +480,6 @@ actor {
       Runtime.trap("Unauthorized: Only registered users can check claim status");
     };
 
-    // Users can only check their own claim status, admins can check anyone's
     if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
       Runtime.trap("Unauthorized: Can only check your own claim status or must be admin");
     };
@@ -631,5 +635,293 @@ actor {
 
     await Stripe.createPayment(stripe, caller, items, "/payment-success", "/payment-cancel");
   };
-};
 
+  public query ({ caller }) func qmy_tokens() : async [{
+    name : Text;
+    symbol : Text;
+    available_supply : Nat;
+    usd_price : Float;
+  }] {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can view token info");
+    };
+    [{
+      name = "Qmy";
+      symbol = "QMY";
+      available_supply = 333333333333;
+      usd_price = fixedQmyPrice;
+    }];
+  };
+
+  public query ({ caller }) func qmy_accounts() : async [
+    {
+      account : Principal;
+      confirmed_balance : Nat;
+      pending_balance : Nat;
+      balance_as_of_time : Int;
+      usd_balance : Float;
+    }
+  ] {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can view accounts");
+    };
+    [{
+      account = caller;
+      confirmed_balance = 1000000;
+      pending_balance = 0;
+      balance_as_of_time = Time.now();
+      usd_balance = 20.0;
+    }];
+  };
+
+  public query ({ caller }) func qmy_getNativeTradeHistory(_account : Principal) : async [Principal] {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can view trade history");
+    };
+    [];
+  };
+
+  public query ({ caller }) func qmy_getCreatedNativeTradeHistory(_account : Principal) : async [Principal] {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can view created trades");
+    };
+    [];
+  };
+
+  public query ({ caller }) func qmy_getActiveNativeTrades(_account : Principal) : async [Principal] {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can view active trades");
+    };
+    [];
+  };
+
+  public query ({ caller }) func qmy_getAvailableNativeTrades(_account : Principal) : async [Principal] {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can view available trades");
+    };
+    [];
+  };
+
+  public shared ({ caller }) func qmy_createOwnedSplitNativeTrade(_tokens : Nat, _price : Float) : async {
+    id : Text;
+    seller : Principal;
+    buyer : Principal;
+    tokens : Nat;
+    price : Float;
+    status : { #pending };
+    timestamp : Int;
+  } {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can create trades");
+    };
+
+    {
+      id = "trade_0";
+      seller = caller;
+      buyer = caller;
+      tokens = _tokens;
+      price = _price;
+      status = #pending;
+      timestamp = Time.now();
+    };
+  };
+
+  public shared ({ caller }) func qmy_purchase_split(_trade_id : Text, _tokens : Nat) : async {
+    tokens_purchased : Nat;
+    _remaining_tokens : Nat;
+  } {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can purchase tokens");
+    };
+
+    { tokens_purchased = _tokens; _remaining_tokens = 0 };
+  };
+
+  public shared ({ caller }) func qmy_cancel_pending_split(_trade_id : Text) : async {
+    remaining_tokens : Nat;
+  } {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can cancel trades");
+    };
+
+    { remaining_tokens = 0 };
+  };
+
+  public shared ({ caller }) func qmy_cancel_owner_pending_native_trades_seller(_seller : Principal) : async {
+    trade_id : Text;
+    remaining_tokens : Nat;
+  } {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can cancel trades");
+    };
+
+    if (caller != _seller and not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Can only cancel your own trades or must be admin");
+    };
+
+    { trade_id = ""; remaining_tokens = 0 };
+  };
+
+  public shared ({ caller }) func qmy_cancel_owner_pending_native_trades_buyer(_buyer : Principal) : async {
+    trade_id : Text;
+    remaining_tokens : Nat;
+  } {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can cancel trades");
+    };
+
+    if (caller != _buyer and not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Can only cancel your own trades or must be admin");
+    };
+
+    { trade_id = ""; remaining_tokens = 0 };
+  };
+
+  public shared ({ caller }) func qmy_purchaseOwnedNFTOwnedSplitNativeTrade(_token : Nat, _wallet : Principal) : async {
+    tokens_purchased : Nat;
+    remaining_tokens : Nat;
+  } {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can purchase tokens");
+    };
+
+    { tokens_purchased = _token; remaining_tokens = 0 };
+  };
+
+  public shared ({ caller }) func qmy_purchase_identify(_tokens : Nat, _wallet : Principal) : async {
+    tokens_purchased : Nat;
+  } {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can purchase tokens");
+    };
+
+    { tokens_purchased = _tokens };
+  };
+
+  public shared ({ caller }) func qmy_cancel_owner_pending_native_trades_buyerbywallet(_buyer : Principal) : async {
+    trade_id : Text;
+    remaining_tokens : Nat;
+  } {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can cancel trades");
+    };
+
+    if (caller != _buyer and not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Can only cancel your own trades or must be admin");
+    };
+
+    { trade_id = ""; remaining_tokens = 0 };
+  };
+
+  public shared ({ caller }) func qmymylo_distribute_qmy(_total_tokens : Nat, _token_price_cents : Float, _distributor_fee_cents : Float) : async {
+    tokens_distributed : Nat;
+    distributor_fee : Float;
+    total_cost_cents : Float;
+    tokens_remaining : Nat;
+  } {
+    if (not AccessControl.hasPermission(accessControlState, caller, #admin)) {
+      Runtime.trap("Unauthorized: Only admins can distribute tokens");
+    };
+
+    {
+      tokens_distributed = _total_tokens;
+      distributor_fee = _distributor_fee_cents;
+      total_cost_cents = _total_tokens.toFloat() * _token_price_cents;
+      tokens_remaining = 0;
+    };
+  };
+
+  public shared ({ caller }) func qmymylo_distribute_mylo(_total_tokens : Nat, _token_price_cents : Float, _distributor_fee_cents : Float) : async {
+    tokens_distributed : Nat;
+    distributor_fee : Float;
+    total_cost_cents : Float;
+    tokens_remaining : Nat;
+  } {
+    if (not AccessControl.hasPermission(accessControlState, caller, #admin)) {
+      Runtime.trap("Unauthorized: Only admins can distribute tokens");
+    };
+
+    {
+      tokens_distributed = _total_tokens;
+      distributor_fee = _distributor_fee_cents;
+      total_cost_cents = _total_tokens.toFloat() * _token_price_cents;
+      tokens_remaining = 0;
+    };
+  };
+
+  public shared ({ caller }) func qmy_update_purchase_request(tokens_requested : Nat) : async {
+    tokens_requested : Nat;
+    timestamp : Int;
+  } {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can update purchase requests");
+    };
+
+    let newRequest : QMYPurchaseRequest = {
+      buyer = caller;
+      tokensRequested = tokens_requested;
+      timestamp = Time.now();
+    };
+    qmyPurchaseRequests.add(caller, newRequest);
+
+    {
+      tokens_requested;
+      timestamp = newRequest.timestamp;
+    };
+  };
+
+  public query ({ caller }) func qmy_get_purchase_request(buyer : Principal) : async ?QMYPurchaseRequest {
+    if (not AccessControl.hasPermission(accessControlState, caller, #admin)) {
+      Runtime.trap("Unauthorized: Only admins can view purchase requests");
+    };
+    qmyPurchaseRequests.get(buyer);
+  };
+
+  public shared ({ caller }) func qmy_cancel_purchase_request() : async {
+    tokens_requested : Nat;
+    timestamp : Int;
+  } {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can cancel purchase requests");
+    };
+
+    switch (qmyPurchaseRequests.get(caller)) {
+      case (?request) {
+        qmyPurchaseRequests.remove(caller);
+        { tokens_requested = request.tokensRequested; timestamp = request.timestamp };
+      };
+      case (null) {
+        Runtime.trap("No purchase request found for caller");
+      };
+    };
+  };
+
+  public query ({ caller }) func qmy_view_purchase_request() : async ?QMYPurchaseRequest {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can view purchase requests");
+    };
+    qmyPurchaseRequests.get(caller);
+  };
+
+  public query ({ caller }) func qmy_get_pending_requests_by_buyer(buyer : Principal) : async [QMYPurchaseRequest] {
+    if (not AccessControl.hasPermission(accessControlState, caller, #admin)) {
+      Runtime.trap("Unauthorized: Only admins can view pending requests");
+    };
+
+    switch (qmyPurchaseRequests.get(buyer)) {
+      case (?req) { [req] };
+      case (null) { [] };
+    };
+  };
+
+  public query ({ caller }) func qmy_get_pending_requests_by_caller() : async [QMYPurchaseRequest] {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can view pending requests");
+    };
+
+    switch (qmyPurchaseRequests.get(caller)) {
+      case (?req) { [req] };
+      case (null) { [] };
+    };
+  };
+};

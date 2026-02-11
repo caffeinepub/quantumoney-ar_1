@@ -1,70 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Luxury black/gold color system - Light theme */
-    --background: oklch(1.0 0 0);
-    --foreground: oklch(0.15 0 0);
-    
-    --card: oklch(0.98 0 0);
-    --card-foreground: oklch(0.15 0 0);
-    
-    --popover: oklch(1.0 0 0);
-    --popover-foreground: oklch(0.15 0 0);
-    
-    --primary: oklch(0.15 0 0);
-    --primary-foreground: oklch(1.0 0 0);
-    
-    --secondary: oklch(0.95 0 0);
-    --secondary-foreground: oklch(0.15 0 0);
-    
-    --muted: oklch(0.96 0 0);
-    --muted-foreground: oklch(0.50 0 0);
-    
-    --accent: oklch(0.70 0.15 60);
-    --accent-foreground: oklch(0.15 0 0);
-    
-    --destructive: oklch(0.55 0.22 25);
-    --destructive-foreground: oklch(1.0 0 0);
-    
-    --border: oklch(0.90 0 0);
-    --input: oklch(0.90 0 0);
-    --ring: oklch(0.70 0.15 60);
-    
-    --radius: 0.5rem;
-  }
+    /* Dark luxury background system */
+    --background: 222 10% 4%;
+    --foreground: 45 95% 75%;
 
-  .dark {
-    /* Luxury black/gold color system - Dark theme */
-    --background: oklch(0.10 0 0);
-    --foreground: oklch(0.95 0 0);
-    
-    --card: oklch(0.15 0 0);
-    --card-foreground: oklch(0.95 0 0);
-    
-    --popover: oklch(0.15 0 0);
-    --popover-foreground: oklch(0.95 0 0);
-    
-    --primary: oklch(0.70 0.15 60);
-    --primary-foreground: oklch(0.10 0 0);
-    
-    --secondary: oklch(0.20 0 0);
-    --secondary-foreground: oklch(0.95 0 0);
-    
-    --muted: oklch(0.18 0 0);
-    --muted-foreground: oklch(0.60 0 0);
-    
-    --accent: oklch(0.70 0.15 60);
-    --accent-foreground: oklch(0.10 0 0);
-    
-    --destructive: oklch(0.55 0.22 25);
-    --destructive-foreground: oklch(0.95 0 0);
-    
-    --border: oklch(0.25 0 0);
-    --input: oklch(0.25 0 0);
-    --ring: oklch(0.70 0.15 60);
+    /* Gold primary - refined luxury tone */
+    --primary: 43 96% 56%;
+    --primary-foreground: 222 10% 4%;
+
+    /* Deep violet secondary */
+    --secondary: 270 45% 55%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Electric blue accent */
+    --accent: 200 95% 55%;
+    --accent-foreground: 222 10% 4%;
+
+    /* Refined muted tones */
+    --muted: 222 10% 12%;
+    --muted-foreground: 0 0% 65%;
+
+    /* Elevated card surfaces */
+    --card: 222 10% 8%;
+    --card-foreground: 45 95% 75%;
+
+    /* Popover surfaces */
+    --popover: 222 10% 8%;
+    --popover-foreground: 45 95% 75%;
+
+    /* Refined borders */
+    --border: 43 96% 56% / 0.25;
+    --input: 43 96% 56% / 0.3;
+
+    /* Focus ring */
+    --ring: 43 96% 56%;
+
+    /* Border radius system */
+    --radius: 0.75rem;
+
+    /* Destructive states */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Success states */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+
+    /* Warning states */
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 10% 4%;
+
+    /* Layout tokens */
+    --header-height: 5rem;
+    --page-gutter-x: 1rem;
+    --page-gutter-y: 2rem;
   }
 }
 
@@ -72,68 +67,119 @@
   * {
     @apply border-border;
   }
+  
   body {
-    @apply bg-background text-foreground;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', sans-serif;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Playfair Display', serif;
+    @apply tracking-tight;
   }
 }
 
-/* Smooth animations */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+@layer utilities {
+  /* Glass morphism surfaces */
+  .glass-card {
+    background: rgba(10, 10, 12, 0.75);
+    backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(217, 165, 32, 0.25);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .glass-card-elevated {
+    background: rgba(15, 15, 18, 0.85);
+    backdrop-filter: blur(20px) saturate(200%);
+    border: 1px solid rgba(217, 165, 32, 0.35);
   }
-}
 
-.animate-fade-in {
-  animation: fade-in 0.8s ease-out;
-}
+  /* Luxury shadows */
+  .shadow-gold {
+    box-shadow: 0 4px 24px rgba(217, 165, 32, 0.3), 0 0 48px rgba(217, 165, 32, 0.15);
+  }
 
-/* Gradient radial utility */
-.bg-gradient-radial {
-  background: radial-gradient(circle, var(--tw-gradient-stops));
-}
+  .shadow-gold-lg {
+    box-shadow: 0 8px 32px rgba(217, 165, 32, 0.4), 0 0 64px rgba(217, 165, 32, 0.2);
+  }
 
-/* Glass card effect */
-.glass-card {
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
+  .shadow-gold-subtle {
+    box-shadow: 0 2px 16px rgba(217, 165, 32, 0.2), 0 0 32px rgba(217, 165, 32, 0.1);
+  }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
+  /* Refined animations */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-/* Custom scrollbar for webkit browsers */
-::-webkit-scrollbar {
-  width: 10px;
-}
+  .animate-fade-in {
+    animation: fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
 
-::-webkit-scrollbar-track {
-  background: oklch(0.15 0 0);
-}
+  @keyframes depth-emerge {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateZ(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateZ(0);
+    }
+  }
 
-::-webkit-scrollbar-thumb {
-  background: oklch(0.70 0.15 60);
-  border-radius: 5px;
-}
+  .animate-depth-emerge {
+    animation: depth-emerge 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.65 0.15 60);
-}
+  @keyframes shimmer {
+    0% {
+      background-position: -200% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
 
-/* Dark theme scrollbar */
-.dark ::-webkit-scrollbar-track {
-  background: oklch(0.10 0 0);
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(217, 165, 32, 0.1) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(10, 10, 12, 0.5);
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(217, 165, 32, 0.4);
+    border-radius: 6px;
+    border: 2px solid rgba(10, 10, 12, 0.5);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(217, 165, 32, 0.6);
+  }
+
+  /* Focus states */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
 }

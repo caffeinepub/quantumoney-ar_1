@@ -1,60 +1,127 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-06T19:00:56.282Z",
+  "generatedAt": "2026-02-10T18:24:30.529Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 3,
+    "total": 4,
+    "implemented": 4,
     "items": [
       {
+        "id": "REQ-1",
+        "summary": "Implement a consistent global layout system that prevents content from appearing too high under the fixed header, by introducing a uniform top offset for page content and consistent vertical rhythm (spacing) across the site, without changing navigation, content, or functionality.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/PageShell.tsx",
+          "frontend/src/components/Layout.tsx",
+          "frontend/src/index.css"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/PageShell.tsx",
+          "frontend/src/index.css"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Perform a full visual redesign (spacing, alignment, typography, component layout) for the critical pages: Home, Login entry points (header login button + any auth-required screens), AR page(s), Map page(s), Profile page(s), and Rules page(s), ensuring a cohesive and professional presentation while preserving existing content and interactions.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/HomePage.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/components/LoginButton.tsx",
+          "frontend/src/pages/WalletPage.tsx",
+          "frontend/src/pages/SwapPage.tsx",
+          "frontend/src/pages/ARDistributionPage.tsx",
+          "frontend/src/pages/ARMode.tsx",
+          "frontend/src/pages/MapMode.tsx",
+          "frontend/src/pages/Perfil.tsx",
+          "frontend/src/pages/QTMRules.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/HomePage.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/components/LoginButton.tsx",
+          "frontend/src/pages/WalletPage.tsx",
+          "frontend/src/pages/SwapPage.tsx",
+          "frontend/src/pages/ARMode.tsx",
+          "frontend/src/pages/MapMode.tsx",
+          "frontend/src/pages/Perfil.tsx",
+          "frontend/src/pages/QTMRules.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Unify typography, spacing tokens, and component composition across pages by standardizing headings, body text, max-width containers, and card/badge/button layout rules to eliminate inconsistent margins/paddings and improve readability.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/Container.tsx",
+          "frontend/src/components/Typography.tsx",
+          "frontend/src/components/ReadOnlyBanner.tsx",
+          "frontend/src/pages/LandingPage.tsx",
+          "frontend/src/pages/DocsPage.tsx",
+          "frontend/src/pages/GoldPaper.tsx",
+          "frontend/src/pages/QMYTokenPage.tsx",
+          "frontend/src/pages/WalletPage.tsx",
+          "frontend/src/pages/SwapPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/Container.tsx",
+          "frontend/src/components/Typography.tsx",
+          "frontend/src/components/ReadOnlyBanner.tsx",
+          "frontend/src/pages/LandingPage.tsx",
+          "frontend/src/pages/DocsPage.tsx",
+          "frontend/src/pages/WalletPage.tsx",
+          "frontend/src/pages/SwapPage.tsx"
+        ]
+      },
+      {
         "id": "REQ-4",
-        "summary": "Update the Gold Paper navigation entry in the header so it no longer links (or redirects) to the canister URL `https://whu4t-kiaaa-aaaah-qsc5q-cai.icp0.io/` and instead routes internally to an on-site page (use the existing route `/gold-paper`). The Gold Paper nav item must be an internal SPA link (no `target=\"_blank\"`, no external `<a href>` to the canister, no JavaScript redirect).",
+        "summary": "Apply a single cohesive visual theme (colors, typography, layout style) across all pages and components to make the UI feel deliberate and consistent. Keep the existing dark + gold direction but refine it into a polished, editorial 'dark-luxury' system with consistent surfaces, borders, and hover/focus states.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/Header.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/Header.tsx"
-        ]
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Replace the current `/gold-paper` page behavior so it does not perform any automatic redirect and does not expose or attempt to fetch any Gold Paper content. The `/gold-paper` page must display ONLY the following single line of text (English, exactly as provided): “Golden Paper temporarily unavailable – content preserved”.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/GoldPaper.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/GoldPaper.tsx"
-        ]
-      },
-      {
-        "id": "REQ-6",
-        "summary": "Remove (or leave unused) any Gold Paper button/link implementation that routes users to the documentation canister root from the Gold Paper entry point(s), ensuring the frontend no longer causes IC0503/503 errors via the Gold Paper button.",
-        "status": "implemented",
-        "plannedFiles": [
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js",
           "frontend/src/components/Header.tsx",
-          "frontend/src/pages/GoldPaper.tsx"
+          "frontend/src/components/Footer.tsx",
+          "frontend/src/components/StatusBadge.tsx"
         ],
         "matchedFiles": [
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js",
           "frontend/src/components/Header.tsx",
-          "frontend/src/pages/GoldPaper.tsx"
+          "frontend/src/components/Footer.tsx",
+          "frontend/src/components/StatusBadge.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
     "build-request.json",
-    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/src/components/Container.tsx",
+    "frontend/src/components/Footer.tsx",
     "frontend/src/components/Header.tsx",
-    "frontend/src/pages/GoldPaper.tsx",
+    "frontend/src/components/LoginButton.tsx",
+    "frontend/src/components/PageShell.tsx",
+    "frontend/src/components/ReadOnlyBanner.tsx",
+    "frontend/src/components/StatusBadge.tsx",
+    "frontend/src/components/Typography.tsx",
+    "frontend/src/index.css",
+    "frontend/src/pages/ARMode.tsx",
+    "frontend/src/pages/DocsPage.tsx",
+    "frontend/src/pages/HomePage.tsx",
+    "frontend/src/pages/LandingPage.tsx",
+    "frontend/src/pages/MapMode.tsx",
+    "frontend/src/pages/Perfil.tsx",
+    "frontend/src/pages/QTMRules.tsx",
+    "frontend/src/pages/SwapPage.tsx",
+    "frontend/src/pages/WalletPage.tsx",
+    "frontend/tailwind.config.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

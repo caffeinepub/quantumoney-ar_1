@@ -1,6 +1,5 @@
-import { Shield, Scale, Users, FileText } from 'lucide-react';
+import { Shield, FileText, AlertTriangle, Scale } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import InstitutionalExpansionSection from '@/components/InstitutionalExpansionSection';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function LegalPage() {
@@ -8,57 +7,87 @@ export default function LegalPage() {
 
   const content = {
     pt: {
-      title: 'Conformidade Legal',
-      subtitle: 'Comprometidos com os Mais Altos Padrões Regulatórios',
-      gdpr: 'Conformidade GDPR da União Europeia',
-      gdprDesc: 'Totalmente compatível com o Regulamento Geral de Proteção de Dados da UE.',
-      mica: 'Conformidade MiCA EU 2025',
-      micaDesc: 'Aderente aos regulamentos de Mercados em Criptoativos da União Europeia.',
-      kyc: 'Verificação KYC/AML',
-      kycDesc: 'Verificação obrigatória de identidade para transações acima de limites estabelecidos.',
-      disclaimer: 'Aviso Legal',
-      disclaimerDesc: 'Investimento em criptomoedas envolve riscos significativos. Invista apenas o que pode perder.',
-      expansion: {
-        title: 'Expansão Institucional / Apêndice Conceptual',
-        clarification: {
-          title: 'Clarificação de Conteúdo Institucional',
-          intro: 'As descrições institucionais apresentadas neste website são conceptuais e não-operacionais:',
-          points: [
-            'Nenhuma emissão de tokens, distribuição, vesting, ou operação de tesouraria é executada através deste sistema.',
-            'Todas as mecânicas de governança, votação DAO, e fluxos de tesouraria descritos são modelos teóricos apenas.',
-            'Nenhuma operação financeira, swap, bridge, ou transação on-chain ocorre através destas páginas institucionais.',
-            'Todo o conteúdo está em conformidade total com MiCA (Regulamento de Mercados de Criptoativos da UE) e GDPR (Regulamento Geral de Proteção de Dados da UE 2016/679).',
-          ],
-          separation: 'Separação do Jogo AR',
-          separationText: 'O conteúdo institucional descrito nestas páginas é completamente separado das mecânicas de gameplay do jogo AR Quantumoney. Nenhuma recompensa de jogo, captura de monstros, ou operação de moeda plantada está relacionada com as descrições conceptuais de tokenomics, tesouraria ou governança.',
-        },
+      title: 'Legal & Conformidade',
+      subtitle: 'Avisos Regulatórios e Proteção de Dados',
+      notFinancial: {
+        title: 'Não é um Produto Financeiro',
+        text: 'QMY não é um produto financeiro, valor mobiliário, instrumento de investimento, ou ativo negociável. Nenhum token foi emitido. QMY não oferece retornos financeiros, rendimentos, dividendos, ou qualquer forma de ganho económico. Todo o conteúdo neste website é estritamente conceptual, educativo e não operacional.',
+      },
+      noTokens: {
+        title: 'Nenhum Token Emitido',
+        text: 'Nenhum token QMY foi emitido, cunhado, distribuído ou colocado em circulação. Todas as referências a "QMY", "tokens", "saldos", "distribuição" ou termos similares são puramente descritivas e destinam-se a fins educativos e de planeamento. Nenhum utilizador possui, detém em custódia, ou tem direitos financeiros sobre qualquer ativo digital através deste website ou da aplicação AR associada.',
+      },
+      mica: {
+        title: 'Conformidade MiCA (UE)',
+        text: 'Este projeto está em conformidade total com o Regulamento de Mercados de Criptoativos da União Europeia (MiCA). Nenhuma oferta de criptoativos, emissão de tokens, ou atividade de mercado regulada ocorre através deste website. Todo o conteúdo é conceptual e não constitui uma oferta, solicitação ou recomendação de investimento. Nenhuma promessa de retornos financeiros, preço, rendimento ou características de investimento é feita.',
+      },
+      gdpr: {
+        title: 'GDPR — Proteção de Dados (UE 2016/679)',
+        text: 'Este website processa dados pessoais mínimos em conformidade com o Regulamento Geral de Proteção de Dados da UE (GDPR, 2016/679). Os dados coletados limitam-se a: identificadores de autenticação (Internet Identity), dados de localização GPS (apenas durante o uso ativo da aplicação AR), e dados de perfil de utilizador (nome de utilizador, estatísticas de jogo). Nenhum dado financeiro, informação de pagamento, ou dados sensíveis são coletados. Os utilizadores têm direito de acesso, retificação, eliminação e portabilidade dos seus dados. Para exercer estes direitos, contacte: helpdesk@htgamers.com',
+      },
+      kyc: {
+        title: 'KYC/AML — Não Aplicável',
+        text: 'Nenhum processo de Conhecimento do Cliente (KYC) ou Anti-Lavagem de Dinheiro (AML) é implementado ou necessário, pois nenhuma transação financeira, emissão de tokens, ou atividade regulada ocorre através deste sistema. Este website e a aplicação AR associada não são prestadores de serviços financeiros, exchanges, ou plataformas de negociação.',
+      },
+      risks: {
+        title: 'Avisos de Risco',
+        items: [
+          'Nenhum token foi emitido.',
+          'Não é transferível.',
+          'Não é um investimento.',
+          'Não oferece retornos financeiros.',
+          'Nenhuma garantia de sincronização futura entre sistemas.',
+          'Nenhuma promessa de valor, preço ou liquidez.',
+          'Conformidade regulatória sujeita a mudanças legais.',
+        ],
+      },
+      contact: {
+        title: 'Contacto Legal',
+        text: 'Para questões legais, conformidade ou proteção de dados, contacte:',
+        email: 'helpdesk@htgamers.com',
+        website: 'htgamers.com',
       },
     },
     en: {
-      title: 'Legal Compliance',
-      subtitle: 'Committed to the Highest Regulatory Standards',
-      gdpr: 'European Union GDPR Compliance',
-      gdprDesc: 'Fully compliant with EU General Data Protection Regulation.',
-      mica: 'MiCA EU 2025 Compliance',
-      micaDesc: 'Adherent to European Union Markets in Crypto-Assets regulations.',
-      kyc: 'KYC/AML Verification',
-      kycDesc: 'Mandatory identity verification for transactions above established limits.',
-      disclaimer: 'Legal Disclaimer',
-      disclaimerDesc: 'Cryptocurrency investment involves significant risks. Invest only what you can afford to lose.',
-      expansion: {
-        title: 'Institutional Expansion / Conceptual Appendix',
-        clarification: {
-          title: 'Institutional Content Clarification',
-          intro: 'The institutional descriptions presented on this website are conceptual and non-operational:',
-          points: [
-            'No token issuance, distribution, vesting, or treasury operations are executed through this system.',
-            'All governance mechanics, DAO voting, and treasury flows described are theoretical models only.',
-            'No financial operations, swaps, bridges, or on-chain transactions occur through these institutional pages.',
-            'All content is in full compliance with MiCA (EU Markets in Crypto-Assets Regulation) and GDPR (EU General Data Protection Regulation 2016/679).',
-          ],
-          separation: 'Separation from AR Game',
-          separationText: 'The institutional content described on these pages is completely separate from the Quantumoney AR game gameplay mechanics. No game rewards, monster captures, or planted coin operations are related to the conceptual descriptions of tokenomics, treasury, or governance.',
-        },
+      title: 'Legal & Compliance',
+      subtitle: 'Regulatory Notices and Data Protection',
+      notFinancial: {
+        title: 'Not a Financial Product',
+        text: 'QMY is not a financial product, security, investment instrument, or tradable asset. No tokens have been issued. QMY does not offer financial returns, yields, dividends, or any form of economic gain. All content on this website is strictly conceptual, educational, and non-operational.',
+      },
+      noTokens: {
+        title: 'No Tokens Issued',
+        text: 'No QMY tokens have been issued, minted, distributed, or placed in circulation. All references to "QMY", "tokens", "balances", "distribution", or similar terms are purely descriptive and intended for educational and planning purposes. No user owns, holds in custody, or has financial rights to any digital asset through this website or the associated AR application.',
+      },
+      mica: {
+        title: 'MiCA Compliance (EU)',
+        text: 'This project is in full compliance with the European Union Markets in Crypto-Assets Regulation (MiCA). No crypto-asset offering, token issuance, or regulated market activity occurs through this website. All content is conceptual and does not constitute an offer, solicitation, or investment recommendation. No promise of financial returns, price, yield, or investment features is made.',
+      },
+      gdpr: {
+        title: 'GDPR — Data Protection (EU 2016/679)',
+        text: 'This website processes minimal personal data in compliance with the EU General Data Protection Regulation (GDPR, 2016/679). Data collected is limited to: authentication identifiers (Internet Identity), GPS location data (only during active AR app use), and user profile data (username, game statistics). No financial data, payment information, or sensitive data is collected. Users have the right to access, rectification, erasure, and portability of their data. To exercise these rights, contact: helpdesk@htgamers.com',
+      },
+      kyc: {
+        title: 'KYC/AML — Not Applicable',
+        text: 'No Know Your Customer (KYC) or Anti-Money Laundering (AML) processes are implemented or required, as no financial transactions, token issuance, or regulated activity occurs through this system. This website and the associated AR application are not financial service providers, exchanges, or trading platforms.',
+      },
+      risks: {
+        title: 'Risk Notices',
+        items: [
+          'No tokens have been issued.',
+          'It is not transferable.',
+          'It is not an investment.',
+          'It does not offer financial returns.',
+          'No guarantee of future synchronization between systems.',
+          'No promise of value, price, or liquidity.',
+          'Regulatory compliance subject to legal changes.',
+        ],
+      },
+      contact: {
+        title: 'Legal Contact',
+        text: 'For legal, compliance, or data protection inquiries, contact:',
+        email: 'helpdesk@htgamers.com',
+        website: 'htgamers.com',
       },
     },
   };
@@ -69,12 +98,8 @@ export default function LegalPage() {
     <section className="py-32 px-6 bg-gradient-to-b from-gray-900 to-black min-h-screen">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-20">
-          <div className="flex items-center justify-center gap-6 mb-8">
-            <img
-              src="/assets/generated/gdpr-mica-compliance-badges-transparent.dim_200x100.png"
-              alt="GDPR & MiCA Compliance"
-              className="h-20 object-contain"
-            />
+          <div className="inline-block p-6 rounded-full bg-amber-600/20 border-2 border-amber-600 mb-6">
+            <Scale className="w-16 h-16 text-amber-500" />
           </div>
           <h2 className="text-5xl md:text-6xl font-serif font-bold text-amber-500 mb-6">
             {t.title}
@@ -84,97 +109,128 @@ export default function LegalPage() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
-          <div className="glass-card p-10 rounded-3xl bg-gradient-to-br from-gray-800/60 to-black/60 border border-amber-600/30">
-            <div className="flex items-start gap-6 mb-6">
-              <Shield className="w-12 h-12 text-amber-500 flex-shrink-0" />
-              <div>
-                <h3 className="text-2xl font-serif font-bold text-amber-500 mb-3">
-                  {t.gdpr}
-                </h3>
-                <p className="text-gray-300 leading-relaxed text-lg">
-                  {t.gdprDesc}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="glass-card p-10 rounded-3xl bg-gradient-to-br from-gray-800/60 to-black/60 border border-amber-600/30">
-            <div className="flex items-start gap-6 mb-6">
-              <Scale className="w-12 h-12 text-amber-500 flex-shrink-0" />
-              <div>
-                <h3 className="text-2xl font-serif font-bold text-amber-500 mb-3">
-                  {t.mica}
-                </h3>
-                <p className="text-gray-300 leading-relaxed text-lg">
-                  {t.micaDesc}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="glass-card p-10 rounded-3xl bg-gradient-to-br from-gray-800/60 to-black/60 border border-amber-600/30">
-            <div className="flex items-start gap-6 mb-6">
-              <Users className="w-12 h-12 text-amber-500 flex-shrink-0" />
-              <div>
-                <h3 className="text-2xl font-serif font-bold text-amber-500 mb-3">
-                  {t.kyc}
-                </h3>
-                <p className="text-gray-300 leading-relaxed text-lg">
-                  {t.kycDesc}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="glass-card p-10 rounded-3xl bg-gradient-to-br from-gray-800/60 to-black/60 border border-amber-600/30">
-            <div className="flex items-start gap-6 mb-6">
-              <FileText className="w-12 h-12 text-amber-500 flex-shrink-0" />
-              <div>
-                <h3 className="text-2xl font-serif font-bold text-amber-500 mb-3">
-                  {t.disclaimer}
-                </h3>
-                <p className="text-gray-300 leading-relaxed text-lg">
-                  {t.disclaimerDesc}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Institutional Expansion Section */}
-        <InstitutionalExpansionSection title={t.expansion.title}>
-          <Card className="bg-black/50 border-amber-500/30 glass-card">
-            <CardHeader>
-              <CardTitle className="text-3xl font-serif text-amber-400">
-                {t.expansion.clarification.title}
+        {/* Not a Financial Product */}
+        <Card className="mb-8 bg-gradient-to-r from-red-900/30 via-red-800/40 to-red-900/30 border-red-500/50 glass-card">
+          <CardHeader>
+            <div className="flex items-center gap-4">
+              <AlertTriangle className="w-10 h-10 text-red-400" />
+              <CardTitle className="text-3xl font-serif text-red-400">
+                {t.notFinancial.title}
               </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <p className="text-amber-300 leading-relaxed text-justify">
-                {t.expansion.clarification.intro}
-              </p>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-red-300 leading-relaxed text-justify text-lg">
+              {t.notFinancial.text}
+            </p>
+          </CardContent>
+        </Card>
 
-              <ul className="space-y-3">
-                {t.expansion.clarification.points.map((point, idx) => (
-                  <li key={idx} className="flex items-start p-4 bg-black/30 rounded-lg border border-amber-500/20">
-                    <span className="text-amber-500 mr-3 text-xl flex-shrink-0">•</span>
-                    <span className="text-gray-300">{point}</span>
-                  </li>
-                ))}
-              </ul>
+        {/* No Tokens Issued */}
+        <Card className="mb-8 bg-gradient-to-r from-red-900/30 via-red-800/40 to-red-900/30 border-red-500/50 glass-card">
+          <CardHeader>
+            <div className="flex items-center gap-4">
+              <AlertTriangle className="w-10 h-10 text-red-400" />
+              <CardTitle className="text-3xl font-serif text-red-400">
+                {t.noTokens.title}
+              </CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-red-300 leading-relaxed text-justify text-lg">
+              {t.noTokens.text}
+            </p>
+          </CardContent>
+        </Card>
 
-              <div className="pt-6 border-t border-amber-500/30">
-                <h3 className="text-2xl font-semibold text-amber-400 mb-4">
-                  {t.expansion.clarification.separation}
-                </h3>
-                <p className="text-amber-300 leading-relaxed text-justify">
-                  {t.expansion.clarification.separationText}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </InstitutionalExpansionSection>
+        {/* MiCA Compliance */}
+        <Card className="mb-8 bg-black/50 border-amber-500/30 glass-card">
+          <CardHeader>
+            <div className="flex items-center gap-4">
+              <Shield className="w-10 h-10 text-amber-500" />
+              <CardTitle className="text-3xl font-serif text-amber-400">
+                {t.mica.title}
+              </CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-amber-300 leading-relaxed text-justify text-lg">
+              {t.mica.text}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* GDPR */}
+        <Card className="mb-8 bg-black/50 border-amber-500/30 glass-card">
+          <CardHeader>
+            <div className="flex items-center gap-4">
+              <Shield className="w-10 h-10 text-amber-500" />
+              <CardTitle className="text-3xl font-serif text-amber-400">
+                {t.gdpr.title}
+              </CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-amber-300 leading-relaxed text-justify text-lg">
+              {t.gdpr.text}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* KYC/AML */}
+        <Card className="mb-8 bg-black/50 border-amber-500/30 glass-card">
+          <CardHeader>
+            <div className="flex items-center gap-4">
+              <FileText className="w-10 h-10 text-amber-500" />
+              <CardTitle className="text-3xl font-serif text-amber-400">
+                {t.kyc.title}
+              </CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-amber-300 leading-relaxed text-justify text-lg">
+              {t.kyc.text}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Risk Notices */}
+        <Card className="mb-8 bg-gradient-to-r from-amber-900/20 via-amber-800/30 to-amber-900/20 border-amber-500/50 glass-card">
+          <CardHeader>
+            <div className="flex items-center gap-4">
+              <AlertTriangle className="w-10 h-10 text-amber-500" />
+              <CardTitle className="text-3xl font-serif text-amber-400">
+                {t.risks.title}
+              </CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-3">
+              {t.risks.items.map((item, idx) => (
+                <li key={idx} className="text-amber-300 flex items-start gap-3 text-lg">
+                  <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-1" />
+                  <span className="font-semibold">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+
+        {/* Legal Contact */}
+        <Card className="bg-black/50 border-amber-500/30 glass-card">
+          <CardHeader>
+            <CardTitle className="text-3xl font-serif text-amber-400 text-center">
+              {t.contact.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <p className="text-amber-300 text-lg">{t.contact.text}</p>
+            <div className="space-y-2">
+              <p className="text-amber-500 text-xl font-semibold">{t.contact.email}</p>
+              <p className="text-amber-500 text-xl font-semibold">{t.contact.website}</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );

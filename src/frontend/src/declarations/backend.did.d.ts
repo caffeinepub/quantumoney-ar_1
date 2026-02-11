@@ -59,6 +59,11 @@ export interface PlayerProfile {
   'registered' : boolean,
   'energy' : bigint,
 }
+export interface QMYPurchaseRequest {
+  'tokensRequested' : bigint,
+  'timestamp' : bigint,
+  'buyer' : Principal,
+}
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
@@ -112,6 +117,115 @@ export interface _SERVICE {
     PaymentSuccessResponse
   >,
   'plantCoin' : ActorMethod<[CoordinatedPoint], undefined>,
+  'qmy_accounts' : ActorMethod<
+    [],
+    Array<
+      {
+        'usd_balance' : number,
+        'balance_as_of_time' : bigint,
+        'pending_balance' : bigint,
+        'account' : Principal,
+        'confirmed_balance' : bigint,
+      }
+    >
+  >,
+  'qmy_cancel_owner_pending_native_trades_buyer' : ActorMethod<
+    [Principal],
+    { 'trade_id' : string, 'remaining_tokens' : bigint }
+  >,
+  'qmy_cancel_owner_pending_native_trades_buyerbywallet' : ActorMethod<
+    [Principal],
+    { 'trade_id' : string, 'remaining_tokens' : bigint }
+  >,
+  'qmy_cancel_owner_pending_native_trades_seller' : ActorMethod<
+    [Principal],
+    { 'trade_id' : string, 'remaining_tokens' : bigint }
+  >,
+  'qmy_cancel_pending_split' : ActorMethod<
+    [string],
+    { 'remaining_tokens' : bigint }
+  >,
+  'qmy_cancel_purchase_request' : ActorMethod<
+    [],
+    { 'tokens_requested' : bigint, 'timestamp' : bigint }
+  >,
+  'qmy_createOwnedSplitNativeTrade' : ActorMethod<
+    [bigint, number],
+    {
+      'id' : string,
+      'status' : { 'pending' : null },
+      'seller' : Principal,
+      'tokens' : bigint,
+      'timestamp' : bigint,
+      'buyer' : Principal,
+      'price' : number,
+    }
+  >,
+  'qmy_getActiveNativeTrades' : ActorMethod<[Principal], Array<Principal>>,
+  'qmy_getAvailableNativeTrades' : ActorMethod<[Principal], Array<Principal>>,
+  'qmy_getCreatedNativeTradeHistory' : ActorMethod<
+    [Principal],
+    Array<Principal>
+  >,
+  'qmy_getNativeTradeHistory' : ActorMethod<[Principal], Array<Principal>>,
+  'qmy_get_pending_requests_by_buyer' : ActorMethod<
+    [Principal],
+    Array<QMYPurchaseRequest>
+  >,
+  'qmy_get_pending_requests_by_caller' : ActorMethod<
+    [],
+    Array<QMYPurchaseRequest>
+  >,
+  'qmy_get_purchase_request' : ActorMethod<
+    [Principal],
+    [] | [QMYPurchaseRequest]
+  >,
+  'qmy_purchaseOwnedNFTOwnedSplitNativeTrade' : ActorMethod<
+    [bigint, Principal],
+    { 'remaining_tokens' : bigint, 'tokens_purchased' : bigint }
+  >,
+  'qmy_purchase_identify' : ActorMethod<
+    [bigint, Principal],
+    { 'tokens_purchased' : bigint }
+  >,
+  'qmy_purchase_split' : ActorMethod<
+    [string, bigint],
+    { '_remaining_tokens' : bigint, 'tokens_purchased' : bigint }
+  >,
+  'qmy_tokens' : ActorMethod<
+    [],
+    Array<
+      {
+        'usd_price' : number,
+        'name' : string,
+        'available_supply' : bigint,
+        'symbol' : string,
+      }
+    >
+  >,
+  'qmy_update_purchase_request' : ActorMethod<
+    [bigint],
+    { 'tokens_requested' : bigint, 'timestamp' : bigint }
+  >,
+  'qmy_view_purchase_request' : ActorMethod<[], [] | [QMYPurchaseRequest]>,
+  'qmymylo_distribute_mylo' : ActorMethod<
+    [bigint, number, number],
+    {
+      'distributor_fee' : number,
+      'tokens_distributed' : bigint,
+      'total_cost_cents' : number,
+      'tokens_remaining' : bigint,
+    }
+  >,
+  'qmymylo_distribute_qmy' : ActorMethod<
+    [bigint, number, number],
+    {
+      'distributor_fee' : number,
+      'tokens_distributed' : bigint,
+      'total_cost_cents' : number,
+      'tokens_remaining' : bigint,
+    }
+  >,
   'registerPlayer' : ActorMethod<[string], undefined>,
   'rescueSingleCoin' : ActorMethod<[string, CoordinatedPoint], undefined>,
   'restoreEnergy' : ActorMethod<[], undefined>,

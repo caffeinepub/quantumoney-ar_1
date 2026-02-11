@@ -118,22 +118,13 @@ export interface PlayerProfile {
     registered: boolean;
     energy: bigint;
 }
-export interface PaymentCancelResponse {
-    message: string;
-    sessionId: string;
-}
-export interface Monster {
-    name: string;
-    energyBoost: bigint;
-    spawnFrequency: bigint;
+export interface CapturedMonster {
+    monster: Monster;
+    captureTime: bigint;
 }
 export interface _CaffeineStorageCreateCertificateResult {
     method: string;
     blob_hash: string;
-}
-export interface CapturedMonster {
-    monster: Monster;
-    captureTime: bigint;
 }
 export interface PaymentSuccessResponse {
     message: string;
@@ -147,6 +138,20 @@ export interface PaymentSuccessResponse {
         amount: bigint;
     };
 }
+export interface QMYPurchaseRequest {
+    tokensRequested: bigint;
+    timestamp: bigint;
+    buyer: Principal;
+}
+export interface PaymentCancelResponse {
+    message: string;
+    sessionId: string;
+}
+export interface Monster {
+    name: string;
+    energyBoost: bigint;
+    spawnFrequency: bigint;
+}
 export interface _CaffeineStorageRefillResult {
     success?: boolean;
     topped_up_amount?: bigint;
@@ -159,6 +164,9 @@ export enum UserRole {
     admin = "admin",
     user = "user",
     guest = "guest"
+}
+export enum Variant_pending {
+    pending = "pending"
 }
 export interface backendInterface {
     _caffeineStorageBlobIsLive(hash: Uint8Array): Promise<boolean>;
@@ -187,13 +195,89 @@ export interface backendInterface {
     paymentCancel(sessionId: string): Promise<PaymentCancelResponse>;
     paymentSuccess(sessionId: string, accountId: string, caffeineCustomerId: string): Promise<PaymentSuccessResponse>;
     plantCoin(location: CoordinatedPoint): Promise<void>;
+    qmy_accounts(): Promise<Array<{
+        usd_balance: number;
+        balance_as_of_time: bigint;
+        pending_balance: bigint;
+        account: Principal;
+        confirmed_balance: bigint;
+    }>>;
+    qmy_cancel_owner_pending_native_trades_buyer(_buyer: Principal): Promise<{
+        trade_id: string;
+        remaining_tokens: bigint;
+    }>;
+    qmy_cancel_owner_pending_native_trades_buyerbywallet(_buyer: Principal): Promise<{
+        trade_id: string;
+        remaining_tokens: bigint;
+    }>;
+    qmy_cancel_owner_pending_native_trades_seller(_seller: Principal): Promise<{
+        trade_id: string;
+        remaining_tokens: bigint;
+    }>;
+    qmy_cancel_pending_split(_trade_id: string): Promise<{
+        remaining_tokens: bigint;
+    }>;
+    qmy_cancel_purchase_request(): Promise<{
+        tokens_requested: bigint;
+        timestamp: bigint;
+    }>;
+    qmy_createOwnedSplitNativeTrade(_tokens: bigint, _price: number): Promise<{
+        id: string;
+        status: Variant_pending;
+        seller: Principal;
+        tokens: bigint;
+        timestamp: bigint;
+        buyer: Principal;
+        price: number;
+    }>;
+    qmy_getActiveNativeTrades(_account: Principal): Promise<Array<Principal>>;
+    qmy_getAvailableNativeTrades(_account: Principal): Promise<Array<Principal>>;
+    qmy_getCreatedNativeTradeHistory(_account: Principal): Promise<Array<Principal>>;
+    qmy_getNativeTradeHistory(_account: Principal): Promise<Array<Principal>>;
+    qmy_get_pending_requests_by_buyer(buyer: Principal): Promise<Array<QMYPurchaseRequest>>;
+    qmy_get_pending_requests_by_caller(): Promise<Array<QMYPurchaseRequest>>;
+    qmy_get_purchase_request(buyer: Principal): Promise<QMYPurchaseRequest | null>;
+    qmy_purchaseOwnedNFTOwnedSplitNativeTrade(_token: bigint, _wallet: Principal): Promise<{
+        remaining_tokens: bigint;
+        tokens_purchased: bigint;
+    }>;
+    qmy_purchase_identify(_tokens: bigint, _wallet: Principal): Promise<{
+        tokens_purchased: bigint;
+    }>;
+    qmy_purchase_split(_trade_id: string, _tokens: bigint): Promise<{
+        _remaining_tokens: bigint;
+        tokens_purchased: bigint;
+    }>;
+    qmy_tokens(): Promise<Array<{
+        usd_price: number;
+        name: string;
+        available_supply: bigint;
+        symbol: string;
+    }>>;
+    qmy_update_purchase_request(tokens_requested: bigint): Promise<{
+        tokens_requested: bigint;
+        timestamp: bigint;
+    }>;
+    qmy_view_purchase_request(): Promise<QMYPurchaseRequest | null>;
+    qmymylo_distribute_mylo(_total_tokens: bigint, _token_price_cents: number, _distributor_fee_cents: number): Promise<{
+        distributor_fee: number;
+        tokens_distributed: bigint;
+        total_cost_cents: number;
+        tokens_remaining: bigint;
+    }>;
+    qmymylo_distribute_qmy(_total_tokens: bigint, _token_price_cents: number, _distributor_fee_cents: number): Promise<{
+        distributor_fee: number;
+        tokens_distributed: bigint;
+        total_cost_cents: number;
+        tokens_remaining: bigint;
+    }>;
     registerPlayer(nickname: string): Promise<void>;
     rescueSingleCoin(coinId: string, playerLocation: CoordinatedPoint): Promise<void>;
     restoreEnergy(): Promise<void>;
     saveCallerUserProfile(profile: PlayerProfile): Promise<void>;
     updateXP(xpChange: bigint): Promise<void>;
 }
-import type { ARSpotDistribution as _ARSpotDistribution, LineItem as _LineItem, PlayerProfile as _PlayerProfile, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
+import type { ARSpotDistribution as _ARSpotDistribution, LineItem as _LineItem, PlayerProfile as _PlayerProfile, QMYPurchaseRequest as _QMYPurchaseRequest, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _caffeineStorageBlobIsLive(arg0: Uint8Array): Promise<boolean> {
@@ -560,6 +644,368 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async qmy_accounts(): Promise<Array<{
+        usd_balance: number;
+        balance_as_of_time: bigint;
+        pending_balance: bigint;
+        account: Principal;
+        confirmed_balance: bigint;
+    }>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_accounts();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_accounts();
+            return result;
+        }
+    }
+    async qmy_cancel_owner_pending_native_trades_buyer(arg0: Principal): Promise<{
+        trade_id: string;
+        remaining_tokens: bigint;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_cancel_owner_pending_native_trades_buyer(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_cancel_owner_pending_native_trades_buyer(arg0);
+            return result;
+        }
+    }
+    async qmy_cancel_owner_pending_native_trades_buyerbywallet(arg0: Principal): Promise<{
+        trade_id: string;
+        remaining_tokens: bigint;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_cancel_owner_pending_native_trades_buyerbywallet(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_cancel_owner_pending_native_trades_buyerbywallet(arg0);
+            return result;
+        }
+    }
+    async qmy_cancel_owner_pending_native_trades_seller(arg0: Principal): Promise<{
+        trade_id: string;
+        remaining_tokens: bigint;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_cancel_owner_pending_native_trades_seller(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_cancel_owner_pending_native_trades_seller(arg0);
+            return result;
+        }
+    }
+    async qmy_cancel_pending_split(arg0: string): Promise<{
+        remaining_tokens: bigint;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_cancel_pending_split(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_cancel_pending_split(arg0);
+            return result;
+        }
+    }
+    async qmy_cancel_purchase_request(): Promise<{
+        tokens_requested: bigint;
+        timestamp: bigint;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_cancel_purchase_request();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_cancel_purchase_request();
+            return result;
+        }
+    }
+    async qmy_createOwnedSplitNativeTrade(arg0: bigint, arg1: number): Promise<{
+        id: string;
+        status: Variant_pending;
+        seller: Principal;
+        tokens: bigint;
+        timestamp: bigint;
+        buyer: Principal;
+        price: number;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_createOwnedSplitNativeTrade(arg0, arg1);
+                return from_candid_record_n17(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_createOwnedSplitNativeTrade(arg0, arg1);
+            return from_candid_record_n17(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async qmy_getActiveNativeTrades(arg0: Principal): Promise<Array<Principal>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_getActiveNativeTrades(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_getActiveNativeTrades(arg0);
+            return result;
+        }
+    }
+    async qmy_getAvailableNativeTrades(arg0: Principal): Promise<Array<Principal>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_getAvailableNativeTrades(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_getAvailableNativeTrades(arg0);
+            return result;
+        }
+    }
+    async qmy_getCreatedNativeTradeHistory(arg0: Principal): Promise<Array<Principal>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_getCreatedNativeTradeHistory(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_getCreatedNativeTradeHistory(arg0);
+            return result;
+        }
+    }
+    async qmy_getNativeTradeHistory(arg0: Principal): Promise<Array<Principal>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_getNativeTradeHistory(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_getNativeTradeHistory(arg0);
+            return result;
+        }
+    }
+    async qmy_get_pending_requests_by_buyer(arg0: Principal): Promise<Array<QMYPurchaseRequest>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_get_pending_requests_by_buyer(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_get_pending_requests_by_buyer(arg0);
+            return result;
+        }
+    }
+    async qmy_get_pending_requests_by_caller(): Promise<Array<QMYPurchaseRequest>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_get_pending_requests_by_caller();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_get_pending_requests_by_caller();
+            return result;
+        }
+    }
+    async qmy_get_purchase_request(arg0: Principal): Promise<QMYPurchaseRequest | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_get_purchase_request(arg0);
+                return from_candid_opt_n19(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_get_purchase_request(arg0);
+            return from_candid_opt_n19(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async qmy_purchaseOwnedNFTOwnedSplitNativeTrade(arg0: bigint, arg1: Principal): Promise<{
+        remaining_tokens: bigint;
+        tokens_purchased: bigint;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_purchaseOwnedNFTOwnedSplitNativeTrade(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_purchaseOwnedNFTOwnedSplitNativeTrade(arg0, arg1);
+            return result;
+        }
+    }
+    async qmy_purchase_identify(arg0: bigint, arg1: Principal): Promise<{
+        tokens_purchased: bigint;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_purchase_identify(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_purchase_identify(arg0, arg1);
+            return result;
+        }
+    }
+    async qmy_purchase_split(arg0: string, arg1: bigint): Promise<{
+        _remaining_tokens: bigint;
+        tokens_purchased: bigint;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_purchase_split(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_purchase_split(arg0, arg1);
+            return result;
+        }
+    }
+    async qmy_tokens(): Promise<Array<{
+        usd_price: number;
+        name: string;
+        available_supply: bigint;
+        symbol: string;
+    }>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_tokens();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_tokens();
+            return result;
+        }
+    }
+    async qmy_update_purchase_request(arg0: bigint): Promise<{
+        tokens_requested: bigint;
+        timestamp: bigint;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_update_purchase_request(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_update_purchase_request(arg0);
+            return result;
+        }
+    }
+    async qmy_view_purchase_request(): Promise<QMYPurchaseRequest | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmy_view_purchase_request();
+                return from_candid_opt_n19(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmy_view_purchase_request();
+            return from_candid_opt_n19(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async qmymylo_distribute_mylo(arg0: bigint, arg1: number, arg2: number): Promise<{
+        distributor_fee: number;
+        tokens_distributed: bigint;
+        total_cost_cents: number;
+        tokens_remaining: bigint;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmymylo_distribute_mylo(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmymylo_distribute_mylo(arg0, arg1, arg2);
+            return result;
+        }
+    }
+    async qmymylo_distribute_qmy(arg0: bigint, arg1: number, arg2: number): Promise<{
+        distributor_fee: number;
+        tokens_distributed: bigint;
+        total_cost_cents: number;
+        tokens_remaining: bigint;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.qmymylo_distribute_qmy(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.qmymylo_distribute_qmy(arg0, arg1, arg2);
+            return result;
+        }
+    }
     async registerPlayer(arg0: string): Promise<void> {
         if (this.processError) {
             try {
@@ -643,11 +1089,43 @@ function from_candid_opt_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8A
 function from_candid_opt_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PlayerProfile]): PlayerProfile | null {
     return value.length === 0 ? null : value[0];
 }
+function from_candid_opt_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_QMYPurchaseRequest]): QMYPurchaseRequest | null {
+    return value.length === 0 ? null : value[0];
+}
 function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [boolean]): boolean | null {
     return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [bigint]): bigint | null {
     return value.length === 0 ? null : value[0];
+}
+function from_candid_record_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    id: string;
+    status: {
+        pending: null;
+    };
+    seller: Principal;
+    tokens: bigint;
+    timestamp: bigint;
+    buyer: Principal;
+    price: number;
+}): {
+    id: string;
+    status: Variant_pending;
+    seller: Principal;
+    tokens: bigint;
+    timestamp: bigint;
+    buyer: Principal;
+    price: number;
+} {
+    return {
+        id: value.id,
+        status: from_candid_variant_n18(_uploadFile, _downloadFile, value.status),
+        seller: value.seller,
+        tokens: value.tokens,
+        timestamp: value.timestamp,
+        buyer: value.buyer,
+        price: value.price
+    };
 }
 function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     success: [] | [boolean];
@@ -669,6 +1147,11 @@ function from_candid_variant_n16(_uploadFile: (file: ExternalBlob) => Promise<Ui
     guest: null;
 }): UserRole {
     return "admin" in value ? UserRole.admin : "user" in value ? UserRole.user : "guest" in value ? UserRole.guest : value;
+}
+function from_candid_variant_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    pending: null;
+}): Variant_pending {
+    return "pending" in value ? Variant_pending.pending : value;
 }
 function to_candid_LineItem_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: LineItem): _LineItem {
     return to_candid_record_n12(_uploadFile, _downloadFile, value);

@@ -1,104 +1,77 @@
-import { Map, BarChart3, Globe2 } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Map, AlertCircle } from 'lucide-react';
+import StatusBadge from '@/components/StatusBadge';
 
 export default function ARDistributionPage() {
-  const { language } = useLanguage();
-
-  const content = {
-    pt: {
-      title: 'Distribuição AR Global',
-      subtitle: 'Rede Mundial de 60.000 AR Spots',
-      mapTitle: 'Mapa de Distribuição Global',
-      statsTitle: 'Estatísticas Regionais',
-      regions: [
-        { name: 'Ásia', percentage: '40%', spots: '24.000 AR Spots' },
-        { name: 'América do Norte', percentage: '20%', spots: '12.000 AR Spots' },
-        { name: 'Europa', percentage: '15%', spots: '9.000 AR Spots' },
-        { name: 'América Latina', percentage: '10%', spots: '6.000 AR Spots' },
-        { name: 'África', percentage: '10%', spots: '6.000 AR Spots' },
-        { name: 'Outros', percentage: '5%', spots: '3.000 AR Spots' },
-      ],
-    },
-    en: {
-      title: 'AR Global Distribution',
-      subtitle: 'Worldwide Network of 60,000 AR Spots',
-      mapTitle: 'Global Distribution Map',
-      statsTitle: 'Regional Statistics',
-      regions: [
-        { name: 'Asia', percentage: '40%', spots: '24,000 AR Spots' },
-        { name: 'North America', percentage: '20%', spots: '12,000 AR Spots' },
-        { name: 'Europe', percentage: '15%', spots: '9,000 AR Spots' },
-        { name: 'Latin America', percentage: '10%', spots: '6,000 AR Spots' },
-        { name: 'Africa', percentage: '10%', spots: '6,000 AR Spots' },
-        { name: 'Others', percentage: '5%', spots: '3,000 AR Spots' },
-      ],
-    },
-  };
-
-  const t = content[language];
-
   return (
-    <section className="py-32 px-6 bg-gradient-to-b from-black via-gray-900 to-black min-h-screen">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-20">
+    <section className="py-32 px-6 bg-gradient-to-b from-gray-900 to-black min-h-screen">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-16">
           <div className="inline-block p-6 rounded-full bg-amber-600/20 border-2 border-amber-600 mb-6">
-            <Globe2 className="w-16 h-16 text-amber-500" />
+            <Map className="w-16 h-16 text-amber-500" />
           </div>
-          <h2 className="text-5xl md:text-6xl font-serif font-bold text-amber-500 mb-6">
-            {t.title}
-          </h2>
+          <h1 className="text-5xl md:text-6xl font-serif font-bold text-amber-500 mb-4">
+            AR Distribution (Conceptual)
+          </h1>
+          <StatusBadge status="draft" className="mb-4" />
           <p className="text-2xl text-gray-300 max-w-3xl mx-auto">
-            {t.subtitle}
+            Theoretical global distribution model
           </p>
         </div>
 
-        {/* Global Map */}
-        <div className="mb-16">
-          <h3 className="text-3xl font-serif font-bold text-amber-500 mb-8 text-center flex items-center justify-center gap-3">
-            <Map className="w-8 h-8" />
-            {t.mapTitle}
-          </h3>
-          <div className="relative group">
-            <img
-              src="/assets/generated/global-ar-distribution-world-map.dim_1200x800.png"
-              alt="Global AR Distribution"
-              className="w-full rounded-3xl border border-amber-600/30 shadow-gold transition-all duration-300 group-hover:scale-105"
-            />
-          </div>
-        </div>
+        {/* Important Notice */}
+        <Card className="mb-12 bg-red-900/20 border-red-500/40 glass-card">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-8 h-8 text-red-400" />
+              <CardTitle className="text-2xl font-serif text-red-400">
+                Conceptual Model Only
+              </CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-red-200 leading-relaxed">
+              This page describes a conceptual AR distribution model for educational purposes. 
+              No active distribution is occurring. No tokens are being distributed. 
+              All content is informational only.
+            </p>
+          </CardContent>
+        </Card>
 
-        {/* Regional Statistics */}
-        <div>
-          <h3 className="text-3xl font-serif font-bold text-amber-500 mb-8 text-center flex items-center justify-center gap-3">
-            <BarChart3 className="w-8 h-8" />
-            {t.statsTitle}
-          </h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {t.regions.map((region, index) => (
-              <div
-                key={index}
-                className="glass-card p-8 rounded-2xl bg-gradient-to-br from-gray-800/60 to-black/60 border border-amber-600/30 backdrop-blur-md hover:border-amber-500/60 transition-all duration-500 hover:scale-105"
-              >
-                <h4 className="text-2xl font-serif font-bold text-amber-500 mb-4">
-                  {region.name}
-                </h4>
-                <div className="space-y-2">
-                  <p className="text-3xl font-bold text-gray-200">{region.percentage}</p>
-                  <p className="text-lg text-gray-400">{region.spots}</p>
-                </div>
+        {/* Conceptual Framework */}
+        <Card className="mb-12 bg-black/50 border-amber-500/30 glass-card">
+          <CardHeader>
+            <CardTitle className="text-3xl font-serif text-amber-400">
+              Conceptual Distribution Framework
+            </CardTitle>
+            <StatusBadge status="draft" className="mt-2" />
+          </CardHeader>
+          <CardContent className="space-y-4 text-gray-300">
+            <div className="p-4 bg-amber-900/10 border border-amber-500/20 rounded-lg">
+              <p className="text-sm text-amber-300 italic">
+                Content pending final Gold Paper. This section will describe the conceptual AR distribution model 
+                without asserting active distribution, specific parameters, or operational claims.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Compliance Notice */}
+        <Card className="bg-black/50 border-amber-500/30 glass-card">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-4">
+              <AlertCircle className="w-6 h-6 text-amber-400 flex-shrink-0 mt-1" />
+              <div>
+                <h3 className="text-amber-400 font-bold text-lg mb-2">Regulatory Compliance</h3>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  This page complies with MiCA (EU) and GDPR (EU 2016/679). 
+                  No tokens are distributed. All content is educational and conceptual only.
+                </p>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Additional Visual */}
-        <div className="mt-16">
-          <img
-            src="/assets/generated/planisferio-global-distribution.dim_800x600.png"
-            alt="Planisphere Distribution"
-            className="w-full rounded-3xl border border-amber-600/30 shadow-gold"
-          />
-        </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );

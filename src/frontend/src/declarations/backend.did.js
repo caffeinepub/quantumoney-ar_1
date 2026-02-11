@@ -76,6 +76,11 @@ export const CoordinatedPoint = IDL.Record({
   'longitude' : IDL.Float64,
   'address' : IDL.Text,
 });
+export const QMYPurchaseRequest = IDL.Record({
+  'tokensRequested' : IDL.Nat,
+  'timestamp' : IDL.Int,
+  'buyer' : IDL.Principal,
+});
 
 export const idlService = IDL.Service({
   '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -148,6 +153,169 @@ export const idlService = IDL.Service({
       [],
     ),
   'plantCoin' : IDL.Func([CoordinatedPoint], [], []),
+  'qmy_accounts' : IDL.Func(
+      [],
+      [
+        IDL.Vec(
+          IDL.Record({
+            'usd_balance' : IDL.Float64,
+            'balance_as_of_time' : IDL.Int,
+            'pending_balance' : IDL.Nat,
+            'account' : IDL.Principal,
+            'confirmed_balance' : IDL.Nat,
+          })
+        ),
+      ],
+      ['query'],
+    ),
+  'qmy_cancel_owner_pending_native_trades_buyer' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Record({ 'trade_id' : IDL.Text, 'remaining_tokens' : IDL.Nat })],
+      [],
+    ),
+  'qmy_cancel_owner_pending_native_trades_buyerbywallet' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Record({ 'trade_id' : IDL.Text, 'remaining_tokens' : IDL.Nat })],
+      [],
+    ),
+  'qmy_cancel_owner_pending_native_trades_seller' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Record({ 'trade_id' : IDL.Text, 'remaining_tokens' : IDL.Nat })],
+      [],
+    ),
+  'qmy_cancel_pending_split' : IDL.Func(
+      [IDL.Text],
+      [IDL.Record({ 'remaining_tokens' : IDL.Nat })],
+      [],
+    ),
+  'qmy_cancel_purchase_request' : IDL.Func(
+      [],
+      [IDL.Record({ 'tokens_requested' : IDL.Nat, 'timestamp' : IDL.Int })],
+      [],
+    ),
+  'qmy_createOwnedSplitNativeTrade' : IDL.Func(
+      [IDL.Nat, IDL.Float64],
+      [
+        IDL.Record({
+          'id' : IDL.Text,
+          'status' : IDL.Variant({ 'pending' : IDL.Null }),
+          'seller' : IDL.Principal,
+          'tokens' : IDL.Nat,
+          'timestamp' : IDL.Int,
+          'buyer' : IDL.Principal,
+          'price' : IDL.Float64,
+        }),
+      ],
+      [],
+    ),
+  'qmy_getActiveNativeTrades' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Vec(IDL.Principal)],
+      ['query'],
+    ),
+  'qmy_getAvailableNativeTrades' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Vec(IDL.Principal)],
+      ['query'],
+    ),
+  'qmy_getCreatedNativeTradeHistory' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Vec(IDL.Principal)],
+      ['query'],
+    ),
+  'qmy_getNativeTradeHistory' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Vec(IDL.Principal)],
+      ['query'],
+    ),
+  'qmy_get_pending_requests_by_buyer' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Vec(QMYPurchaseRequest)],
+      ['query'],
+    ),
+  'qmy_get_pending_requests_by_caller' : IDL.Func(
+      [],
+      [IDL.Vec(QMYPurchaseRequest)],
+      ['query'],
+    ),
+  'qmy_get_purchase_request' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Opt(QMYPurchaseRequest)],
+      ['query'],
+    ),
+  'qmy_purchaseOwnedNFTOwnedSplitNativeTrade' : IDL.Func(
+      [IDL.Nat, IDL.Principal],
+      [
+        IDL.Record({
+          'remaining_tokens' : IDL.Nat,
+          'tokens_purchased' : IDL.Nat,
+        }),
+      ],
+      [],
+    ),
+  'qmy_purchase_identify' : IDL.Func(
+      [IDL.Nat, IDL.Principal],
+      [IDL.Record({ 'tokens_purchased' : IDL.Nat })],
+      [],
+    ),
+  'qmy_purchase_split' : IDL.Func(
+      [IDL.Text, IDL.Nat],
+      [
+        IDL.Record({
+          '_remaining_tokens' : IDL.Nat,
+          'tokens_purchased' : IDL.Nat,
+        }),
+      ],
+      [],
+    ),
+  'qmy_tokens' : IDL.Func(
+      [],
+      [
+        IDL.Vec(
+          IDL.Record({
+            'usd_price' : IDL.Float64,
+            'name' : IDL.Text,
+            'available_supply' : IDL.Nat,
+            'symbol' : IDL.Text,
+          })
+        ),
+      ],
+      ['query'],
+    ),
+  'qmy_update_purchase_request' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Record({ 'tokens_requested' : IDL.Nat, 'timestamp' : IDL.Int })],
+      [],
+    ),
+  'qmy_view_purchase_request' : IDL.Func(
+      [],
+      [IDL.Opt(QMYPurchaseRequest)],
+      ['query'],
+    ),
+  'qmymylo_distribute_mylo' : IDL.Func(
+      [IDL.Nat, IDL.Float64, IDL.Float64],
+      [
+        IDL.Record({
+          'distributor_fee' : IDL.Float64,
+          'tokens_distributed' : IDL.Nat,
+          'total_cost_cents' : IDL.Float64,
+          'tokens_remaining' : IDL.Nat,
+        }),
+      ],
+      [],
+    ),
+  'qmymylo_distribute_qmy' : IDL.Func(
+      [IDL.Nat, IDL.Float64, IDL.Float64],
+      [
+        IDL.Record({
+          'distributor_fee' : IDL.Float64,
+          'tokens_distributed' : IDL.Nat,
+          'total_cost_cents' : IDL.Float64,
+          'tokens_remaining' : IDL.Nat,
+        }),
+      ],
+      [],
+    ),
   'registerPlayer' : IDL.Func([IDL.Text], [], []),
   'rescueSingleCoin' : IDL.Func([IDL.Text, CoordinatedPoint], [], []),
   'restoreEnergy' : IDL.Func([], [], []),
@@ -226,6 +394,11 @@ export const idlFactory = ({ IDL }) => {
     'longitude' : IDL.Float64,
     'address' : IDL.Text,
   });
+  const QMYPurchaseRequest = IDL.Record({
+    'tokensRequested' : IDL.Nat,
+    'timestamp' : IDL.Int,
+    'buyer' : IDL.Principal,
+  });
   
   return IDL.Service({
     '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -298,6 +471,169 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'plantCoin' : IDL.Func([CoordinatedPoint], [], []),
+    'qmy_accounts' : IDL.Func(
+        [],
+        [
+          IDL.Vec(
+            IDL.Record({
+              'usd_balance' : IDL.Float64,
+              'balance_as_of_time' : IDL.Int,
+              'pending_balance' : IDL.Nat,
+              'account' : IDL.Principal,
+              'confirmed_balance' : IDL.Nat,
+            })
+          ),
+        ],
+        ['query'],
+      ),
+    'qmy_cancel_owner_pending_native_trades_buyer' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Record({ 'trade_id' : IDL.Text, 'remaining_tokens' : IDL.Nat })],
+        [],
+      ),
+    'qmy_cancel_owner_pending_native_trades_buyerbywallet' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Record({ 'trade_id' : IDL.Text, 'remaining_tokens' : IDL.Nat })],
+        [],
+      ),
+    'qmy_cancel_owner_pending_native_trades_seller' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Record({ 'trade_id' : IDL.Text, 'remaining_tokens' : IDL.Nat })],
+        [],
+      ),
+    'qmy_cancel_pending_split' : IDL.Func(
+        [IDL.Text],
+        [IDL.Record({ 'remaining_tokens' : IDL.Nat })],
+        [],
+      ),
+    'qmy_cancel_purchase_request' : IDL.Func(
+        [],
+        [IDL.Record({ 'tokens_requested' : IDL.Nat, 'timestamp' : IDL.Int })],
+        [],
+      ),
+    'qmy_createOwnedSplitNativeTrade' : IDL.Func(
+        [IDL.Nat, IDL.Float64],
+        [
+          IDL.Record({
+            'id' : IDL.Text,
+            'status' : IDL.Variant({ 'pending' : IDL.Null }),
+            'seller' : IDL.Principal,
+            'tokens' : IDL.Nat,
+            'timestamp' : IDL.Int,
+            'buyer' : IDL.Principal,
+            'price' : IDL.Float64,
+          }),
+        ],
+        [],
+      ),
+    'qmy_getActiveNativeTrades' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Vec(IDL.Principal)],
+        ['query'],
+      ),
+    'qmy_getAvailableNativeTrades' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Vec(IDL.Principal)],
+        ['query'],
+      ),
+    'qmy_getCreatedNativeTradeHistory' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Vec(IDL.Principal)],
+        ['query'],
+      ),
+    'qmy_getNativeTradeHistory' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Vec(IDL.Principal)],
+        ['query'],
+      ),
+    'qmy_get_pending_requests_by_buyer' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Vec(QMYPurchaseRequest)],
+        ['query'],
+      ),
+    'qmy_get_pending_requests_by_caller' : IDL.Func(
+        [],
+        [IDL.Vec(QMYPurchaseRequest)],
+        ['query'],
+      ),
+    'qmy_get_purchase_request' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Opt(QMYPurchaseRequest)],
+        ['query'],
+      ),
+    'qmy_purchaseOwnedNFTOwnedSplitNativeTrade' : IDL.Func(
+        [IDL.Nat, IDL.Principal],
+        [
+          IDL.Record({
+            'remaining_tokens' : IDL.Nat,
+            'tokens_purchased' : IDL.Nat,
+          }),
+        ],
+        [],
+      ),
+    'qmy_purchase_identify' : IDL.Func(
+        [IDL.Nat, IDL.Principal],
+        [IDL.Record({ 'tokens_purchased' : IDL.Nat })],
+        [],
+      ),
+    'qmy_purchase_split' : IDL.Func(
+        [IDL.Text, IDL.Nat],
+        [
+          IDL.Record({
+            '_remaining_tokens' : IDL.Nat,
+            'tokens_purchased' : IDL.Nat,
+          }),
+        ],
+        [],
+      ),
+    'qmy_tokens' : IDL.Func(
+        [],
+        [
+          IDL.Vec(
+            IDL.Record({
+              'usd_price' : IDL.Float64,
+              'name' : IDL.Text,
+              'available_supply' : IDL.Nat,
+              'symbol' : IDL.Text,
+            })
+          ),
+        ],
+        ['query'],
+      ),
+    'qmy_update_purchase_request' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Record({ 'tokens_requested' : IDL.Nat, 'timestamp' : IDL.Int })],
+        [],
+      ),
+    'qmy_view_purchase_request' : IDL.Func(
+        [],
+        [IDL.Opt(QMYPurchaseRequest)],
+        ['query'],
+      ),
+    'qmymylo_distribute_mylo' : IDL.Func(
+        [IDL.Nat, IDL.Float64, IDL.Float64],
+        [
+          IDL.Record({
+            'distributor_fee' : IDL.Float64,
+            'tokens_distributed' : IDL.Nat,
+            'total_cost_cents' : IDL.Float64,
+            'tokens_remaining' : IDL.Nat,
+          }),
+        ],
+        [],
+      ),
+    'qmymylo_distribute_qmy' : IDL.Func(
+        [IDL.Nat, IDL.Float64, IDL.Float64],
+        [
+          IDL.Record({
+            'distributor_fee' : IDL.Float64,
+            'tokens_distributed' : IDL.Nat,
+            'total_cost_cents' : IDL.Float64,
+            'tokens_remaining' : IDL.Nat,
+          }),
+        ],
+        [],
+      ),
     'registerPlayer' : IDL.Func([IDL.Text], [], []),
     'rescueSingleCoin' : IDL.Func([IDL.Text, CoordinatedPoint], [], []),
     'restoreEnergy' : IDL.Func([], [], []),

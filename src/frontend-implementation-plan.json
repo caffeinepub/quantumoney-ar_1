@@ -1,57 +1,186 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Replace Gold Paper external canister link with internal placeholder page",
+  "title": "Frontend-only dark-luxury visual redesign with unified page shell and typography system",
   "requirements": [
     {
-      "id": "REQ-4",
-      "summary": "Change the header “Gold Paper” navigation item (desktop + mobile) to use internal SPA navigation to /gold-paper, with no external URL behavior.",
+      "id": "REQ-1",
+      "summary": "Introduce a shared page shell to enforce a consistent top offset under the fixed header and a uniform vertical rhythm across all routed pages without altering navigation/content/functionality.",
       "acceptanceCriteria": [
-        "From the header (desktop and mobile), clicking “Gold Paper” navigates to `/gold-paper` within the app (no navigation to `https://whu4t-kiaaa-aaaah-qsc5q-cai.icp0.io/`).",
-        "The header Gold Paper item is treated as internal navigation (no external-link icon required, no new tab behavior).",
-        "No other header navigation items change behavior or styling."
+        "All routed pages render their first meaningful content below the fixed header (no overlap).",
+        "A single, consistent approach is used site-wide (e.g., a shared page wrapper / page shell) rather than ad-hoc per-page fixes.",
+        "No text content, routes, or functional behavior changes (authentication flow, wallet read-only labels, links) are introduced as part of this change."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/Header.tsx",
+          "path": "frontend/src/components/PageShell.tsx",
+          "operation": "create",
+          "description": "Create a shared PageShell component that applies a uniform top offset (accounting for the fixed header) and standard vertical spacing for page content; keep it presentation-only (no behavior changes)."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
           "operation": "modify",
-          "description": "Replace the current external Gold Paper nav item (which uses the docs canister URL + ExternalLink icon + target=_blank) with an internal TanStack Router <Link> pointing to `/gold-paper` for both desktop and mobile menus; remove the docs canister constants from this header file while keeping all other nav items unchanged."
+          "description": "Wire PageShell into the global layout so the routed Outlet content always renders below the fixed header using a single site-wide approach (no per-page header-offset hacks)."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add/standardize global layout tokens (e.g., CSS variables for header height and page gutters) and shared utilities used by PageShell to ensure consistent vertical rhythm across the app."
         }
       ]
     },
     {
-      "id": "REQ-5",
-      "summary": "Replace /gold-paper page content with a single-line English placeholder message and remove any redirect or content fetching attempts.",
+      "id": "REQ-2",
+      "summary": "Visually redesign the critical pages (Home, login entry points and unauth screens, AR, Map, Profile, Rules) for cohesive spacing/alignment/typography while preserving existing content and interactions.",
       "acceptanceCriteria": [
-        "Visiting `/gold-paper` never triggers `window.location.href` changes, timed redirects, or any link to the canister URL.",
-        "The page renders only the exact text: “Golden Paper temporarily unavailable – content preserved”.",
-        "No additional explanatory text, buttons, canister URLs, spinners, or other UI elements are shown on `/gold-paper`."
+        "Home page layout is visually balanced on mobile and desktop: consistent padding, aligned center content, and no elements clipped by the viewport or header.",
+        "Login entry points are visually consistent: the Header login button styling matches the new system, and auth-required screens (e.g., Wallet/Swap unauthenticated states) match the same typography/spacing rules.",
+        "If AR/Map/Profile/Rules pages exist in the codebase (including placeholder pages), they use the same redesigned page shell, typography scale, and spacing system as Home/Wallet/Swap.",
+        "No backend calls, React Query behavior, or identity logic is changed."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/GoldPaper.tsx",
+          "path": "frontend/src/pages/HomePage.tsx",
           "operation": "modify",
-          "description": "Remove the auto-redirect useEffect, the manual redirect button, any references/constants for the documentation canister URL, and any multilingual/extra UI; ensure the component renders ONLY the exact single line text: “Golden Paper temporarily unavailable – content preserved”."
+          "description": "Refactor Home page layout to use the redesigned spacing/typography system and ensure its hero content sits comfortably below the fixed header on all breakpoints; preserve all existing text and interactions."
+        },
+        {
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "modify",
+          "description": "Adjust header presentation (spacing, alignment, hover/focus styling) to match the redesigned dark-luxury system while keeping existing navigation items and behavior unchanged."
+        },
+        {
+          "path": "frontend/src/components/LoginButton.tsx",
+          "operation": "modify",
+          "description": "Update only the Login button presentation (spacing/typography/interaction states) to align with the new design system; do not change authentication logic, labels, or query cache clearing behavior."
+        },
+        {
+          "path": "frontend/src/pages/WalletPage.tsx",
+          "operation": "modify",
+          "description": "Redesign Wallet page visual layout (including unauthenticated screen and read-only banner) to use the shared PageShell/container/typography rules; preserve all wording, links, and behaviors."
+        },
+        {
+          "path": "frontend/src/pages/SwapPage.tsx",
+          "operation": "modify",
+          "description": "Redesign Swap page visual layout (including unauthenticated screen and read-only banner) to use the shared PageShell/container/typography rules; preserve all wording, links, and behaviors."
+        },
+        {
+          "path": "frontend/src/pages/ARDistributionPage.tsx",
+          "operation": "modify",
+          "description": "Align AR Distribution page spacing/typography and section structure with the redesigned page shell and component composition; preserve all existing educational/disclaimer text."
+        },
+        {
+          "path": "frontend/src/pages/ARMode.tsx",
+          "operation": "modify",
+          "description": "Apply the redesigned page shell, typography scale, and spacing system to this AR placeholder page (presentation-only), without adding new AR functionality."
+        },
+        {
+          "path": "frontend/src/pages/MapMode.tsx",
+          "operation": "modify",
+          "description": "Apply the redesigned page shell, typography scale, and spacing system to this Map placeholder page (presentation-only), without adding new Map functionality."
+        },
+        {
+          "path": "frontend/src/pages/Perfil.tsx",
+          "operation": "modify",
+          "description": "Apply the redesigned page shell, typography scale, and spacing system to this Profile placeholder page (presentation-only), without adding new profile functionality."
+        },
+        {
+          "path": "frontend/src/pages/QTMRules.tsx",
+          "operation": "modify",
+          "description": "Apply the redesigned page shell, typography scale, and spacing system to this Rules placeholder page (presentation-only), without adding new rules content beyond existing placeholders."
         }
       ]
     },
     {
-      "id": "REQ-6",
-      "summary": "Eliminate any remaining Gold Paper entry-point code paths that navigate to the documentation canister root, preventing 503/IC0503 errors triggered by the Gold Paper button.",
+      "id": "REQ-3",
+      "summary": "Standardize typography scale, spacing tokens, containers, and composition rules (cards/badges/buttons/banners) across pages without modifying shadcn/ui source files.",
       "acceptanceCriteria": [
-        "There is no remaining user path from the “Gold Paper” button in the header that can navigate to `https://whu4t-kiaaa-aaaah-qsc5q-cai.icp0.io/`.",
-        "Clicking “Gold Paper” does not produce a 503 error because it does not attempt to load the non-public canister URL."
+        "Heading hierarchy is consistent across pages (e.g., H1/H2 sizing and font usage) and does not vary arbitrarily between Home, Wallet, Swap, Landing, Docs/Legal pages.",
+        "All primary page sections use consistent max-width and horizontal padding conventions (e.g., container usage) for mobile/tablet/desktop.",
+        "Buttons, cards, and banners (including the 'Read-Only – Transfers Disabled' banners) maintain their wording but have consistent spacing, alignment, and responsive behavior.",
+        "No Shadcn UI component source files under frontend/src/components/ui are modified (compose instead)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/Header.tsx",
+          "path": "frontend/src/components/Container.tsx",
+          "operation": "create",
+          "description": "Create a small Container component (composition-only) to standardize max-width and horizontal padding rules for page sections across the site."
+        },
+        {
+          "path": "frontend/src/components/Typography.tsx",
+          "operation": "create",
+          "description": "Create shared Typography helpers (e.g., PageTitle/SectionTitle/BodyText class presets) to enforce consistent heading hierarchy and body text styling across pages (composition-only; no shadcn/ui edits)."
+        },
+        {
+          "path": "frontend/src/components/ReadOnlyBanner.tsx",
+          "operation": "create",
+          "description": "Create a shared ReadOnlyBanner component to unify spacing/alignment for the existing 'Read-Only – Transfers Disabled' banner across pages while preserving the exact wording."
+        },
+        {
+          "path": "frontend/src/pages/LandingPage.tsx",
           "operation": "modify",
-          "description": "Audit and remove any remaining external-anchor/new-tab behavior or canister URL usage associated with the “Gold Paper” header entry point, ensuring the only action is internal navigation to `/gold-paper`."
+          "description": "Update Landing page to use the shared Container/Typography components and consistent spacing rules; preserve content and existing links/interactions."
+        },
+        {
+          "path": "frontend/src/pages/DocsPage.tsx",
+          "operation": "modify",
+          "description": "Standardize Docs hub layout using the shared Container/Typography components and consistent card grid spacing; preserve all section titles, descriptions, and links."
         },
         {
           "path": "frontend/src/pages/GoldPaper.tsx",
           "operation": "modify",
-          "description": "Ensure there are zero remaining canister URL references and zero redirect mechanisms (including window.location assignments and timers) within the `/gold-paper` page implementation."
+          "description": "Standardize Gold Paper page typography hierarchy (H1/H2/section titles), spacing rhythm, and container widths using the shared design primitives; preserve all existing text and anchor links."
+        },
+        {
+          "path": "frontend/src/pages/QMYTokenPage.tsx",
+          "operation": "modify",
+          "description": "Align QMY Token page typography scale, card spacing, and container usage with the shared design system; preserve all existing content."
+        },
+        {
+          "path": "frontend/src/pages/WalletPage.tsx",
+          "operation": "modify",
+          "description": "Replace page-specific container/padding patterns with shared Container/Typography and reuse ReadOnlyBanner for consistent composition while keeping content and behavior unchanged."
+        },
+        {
+          "path": "frontend/src/pages/SwapPage.tsx",
+          "operation": "modify",
+          "description": "Replace page-specific container/padding patterns with shared Container/Typography and reuse ReadOnlyBanner for consistent composition while keeping content and behavior unchanged."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Refine the existing dark+gold theme into a cohesive dark-luxury system with consistent surfaces, borders, and interaction states across header/footer/pages while maintaining accessibility.",
+      "acceptanceCriteria": [
+        "The site uses a consistent set of surface styles (backgrounds, glass cards, borders) and interaction states (hover/focus/disabled) across Header, Footer, and main page content.",
+        "No new product features are introduced; only visual/presentation improvements are made.",
+        "Theme changes do not reduce accessibility (text contrast remains readable on dark backgrounds)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Refine theme tokens for a polished dark-luxury system (surface layers, borders, text tones, focus rings) and add shared utility classes for consistent surfaces/interactions across the app."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Adjust/extend Tailwind theme mappings (colors/shadows/typography) to reflect the refined dark-luxury palette and consistent interaction states, keeping existing dark+gold direction."
+        },
+        {
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "modify",
+          "description": "Apply the refined surface/border/hover/focus styling to the fixed header so it matches the new theme system while keeping navigation and behavior unchanged."
+        },
+        {
+          "path": "frontend/src/components/Footer.tsx",
+          "operation": "modify",
+          "description": "Apply the refined surface/border/typography styling to the footer to match the new theme system while preserving all links and content."
+        },
+        {
+          "path": "frontend/src/components/StatusBadge.tsx",
+          "operation": "modify",
+          "description": "Unify StatusBadge presentation (spacing, typography, surface/border treatment) to align with the dark-luxury system while preserving statuses and their meaning."
         }
       ]
     }

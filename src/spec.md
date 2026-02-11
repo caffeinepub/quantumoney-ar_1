@@ -1,11 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Replace the Gold Paper header link and page behavior so it routes internally to an on-site placeholder page, eliminating navigation to the external documentation canister URL and avoiding 503 errors.
+**Goal:** Deliver a frontend-only visual redesign and consistent global layout/spacing system so all pages feel professional, balanced, and cohesive under the fixed header—without changing content, navigation, or functionality.
 
 **Planned changes:**
-- Update the “Gold Paper” header navigation item (desktop and mobile) to use internal SPA routing to the existing `/gold-paper` route, removing any external link, new-tab behavior, or redirect to `https://whu4t-kiaaa-aaaah-qsc5q-cai.icp0.io/`.
-- Change the `/gold-paper` page to never redirect or fetch/expose Gold Paper content, and to render only this exact single line of text: “Golden Paper temporarily unavailable – content preserved”.
-- Remove or leave unused any remaining frontend implementation paths from the Gold Paper entry point(s) that could navigate users to the canister root URL.
+- Introduce a single shared page shell/wrapper that applies a uniform top offset beneath the fixed header and establishes consistent vertical rhythm site-wide.
+- Redesign visual layout (spacing, alignment, typography scale, component composition) for critical pages: Home, Login entry points (header login button + auth-required states/screens), AR page(s), Map page(s), Profile page(s), and Rules page(s), while preserving existing content and interactions.
+- Standardize typography hierarchy, spacing tokens, container max-widths/padding, and common component layout rules (cards/badges/buttons/banners) across pages to remove inconsistent margins/paddings and improve readability.
+- Refine the existing dark + gold direction into a cohesive “dark-luxury” theme with consistent surfaces, borders, and hover/focus/disabled states across header/footer/main content, maintaining readable contrast.
 
-**User-visible outcome:** Clicking “Gold Paper” in the header navigates within the app to `/gold-paper`, where users only see “Golden Paper temporarily unavailable – content preserved”, and no longer encounter 503 errors from attempting to load the external canister URL.
+**User-visible outcome:** All pages consistently start below the fixed header with unified spacing/typography and a polished dark-luxury look; key pages (Home/Login/AR/Map/Profile/Rules) appear visually redesigned but behave exactly as before.

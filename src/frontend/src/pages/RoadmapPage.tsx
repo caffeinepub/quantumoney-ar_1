@@ -1,141 +1,77 @@
-import { Calendar, CheckCircle2 } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Globe, AlertCircle } from 'lucide-react';
+import StatusBadge from '@/components/StatusBadge';
 
 export default function RoadmapPage() {
-  const { language } = useLanguage();
-
-  const content = {
-    pt: {
-      title: 'Roadmap 2026',
-      subtitle: 'Marcos e Desenvolvimento Progressivo',
-      quarters: [
-        {
-          title: 'Q1 2026',
-          items: [
-            'Lançamento Beta QMY Luxury Pro',
-            'Distribuição AR em 10 países',
-            'Integração Internet Identity',
-            'Sistema de Captura de Monstros',
-          ],
-        },
-        {
-          title: 'Q2 2026',
-          items: [
-            'Expansão para 50 países',
-            'Lançamento DAO Governance',
-            'Integração ICPSwap',
-            'Sistema de Vesting Automático',
-          ],
-        },
-        {
-          title: 'Q3 2026',
-          items: [
-            'Cobertura global completa',
-            'Marketplace NFT',
-            'Eventos Metaverso',
-            'Parcerias estratégicas',
-          ],
-        },
-        {
-          title: 'Q4 2026',
-          items: [
-            'Lançamento Metaverso 3D',
-            'Cross-chain bridges',
-            'Expansão mobile nativa',
-            'Certificação MiCA EU',
-          ],
-        },
-      ],
-    },
-    en: {
-      title: 'Roadmap 2026',
-      subtitle: 'Milestones and Progressive Development',
-      quarters: [
-        {
-          title: 'Q1 2026',
-          items: [
-            'QMY Luxury Pro Beta Launch',
-            'AR Distribution in 10 countries',
-            'Internet Identity Integration',
-            'Monster Capture System',
-          ],
-        },
-        {
-          title: 'Q2 2026',
-          items: [
-            'Expansion to 50 countries',
-            'DAO Governance Launch',
-            'ICPSwap Integration',
-            'Automatic Vesting System',
-          ],
-        },
-        {
-          title: 'Q3 2026',
-          items: [
-            'Complete global coverage',
-            'NFT Marketplace',
-            'Metaverse Events',
-            'Strategic partnerships',
-          ],
-        },
-        {
-          title: 'Q4 2026',
-          items: [
-            '3D Metaverse Launch',
-            'Cross-chain bridges',
-            'Native mobile expansion',
-            'MiCA EU Certification',
-          ],
-        },
-      ],
-    },
-  };
-
-  const t = content[language];
-
   return (
-    <section className="py-32 px-6 bg-black min-h-screen">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-20">
-          <h2 className="text-5xl md:text-6xl font-serif font-bold text-amber-500 mb-6">
-            {t.title}
-          </h2>
+    <section className="py-32 px-6 bg-gradient-to-b from-gray-900 to-black min-h-screen">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <div className="inline-block p-6 rounded-full bg-amber-600/20 border-2 border-amber-600 mb-6">
+            <Globe className="w-16 h-16 text-amber-500" />
+          </div>
+          <h1 className="text-5xl md:text-6xl font-serif font-bold text-amber-500 mb-4">
+            Roadmap (Conceptual)
+          </h1>
+          <StatusBadge status="draft" className="mb-4" />
           <p className="text-2xl text-gray-300 max-w-3xl mx-auto">
-            {t.subtitle}
+            Theoretical development phases
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-          {t.quarters.map((quarter, index) => (
-            <div
-              key={index}
-              className="glass-card p-8 rounded-3xl bg-gradient-to-br from-gray-800/60 to-black/60 border border-amber-600/30 backdrop-blur-md hover:border-amber-500/60 transition-all duration-500 hover:scale-105"
-            >
-              <div className="w-16 h-16 rounded-full bg-amber-600/20 flex items-center justify-center mb-6 mx-auto">
-                <Calendar className="w-8 h-8 text-amber-500" />
-              </div>
-              <h3 className="text-2xl font-serif font-bold text-amber-500 mb-6 text-center">
-                {quarter.title}
-              </h3>
-              <ul className="space-y-3">
-                {quarter.items.map((item, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-300 text-base">{item}</span>
-                  </li>
-                ))}
-              </ul>
+        {/* Important Disclaimer */}
+        <Card className="mb-12 bg-red-900/20 border-red-500/40 glass-card">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-8 h-8 text-red-400" />
+              <CardTitle className="text-2xl font-serif text-red-400">
+                No Commitments or Guarantees
+              </CardTitle>
             </div>
-          ))}
-        </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-red-200 leading-relaxed">
+              This roadmap is conceptual and educational. No specific dates, commitments, or guarantees are provided. 
+              All phases are subject to regulatory approval and technical feasibility. 
+              No operational promises or launch dates are stated.
+            </p>
+          </CardContent>
+        </Card>
 
-        <div className="mt-16">
-          <img
-            src="/assets/generated/roadmap-timeline-2026.dim_1000x600.png"
-            alt="Roadmap Timeline"
-            className="w-full rounded-3xl border border-amber-600/30 shadow-gold"
-          />
-        </div>
+        {/* Conceptual Phases */}
+        <Card className="mb-12 bg-black/50 border-amber-500/30 glass-card">
+          <CardHeader>
+            <CardTitle className="text-3xl font-serif text-amber-400">
+              Conceptual Development Phases
+            </CardTitle>
+            <StatusBadge status="draft" className="mt-2" />
+          </CardHeader>
+          <CardContent className="space-y-4 text-gray-300">
+            <div className="p-4 bg-amber-900/10 border border-amber-500/20 rounded-lg">
+              <p className="text-sm text-amber-300 italic">
+                Content pending final Gold Paper. This section will outline conceptual development phases 
+                without specific dates, commitments, or operational promises.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Compliance Notice */}
+        <Card className="bg-black/50 border-amber-500/30 glass-card">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-4">
+              <AlertCircle className="w-6 h-6 text-amber-400 flex-shrink-0 mt-1" />
+              <div>
+                <h3 className="text-amber-400 font-bold text-lg mb-2">Regulatory Compliance</h3>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  This roadmap complies with MiCA (EU) and GDPR (EU 2016/679). 
+                  No operational commitments are made. All content is educational and conceptual only.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );

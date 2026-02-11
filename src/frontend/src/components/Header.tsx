@@ -1,85 +1,113 @@
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { Menu, X, Wallet, Repeat, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Globe } from 'lucide-react';
+import LoginButton from './LoginButton';
 
 export default function Header() {
-  const { language, setLanguage, t } = useLanguage();
-  const [isOpen, setIsOpen] = useState(false);
-
-  const navItems = [
-    { path: '/home', label: 'Home' },
-    { path: '/about', label: t.nav.about },
-    { path: '/tokenomics', label: t.nav.tokenomics },
-    { path: '/ar-distribution', label: t.nav.arDistribution },
-    { path: '/dao', label: t.nav.dao },
-    { path: '/treasury-monetary-policy', label: t.nav.treasury },
-    { path: '/roadmap', label: t.nav.roadmap },
-    { path: '/vesting-deflation', label: t.nav.vesting },
-    { path: '/presale', label: t.nav.presale },
-    { path: '/technical', label: t.nav.technical },
-    { path: '/game-systems', label: t.nav.gameSystems },
-    { path: '/legal', label: t.nav.legal },
-    { path: '/contact', label: t.nav.contact },
-    { path: '/gold-paper', label: 'Gold Paper' },
-  ];
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-lg border-b border-gold-500/20">
-      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <img 
-            src="/assets/generated/quantumoney-ar-logo-transparent.dim_200x200.png" 
-            alt="Quantumoney AR" 
-            className="h-10 w-10"
-          />
-          <span className="text-xl font-serif font-bold text-gold-500">Quantumoney AR</span>
-        </Link>
+    <header className="fixed top-0 left-0 right-0 z-50 glass-card-elevated border-b border-primary/20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-3 group">
+            <img
+              src="/assets/generated/quantumoney-ar-logo-transparent.dim_200x200.png"
+              alt="Quantumoney AR"
+              className="w-12 h-12 transition-transform duration-300 group-hover:scale-110"
+            />
+            <span className="text-xl font-serif font-bold text-primary hidden md:block transition-colors duration-300 group-hover:text-primary/80">
+              Quantumoney AR
+            </span>
+          </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-1">
-          {navItems.map((item) => (
-            <Link key={item.path} to={item.path}>
-              <Button variant="ghost" size="sm" className="text-gold-500 hover:text-gold-400 hover:bg-gold-500/10">
-                {item.label}
-              </Button>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-2">
+            <Link
+              to="/"
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5"
+            >
+              Home
             </Link>
-          ))}
-        </nav>
+            <Link
+              to="/qmy-token"
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
+            >
+              <Coins className="w-4 h-4" />
+              QMY Token
+            </Link>
+            <Link
+              to="/wallet"
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
+            >
+              <Wallet className="w-4 h-4" />
+              Wallet
+            </Link>
+            <Link
+              to="/swap"
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
+            >
+              <Repeat className="w-4 h-4" />
+              Swap
+            </Link>
+            <div className="ml-2">
+              <LoginButton />
+            </div>
+          </nav>
 
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setLanguage(language === 'pt' ? 'en' : 'pt')}
-            className="border-gold-500 text-gold-500 hover:bg-gold-500/10"
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden p-2 text-primary hover:text-primary/80 transition-colors duration-200 rounded-lg hover:bg-primary/5"
+            aria-label="Toggle menu"
           >
-            <Globe className="h-4 w-4 mr-1" />
-            {language === 'pt' ? 'EN' : 'PT'}
-          </Button>
-
-          {/* Mobile Menu */}
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild className="lg:hidden">
-              <Button variant="outline" size="sm" className="border-gold-500 text-gold-500">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="bg-black border-gold-500/20">
-              <nav className="flex flex-col gap-2 mt-8">
-                {navItems.map((item) => (
-                  <Link key={item.path} to={item.path} onClick={() => setIsOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start text-gold-500 hover:text-gold-400 hover:bg-gold-500/10">
-                      {item.label}
-                    </Button>
-                  </Link>
-                ))}
-              </nav>
-            </SheetContent>
-          </Sheet>
+            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <nav className="md:hidden py-6 border-t border-primary/20 animate-fade-in">
+            <div className="flex flex-col gap-2">
+              <Link
+                to="/"
+                onClick={() => setIsMenuOpen(false)}
+                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5"
+              >
+                Home
+              </Link>
+              <Link
+                to="/qmy-token"
+                onClick={() => setIsMenuOpen(false)}
+                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
+              >
+                <Coins className="w-4 h-4" />
+                QMY Token
+              </Link>
+              <Link
+                to="/wallet"
+                onClick={() => setIsMenuOpen(false)}
+                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
+              >
+                <Wallet className="w-4 h-4" />
+                Wallet
+              </Link>
+              <Link
+                to="/swap"
+                onClick={() => setIsMenuOpen(false)}
+                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
+              >
+                <Repeat className="w-4 h-4" />
+                Swap
+              </Link>
+              <div className="pt-4 px-4">
+                <LoginButton />
+              </div>
+            </div>
+          </nav>
+        )}
       </div>
     </header>
   );

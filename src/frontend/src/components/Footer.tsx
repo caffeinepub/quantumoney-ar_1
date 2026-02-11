@@ -1,55 +1,119 @@
-import { Shield, ExternalLink } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
-
-// Canister configuration
-const DOCS_CANISTER_ID = 'whu4t-kiaaa-aaaah-qsc5q-cai';
-const DOCS_BASE_URL = `https://${DOCS_CANISTER_ID}.icp0.io`;
+import { Link } from '@tanstack/react-router';
+import { Heart } from 'lucide-react';
 
 export default function Footer() {
-  const { t } = useLanguage();
+  const currentYear = new Date().getFullYear();
+  const appIdentifier = typeof window !== 'undefined' 
+    ? encodeURIComponent(window.location.hostname) 
+    : 'quantumoney-ar';
 
   return (
-    <footer className="py-16 px-6 bg-black border-t border-amber-600/30">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col items-center text-center space-y-8">
-          <div className="flex items-center gap-4">
-            <img
-              src="/assets/generated/quantumoney-ar-logo-transparent.dim_200x200.png"
-              alt="Quantumoney AR"
-              className="w-16 h-16 object-contain"
+    <footer className="relative z-10 glass-card-elevated border-t border-primary/20 py-16 px-4">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+          {/* Brand */}
+          <div className="text-center md:text-left">
+            <img 
+              src="/assets/generated/quantumoney-ar-logo-transparent.dim_200x200.png" 
+              alt="Quantumoney AR" 
+              className="w-16 h-16 mb-4 mx-auto md:mx-0 opacity-90"
             />
-            <span className="text-3xl font-serif font-bold text-amber-500">Quantumoney AR</span>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              Quantum universe Web3 application on Internet Computer.
+            </p>
           </div>
 
-          <div className="space-y-4">
-            <p className="text-amber-500 font-semibold text-lg">
-              {t.footer.builtBy} | {t.footer.year}
+          {/* Quick Links */}
+          <div className="text-center md:text-left">
+            <h3 className="text-primary font-bold mb-4 text-sm uppercase tracking-wider">Resources</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link to="/qmy-token" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  QMY Token
+                </Link>
+              </li>
+              <li>
+                <Link to="/wallet" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Wallet
+                </Link>
+              </li>
+              <li>
+                <Link to="/swap" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Swap
+                </Link>
+              </li>
+              <li>
+                <Link to="/dao" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  DAO
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div className="text-center md:text-left">
+            <h3 className="text-primary font-bold mb-4 text-sm uppercase tracking-wider">Contact</h3>
+            <ul className="space-y-3 text-muted-foreground text-sm">
+              <li>
+                <a href="mailto:helpdesk@quantumoney.net" className="hover:text-primary transition-colors">
+                  helpdesk@quantumoney.net
+                </a>
+              </li>
+              <li>
+                <a href="https://www.quantumoney.net" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                  www.quantumoney.net
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Documentation */}
+          <div className="text-center md:text-left">
+            <h3 className="text-primary font-bold mb-4 text-sm uppercase tracking-wider">Documentation</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link to="/gold-paper" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Gold Paper
+                </Link>
+              </li>
+              <li>
+                <Link to="/docs" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Documentation Hub
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-primary/10 pt-8 space-y-4">
+          <div className="text-center">
+            <p className="text-muted-foreground text-sm mb-2">
+              © {currentYear} Quantumoney AR
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-gray-400">
-              <a href="mailto:helpdesk@quantumoney.net" className="hover:text-amber-400 transition-colors">
+            <p className="text-muted-foreground/70 text-xs mb-3">
+              by HTgamers | 
+              <a href="mailto:helpdesk@quantumoney.net" className="text-primary hover:underline ml-1">
                 helpdesk@quantumoney.net
-              </a>
-              <span className="hidden sm:inline">|</span>
-              <a href="https://www.quantumoney.net" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors">
+              </a> | 
+              <a href="https://www.quantumoney.net" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline ml-1">
                 www.quantumoney.net
               </a>
-              <span className="hidden sm:inline">|</span>
+            </p>
+          </div>
+          
+          {/* Attribution */}
+          <div className="text-center">
+            <p className="text-muted-foreground/60 text-xs flex items-center justify-center gap-2">
+              Built with <Heart className="w-3 h-3 text-primary fill-primary animate-pulse" /> using{' '}
               <a 
-                href={DOCS_BASE_URL}
+                href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${appIdentifier}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-amber-400 transition-colors flex items-center gap-1"
+                className="text-primary hover:underline font-medium"
               >
-                Documentation
-                <ExternalLink className="w-3 h-3" />
+                caffeine.ai
               </a>
-            </div>
-            <p className="text-gray-400 text-sm flex items-center justify-center gap-2">
-              <Shield className="w-4 h-4 text-amber-500" />
-              {t.footer.compliance}
-            </p>
-            <p className="text-gray-500 text-xs italic">
-              {t.footer.informationalOnly}
             </p>
           </div>
         </div>
