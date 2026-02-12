@@ -1,109 +1,203 @@
 {
   "kind": "build_request",
-  "title": "Controlled clean initialization: add minimal IC project files and stop for validation",
+  "title": "Quantumoney.app simulated-mode patch: Send QMY simulation, Central Bank dashboard, Public Chat, Pre-Proposals, Presale, Golden Paper visualization, and Caffeine removal (visually synced with QuantumoneyAR.app)",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Create a minimal root-level package.json that is sufficient to install and build the existing React+TypeScript frontend without regenerating or rewriting any existing application source files.",
+      "text": "Add a simulated “Send QMY” flow to the Wallet page that does not execute any real on-chain transfers, including: a visible “Send QMY” button, destination Principal input, token amount input, and simulated success/failure feedback. The UI must remain safe (no canister write calls) while being structured so it can be switched to real transfers later when canister technical details are provided.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-1",
+          "msg-2"
         ],
         "quotes": [
-          "Create a minimal valid project structure only:\n- package.json"
+          "Implementar botão “Enviar QMY” na wallet. Input para principal destino e quantidade de tokens. ... Simular transferência on-chain ... sem tocar no canister real. Preparado para trocar para modo real assim que forem fornecidos os dados técnicos do canister"
         ]
       },
       "acceptanceCriteria": [
-        "A root-level package.json exists.",
-        "package.json contains scripts needed to install dependencies and build the frontend (e.g., dev/build/preview or equivalent).",
-        "No existing frontend source files are rewritten as part of creating package.json."
+        "Wallet page shows a clearly labeled “Send QMY” entry point and a form with destination Principal + amount inputs.",
+        "Submitting the form never calls ledger/canister transfer APIs and never triggers any backend mutation; it only performs local simulation.",
+        "Form validates that destination is a valid Principal format and amount is a positive number within simulated available balance.",
+        "User receives clear toast/inline feedback for simulated success and simulated failure cases (deterministic or randomized), and the UI remains responsive on mobile/desktop.",
+        "Code structure isolates the simulated send logic so a future real-transfer implementation can replace the simulator with minimal UI changes."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Create a minimal root-level dfx.json defining canisters for the existing backend and frontend assets, without changing any backend code and without attempting deployment.",
-      "target": "both",
+      "text": "Implement simulated available vs locked QMY balances for the send flow that respect the requested vesting schedule: 100 QMY unlocked immediately and 900 QMY released as 100 QMY every 30 days. The wallet must display these simulated available/locked amounts in a clear way when simulation mode is active, without overwriting the existing real on-chain read-only balance display.",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-1",
+          "msg-2"
         ],
         "quotes": [
-          "Create a minimal valid project structure only:\n- dfx.json",
-          "- no backend changes",
-          "Do not attempt deployment yet."
+          "Simular saldo disponível e bloqueado (respeitando vesting do primeiro registro: 100 QMY desbloqueados + 900 liberados 100/30 dias)."
         ]
       },
       "acceptanceCriteria": [
-        "A root-level dfx.json exists.",
-        "dfx.json references the existing backend canister entrypoint at backend/main.mo (no edits to backend/main.mo).",
-        "dfx.json includes an assets canister that serves the existing frontend build output.",
-        "No dfx deploy (or equivalent deployment attempt) is performed as part of this work."
+        "When simulation mode is enabled, the wallet shows a vesting breakdown that matches: initial unlocked=100 QMY; locked starts at 900 QMY; unlock increments of 100 QMY per 30-day period.",
+        "Simulation vesting state is derived from a locally stored “simulation start date” (e.g., first enablement) and updates on refresh accordingly.",
+        "Existing real on-chain read-only QMY balance and transaction history views remain available and are not replaced by simulated values unless explicitly labeled as simulated.",
+        "The UI clearly labels simulated values as “Simulated” to avoid confusion with on-chain data."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Ensure the frontend entry files exist and are valid: frontend/index.html and frontend/src/main.tsx. If they already exist, do not modify them; only create them if missing.",
+      "text": "Create a “QMY Central Bank” informational dashboard page and route, with a clean, modern, responsive layout showing: total circulating vs locked supply; distribution by category (founders, team, presale, first players); usage stats; presale stats; and geographic distribution. Data can be simulated/static for now but must be structured so it can later reflect AR hotspots and the future 600M QMY strategic distribution.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-1",
+          "msg-2"
         ],
         "quotes": [
-          "Create a minimal valid project structure only:\n- frontend entry (index.html + main file)",
-          "Do not generate full application code."
+          "Criar dashboard visível com: Saldo total circulante e bloqueado; Total de tokens distribuídos por categoria ... Estatísticas de uso, pré-venda e distribuição geográfica ... Preparado para refletir hotspots do AR e distribuição futura de 600 milhões de QMY."
         ]
       },
       "acceptanceCriteria": [
-        "frontend/index.html exists.",
-        "frontend/src/main.tsx exists.",
-        "If either file already existed in the workspace prior to this change, its contents remain unchanged (no reformatting or rewriting)."
+        "A new navigable page exists for the Central Bank dashboard (added to routing and reachable from existing navigation patterns).",
+        "Dashboard includes sections/cards for: circulating vs locked totals; category distribution; usage metrics; presale metrics; geographic distribution.",
+        "All displayed numbers/graphs are clearly labeled as informational/simulated if not sourced from on-chain.",
+        "Layout is responsive and visually consistent with the existing QuantumUniverseScene + gold/amber styling used across the app."
       ]
     },
     {
       "id": "REQ-4",
-      "text": "After creating only the minimal structure files (package.json, dfx.json, and ensuring the frontend entry files exist), STOP and provide an explicit confirmation that these files physically exist in the workspace before any build attempt or further changes.",
-      "target": "unknown",
+      "text": "Implement a public community chat feature with messages visible to all users, timestamps, and infinite scroll. Use an Internet Computer backend-based storage API and client-side polling (or periodic refetch) to approximate real-time behavior (no WebSockets).",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-1",
+          "msg-2"
         ],
         "quotes": [
-          "After creating the structure, STOP and confirm file existence before any build attempt."
+          "Integrar chat em tempo real para a comunidade conversar. Mensagens visíveis para todos, com scroll infinito e timestamps."
         ]
       },
       "acceptanceCriteria": [
-        "Work concludes with a confirmation step listing the presence of: package.json, dfx.json, frontend/index.html, and frontend/src/main.tsx.",
-        "No build, bundling, or deployment steps are initiated after the confirmation."
+        "Backend exposes APIs to post a message and to list messages with pagination (cursor/offset) suitable for infinite scroll.",
+        "Frontend provides a public chat page with: message list, timestamps, compose box, and infinite scroll loading older messages.",
+        "Chat updates automatically via polling/refetch interval so new messages appear without a full page reload.",
+        "Chat UI works on desktop and mobile (input remains accessible; list scroll behavior is stable).",
+        "Basic anti-abuse constraints exist (e.g., max message length, simple rate limit per principal/time window) enforced in backend or frontend with backend validation."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Add a “Pre-Proposals” educational section where users can browse proposal drafts (title, description, objective, impact) and click “Learn more” to view full details. This must not submit anything to a DAO or execute on-chain governance.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1",
+          "msg-2"
+        ],
+        "quotes": [
+          "Secção educativa onde usuários podem ler propostas antes de submeter à DAO. Cada proposta mostra: título, descrição, objetivo e impacto. Botão de “Aprender mais” sem execução on-chain."
+        ]
+      },
+      "acceptanceCriteria": [
+        "There is a dedicated section/page (or clearly separated section inside the DAO area) listing pre-proposals with title, description, objective, and impact.",
+        "Each pre-proposal has a “Learn more” affordance that navigates to/opens a detail view with expanded content.",
+        "No actions exist that create proposals, vote, or execute governance; all content is informational/educational."
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Implement a detailed “QMY Presale” section with interactive, responsive UI that presents: token lots, acquisition rules, time-based distribution, and an unlock visualization. Include visual counters and filters for exploring the lots/phases using simulated data for now.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1",
+          "msg-2"
+        ],
+        "quotes": [
+          "Criar secção com detalhe completo da pré-venda: Quantidade de tokens por lote; Preço ou regras de aquisição; Distribuição temporal e desbloqueio ... Interface clara e interativa, com contadores visuais e filtros."
+        ]
+      },
+      "acceptanceCriteria": [
+        "A presale page/section exists and is reachable via routing/navigation.",
+        "Presale content includes lots/phases with quantities and acquisition rules, plus a time/unlock visualization (timeline/progress).",
+        "UI provides interactive controls (filters and/or phase selectors) and clear counters to explore presale data.",
+        "All presale information is clearly presented as informational/simulated and does not initiate payments or token issuance."
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Upgrade the “Gold Paper / Papel Dourado” experience into an interactive visualization page that includes: global distribution of 600 million strategic QMY, geographic hotspot/tourist-point visualization, and a floating ‘universe’ style layout (stars, planets, comets) consistent with the app’s existing quantum universe visuals and ready to visually sync with QuantumoneyAR.app.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1",
+          "msg-2"
+        ],
+        "quotes": [
+          "Criar página interativa mostrando: Distribuição global dos 600 milhões de QMY estratégicos; Localização geográfica de hotspots e pontos turísticos; Layout flutuante e visual estilo “universo” com estrelas, planetas e cometas no fundo; Preparado para sincronizar visualmente com QuantumoneyAR.app."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Gold Paper area includes an interactive visualization section (not just static text/images).",
+        "Visualization includes: a global distribution representation for 600M QMY and a way to explore hotspots/tourist points (simulated dataset is acceptable).",
+        "Background/scene uses the existing quantum universe styling so it feels visually synchronized with the AR app look-and-feel.",
+        "Page remains performant and responsive; interactive elements remain usable on mobile."
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Remove all visible references to “Caffeine” across Quantumoney.app (including footer/attribution/metadata) and remove any code comments mentioning Caffeine, ensuring the site presents as 100% Quantumoney-branded.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1",
+          "msg-2"
+        ],
+        "quotes": [
+          "Remoção completa de Caffeine — Remover todas as referências visíveis a Caffeine ... Remover comentários no código que mencionem Caffeine."
+        ]
+      },
+      "acceptanceCriteria": [
+        "No UI text in the rendered app mentions “Caffeine”.",
+        "No source code comments in the repository mention “Caffeine”.",
+        "Footer and any documentation pages reflect only Quantumoney branding and provided contact links."
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Add/adjust navigation and routes so the new sections (Central Bank, Public Chat, Pre-Proposals, Presale, upgraded Gold Paper visualization) are discoverable and consistent with existing routing patterns and styling.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1",
+          "msg-2"
+        ],
+        "quotes": [
+          "Aplicar as seguintes atualizações no site Quantumoney.app ... banco central, chat público, pré-propostas, pré-venda, papel dourado ..."
+        ]
+      },
+      "acceptanceCriteria": [
+        "App routing includes stable paths for each new/updated section and they render inside the existing Layout.",
+        "Navigation entry points exist (header/section navigator/links) so users can reach the new pages without manually typing URLs.",
+        "All new pages follow existing layout primitives (Container/PageShell/cards) and match the app’s dark + gold aesthetic."
       ]
     }
   ],
   "constraints": [
-    "Do not redesign UI.",
-    "Do not add new features.",
-    "Do not change backend logic or files (including backend/main.mo).",
-    "Do not regenerate the full application codebase.",
-    "Do not attempt deployment yet.",
-    "Do not attempt a build yet; stop after confirming required files exist."
+    "Do not implement real on-chain QMY transfers; the send-tokens feature must be simulated only until real canister details are provided.",
+    "Respect the single-actor Motoko backend architecture; keep logic in backend/main.mo and add backend/migration.mo changes only if stable state schema changes.",
+    "Do not edit files under frontend/src/components/ui (shadcn components); compose them instead.",
+    "Do not edit immutable paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui.",
+    "Do not use WebSockets or socket-based real-time; implement chat ‘real-time’ via polling/refetch on the client."
   ],
   "nonGoals": [
-    "Fixing the original deployment failure (requires logs / later step).",
-    "Adding or modifying routes, pages, or components beyond ensuring the entry files exist.",
-    "Changing dependencies beyond what is strictly required for a minimal valid workspace foundation."
+    "Implementing real ledger transfers (ICRC/DIP20/custom) or any canister write operations to move real QMY.",
+    "Implementing third-party authentication beyond Internet Identity.",
+    "Implementing external database storage or external hosted services for chat or analytics.",
+    "Implementing payments checkout for presale beyond informational UI (no token sale execution)."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

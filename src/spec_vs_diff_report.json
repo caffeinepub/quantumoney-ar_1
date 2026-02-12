@@ -1,86 +1,84 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-11T22:54:06.235Z",
-  "summary": "The diff does not implement the requested minimal IC workspace scaffold. No new root-level package.json or dfx.json was added, and backend code was modified despite the explicit constraint not to change backend files. The diff also includes unrelated frontend/style and metadata changes beyond the requested minimal file presence checks.",
+  "generatedAt": "2026-02-12T22:59:01.652Z",
+  "summary": "Most requested frontend pages/routes were added (Central Bank dashboard, Public Chat, Pre‑Proposals with detail view, Presale page with unlock visualization, and Gold Paper interactive visualization). Simulated wallet send + vesting logic appears implemented, but some acceptance-criteria details are not verifiable from the truncated diff. The chat feature uses polling, but the UI shown relies on a “Load Older Messages” button rather than true infinite scroll; backend anti-abuse/rate-limit enforcement is not evidenced in the shown backend diff.",
   "missing_requirements": [
     {
-      "id": "REQ-1",
-      "requirement": "Create a minimal root-level package.json with scripts needed to install and build the existing React+TypeScript frontend.",
-      "reason": "No package.json was added (and none is shown as modified), so the required root-level package.json and build scripts cannot be verified as implemented.",
+      "id": "REQ-4",
+      "requirement": "Public community chat must support infinite scroll for loading older messages.",
+      "reason": "The Public Chat UI shown provides a manual 'Load Older Messages' button, but no evidence of an infinite-scroll trigger (e.g., scroll listener / intersection observer) is present in the diff summary.",
       "evidence": [
-        "<file-diff>: ADDED FILES: none",
-        "<file-diff>: MODIFIED FILES list does not include package.json"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "requirement": "Create a minimal root-level dfx.json defining backend and frontend assets canisters; reference backend/main.mo; do not change backend code; no deployment attempt.",
-      "reason": "No dfx.json was added (and none is shown as modified). Additionally, backend/main.mo was modified, violating the constraint/AC that backend code not be edited as part of this work.",
-      "evidence": [
-        "<file-diff>: ADDED FILES: none",
-        "<file-diff>: MODIFIED FILES list does not include dfx.json",
-        "backend/main.mo (modified)"
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "requirement": "Ensure frontend entry files exist and are valid: frontend/index.html and frontend/src/main.tsx; if they already existed, do not modify them.",
-      "reason": "frontend/index.html was modified (not just ensured/created if missing), and there is no evidence that frontend/src/main.tsx exists or was created (it is not listed as added or modified).",
-      "evidence": [
-        "frontend/index.html (modified)",
-        "<file-diff>: ADDED FILES: none",
-        "<file-diff>: MODIFIED FILES list does not include frontend/src/main.tsx"
+        "frontend/src/pages/PublicChatPage.tsx",
+        "frontend/src/hooks/usePublicChat.ts"
       ]
     },
     {
       "id": "REQ-4",
-      "requirement": "Stop after creating only minimal structure files and provide explicit confirmation that package.json, dfx.json, frontend/index.html, and frontend/src/main.tsx exist; no build/deploy initiated.",
-      "reason": "The diff summary contains no confirmation step/output listing those files as present; also the required files (package.json, dfx.json, frontend/src/main.tsx) are not evidenced as created/ensured by the diff.",
+      "requirement": "Basic anti-abuse constraints (e.g., simple rate limit per principal/time window) enforced with backend validation.",
+      "reason": "Frontend enforces a max message length (500 chars), but the backend diff excerpt does not show any rate limiting or backend-side validation logic for message posting; only types/maps/counters are visible in the truncated backend file.",
       "evidence": [
-        "<file-diff>: no package.json present",
-        "<file-diff>: no dfx.json present",
-        "<file-diff>: no frontend/src/main.tsx present"
+        "backend/main.mo",
+        "frontend/src/pages/PublicChatPage.tsx"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "Wallet must clearly label simulated vesting/available/locked values as 'Simulated' and show them only when simulation mode is active, without overwriting existing on-chain read-only displays.",
+      "reason": "Simulated vesting hook and send card include 'Simulated' labeling, but the WalletPage and VestingBreakdown changes are truncated and do not clearly evidence the required conditional display behavior and labeling for simulated balances alongside existing on-chain read-only balances.",
+      "evidence": [
+        "frontend/src/pages/WalletPage.tsx",
+        "frontend/src/components/wallet/VestingBreakdown.tsx",
+        "frontend/src/hooks/useSimulatedQMYVesting.ts"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Backend code changes in backend/main.mo despite the requirement/constraint to not change backend logic or files.",
-      "reason": "BuildRequest explicitly forbids changing backend files (including backend/main.mo), but the diff modifies backend/main.mo.",
+      "description": "DAO governance page enhanced to create proposals and enable voting with backend integration (non-informational governance actions).",
+      "reason": "BuildRequest only asked for an educational 'Pre‑Proposals' section with no governance actions; adding proposal creation/voting is outside the requested scope and conflicts with the non-goal of not executing governance actions for this educational content.",
       "evidence": [
-        "backend/main.mo (modified)"
+        "frontend-file-summaries.txt (frontend/src/pages/DAO.tsx)"
       ]
     },
     {
-      "description": "Unrequested frontend styling change to frontend/src/index.css.",
-      "reason": "BuildRequest limits changes to minimal structure files and explicitly avoids modifying components/pages beyond ensuring entry files exist; modifying index.css is outside those requirements.",
+      "description": "Added/expanded various unrelated UI features (e.g., social sharing buttons, print functionality, modals enhancements).",
+      "reason": "These changes are not part of REQ-1..REQ-9 and are not mentioned in the BuildRequest.",
       "evidence": [
-        "frontend/src/index.css (modified)"
-      ]
-    },
-    {
-      "description": "Added/updated metadata files (frontend-file-summaries.txt and project_state.json) not requested in the BuildRequest.",
-      "reason": "These files are not part of the required minimal scaffold (package.json, dfx.json, frontend/index.html, frontend/src/main.tsx).",
-      "evidence": [
-        "frontend-file-summaries.txt (modified)",
-        "project_state.json (modified)"
-      ]
-    },
-    {
-      "description": "App feature additions/changes described in frontend-file-summaries.txt (e.g., DAO governance integration, modals, navigation, tutorial content).",
-      "reason": "BuildRequest explicitly says not to add new features or redesign UI; the summaries describe substantial feature/UI work. (Even if the underlying code changes are truncated/not shown, the diff includes this file asserting those changes.)",
-      "evidence": [
-        "frontend-file-summaries.txt (modified)"
+        "frontend-file-summaries.txt (frontend/src/components/TokenInfoModal.tsx)",
+        "frontend-file-summaries.txt (frontend/src/components/PlantConfirmationModal.tsx)",
+        "frontend-file-summaries.txt (frontend/src/components/RescueConfirmationModal.tsx)"
       ]
     }
   ],
-  "confidence": 0.84,
+  "confidence": 0.62,
   "changed_files": [
     "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/index.html",
-    "frontend/src/index.css",
+    "frontend/src/App.tsx",
+    "frontend/src/components/Footer.tsx",
+    "frontend/src/components/Header.tsx",
+    "frontend/src/components/SectionNavigator.tsx",
+    "frontend/src/components/gold-paper/GoldPaperUniverseVisualization.tsx",
+    "frontend/src/components/presale/PresaleLotsExplorer.tsx",
+    "frontend/src/components/presale/PresaleUnlockVisualization.tsx",
+    "frontend/src/components/wallet/SendQMYSimulatedCard.tsx",
+    "frontend/src/components/wallet/VestingBreakdown.tsx",
+    "frontend/src/hooks/usePublicChat.ts",
+    "frontend/src/hooks/useSimulatedQMYVesting.ts",
+    "frontend/src/lib/dao/preProposalsData.ts",
+    "frontend/src/lib/qmy/centralBankSimData.ts",
+    "frontend/src/lib/qmy/goldPaperSimData.ts",
+    "frontend/src/lib/qmy/presaleSimData.ts",
+    "frontend/src/lib/qmy/simulatedSend.ts",
+    "frontend/src/lib/qmy/simulatedVesting.ts",
+    "frontend/src/pages/BancoCentral.tsx",
+    "frontend/src/pages/GoldPaper.tsx",
+    "frontend/src/pages/PreProposalDetailPage.tsx",
+    "frontend/src/pages/PreProposalsPage.tsx",
+    "frontend/src/pages/PresalePage.tsx",
+    "frontend/src/pages/PublicChatPage.tsx",
+    "frontend/src/pages/WalletPage.tsx",
     "project_state.json"
   ]
 }

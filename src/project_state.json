@@ -1,22 +1,85 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Initialize a minimal, stable Internet Computer workspace foundation (no full app regeneration) to recover from missing persisted project files and prepare for later deployment stabilization.",
+  "summary": "Quantumoney.app: build a simulated-mode wallet and ecosystem UI for QMY (send-tokens simulation, Central Bank dashboard, public chat, pre-proposals, pre-sale, Golden Paper visualization) with complete removal of Caffeine references and visual sync readiness with QuantumoneyAR.app; designed to switch to real on-chain integration once token canister details are provided.",
   "architectural_notes": [
-    "Do not regenerate a full application; only initialize minimal scaffold files (package.json, dfx.json, index.html, frontend main entry).",
-    "After initialization, stop and confirm file presence before any build/deploy attempt.",
-    "No redesign, no new features, and no backend changes during this initialization."
+    "Ship a simulated-mode implementation for token sending (no real canister write calls) with a clean seam to switch to real on-chain integration once QMY canister ID, token standard, and vesting data source are provided.",
+    "Design UI/components to be visually sync-ready with QuantumoneyAR.app (shared visual language for hotspots/distribution where applicable)."
   ],
   "known_issues": [
-    "Workspace currently missing persisted project files from the previously generated/working build; requires controlled re-initialization of minimal structure."
+    "Cannot implement real on-chain QMY transfers yet: missing QMY token canister ID, token standard (ICRC-1/DIP20/custom), and source of vesting/locked-balance data."
   ],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-ensure-the-frontend-entry-files-exist-and-are-valid-frontend-index-html-and-frontend-src-main-tsx-if-they-already-exist-do-not-modify-them-only-create-them-if-missing",
-      "title": "Ensure the frontend entry files exist and are valid: frontend/index.html and frontend/src/main.tsx. If they already exist, do not modify them; only create them if missing.",
+      "id": "feature-add-a-simulated-send-qmy-flow-to-the-wallet-page-that-does-not-execute-any-real-on-chain-transfers-including-a-visible-send-qmy-button-destination-principal-input-token-amount-input-and-simulated-success-failure-feedback-the-ui-must-remain-safe-no-canister-write-calls-while-being-structured-so-it-can-be-switched-to-real-transfers-later-when-canister-technical-details-are-provided",
+      "title": "Add a simulated “Send QMY” flow to the Wallet page that does not execute any real on-chain transfers, including: a visible “Send QMY” button, destination Principal input, token amount input, and simulated success/failure feedback. The UI must remain safe (no canister write calls) while being structured so it can be switched to real transfers later when canister technical details are provided.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-simulated-available-vs-locked-qmy-balances-for-the-send-flow-that-respect-the-requested-vesting-schedule-100-qmy-unlocked-immediately-and-900-qmy-released-as-100-qmy-every-30-days-the-wallet-must-display-these-simulated-available-locked-amounts-in-a-clear-way-when-simulation-mode-is-active-without-overwriting-the-existing-real-on-chain-read-only-balance-display",
+      "title": "Implement simulated available vs locked QMY balances for the send flow that respect the requested vesting schedule: 100 QMY unlocked immediately and 900 QMY released as 100 QMY every 30 days. The wallet must display these simulated available/locked amounts in a clear way when simulation mode is active, without overwriting the existing real on-chain read-only balance display.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-qmy-central-bank-informational-dashboard-page-and-route-with-a-clean-modern-responsive-layout-showing-total-circulating-vs-locked-supply-distribution-by-category-founders-team-presale-first-players-usage-stats-presale-stats-and-geographic-distribution-data-can-be-simulated-static-for-now-but-must-be-structured-so-it-can-later-reflect-ar-hotspots-and-the-future-600m-qmy-strategic-distribution",
+      "title": "Create a “QMY Central Bank” informational dashboard page and route, with a clean, modern, responsive layout showing: total circulating vs locked supply; distribution by category (founders, team, presale, first players); usage stats; presale stats; and geographic distribution. Data can be simulated/static for now but must be structured so it can later reflect AR hotspots and the future 600M QMY strategic distribution.",
       "reqIds": [
         "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-public-community-chat-feature-with-messages-visible-to-all-users-timestamps-and-infinite-scroll-use-an-internet-computer-backend-based-storage-api-and-client-side-polling-or-periodic-refetch-to-approximate-real-time-behavior-no-websockets",
+      "title": "Implement a public community chat feature with messages visible to all users, timestamps, and infinite scroll. Use an Internet Computer backend-based storage API and client-side polling (or periodic refetch) to approximate real-time behavior (no WebSockets).",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-pre-proposals-educational-section-where-users-can-browse-proposal-drafts-title-description-objective-impact-and-click-learn-more-to-view-full-details-this-must-not-submit-anything-to-a-dao-or-execute-on-chain-governance",
+      "title": "Add a “Pre-Proposals” educational section where users can browse proposal drafts (title, description, objective, impact) and click “Learn more” to view full details. This must not submit anything to a DAO or execute on-chain governance.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-detailed-qmy-presale-section-with-interactive-responsive-ui-that-presents-token-lots-acquisition-rules-time-based-distribution-and-an-unlock-visualization-include-visual-counters-and-filters-for-exploring-the-lots-phases-using-simulated-data-for-now",
+      "title": "Implement a detailed “QMY Presale” section with interactive, responsive UI that presents: token lots, acquisition rules, time-based distribution, and an unlock visualization. Include visual counters and filters for exploring the lots/phases using simulated data for now.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-upgrade-the-gold-paper-papel-dourado-experience-into-an-interactive-visualization-page-that-includes-global-distribution-of-600-million-strategic-qmy-geographic-hotspot-tourist-point-visualization-and-a-floating-universe-style-layout-stars-planets-comets-consistent-with-the-app-s-existing-quantum-universe-visuals-and-ready-to-visually-sync-with-quantumoneyar-app",
+      "title": "Upgrade the “Gold Paper / Papel Dourado” experience into an interactive visualization page that includes: global distribution of 600 million strategic QMY, geographic hotspot/tourist-point visualization, and a floating ‘universe’ style layout (stars, planets, comets) consistent with the app’s existing quantum universe visuals and ready to visually sync with QuantumoneyAR.app.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-all-visible-references-to-caffeine-across-quantumoney-app-including-footer-attribution-metadata-and-remove-any-code-comments-mentioning-caffeine-ensuring-the-site-presents-as-100-quantumoney-branded",
+      "title": "Remove all visible references to “Caffeine” across Quantumoney.app (including footer/attribution/metadata) and remove any code comments mentioning Caffeine, ensuring the site presents as 100% Quantumoney-branded.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-adjust-navigation-and-routes-so-the-new-sections-central-bank-public-chat-pre-proposals-presale-upgraded-gold-paper-visualization-are-discoverable-and-consistent-with-existing-routing-patterns-and-styling",
+      "title": "Add/adjust navigation and routes so the new sections (Central Bank, Public Chat, Pre-Proposals, Presale, upgraded Gold Paper visualization) are discoverable and consistent with existing routing patterns and styling.",
+      "reqIds": [
+        "REQ-9"
       ],
       "version": 1
     }
@@ -24,36 +87,49 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Create a controlled minimal valid project structure (package.json, dfx.json, frontend index.html + main entry) and stop after confirming files exist; no redesign, no new features, no backend changes, no deployment attempt yet.",
+      "summary": "Implement Send-Tokens Flow in simulated mode (Enviar QMY button, destination principal + amount inputs, simulate available vs locked balance with vesting 100 unlocked + 900 releasing 100/30 days, simulate success/failure feedback; ready to swap to real canister later).",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Create a minimal root-level package.json that is sufficient to install and build the existing React+TypeScript frontend without regenerating or rewriting any existing application source files.",
-      "reqIds": [
-        "REQ-1"
-      ],
+      "summary": "Add 'Banco Central QMY' informational dashboard (circulating vs locked totals, distribution by category, usage/pre-sale stats, geographic distribution; prepared to reflect AR hotspots and future 600M QMY distribution).",
+      "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Create a minimal root-level dfx.json defining canisters for the existing backend and frontend assets, without changing any backend code and without attempting deployment.",
-      "reqIds": [
-        "REQ-2"
-      ],
+      "summary": "Integrate public real-time community chat (messages visible to all, infinite scroll, timestamps, desktop+mobile compatible).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Create 'Pré-propostas' educational section (proposal cards with title/description/objective/impact and Learn more button; no on-chain execution).",
+      "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-5",
-      "summary": "After creating only the minimal structure files (package.json, dfx.json, and ensuring the frontend entry files exist), STOP and provide an explicit confirmation that these files physically exist in the workspace before any build attempt or further changes.",
-      "reqIds": [
-        "REQ-4"
-      ],
+      "summary": "Create 'Pré-venda QMY' section (lots, acquisition rules, temporal distribution/unlock visualization, interactive responsive UI with counters/filters).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Create 'Papel Dourado' interactive page (global distribution of 600M QMY, hotspots/tourist points map, floating universe-style background; visually syncable with QuantumoneyAR.app).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Remove all references to Caffeine from Quantumoney.app (UI/footer and code comments) to ensure site is 100% Quantumoney-branded.",
+      "reqIds": [],
       "status": "pending"
     }
   ],
-  "projectName": "Controlled clean initialization: add minimal IC project files and stop for validation",
+  "gameProjectType": "none",
+  "projectName": "Quantumoney.app",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

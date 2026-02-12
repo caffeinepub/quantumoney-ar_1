@@ -1,13 +1,13 @@
-import { FileText, Shield, BookOpen, Target, Zap, Coins, Layers, Globe, Users, Scale, Cpu, AlertTriangle } from 'lucide-react';
+import { FileText, Shield, BookOpen, Target, Zap, Coins, Layers, Globe, Users, Scale, Cpu } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from '@tanstack/react-router';
 import StatusBadge from '@/components/StatusBadge';
+import GoldPaperUniverseVisualization from '@/components/gold-paper/GoldPaperUniverseVisualization';
 
 export default function GoldPaper() {
   return (
     <section className="py-20 px-6 bg-black min-h-screen">
       <div className="max-w-5xl mx-auto">
-        {/* Header */}
         <div className="text-center mb-16">
           <div className="inline-block p-6 rounded-full bg-amber-600/20 border-2 border-amber-600 mb-8">
             <FileText className="w-16 h-16 text-amber-500" />
@@ -21,7 +21,6 @@ export default function GoldPaper() {
           </p>
         </div>
 
-        {/* Important Notice */}
         <Card className="glass-card bg-red-900/20 border-red-500/40 mb-12">
           <CardContent className="p-6">
             <div className="flex items-start gap-4">
@@ -38,7 +37,6 @@ export default function GoldPaper() {
           </CardContent>
         </Card>
 
-        {/* Table of Contents */}
         <Card className="glass-card bg-black/40 border-amber-500/30 mb-12">
           <CardHeader>
             <CardTitle className="text-2xl text-amber-500 flex items-center gap-3">
@@ -52,15 +50,15 @@ export default function GoldPaper() {
               <a href="#purpose" className="hover:text-amber-400 transition-colors">2. Purpose & Problem Statement</a>
               <a href="#tokenomics" className="hover:text-amber-400 transition-colors">3. QMY Token Logic (Conceptual)</a>
               <a href="#ecosystem" className="hover:text-amber-400 transition-colors">4. Ecosystem Overview</a>
-              <a href="#roadmap" className="hover:text-amber-400 transition-colors">5. High-Level Roadmap</a>
-              <a href="#governance" className="hover:text-amber-400 transition-colors">6. Governance Principles</a>
-              <a href="#technical" className="hover:text-amber-400 transition-colors">7. Technical Architecture</a>
-              <a href="#legal" className="hover:text-amber-400 transition-colors">8. Legal & Compliance</a>
+              <a href="#distribution" className="hover:text-amber-400 transition-colors">5. Strategic Distribution</a>
+              <a href="#roadmap" className="hover:text-amber-400 transition-colors">6. High-Level Roadmap</a>
+              <a href="#governance" className="hover:text-amber-400 transition-colors">7. Governance Principles</a>
+              <a href="#technical" className="hover:text-amber-400 transition-colors">8. Technical Architecture</a>
+              <a href="#legal" className="hover:text-amber-400 transition-colors">9. Legal & Compliance</a>
             </div>
           </CardContent>
         </Card>
 
-        {/* Section 1: Vision & Mission */}
         <div id="vision" className="mb-12 scroll-mt-20">
           <Card className="glass-card bg-black/40 border-amber-500/30">
             <CardHeader>
@@ -82,7 +80,6 @@ export default function GoldPaper() {
           </Card>
         </div>
 
-        {/* Section 2: Purpose & Problem Statement */}
         <div id="purpose" className="mb-12 scroll-mt-20">
           <Card className="glass-card bg-black/40 border-amber-500/30">
             <CardHeader>
@@ -104,7 +101,6 @@ export default function GoldPaper() {
           </Card>
         </div>
 
-        {/* Section 3: QMY Token Logic */}
         <div id="tokenomics" className="mb-12 scroll-mt-20">
           <Card className="glass-card bg-black/40 border-amber-500/30">
             <CardHeader>
@@ -132,7 +128,6 @@ export default function GoldPaper() {
           </Card>
         </div>
 
-        {/* Section 4: Ecosystem Overview */}
         <div id="ecosystem" className="mb-12 scroll-mt-20">
           <Card className="glass-card bg-black/40 border-amber-500/30">
             <CardHeader>
@@ -184,14 +179,30 @@ export default function GoldPaper() {
           </Card>
         </div>
 
-        {/* Section 5: High-Level Roadmap */}
+        <div id="distribution" className="mb-12 scroll-mt-20">
+          <Card className="glass-card bg-black/40 border-amber-500/30">
+            <CardHeader>
+              <div className="flex items-center justify-between mb-2">
+                <CardTitle className="text-3xl text-amber-500 flex items-center gap-3">
+                  <Globe className="w-7 h-7" />
+                  5. Strategic Distribution (600M QMY)
+                </CardTitle>
+                <StatusBadge status="draft" />
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <GoldPaperUniverseVisualization />
+            </CardContent>
+          </Card>
+        </div>
+
         <div id="roadmap" className="mb-12 scroll-mt-20">
           <Card className="glass-card bg-black/40 border-amber-500/30">
             <CardHeader>
               <div className="flex items-center justify-between mb-2">
                 <CardTitle className="text-3xl text-amber-500 flex items-center gap-3">
                   <Globe className="w-7 h-7" />
-                  5. High-Level Roadmap (Conceptual)
+                  6. High-Level Roadmap (Conceptual)
                 </CardTitle>
                 <StatusBadge status="draft" />
               </div>
@@ -212,14 +223,13 @@ export default function GoldPaper() {
           </Card>
         </div>
 
-        {/* Section 6: Governance Principles */}
         <div id="governance" className="mb-12 scroll-mt-20">
           <Card className="glass-card bg-black/40 border-amber-500/30">
             <CardHeader>
               <div className="flex items-center justify-between mb-2">
                 <CardTitle className="text-3xl text-amber-500 flex items-center gap-3">
                   <Users className="w-7 h-7" />
-                  6. Governance Principles
+                  7. Governance Principles
                 </CardTitle>
                 <StatusBadge status="draft" />
               </div>
@@ -234,14 +244,13 @@ export default function GoldPaper() {
           </Card>
         </div>
 
-        {/* Section 7: Technical Architecture */}
         <div id="technical" className="mb-12 scroll-mt-20">
           <Card className="glass-card bg-black/40 border-amber-500/30">
             <CardHeader>
               <div className="flex items-center justify-between mb-2">
                 <CardTitle className="text-3xl text-amber-500 flex items-center gap-3">
                   <Cpu className="w-7 h-7" />
-                  7. Technical Architecture
+                  8. Technical Architecture
                 </CardTitle>
                 <StatusBadge status="draft" />
               </div>
@@ -256,14 +265,13 @@ export default function GoldPaper() {
           </Card>
         </div>
 
-        {/* Section 8: Legal & Compliance */}
         <div id="legal" className="mb-12 scroll-mt-20">
           <Card className="glass-card bg-black/40 border-amber-500/30">
             <CardHeader>
               <div className="flex items-center justify-between mb-2">
                 <CardTitle className="text-3xl text-amber-500 flex items-center gap-3">
                   <Scale className="w-7 h-7" />
-                  8. Legal & Compliance
+                  9. Legal & Compliance
                 </CardTitle>
                 <StatusBadge status="draft" />
               </div>
@@ -284,7 +292,6 @@ export default function GoldPaper() {
           </Card>
         </div>
 
-        {/* Navigation to Docs Hub */}
         <Card className="glass-card bg-black/40 border-amber-500/30">
           <CardContent className="p-8 text-center">
             <BookOpen className="w-12 h-12 text-amber-500 mx-auto mb-4" />
@@ -292,10 +299,10 @@ export default function GoldPaper() {
               Explore More Documentation
             </h3>
             <p className="text-gray-300 mb-6">
-              Visit the Documentation Hub for additional institutional resources and technical specifications.
+              Visit the Documentation Hub for additional resources and information
             </p>
             <Link to="/docs">
-              <button className="px-8 py-3 bg-amber-600 hover:bg-amber-700 text-black font-bold rounded-full transition-all duration-300">
+              <button className="px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-colors">
                 Go to Documentation Hub
               </button>
             </Link>

@@ -63,6 +63,12 @@ export interface Monster {
     energyBoost: bigint;
     spawnFrequency: bigint;
 }
+export interface ChatMessage {
+    content: string;
+    authorName: string;
+    sender: Principal;
+    timestamp: bigint;
+}
 export interface CreatePaymentResponse {
     checkoutUrl: string;
     sessionId: string;
@@ -82,12 +88,15 @@ export interface backendInterface {
     captureMonster(monster: Monster): Promise<void>;
     checkout(items: Array<LineItem>): Promise<CreatePaymentResponse>;
     claimARSpot(spotId: string, qtmAmount: bigint): Promise<void>;
+    clearAllMessages(): Promise<void>;
     getARSpotDistribution(spotId: string): Promise<ARSpotDistribution | null>;
     getAllPlayerProfiles(): Promise<Array<[Principal, PlayerProfile]>>;
     getCallerUserProfile(): Promise<PlayerProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getCapturedMonsters(user: Principal): Promise<Array<CapturedMonster>>;
+    getMessages(limit: bigint, offset: bigint): Promise<Array<ChatMessage>>;
     getPlayerState(): Promise<PlayerProfile | null>;
+    getTotalMessagesCount(): Promise<bigint>;
     getUserProfile(user: Principal): Promise<PlayerProfile | null>;
     hasClaimedARSpot(spotId: string, user: Principal): Promise<boolean>;
     initializeAccessControl(): Promise<void>;
@@ -176,5 +185,6 @@ export interface backendInterface {
     rescueSingleCoin(coinId: string, playerLocation: CoordinatedPoint): Promise<void>;
     restoreEnergy(): Promise<void>;
     saveCallerUserProfile(profile: PlayerProfile): Promise<void>;
+    sendMessage(authorName: string, content: string): Promise<void>;
     updateXP(xpChange: bigint): Promise<void>;
 }

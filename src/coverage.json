@@ -1,54 +1,161 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-11T22:54:06.238Z",
+  "generatedAt": "2026-02-12T22:59:01.656Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 4,
-    "implemented": 1,
+    "total": 9,
+    "implemented": 9,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Create a minimal root-level package.json that is sufficient to install and build the existing React+TypeScript frontend without regenerating or rewriting any existing application source files.",
-        "status": "missing",
+        "summary": "Add a simulated “Send QMY” flow to the Wallet page that does not execute any real on-chain transfers, including: a visible “Send QMY” button, destination Principal input, token amount input, and simulated success/failure feedback. The UI must remain safe (no canister write calls) while being structured so it can be switched to real transfers later when canister technical details are provided.",
+        "status": "implemented",
         "plannedFiles": [
-          "frontend/../package.json"
+          "frontend/src/lib/qmy/simulatedSend.ts",
+          "frontend/src/components/wallet/SendQMYSimulatedCard.tsx",
+          "frontend/src/pages/WalletPage.tsx"
         ],
-        "matchedFiles": []
+        "matchedFiles": [
+          "frontend/src/lib/qmy/simulatedSend.ts",
+          "frontend/src/components/wallet/SendQMYSimulatedCard.tsx",
+          "frontend/src/pages/WalletPage.tsx"
+        ]
       },
       {
         "id": "REQ-2",
-        "summary": "Create a minimal root-level dfx.json defining canisters for the existing backend and frontend assets, without changing any backend code and without attempting deployment.",
-        "status": "missing",
+        "summary": "Implement simulated available vs locked QMY balances for the send flow that respect the requested vesting schedule: 100 QMY unlocked immediately and 900 QMY released as 100 QMY every 30 days. The wallet must display these simulated available/locked amounts in a clear way when simulation mode is active, without overwriting the existing real on-chain read-only balance display.",
+        "status": "implemented",
         "plannedFiles": [
-          "frontend/../dfx.json"
+          "frontend/src/lib/qmy/simulatedVesting.ts",
+          "frontend/src/hooks/useSimulatedQMYVesting.ts",
+          "frontend/src/components/wallet/VestingBreakdown.tsx",
+          "frontend/src/pages/WalletPage.tsx"
         ],
-        "matchedFiles": []
+        "matchedFiles": [
+          "frontend/src/lib/qmy/simulatedVesting.ts",
+          "frontend/src/hooks/useSimulatedQMYVesting.ts",
+          "frontend/src/components/wallet/VestingBreakdown.tsx",
+          "frontend/src/pages/WalletPage.tsx"
+        ]
       },
       {
         "id": "REQ-3",
-        "summary": "Ensure the frontend entry files exist and are valid: frontend/index.html and frontend/src/main.tsx. If they already exist, do not modify them; only create them if missing.",
+        "summary": "Create a “QMY Central Bank” informational dashboard page and route, with a clean, modern, responsive layout showing: total circulating vs locked supply; distribution by category (founders, team, presale, first players); usage stats; presale stats; and geographic distribution. Data can be simulated/static for now but must be structured so it can later reflect AR hotspots and the future 600M QMY strategic distribution.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/index.html",
-          "frontend/src/main.tsx"
+          "frontend/src/pages/BancoCentral.tsx",
+          "frontend/src/lib/qmy/centralBankSimData.ts",
+          "frontend/src/App.tsx"
         ],
         "matchedFiles": [
-          "frontend/index.html"
+          "frontend/src/pages/BancoCentral.tsx",
+          "frontend/src/lib/qmy/centralBankSimData.ts",
+          "frontend/src/App.tsx"
         ]
       },
       {
         "id": "REQ-4",
-        "summary": "After creating only the minimal structure files (package.json, dfx.json, and ensuring the frontend entry files exist), STOP and provide an explicit confirmation that these files physically exist in the workspace before any build attempt or further changes.",
-        "status": "missing",
+        "summary": "Implement a public community chat feature with messages visible to all users, timestamps, and infinite scroll. Use an Internet Computer backend-based storage API and client-side polling (or periodic refetch) to approximate real-time behavior (no WebSockets).",
+        "status": "implemented",
         "plannedFiles": [
-          "frontend/STRUCTURE_CONFIRMATION.md",
-          "frontend/src/VALIDATION_REQUIRED.md"
+          "frontend/src/hooks/usePublicChat.ts",
+          "frontend/src/pages/PublicChatPage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Header.tsx"
         ],
-        "matchedFiles": []
+        "matchedFiles": [
+          "frontend/src/hooks/usePublicChat.ts",
+          "frontend/src/pages/PublicChatPage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Header.tsx"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Add a “Pre-Proposals” educational section where users can browse proposal drafts (title, description, objective, impact) and click “Learn more” to view full details. This must not submit anything to a DAO or execute on-chain governance.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/dao/preProposalsData.ts",
+          "frontend/src/pages/PreProposalsPage.tsx",
+          "frontend/src/pages/PreProposalDetailPage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/pages/DAOPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/dao/preProposalsData.ts",
+          "frontend/src/pages/PreProposalsPage.tsx",
+          "frontend/src/pages/PreProposalDetailPage.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-6",
+        "summary": "Implement a detailed “QMY Presale” section with interactive, responsive UI that presents: token lots, acquisition rules, time-based distribution, and an unlock visualization. Include visual counters and filters for exploring the lots/phases using simulated data for now.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/qmy/presaleSimData.ts",
+          "frontend/src/components/presale/PresaleLotsExplorer.tsx",
+          "frontend/src/components/presale/PresaleUnlockVisualization.tsx",
+          "frontend/src/pages/PresalePage.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/qmy/presaleSimData.ts",
+          "frontend/src/components/presale/PresaleLotsExplorer.tsx",
+          "frontend/src/components/presale/PresaleUnlockVisualization.tsx",
+          "frontend/src/pages/PresalePage.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-7",
+        "summary": "Upgrade the “Gold Paper / Papel Dourado” experience into an interactive visualization page that includes: global distribution of 600 million strategic QMY, geographic hotspot/tourist-point visualization, and a floating ‘universe’ style layout (stars, planets, comets) consistent with the app’s existing quantum universe visuals and ready to visually sync with QuantumoneyAR.app.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/qmy/goldPaperSimData.ts",
+          "frontend/src/components/gold-paper/GoldPaperUniverseVisualization.tsx",
+          "frontend/src/pages/GoldPaper.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/qmy/goldPaperSimData.ts",
+          "frontend/src/components/gold-paper/GoldPaperUniverseVisualization.tsx",
+          "frontend/src/pages/GoldPaper.tsx"
+        ]
+      },
+      {
+        "id": "REQ-8",
+        "summary": "Remove all visible references to “Caffeine” across Quantumoney.app (including footer/attribution/metadata) and remove any code comments mentioning Caffeine, ensuring the site presents as 100% Quantumoney-branded.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/index.html",
+          "frontend/src/components/Footer.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/Footer.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-9",
+        "summary": "Add/adjust navigation and routes so the new sections (Central Bank, Public Chat, Pre-Proposals, Presale, upgraded Gold Paper visualization) are discoverable and consistent with existing routing patterns and styling.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/components/Footer.tsx",
+          "frontend/src/components/SectionNavigator.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/components/Footer.tsx",
+          "frontend/src/components/SectionNavigator.tsx"
+        ]
       }
     ]
   },
@@ -58,9 +165,34 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/index.html",
+    "frontend/src/App.tsx",
     "frontend/src/backend.d.ts",
-    "frontend/src/index.css",
+    "frontend/src/backend.ts",
+    "frontend/src/components/Footer.tsx",
+    "frontend/src/components/Header.tsx",
+    "frontend/src/components/SectionNavigator.tsx",
+    "frontend/src/components/gold-paper/GoldPaperUniverseVisualization.tsx",
+    "frontend/src/components/presale/PresaleLotsExplorer.tsx",
+    "frontend/src/components/presale/PresaleUnlockVisualization.tsx",
+    "frontend/src/components/wallet/SendQMYSimulatedCard.tsx",
+    "frontend/src/components/wallet/VestingBreakdown.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/usePublicChat.ts",
+    "frontend/src/hooks/useSimulatedQMYVesting.ts",
+    "frontend/src/lib/dao/preProposalsData.ts",
+    "frontend/src/lib/qmy/centralBankSimData.ts",
+    "frontend/src/lib/qmy/goldPaperSimData.ts",
+    "frontend/src/lib/qmy/presaleSimData.ts",
+    "frontend/src/lib/qmy/simulatedSend.ts",
+    "frontend/src/lib/qmy/simulatedVesting.ts",
+    "frontend/src/pages/BancoCentral.tsx",
+    "frontend/src/pages/GoldPaper.tsx",
+    "frontend/src/pages/PreProposalDetailPage.tsx",
+    "frontend/src/pages/PreProposalsPage.tsx",
+    "frontend/src/pages/PresalePage.tsx",
+    "frontend/src/pages/PublicChatPage.tsx",
+    "frontend/src/pages/WalletPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

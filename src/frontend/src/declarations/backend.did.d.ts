@@ -16,6 +16,12 @@ export interface ARSpotDistribution {
   'spotId' : string,
 }
 export interface CapturedMonster { 'monster' : Monster, 'captureTime' : bigint }
+export interface ChatMessage {
+  'content' : string,
+  'authorName' : string,
+  'sender' : Principal,
+  'timestamp' : bigint,
+}
 export interface CoordinatedPoint {
   'latitude' : number,
   'longitude' : number,
@@ -100,12 +106,15 @@ export interface _SERVICE {
   'captureMonster' : ActorMethod<[Monster], undefined>,
   'checkout' : ActorMethod<[Array<LineItem>], CreatePaymentResponse>,
   'claimARSpot' : ActorMethod<[string, bigint], undefined>,
+  'clearAllMessages' : ActorMethod<[], undefined>,
   'getARSpotDistribution' : ActorMethod<[string], [] | [ARSpotDistribution]>,
   'getAllPlayerProfiles' : ActorMethod<[], Array<[Principal, PlayerProfile]>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [PlayerProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getCapturedMonsters' : ActorMethod<[Principal], Array<CapturedMonster>>,
+  'getMessages' : ActorMethod<[bigint, bigint], Array<ChatMessage>>,
   'getPlayerState' : ActorMethod<[], [] | [PlayerProfile]>,
+  'getTotalMessagesCount' : ActorMethod<[], bigint>,
   'getUserProfile' : ActorMethod<[Principal], [] | [PlayerProfile]>,
   'hasClaimedARSpot' : ActorMethod<[string, Principal], boolean>,
   'initializeAccessControl' : ActorMethod<[], undefined>,
@@ -230,6 +239,7 @@ export interface _SERVICE {
   'rescueSingleCoin' : ActorMethod<[string, CoordinatedPoint], undefined>,
   'restoreEnergy' : ActorMethod<[], undefined>,
   'saveCallerUserProfile' : ActorMethod<[PlayerProfile], undefined>,
+  'sendMessage' : ActorMethod<[string, string], undefined>,
   'updateXP' : ActorMethod<[bigint], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;

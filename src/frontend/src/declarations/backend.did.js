@@ -58,6 +58,12 @@ export const PlayerProfile = IDL.Record({
   'registered' : IDL.Bool,
   'energy' : IDL.Nat,
 });
+export const ChatMessage = IDL.Record({
+  'content' : IDL.Text,
+  'authorName' : IDL.Text,
+  'sender' : IDL.Principal,
+  'timestamp' : IDL.Int,
+});
 export const PaymentCancelResponse = IDL.Record({
   'message' : IDL.Text,
   'sessionId' : IDL.Text,
@@ -115,6 +121,7 @@ export const idlService = IDL.Service({
   'captureMonster' : IDL.Func([Monster], [], []),
   'checkout' : IDL.Func([IDL.Vec(LineItem)], [CreatePaymentResponse], []),
   'claimARSpot' : IDL.Func([IDL.Text, IDL.Nat], [], []),
+  'clearAllMessages' : IDL.Func([], [], []),
   'getARSpotDistribution' : IDL.Func(
       [IDL.Text],
       [IDL.Opt(ARSpotDistribution)],
@@ -132,7 +139,13 @@ export const idlService = IDL.Service({
       [IDL.Vec(CapturedMonster)],
       ['query'],
     ),
+  'getMessages' : IDL.Func(
+      [IDL.Nat, IDL.Nat],
+      [IDL.Vec(ChatMessage)],
+      ['query'],
+    ),
   'getPlayerState' : IDL.Func([], [IDL.Opt(PlayerProfile)], []),
+  'getTotalMessagesCount' : IDL.Func([], [IDL.Nat], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(PlayerProfile)],
@@ -320,6 +333,7 @@ export const idlService = IDL.Service({
   'rescueSingleCoin' : IDL.Func([IDL.Text, CoordinatedPoint], [], []),
   'restoreEnergy' : IDL.Func([], [], []),
   'saveCallerUserProfile' : IDL.Func([PlayerProfile], [], []),
+  'sendMessage' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'updateXP' : IDL.Func([IDL.Int], [], []),
 });
 
@@ -375,6 +389,12 @@ export const idlFactory = ({ IDL }) => {
     'bonusTokens' : IDL.Nat,
     'registered' : IDL.Bool,
     'energy' : IDL.Nat,
+  });
+  const ChatMessage = IDL.Record({
+    'content' : IDL.Text,
+    'authorName' : IDL.Text,
+    'sender' : IDL.Principal,
+    'timestamp' : IDL.Int,
   });
   const PaymentCancelResponse = IDL.Record({
     'message' : IDL.Text,
@@ -433,6 +453,7 @@ export const idlFactory = ({ IDL }) => {
     'captureMonster' : IDL.Func([Monster], [], []),
     'checkout' : IDL.Func([IDL.Vec(LineItem)], [CreatePaymentResponse], []),
     'claimARSpot' : IDL.Func([IDL.Text, IDL.Nat], [], []),
+    'clearAllMessages' : IDL.Func([], [], []),
     'getARSpotDistribution' : IDL.Func(
         [IDL.Text],
         [IDL.Opt(ARSpotDistribution)],
@@ -450,7 +471,13 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(CapturedMonster)],
         ['query'],
       ),
+    'getMessages' : IDL.Func(
+        [IDL.Nat, IDL.Nat],
+        [IDL.Vec(ChatMessage)],
+        ['query'],
+      ),
     'getPlayerState' : IDL.Func([], [IDL.Opt(PlayerProfile)], []),
+    'getTotalMessagesCount' : IDL.Func([], [IDL.Nat], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(PlayerProfile)],
@@ -638,6 +665,7 @@ export const idlFactory = ({ IDL }) => {
     'rescueSingleCoin' : IDL.Func([IDL.Text, CoordinatedPoint], [], []),
     'restoreEnergy' : IDL.Func([], [], []),
     'saveCallerUserProfile' : IDL.Func([PlayerProfile], [], []),
+    'sendMessage' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'updateXP' : IDL.Func([IDL.Int], [], []),
   });
 };

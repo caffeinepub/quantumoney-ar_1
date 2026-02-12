@@ -12,8 +12,6 @@ import Array "mo:core/Array";
 import Time "mo:core/Time";
 import Int "mo:core/Int";
 
-
-
 actor {
   include MixinStorage();
 
@@ -77,6 +75,13 @@ actor {
     timestamp : Int;
   };
 
+  type ChatMessage = {
+    sender : Principal;
+    authorName : Text;
+    content : Text;
+    timestamp : Int;
+  };
+
   let accessControlState = AccessControl.initState();
   let stripe = Stripe.init(accessControlState, "usd");
 
@@ -86,8 +91,10 @@ actor {
   let arSpotClaims = Map.empty<Text, ARSpotClaim>();
   let arSpotDistributions = Map.empty<Text, ARSpotDistribution>();
   var qmyPurchaseRequests = Map.empty<Principal, QMYPurchaseRequest>();
+  let chatMessages = Map.empty<Nat, ChatMessage>();
 
   var fixedQmyPrice : Float = 0.02;
+  var chatMessageCounter = 0;
 
   include StripeMixin(stripe);
 
@@ -924,5 +931,58 @@ actor {
       case (null) { [] };
     };
   };
-};
 
+  public shared ({ caller }) func sendMessage(authorName : Text, content : Text) : async () {
+    if (caller.isAnonymous()) {
+      Runtime.trap("Unauthorized: Anonymous users cannot send messages");
+    };
+
+    switch (content.size(), authorName.size()) {
+      case (0, _) { Runtime.trap("Cannot send empty author name or content") };
+      case (_, 0) { Runtime.trap("Cannot send empty author name or content") };
+      case (_, _) {};
+    };
+
+    let newMessage : ChatMessage = {
+      sender = caller;
+      authorName = authorName;
+      content;
+      timestamp = Time.now();
+    };
+
+    chatMessages.add(chatMessageCounter, newMessage);
+    chatMessageCounter += 1;
+  };
+
+  public query func getMessages(limit : Nat, offset : Nat) : async [ChatMessage] {
+    let totalMessages = chatMessages.size();
+
+    let actualOffset = Nat.min(offset, totalMessages);
+    let actualLimit = Nat.min(limit, totalMessages - actualOffset);
+
+    if (actualLimit == 0) { return [] };
+
+    let iter = chatMessages.entries();
+    let startIter = iter.drop(actualOffset);
+    let limitedIter = startIter.take(actualLimit);
+
+    limitedIter.toArray().map(
+      func((_, message)) { message }
+    );
+  };
+
+  public query func getTotalMessagesCount() : async Nat {
+    chatMessages.size();
+  };
+
+  public shared ({ caller }) func clearAllMessages() : async () {
+    if (not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Only admins can clear all messages");
+    };
+
+    if (chatMessages.size() != 0) {
+      chatMessages.clear();
+      chatMessageCounter := 0;
+    };
+  };
+};

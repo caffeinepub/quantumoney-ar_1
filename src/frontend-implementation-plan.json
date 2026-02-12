@@ -1,79 +1,282 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Controlled clean initialization: minimal IC + React workspace scaffolding (frontend-only)",
+  "title": "Quantumoney.app simulated-mode patch (frontend): simulated Send QMY, Central Bank dashboard, Public Chat, Pre-Proposals, Presale UI, Gold Paper visualization, navigation, and Caffeine removal",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Add a minimal root-level package.json to install and build the existing React+TypeScript frontend without touching existing source files.",
+      "summary": "Add a simulated-only “Send QMY” form to the Wallet page with Principal+amount inputs, validation, and simulated success/failure feedback; isolate send logic for later swap-in to real transfers.",
       "acceptanceCriteria": [
-        "A root-level package.json exists.",
-        "package.json contains scripts needed to install dependencies and build the frontend (e.g., dev/build/preview or equivalent).",
-        "No existing frontend source files are rewritten as part of creating package.json."
+        "Wallet page shows a clearly labeled “Send QMY” entry point and a form with destination Principal + amount inputs.",
+        "Submitting the form never calls ledger/canister transfer APIs and never triggers any backend mutation; it only performs local simulation.",
+        "Form validates that destination is a valid Principal format and amount is a positive number within simulated available balance.",
+        "User receives clear toast/inline feedback for simulated success and simulated failure cases (deterministic or randomized), and the UI remains responsive on mobile/desktop.",
+        "Code structure isolates the simulated send logic so a future real-transfer implementation can replace the simulator with minimal UI changes."
       ],
       "file_operations": [
         {
-          "path": "frontend/../package.json",
+          "path": "frontend/src/lib/qmy/simulatedSend.ts",
           "operation": "create",
-          "description": "Create a minimal root-level package.json (via this relative path) with only essential scripts (dev/build/preview) and dependencies required by the existing frontend codebase; do not modify any existing frontend source files."
+          "description": "Create isolated simulation-only send logic (e.g., Principal parsing/validation, balance checks, deterministic/randomized success/failure result shaping) that never performs any ledger or backend mutation."
+        },
+        {
+          "path": "frontend/src/components/wallet/SendQMYSimulatedCard.tsx",
+          "operation": "create",
+          "description": "Add a Wallet sub-component that renders the “Send QMY” button + form UI (destination Principal, amount), shows inline feedback, and triggers toast notifications on simulated success/failure using the existing Toaster integration (sonner)."
+        },
+        {
+          "path": "frontend/src/pages/WalletPage.tsx",
+          "operation": "modify",
+          "description": "Wire the simulated Send QMY card into the Wallet page without removing the existing read-only balance/transaction views; ensure the simulated flow does not call useActor mutations or ledger transfer APIs."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Add a minimal root-level dfx.json defining backend and frontend assets canisters, pointing at existing backend/main.mo and serving the existing frontend build output, without deploying.",
+      "summary": "Implement simulation-mode available vs locked balances with a local vesting schedule (100 unlocked immediately; 900 locked; unlock 100 every 30 days) derived from a locally stored simulation start date, and display it clearly alongside existing on-chain read-only data.",
       "acceptanceCriteria": [
-        "A root-level dfx.json exists.",
-        "dfx.json references the existing backend canister entrypoint at backend/main.mo (no edits to backend/main.mo).",
-        "dfx.json includes an assets canister that serves the existing frontend build output.",
-        "No dfx deploy (or equivalent deployment attempt) is performed as part of this work."
+        "When simulation mode is enabled, the wallet shows a vesting breakdown that matches: initial unlocked=100 QMY; locked starts at 900 QMY; unlock increments of 100 QMY per 30-day period.",
+        "Simulation vesting state is derived from a locally stored “simulation start date” (e.g., first enablement) and updates on refresh accordingly.",
+        "Existing real on-chain read-only QMY balance and transaction history views remain available and are not replaced by simulated values unless explicitly labeled as simulated.",
+        "The UI clearly labels simulated values as “Simulated” to avoid confusion with on-chain data."
       ],
       "file_operations": [
         {
-          "path": "frontend/../dfx.json",
+          "path": "frontend/src/lib/qmy/simulatedVesting.ts",
           "operation": "create",
-          "description": "Create a minimal root-level dfx.json (via this relative path) that declares a backend canister referencing backend/main.mo and an assets canister serving the frontend build output directory; do not perform any deployment actions."
+          "description": "Implement vesting math helpers for the requested schedule (100 unlocked immediately + 900 locked with 100 released every 30 days) based on a stored simulation start date; return available, locked, and next unlock info for UI."
+        },
+        {
+          "path": "frontend/src/hooks/useSimulatedQMYVesting.ts",
+          "operation": "create",
+          "description": "Create a hook that manages simulation mode state + persists a simulation start date in localStorage on first enablement; exposes computed simulated available/locked/nextUnlock derived from simulatedVesting helpers."
+        },
+        {
+          "path": "frontend/src/components/wallet/VestingBreakdown.tsx",
+          "operation": "modify",
+          "description": "Extend the vesting breakdown presentation to optionally show a clear “Simulated” label/badge and avoid ambiguity between simulated and on-chain-unavailable states (without altering any shadcn/ui components)."
+        },
+        {
+          "path": "frontend/src/pages/WalletPage.tsx",
+          "operation": "modify",
+          "description": "Add a simulation-mode control (e.g., toggle) and, when enabled, show simulated available/locked/next unlock values (clearly labeled) while retaining the existing on-chain read-only balance + transaction history display."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Ensure frontend entry files exist (index.html and main.tsx) without modifying them if already present.",
+      "summary": "Create a responsive “QMY Central Bank” informational dashboard page and route with simulated/static but future-structured metrics and visual sections.",
       "acceptanceCriteria": [
-        "frontend/index.html exists.",
-        "frontend/src/main.tsx exists.",
-        "If either file already existed in the workspace prior to this change, its contents remain unchanged (no reformatting or rewriting)."
+        "A new navigable page exists for the Central Bank dashboard (added to routing and reachable from existing navigation patterns).",
+        "Dashboard includes sections/cards for: circulating vs locked totals; category distribution; usage metrics; presale metrics; geographic distribution.",
+        "All displayed numbers/graphs are clearly labeled as informational/simulated if not sourced from on-chain.",
+        "Layout is responsive and visually consistent with the existing QuantumUniverseScene + gold/amber styling used across the app."
       ],
       "file_operations": [
         {
-          "path": "frontend/index.html",
-          "operation": "create",
-          "description": "Only if missing: create a valid frontend/index.html with a root mount element and module script loading /src/main.tsx; if the file already exists, do not modify it."
+          "path": "frontend/src/pages/BancoCentral.tsx",
+          "operation": "modify",
+          "description": "Implement the “QMY Central Bank” dashboard UI using existing layout primitives (PageShell/Container/Cards) with simulated data models structured to later reflect AR hotspots and 600M QMY strategic distribution; label all non-on-chain values as informational/simulated."
         },
         {
-          "path": "frontend/src/main.tsx",
+          "path": "frontend/src/lib/qmy/centralBankSimData.ts",
           "operation": "create",
-          "description": "Only if missing: create a valid React+TypeScript bootstrap file that mounts the app into #root; if the file already exists, do not modify it."
+          "description": "Add a simulated/static data module for dashboard sections (circulating vs locked, category distribution, usage stats, presale stats, geographic distribution) with a structure that can later be replaced by real data sources."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add a stable route path for the Central Bank dashboard and mount it under the existing Layout routing tree."
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Stop after creating the minimal structure and add an explicit confirmation step that the required files exist, with no build/deploy initiated afterward.",
+      "summary": "Implement a public community chat UI with polling-based updates and infinite scroll, integrating with the existing backend chat read/write functions via the actor.",
       "acceptanceCriteria": [
-        "Work concludes with a confirmation step listing the presence of: package.json, dfx.json, frontend/index.html, and frontend/src/main.tsx.",
-        "No build, bundling, or deployment steps are initiated after the confirmation."
+        "Backend exposes APIs to post a message and to list messages with pagination (cursor/offset) suitable for infinite scroll.",
+        "Frontend provides a public chat page with: message list, timestamps, compose box, and infinite scroll loading older messages.",
+        "Chat updates automatically via polling/refetch interval so new messages appear without a full page reload.",
+        "Chat UI works on desktop and mobile (input remains accessible; list scroll behavior is stable).",
+        "Basic anti-abuse constraints exist (e.g., max message length, simple rate limit per principal/time window) enforced in backend or frontend with backend validation."
       ],
       "file_operations": [
         {
-          "path": "frontend/STRUCTURE_CONFIRMATION.md",
+          "path": "frontend/src/hooks/usePublicChat.ts",
           "operation": "create",
-          "description": "Create a short, explicit confirmation checklist instructing the operator to verify that frontend/../package.json, frontend/../dfx.json, frontend/index.html, and frontend/src/main.tsx physically exist in the workspace, and to STOP before any build/bundle/deploy."
+          "description": "Create React Query hooks for chat: polling-based message refresh and paginated/infinite message loading using the existing actor capabilities (getMessages/getTotalMessagesCount/sendMessage) without WebSockets."
         },
         {
-          "path": "frontend/src/VALIDATION_REQUIRED.md",
+          "path": "frontend/src/pages/PublicChatPage.tsx",
+          "operation": "create",
+          "description": "Implement a public chat page with message list (timestamps), compose box, and infinite scroll; include client-side anti-abuse (max message length, basic cooldown) and handle actor/auth availability gracefully on mobile/desktop."
+        },
+        {
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Append a new 'Controlled clean initialization' validation section that requires explicitly confirming the presence of the four required files and reiterates that no build/bundling/deployment should be attempted after confirmation."
+          "description": "Register a stable route for the Public Chat page and ensure it renders inside the existing Layout."
+        },
+        {
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "modify",
+          "description": "Add a navigation entry to the Public Chat page consistent with existing header styling."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Add an educational Pre-Proposals browsing section with list + detail views (learn more) and no governance submission/execution actions.",
+      "acceptanceCriteria": [
+        "There is a dedicated section/page (or clearly separated section inside the DAO area) listing pre-proposals with title, description, objective, and impact.",
+        "Each pre-proposal has a “Learn more” affordance that navigates to/opens a detail view with expanded content.",
+        "No actions exist that create proposals, vote, or execute governance; all content is informational/educational."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/dao/preProposalsData.ts",
+          "operation": "create",
+          "description": "Create a static/simulated dataset for pre-proposals (title, description, objective, impact, and full details) explicitly marked as educational/informational."
+        },
+        {
+          "path": "frontend/src/pages/PreProposalsPage.tsx",
+          "operation": "create",
+          "description": "Implement the Pre-Proposals list page (title, description, objective, impact) with “Learn more” navigation to a detail view; ensure no on-chain/DAO actions exist."
+        },
+        {
+          "path": "frontend/src/pages/PreProposalDetailPage.tsx",
+          "operation": "create",
+          "description": "Implement the Pre-Proposals detail view for expanded content and clear educational disclaimers; no submit/vote/execute UI."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add routes for Pre-Proposals list and detail pages (stable paths) under the existing routing tree."
+        },
+        {
+          "path": "frontend/src/pages/DAOPage.tsx",
+          "operation": "modify",
+          "description": "Add a clearly labeled educational link/section entry point from the DAO page to Pre-Proposals, without adding any governance execution UI."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Implement an interactive, responsive “QMY Presale” informational section with simulated lots/phases, rules, time-based distribution, unlock visualization, counters, and filters.",
+      "acceptanceCriteria": [
+        "A presale page/section exists and is reachable via routing/navigation.",
+        "Presale content includes lots/phases with quantities and acquisition rules, plus a time/unlock visualization (timeline/progress).",
+        "UI provides interactive controls (filters and/or phase selectors) and clear counters to explore presale data.",
+        "All presale information is clearly presented as informational/simulated and does not initiate payments or token issuance."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/qmy/presaleSimData.ts",
+          "operation": "create",
+          "description": "Add simulated presale lots/phases data (quantities, acquisition rules, schedule/unlock markers) designed to be replaceable with real data later."
+        },
+        {
+          "path": "frontend/src/components/presale/PresaleLotsExplorer.tsx",
+          "operation": "create",
+          "description": "Create interactive UI for exploring presale lots/phases with filters/phase selectors and counters; ensure all outputs are labeled as informational/simulated and do not start payments."
+        },
+        {
+          "path": "frontend/src/components/presale/PresaleUnlockVisualization.tsx",
+          "operation": "create",
+          "description": "Create a responsive unlock visualization (timeline/progress style) driven by the simulated presale data; keep it lightweight and mobile-friendly."
+        },
+        {
+          "path": "frontend/src/pages/PresalePage.tsx",
+          "operation": "modify",
+          "description": "Upgrade the existing presale page to include the interactive lots explorer + unlock visualization while retaining existing styling; keep the page explicitly informational (no checkout/token issuance)."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add a stable route for the presale page and ensure it is reachable via routing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Upgrade Gold Paper into an interactive “universe-style” visualization for 600M strategic QMY distribution and hotspot/tourist-point exploration, aligned with existing quantum universe visuals.",
+      "acceptanceCriteria": [
+        "Gold Paper area includes an interactive visualization section (not just static text/images).",
+        "Visualization includes: a global distribution representation for 600M QMY and a way to explore hotspots/tourist points (simulated dataset is acceptable).",
+        "Background/scene uses the existing quantum universe styling so it feels visually synchronized with the AR app look-and-feel.",
+        "Page remains performant and responsive; interactive elements remain usable on mobile."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/qmy/goldPaperSimData.ts",
+          "operation": "create",
+          "description": "Add a simulated dataset representing 600M strategic distribution and geo hotspot/tourist points, structured so it can later reflect AR hotspots."
+        },
+        {
+          "path": "frontend/src/components/gold-paper/GoldPaperUniverseVisualization.tsx",
+          "operation": "create",
+          "description": "Implement an interactive visualization component (floating universe-style nodes + selectable regions/hotspots list) consistent with the app’s quantum universe visuals; use simulated data and keep performance/mobile usability in mind."
+        },
+        {
+          "path": "frontend/src/pages/GoldPaper.tsx",
+          "operation": "modify",
+          "description": "Integrate the interactive Gold Paper visualization section into the existing Gold Paper page (without replacing required educational notices) and clearly label simulated/informational data."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Remove all visible references to “Caffeine” across the frontend UI/metadata and delete any frontend code comments mentioning Caffeine, leaving only Quantumoney branding.",
+      "acceptanceCriteria": [
+        "No UI text in the rendered app mentions “Caffeine”.",
+        "No source code comments in the repository mention “Caffeine”.",
+        "Footer and any documentation pages reflect only Quantumoney branding and provided contact links."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Review and remove any “Caffeine” references from frontend metadata (title/meta tags/description) if present; ensure branding is Quantumoney-only."
+        },
+        {
+          "path": "frontend/src/components/Footer.tsx",
+          "operation": "modify",
+          "description": "Remove/replace any footer attribution or UI text that mentions “Caffeine” (if present) and ensure the footer reflects only Quantumoney branding and the provided contact links."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Perform a frontend-scoped audit pass while editing this file to remove any “Caffeine” mentions in comments or UI text (if present) and keep routing/nav consistent with Quantumoney branding."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Add/adjust routes and navigation so Central Bank, Public Chat, Pre-Proposals, Presale, and upgraded Gold Paper visualization are discoverable and consistent with existing styling.",
+      "acceptanceCriteria": [
+        "App routing includes stable paths for each new/updated section and they render inside the existing Layout.",
+        "Navigation entry points exist (header/section navigator/links) so users can reach the new pages without manually typing URLs.",
+        "All new pages follow existing layout primitives (Container/PageShell/cards) and match the app’s dark + gold aesthetic."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire all new routes (Central Bank, Public Chat, Pre-Proposals list/detail, Presale) into the TanStack Router routeTree and ensure they render under the existing Layout."
+        },
+        {
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "modify",
+          "description": "Add/adjust header navigation links so users can discover Central Bank, Public Chat, Presale, Gold Paper, and DAO/Pre-Proposals entry points; keep consistent with existing dark+gold styling."
+        },
+        {
+          "path": "frontend/src/components/Footer.tsx",
+          "operation": "modify",
+          "description": "Add footer links for the new sections (Central Bank, Public Chat, Presale, Pre-Proposals) consistent with existing footer patterns."
+        },
+        {
+          "path": "frontend/src/components/SectionNavigator.tsx",
+          "operation": "modify",
+          "description": "Update the section navigator list to include the newly implemented sections and mark them as available with correct stable paths."
         }
       ]
     }

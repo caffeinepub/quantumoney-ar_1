@@ -1,21 +1,16 @@
 import { Link } from '@tanstack/react-router';
-import { Heart } from 'lucide-react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const appIdentifier = typeof window !== 'undefined' 
-    ? encodeURIComponent(window.location.hostname) 
-    : 'quantumoney-ar';
 
   return (
     <footer className="relative z-10 glass-card-elevated border-t border-primary/20 py-16 px-4">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          {/* Brand */}
           <div className="text-center md:text-left">
             <img 
               src="/assets/generated/quantumoney-ar-logo-transparent.dim_200x200.png" 
-              alt="Quantumoney AR" 
+              alt="Quantumoney" 
               className="w-16 h-16 mb-4 mx-auto md:mx-0 opacity-90"
             />
             <p className="text-muted-foreground text-sm leading-relaxed">
@@ -23,7 +18,6 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Quick Links */}
           <div className="text-center md:text-left">
             <h3 className="text-primary font-bold mb-4 text-sm uppercase tracking-wider">Resources</h3>
             <ul className="space-y-3">
@@ -38,36 +32,39 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/swap" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Swap
+                <Link to="/central-bank" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Central Bank
                 </Link>
               </li>
+              <li>
+                <Link to="/chat" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Public Chat
+                </Link>
+              </li>
+              <li>
+                <Link to="/presale" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Presale
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="text-center md:text-left">
+            <h3 className="text-primary font-bold mb-4 text-sm uppercase tracking-wider">Governance</h3>
+            <ul className="space-y-3">
               <li>
                 <Link to="/dao" className="text-muted-foreground hover:text-primary transition-colors text-sm">
                   DAO
                 </Link>
               </li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div className="text-center md:text-left">
-            <h3 className="text-primary font-bold mb-4 text-sm uppercase tracking-wider">Contact</h3>
-            <ul className="space-y-3 text-muted-foreground text-sm">
               <li>
-                <a href="mailto:helpdesk@quantumoney.net" className="hover:text-primary transition-colors">
-                  helpdesk@quantumoney.net
-                </a>
-              </li>
-              <li>
-                <a href="https://www.quantumoney.net" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-                  www.quantumoney.net
-                </a>
+                <Link to="/pre-proposals" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Pre-Proposals
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Documentation */}
           <div className="text-center md:text-left">
             <h3 className="text-primary font-bold mb-4 text-sm uppercase tracking-wider">Documentation</h3>
             <ul className="space-y-3">
@@ -85,34 +82,18 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-primary/10 pt-8 space-y-4">
+        <div className="border-t border-primary/10 pt-8">
           <div className="text-center">
             <p className="text-muted-foreground text-sm mb-2">
-              © {currentYear} Quantumoney AR
+              © {currentYear} Quantumoney
             </p>
-            <p className="text-muted-foreground/70 text-xs mb-3">
+            <p className="text-muted-foreground/70 text-xs">
               by HTgamers | 
               <a href="mailto:helpdesk@quantumoney.net" className="text-primary hover:underline ml-1">
                 helpdesk@quantumoney.net
               </a> | 
               <a href="https://www.quantumoney.net" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline ml-1">
                 www.quantumoney.net
-              </a>
-            </p>
-          </div>
-          
-          {/* Attribution */}
-          <div className="text-center">
-            <p className="text-muted-foreground/60 text-xs flex items-center justify-center gap-2">
-              Built with <Heart className="w-3 h-3 text-primary fill-primary animate-pulse" /> using{' '}
-              <a 
-                href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${appIdentifier}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline font-medium"
-              >
-                caffeine.ai
               </a>
             </p>
           </div>

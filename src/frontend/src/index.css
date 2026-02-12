@@ -1,15 +1,185 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Dark luxury background system */
+    --background: 222 10% 4%;
+    --foreground: 45 95% 75%;
+
+    /* Gold primary - refined luxury tone */
+    --primary: 43 96% 56%;
+    --primary-foreground: 222 10% 4%;
+
+    /* Deep violet secondary */
+    --secondary: 270 45% 55%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Electric blue accent */
+    --accent: 200 95% 55%;
+    --accent-foreground: 222 10% 4%;
+
+    /* Refined muted tones */
+    --muted: 222 10% 12%;
+    --muted-foreground: 0 0% 65%;
+
+    /* Elevated card surfaces */
+    --card: 222 10% 8%;
+    --card-foreground: 45 95% 75%;
+
+    /* Popover surfaces */
+    --popover: 222 10% 8%;
+    --popover-foreground: 45 95% 75%;
+
+    /* Refined borders */
+    --border: 43 96% 56% / 0.25;
+    --input: 43 96% 56% / 0.3;
+
+    /* Focus ring */
+    --ring: 43 96% 56%;
+
+    /* Border radius system */
+    --radius: 0.75rem;
+
+    /* Destructive states */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Success states */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+
+    /* Warning states */
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 10% 4%;
+
+    /* Layout tokens */
+    --header-height: 5rem;
+    --page-gutter-x: 1rem;
+    --page-gutter-y: 2rem;
+  }
 }
 
-body {
-  font-family: system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    @apply tracking-tight;
+  }
 }
 
-#root {
-  min-height: 100vh;
+@layer utilities {
+  /* Glass morphism surfaces */
+  .glass-card {
+    background: rgba(10, 10, 12, 0.75);
+    backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(217, 165, 32, 0.25);
+  }
+
+  .glass-card-elevated {
+    background: rgba(15, 15, 18, 0.85);
+    backdrop-filter: blur(20px) saturate(200%);
+    border: 1px solid rgba(217, 165, 32, 0.35);
+  }
+
+  /* Luxury shadows */
+  .shadow-gold {
+    box-shadow: 0 4px 24px rgba(217, 165, 32, 0.3), 0 0 48px rgba(217, 165, 32, 0.15);
+  }
+
+  .shadow-gold-lg {
+    box-shadow: 0 8px 32px rgba(217, 165, 32, 0.4), 0 0 64px rgba(217, 165, 32, 0.2);
+  }
+
+  .shadow-gold-subtle {
+    box-shadow: 0 2px 16px rgba(217, 165, 32, 0.2), 0 0 32px rgba(217, 165, 32, 0.1);
+  }
+
+  /* Refined animations */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes depth-emerge {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateZ(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateZ(0);
+    }
+  }
+
+  .animate-depth-emerge {
+    animation: depth-emerge 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(217, 165, 32, 0.1) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(10, 10, 12, 0.5);
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(217, 165, 32, 0.4);
+    border-radius: 6px;
+    border: 2px solid rgba(10, 10, 12, 0.5);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(217, 165, 32, 0.6);
+  }
+
+  /* Focus states */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
 }
