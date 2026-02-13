@@ -1,84 +1,66 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-12T22:59:01.652Z",
-  "summary": "Most requested frontend pages/routes were added (Central Bank dashboard, Public Chat, Pre‑Proposals with detail view, Presale page with unlock visualization, and Gold Paper interactive visualization). Simulated wallet send + vesting logic appears implemented, but some acceptance-criteria details are not verifiable from the truncated diff. The chat feature uses polling, but the UI shown relies on a “Load Older Messages” button rather than true infinite scroll; backend anti-abuse/rate-limit enforcement is not evidenced in the shown backend diff.",
+  "generatedAt": "2026-02-13T19:51:29.584Z",
+  "summary": "REQ-1/2/3/6 appear implemented via App-level LanguageProvider wrapping, in-memory simulated chat hook + UI disclaimer, 100dvh-aware layout/CSS utilities with premium black/gold + HUD/map-info styling, and explicit simulated/static disclaimers for presale and gold paper. REQ-5 (full Feb/2026 Terms/Privacy page content) is not evidenced in the provided diff summary. REQ-4 (footer required strings + complete sitewide removal of “Caffeine”) is only partially evidenced due to Footer truncation and lack of project-wide string evidence.",
   "missing_requirements": [
     {
       "id": "REQ-4",
-      "requirement": "Public community chat must support infinite scroll for loading older messages.",
-      "reason": "The Public Chat UI shown provides a manual 'Load Older Messages' button, but no evidence of an infinite-scroll trigger (e.g., scroll listener / intersection observer) is present in the diff summary.",
+      "requirement": "Footer includes: \"by HTgamers\", support email helpdesk@quantumoney.net, and the phrase \"On-chain na Internet Computer (ICP)\", and remove any remaining \"Caffeine\" references across the entire site (including metadata).",
+      "reason": "Footer content is truncated in the diff, so inclusion of \"by HTgamers\" and \"helpdesk@quantumoney.net\" is not verifiable; only the \"On-chain na Internet Computer (ICP)\" phrase is explicitly visible. Also, no diff evidence shows a project-wide removal of the string \"Caffeine\" beyond updating frontend/index.html metadata.",
       "evidence": [
-        "frontend/src/pages/PublicChatPage.tsx",
-        "frontend/src/hooks/usePublicChat.ts"
+        "frontend/src/components/Footer.tsx (truncated, shows \"On-chain na Internet Computer (ICP)\" but not the other required strings)",
+        "frontend/index.html (metadata shown; does not prove project-wide removal)"
       ]
     },
     {
-      "id": "REQ-4",
-      "requirement": "Basic anti-abuse constraints (e.g., simple rate limit per principal/time window) enforced with backend validation.",
-      "reason": "Frontend enforces a max message length (500 chars), but the backend diff excerpt does not show any rate limiting or backend-side validation logic for message posting; only types/maps/counters are visible in the truncated backend file.",
+      "id": "REQ-5",
+      "requirement": "Terms of Service and Privacy Policy pages are fully populated with complete Feb/2026 text content (no placeholders/truncation) and are navigable via site links; cookie consent banner visible on entry with working links to Privacy Policy.",
+      "reason": "Routes to /terms and /privacy are wired and the cookie consent banner links to /privacy, but no diff evidence shows the Terms/Privacy pages containing the complete Feb/2026 legal text (the page components themselves are not included in the diff summary).",
       "evidence": [
-        "backend/main.mo",
-        "frontend/src/pages/PublicChatPage.tsx"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "requirement": "Wallet must clearly label simulated vesting/available/locked values as 'Simulated' and show them only when simulation mode is active, without overwriting existing on-chain read-only displays.",
-      "reason": "Simulated vesting hook and send card include 'Simulated' labeling, but the WalletPage and VestingBreakdown changes are truncated and do not clearly evidence the required conditional display behavior and labeling for simulated balances alongside existing on-chain read-only balances.",
-      "evidence": [
-        "frontend/src/pages/WalletPage.tsx",
-        "frontend/src/components/wallet/VestingBreakdown.tsx",
-        "frontend/src/hooks/useSimulatedQMYVesting.ts"
+        "frontend/src/App.tsx (adds /terms and /privacy routes)",
+        "frontend/src/components/CookieConsentBanner.tsx (links to /privacy)",
+        "frontend/src/components/Footer.tsx (truncated; shows links to /terms and /privacy but not page contents)"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "DAO governance page enhanced to create proposals and enable voting with backend integration (non-informational governance actions).",
-      "reason": "BuildRequest only asked for an educational 'Pre‑Proposals' section with no governance actions; adding proposal creation/voting is outside the requested scope and conflicts with the non-goal of not executing governance actions for this educational content.",
+      "description": "Added/expanded DAO governance page with \"full backend integration\" (creating proposals, listing proposals with real-time data, voting system with authentication checks, 30s polling).",
+      "reason": "Not requested in the BuildRequest and potentially conflicts with the stated simulated/pro UI-first constraints; this capability is asserted in the diff-provided file summary rather than tied to an explicit requirement.",
       "evidence": [
-        "frontend-file-summaries.txt (frontend/src/pages/DAO.tsx)"
+        "frontend-file-summaries.txt (entry for \"frontend/src/pages/DAO.tsx\" describing full backend integration and polling)"
       ]
     },
     {
-      "description": "Added/expanded various unrelated UI features (e.g., social sharing buttons, print functionality, modals enhancements).",
-      "reason": "These changes are not part of REQ-1..REQ-9 and are not mentioned in the BuildRequest.",
+      "description": "Added social sharing, printing features, and XP reward notifications in various modals (e.g., TokenInfoModal, PlantConfirmationModal, RescueConfirmationModal).",
+      "reason": "Not requested by any REQ-1..REQ-6; these changes are asserted in the diff-provided file summary.",
       "evidence": [
-        "frontend-file-summaries.txt (frontend/src/components/TokenInfoModal.tsx)",
-        "frontend-file-summaries.txt (frontend/src/components/PlantConfirmationModal.tsx)",
-        "frontend-file-summaries.txt (frontend/src/components/RescueConfirmationModal.tsx)"
+        "frontend-file-summaries.txt (entries for PlantConfirmationModal.tsx, RescueConfirmationModal.tsx, TokenInfoModal.tsx)"
+      ]
+    },
+    {
+      "description": "Persisted \"AR Distribution Initialized 100%\" status in localStorage via useARInitializationStatus hook and added admin Force Initialize button.",
+      "reason": "Not requested, and introduces localStorage persistence (even if unrelated to chat), which is outside the described scope of this patch.",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/src/pages/BancoCentral.tsx\" describing localStorage persistence and Force Initialize button)"
       ]
     }
   ],
-  "confidence": 0.62,
+  "confidence": 0.63,
   "changed_files": [
-    "backend/main.mo",
     "frontend-file-summaries.txt",
+    "frontend/index.html",
     "frontend/src/App.tsx",
+    "frontend/src/components/CookieConsentBanner.tsx",
     "frontend/src/components/Footer.tsx",
-    "frontend/src/components/Header.tsx",
-    "frontend/src/components/SectionNavigator.tsx",
-    "frontend/src/components/gold-paper/GoldPaperUniverseVisualization.tsx",
-    "frontend/src/components/presale/PresaleLotsExplorer.tsx",
-    "frontend/src/components/presale/PresaleUnlockVisualization.tsx",
-    "frontend/src/components/wallet/SendQMYSimulatedCard.tsx",
-    "frontend/src/components/wallet/VestingBreakdown.tsx",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/components/PageShell.tsx",
     "frontend/src/hooks/usePublicChat.ts",
-    "frontend/src/hooks/useSimulatedQMYVesting.ts",
-    "frontend/src/lib/dao/preProposalsData.ts",
-    "frontend/src/lib/qmy/centralBankSimData.ts",
-    "frontend/src/lib/qmy/goldPaperSimData.ts",
-    "frontend/src/lib/qmy/presaleSimData.ts",
-    "frontend/src/lib/qmy/simulatedSend.ts",
-    "frontend/src/lib/qmy/simulatedVesting.ts",
-    "frontend/src/pages/BancoCentral.tsx",
+    "frontend/src/index.css",
     "frontend/src/pages/GoldPaper.tsx",
-    "frontend/src/pages/PreProposalDetailPage.tsx",
-    "frontend/src/pages/PreProposalsPage.tsx",
     "frontend/src/pages/PresalePage.tsx",
     "frontend/src/pages/PublicChatPage.tsx",
-    "frontend/src/pages/WalletPage.tsx",
     "project_state.json"
   ]
 }

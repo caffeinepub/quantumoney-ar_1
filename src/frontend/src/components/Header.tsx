@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { Menu, X, Wallet, Repeat, Coins, Building2, MessageSquare, FileText, ShoppingCart } from 'lucide-react';
+import { Menu, X, Wallet, Coins, Building2, MessageSquare, FileText, ShoppingCart, Scale } from 'lucide-react';
 import LoginButton from './LoginButton';
 
 export default function Header() {
@@ -62,6 +62,13 @@ export default function Header() {
             >
               <ShoppingCart className="w-4 h-4" />
               Presale
+            </Link>
+            <Link
+              to="/terms"
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
+            >
+              <Scale className="w-4 h-4" />
+              Legal
             </Link>
             <div className="ml-2">
               <LoginButton />
@@ -134,6 +141,14 @@ export default function Header() {
               >
                 <FileText className="w-4 h-4" />
                 DAO
+              </Link>
+              <Link
+                to="/terms"
+                onClick={() => setIsMenuOpen(false)}
+                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
+              >
+                <Scale className="w-4 h-4" />
+                Legal
               </Link>
               <div className="pt-4 px-4">
                 <LoginButton />

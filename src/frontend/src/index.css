@@ -1,65 +1,87 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Dark luxury background system */
-    --background: 222 10% 4%;
-    --foreground: 45 95% 75%;
+    /* Premium Black/Gold OKLCH Color System */
+    --background: oklch(0.12 0.01 240);
+    --foreground: oklch(0.95 0.01 60);
 
-    /* Gold primary - refined luxury tone */
-    --primary: 43 96% 56%;
-    --primary-foreground: 222 10% 4%;
+    --card: oklch(0.15 0.015 240);
+    --card-foreground: oklch(0.95 0.01 60);
 
-    /* Deep violet secondary */
-    --secondary: 270 45% 55%;
-    --secondary-foreground: 0 0% 100%;
+    --popover: oklch(0.14 0.015 240);
+    --popover-foreground: oklch(0.95 0.01 60);
 
-    /* Electric blue accent */
-    --accent: 200 95% 55%;
-    --accent-foreground: 222 10% 4%;
+    --primary: oklch(0.75 0.15 85);
+    --primary-foreground: oklch(0.15 0.01 240);
 
-    /* Refined muted tones */
-    --muted: 222 10% 12%;
-    --muted-foreground: 0 0% 65%;
+    --secondary: oklch(0.25 0.02 240);
+    --secondary-foreground: oklch(0.95 0.01 60);
 
-    /* Elevated card surfaces */
-    --card: 222 10% 8%;
-    --card-foreground: 45 95% 75%;
+    --muted: oklch(0.22 0.015 240);
+    --muted-foreground: oklch(0.65 0.02 240);
 
-    /* Popover surfaces */
-    --popover: 222 10% 8%;
-    --popover-foreground: 45 95% 75%;
+    --accent: oklch(0.65 0.18 45);
+    --accent-foreground: oklch(0.15 0.01 240);
 
-    /* Refined borders */
-    --border: 43 96% 56% / 0.25;
-    --input: 43 96% 56% / 0.3;
+    --destructive: oklch(0.55 0.22 25);
+    --destructive-foreground: oklch(0.98 0.01 60);
 
-    /* Focus ring */
-    --ring: 43 96% 56%;
+    --success: oklch(0.65 0.18 145);
+    --success-foreground: oklch(0.15 0.01 240);
 
-    /* Border radius system */
+    --warning: oklch(0.70 0.18 75);
+    --warning-foreground: oklch(0.15 0.01 240);
+
+    --border: oklch(0.25 0.02 240);
+    --input: oklch(0.25 0.02 240);
+    --ring: oklch(0.75 0.15 85);
+
     --radius: 0.75rem;
 
-    /* Destructive states */
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --chart-1: oklch(0.75 0.15 85);
+    --chart-2: oklch(0.65 0.18 45);
+    --chart-3: oklch(0.55 0.20 145);
+    --chart-4: oklch(0.60 0.18 275);
+    --chart-5: oklch(0.70 0.18 25);
+  }
 
-    /* Success states */
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
+  .dark {
+    --background: oklch(0.12 0.01 240);
+    --foreground: oklch(0.95 0.01 60);
 
-    /* Warning states */
-    --warning: 38 92% 50%;
-    --warning-foreground: 222 10% 4%;
+    --card: oklch(0.15 0.015 240);
+    --card-foreground: oklch(0.95 0.01 60);
 
-    /* Layout tokens */
-    --header-height: 5rem;
-    --page-gutter-x: 1rem;
-    --page-gutter-y: 2rem;
+    --popover: oklch(0.14 0.015 240);
+    --popover-foreground: oklch(0.95 0.01 60);
+
+    --primary: oklch(0.75 0.15 85);
+    --primary-foreground: oklch(0.15 0.01 240);
+
+    --secondary: oklch(0.25 0.02 240);
+    --secondary-foreground: oklch(0.95 0.01 60);
+
+    --muted: oklch(0.22 0.015 240);
+    --muted-foreground: oklch(0.65 0.02 240);
+
+    --accent: oklch(0.65 0.18 45);
+    --accent-foreground: oklch(0.15 0.01 240);
+
+    --destructive: oklch(0.55 0.22 25);
+    --destructive-foreground: oklch(0.98 0.01 60);
+
+    --success: oklch(0.65 0.18 145);
+    --success-foreground: oklch(0.15 0.01 240);
+
+    --warning: oklch(0.70 0.18 75);
+    --warning-foreground: oklch(0.15 0.01 240);
+
+    --border: oklch(0.25 0.02 240);
+    --input: oklch(0.25 0.02 240);
+    --ring: oklch(0.75 0.15 85);
   }
 }
 
@@ -67,50 +89,77 @@
   * {
     @apply border-border;
   }
-  
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', sans-serif;
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
-  
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Playfair Display', serif;
-    @apply tracking-tight;
   }
 }
 
 @layer utilities {
-  /* Glass morphism surfaces */
+  /* 100dvh support for mobile viewport */
+  .min-h-screen-dvh {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .h-screen-dvh {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  /* Safe area padding for mobile notches/home indicators */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 1rem);
+  }
+
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0);
+  }
+
+  /* Glass morphism effects */
   .glass-card {
-    background: rgba(10, 10, 12, 0.75);
-    backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid rgba(217, 165, 32, 0.25);
+    @apply backdrop-blur-md bg-background/40 border border-primary/20;
   }
 
   .glass-card-elevated {
-    background: rgba(15, 15, 18, 0.85);
-    backdrop-filter: blur(20px) saturate(200%);
-    border: 1px solid rgba(217, 165, 32, 0.35);
+    @apply backdrop-blur-lg bg-background/60 border border-primary/30;
   }
 
-  /* Luxury shadows */
-  .shadow-gold {
-    box-shadow: 0 4px 24px rgba(217, 165, 32, 0.3), 0 0 48px rgba(217, 165, 32, 0.15);
-  }
-
-  .shadow-gold-lg {
-    box-shadow: 0 8px 32px rgba(217, 165, 32, 0.4), 0 0 64px rgba(217, 165, 32, 0.2);
-  }
-
+  /* Premium shadows */
   .shadow-gold-subtle {
-    box-shadow: 0 2px 16px rgba(217, 165, 32, 0.2), 0 0 32px rgba(217, 165, 32, 0.1);
+    box-shadow: 0 4px 20px -2px oklch(0.75 0.15 85 / 0.15);
   }
 
-  /* Refined animations */
+  .shadow-gold-strong {
+    box-shadow: 0 8px 32px -4px oklch(0.75 0.15 85 / 0.25);
+  }
+
+  /* HUD-style elements (AR visual sync) */
+  .hud-panel {
+    @apply glass-card-elevated border-primary/40 rounded-lg p-4;
+    box-shadow: 0 0 20px oklch(0.75 0.15 85 / 0.2), inset 0 0 10px oklch(0.75 0.15 85 / 0.05);
+  }
+
+  .hud-border {
+    @apply border-2 border-primary/50;
+    box-shadow: 0 0 10px oklch(0.75 0.15 85 / 0.3);
+  }
+
+  /* Map info window style (AR visual sync) */
+  .map-info-window {
+    @apply glass-card-elevated rounded-xl p-6 border-primary/40;
+    box-shadow: 0 8px 32px oklch(0.75 0.15 85 / 0.2);
+  }
+
+  /* Animations */
   @keyframes fade-in {
     from {
       opacity: 0;
-      transform: translateY(16px);
+      transform: translateY(10px);
     }
     to {
       opacity: 1;
@@ -119,67 +168,42 @@
   }
 
   .animate-fade-in {
-    animation: fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: fade-in 0.4s ease-out;
   }
 
-  @keyframes depth-emerge {
-    from {
-      opacity: 0;
-      transform: scale(0.95) translateZ(-50px);
-    }
-    to {
+  @keyframes pulse-gold {
+    0%, 100% {
       opacity: 1;
-      transform: scale(1) translateZ(0);
+    }
+    50% {
+      opacity: 0.6;
     }
   }
 
-  .animate-depth-emerge {
-    animation: depth-emerge 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  .animate-pulse-gold {
+    animation: pulse-gold 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
-  @keyframes shimmer {
-    0% {
-      background-position: -200% center;
-    }
-    100% {
-      background-position: 200% center;
-    }
-  }
-
-  .animate-shimmer {
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(217, 165, 32, 0.1) 50%,
-      transparent 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 3s ease-in-out infinite;
+  /* Typography utilities */
+  .text-balance {
+    text-wrap: balance;
   }
 
   /* Scrollbar styling */
-  ::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
   }
 
-  ::-webkit-scrollbar-track {
-    background: rgba(10, 10, 12, 0.5);
-    border-radius: 6px;
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-background/20;
   }
 
-  ::-webkit-scrollbar-thumb {
-    background: rgba(217, 165, 32, 0.4);
-    border-radius: 6px;
-    border: 2px solid rgba(10, 10, 12, 0.5);
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-primary/30 rounded-full;
   }
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(217, 165, 32, 0.6);
-  }
-
-  /* Focus states */
-  .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/50;
   }
 }

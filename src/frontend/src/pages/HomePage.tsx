@@ -32,8 +32,8 @@ export default function HomePage() {
   };
 
   const animatedText = {
-    pt: 'Quantumoney AR: em desenvolvimento ativo para promover prosperidade coletiva e inovação blockchain🌐🌐🌐',
-    en: 'Quantumoney AR: in development to promote collective prosperity and blockchain innovation🌐🌐🌐',
+    pt: 'Quantumoney: em desenvolvimento ativo para promover prosperidade coletiva e inovação blockchain🌐🌐🌐',
+    en: 'Quantumoney: in development to promote collective prosperity and blockchain innovation🌐🌐🌐',
   };
 
   const ctaText = language === 'pt' ? 'Instalar Aplicativo' : 'Install App';
@@ -100,7 +100,7 @@ export default function HomePage() {
         {/* Branding */}
         <div className="space-y-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-primary drop-shadow-[0_0_30px_rgba(217,165,32,0.7)]">
-            Quantumoney AR
+            Quantumoney
           </h1>
           <p className="text-xl md:text-2xl lg:text-3xl text-foreground/80 font-light max-w-4xl mx-auto">
             {language === 'pt' ? 'Documentação Institucional' : 'Institutional Documentation'}

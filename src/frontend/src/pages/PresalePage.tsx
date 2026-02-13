@@ -33,8 +33,8 @@ export default function PresalePage() {
               <div>
                 <p className="text-amber-300 text-sm leading-relaxed">
                   <strong>Important:</strong> All presale information is informational and simulated. 
-                  No token sales, payments, or issuance are active. This page demonstrates the conceptual 
-                  presale structure for educational purposes.
+                  No token sales, payments, or issuance are active. No real purchase logic or transactions 
+                  are processed. This page demonstrates the conceptual presale structure for educational purposes only.
                 </p>
               </div>
             </CardContent>
@@ -52,7 +52,7 @@ export default function PresalePage() {
                 <p className="text-3xl font-bold text-primary mb-1">
                   {data.totalAllocation.toLocaleString()}
                 </p>
-                <p className="text-sm text-muted-foreground">QMY tokens</p>
+                <p className="text-sm text-muted-foreground">QMY tokens (conceptual)</p>
               </CardContent>
             </Card>
 
@@ -67,7 +67,7 @@ export default function PresalePage() {
                 <p className="text-3xl font-bold text-primary mb-1">
                   {data.phases.length}
                 </p>
-                <p className="text-sm text-muted-foreground">Investment phases</p>
+                <p className="text-sm text-muted-foreground">Investment phases (simulated)</p>
               </CardContent>
             </Card>
 
@@ -82,7 +82,7 @@ export default function PresalePage() {
                 <p className="text-3xl font-bold text-primary mb-1">
                   {data.vestingMonths}
                 </p>
-                <p className="text-sm text-muted-foreground">months</p>
+                <p className="text-sm text-muted-foreground">months (conceptual)</p>
               </CardContent>
             </Card>
           </div>
@@ -93,32 +93,32 @@ export default function PresalePage() {
 
           <Card className="glass-card border-primary/30">
             <CardHeader>
-              <CardTitle className="text-primary">Acquisition Rules</CardTitle>
+              <CardTitle className="text-primary">Conceptual Acquisition Rules</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                   <p className="text-muted-foreground text-sm">
-                    <strong className="text-primary">Minimum Purchase:</strong> Each phase has a minimum purchase requirement to ensure fair distribution.
+                    <strong className="text-primary">Minimum Purchase:</strong> Each phase has a minimum purchase requirement to ensure fair distribution (simulated).
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                   <p className="text-muted-foreground text-sm">
-                    <strong className="text-primary">Vesting Schedule:</strong> All presale tokens follow a gradual unlock schedule over {data.vestingMonths} months.
+                    <strong className="text-primary">Vesting Schedule:</strong> All presale tokens follow a gradual unlock schedule over {data.vestingMonths} months (conceptual).
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                   <p className="text-muted-foreground text-sm">
-                    <strong className="text-primary">Early Bird Bonus:</strong> Earlier phases receive better pricing and bonus allocations.
+                    <strong className="text-primary">Early Bird Bonus:</strong> Earlier phases receive better pricing and bonus allocations (informational).
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                   <p className="text-muted-foreground text-sm">
-                    <strong className="text-primary">KYC Required:</strong> All participants must complete identity verification before purchase.
+                    <strong className="text-primary">Note:</strong> No real purchases, KYC, or payment processing are active. This is a simulated UI demonstration.
                   </p>
                 </div>
               </div>

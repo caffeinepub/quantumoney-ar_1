@@ -29,8 +29,8 @@ export default function GoldPaper() {
                 <h3 className="text-red-300 font-bold text-lg mb-2">Educational & Institutional Document</h3>
                 <p className="text-red-200 text-sm leading-relaxed">
                   This Gold Paper is a conceptual and educational resource. It does not constitute a financial product, 
-                  investment offering, or operational implementation. No tokens are issued or distributed. 
-                  All content is informational only and complies with MiCA (EU) and GDPR regulations.
+                  investment offering, or operational implementation. No tokens are issued or distributed. No real purchase 
+                  or transaction flows are active. All content is informational only and complies with MiCA (EU) and GDPR regulations.
                 </p>
               </div>
             </div>
@@ -116,7 +116,7 @@ export default function GoldPaper() {
               <div className="p-4 bg-blue-900/20 border border-blue-500/40 rounded-lg mb-4">
                 <p className="text-blue-200 text-sm">
                   <strong>Important:</strong> The following describes a conceptual token model for educational purposes. 
-                  No QMY tokens are issued or distributed.
+                  No QMY tokens are issued or distributed. No real purchase or transaction flows are active.
                 </p>
               </div>
               <div className="p-4 bg-amber-900/10 border border-amber-500/20 rounded-lg">
@@ -172,7 +172,8 @@ export default function GoldPaper() {
                 <h4 className="text-red-300 font-bold mb-2">Critical Clarification</h4>
                 <p className="text-red-200 text-sm leading-relaxed">
                   These two systems are completely separate with no shared backend, no token synchronization, and no 
-                  operational connection. The institutional site provides educational documentation only.
+                  operational connection. The institutional site provides educational documentation only. Visual alignment 
+                  is aesthetic only (layout, colors, HUD, windows, footer).
                 </p>
               </div>
             </CardContent>
@@ -258,7 +259,7 @@ export default function GoldPaper() {
             <CardContent className="space-y-4 text-gray-300">
               <div className="p-4 bg-amber-900/10 border border-amber-500/20 rounded-lg">
                 <p className="text-sm text-amber-300 italic">
-                  Content pending final Gold Paper. This section will describe the technical architecture.
+                  Content pending final Gold Paper. This section will describe the conceptual technical architecture.
                 </p>
               </div>
             </CardContent>
@@ -277,37 +278,32 @@ export default function GoldPaper() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4 text-gray-300">
-              <div className="p-4 bg-blue-900/20 border border-blue-500/40 rounded-lg">
-                <p className="text-blue-200 text-sm leading-relaxed">
-                  This document complies with MiCA (EU Markets in Crypto-Assets Regulation) and GDPR (EU 2016/679). 
-                  No tokens are issued. No financial products are offered. All content is educational only.
+              <div className="p-4 bg-blue-900/20 border border-blue-500/40 rounded-lg mb-4">
+                <p className="text-blue-200 text-sm">
+                  <strong>MiCA & GDPR Compliance:</strong> This document complies with EU regulations. 
+                  No financial products are offered. No personal data is processed beyond essential site functionality.
                 </p>
               </div>
               <div className="p-4 bg-amber-900/10 border border-amber-500/20 rounded-lg">
                 <p className="text-sm text-amber-300 italic">
-                  Content pending final Gold Paper. This section will provide legal and compliance information.
+                  Content pending final Gold Paper. This section will outline legal compliance and regulatory considerations.
                 </p>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <Card className="glass-card bg-black/40 border-amber-500/30">
-          <CardContent className="p-8 text-center">
-            <BookOpen className="w-12 h-12 text-amber-500 mx-auto mb-4" />
-            <h3 className="text-2xl font-serif font-bold text-amber-500 mb-4">
-              Explore More Documentation
-            </h3>
-            <p className="text-gray-300 mb-6">
-              Visit the Documentation Hub for additional resources and information
-            </p>
-            <Link to="/docs">
-              <button className="px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-colors">
-                Go to Documentation Hub
-              </button>
+        <div className="text-center mt-16 pt-8 border-t border-amber-500/20">
+          <p className="text-gray-400 text-sm mb-4">
+            For more detailed documentation, visit the{' '}
+            <Link to="/docs" className="text-amber-500 hover:underline font-medium">
+              Documentation Hub
             </Link>
-          </CardContent>
-        </Card>
+          </p>
+          <p className="text-gray-500 text-xs">
+            © {new Date().getFullYear()} Quantumoney — All rights reserved
+          </p>
+        </div>
       </div>
     </section>
   );

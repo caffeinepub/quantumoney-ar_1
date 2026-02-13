@@ -1,85 +1,61 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Quantumoney.app: build a simulated-mode wallet and ecosystem UI for QMY (send-tokens simulation, Central Bank dashboard, public chat, pre-proposals, pre-sale, Golden Paper visualization) with complete removal of Caffeine references and visual sync readiness with QuantumoneyAR.app; designed to switch to real on-chain integration once token canister details are provided.",
+  "summary": "Quantumoney.app simulated/pro patch: fix useLanguage provider error by wrapping app in LanguageProvider while preserving existing premium black/gold responsive UI (100dvh), HUD + AR map info window, aesthetic-only visual sync with QuantumoneyAR.app, sitewide footer (no 'Caffeine'), cookie notice, clickable Terms of Service & Privacy Policy pages with full Feb/2026 text, and simulated-only features (public chat UI, presale & golden paper static UI) with no backend/transactions.",
   "architectural_notes": [
-    "Ship a simulated-mode implementation for token sending (no real canister write calls) with a clean seam to switch to real on-chain integration once QMY canister ID, token standard, and vesting data source are provided.",
-    "Design UI/components to be visually sync-ready with QuantumoneyAR.app (shared visual language for hotspots/distribution where applicable)."
+    "All functionality is simulated/UI-only: no backend integration, no real transactions, and no external app connections (visual sync only).",
+    "Internationalization must be provided app-wide via a top-level LanguageProvider wrapper around App/Root."
   ],
   "known_issues": [
-    "Cannot implement real on-chain QMY transfers yet: missing QMY token canister ID, token standard (ICRC-1/DIP20/custom), and source of vesting/locked-balance data."
+    "Current runtime error: useLanguage must be used within a LanguageProvider."
   ],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-add-a-simulated-send-qmy-flow-to-the-wallet-page-that-does-not-execute-any-real-on-chain-transfers-including-a-visible-send-qmy-button-destination-principal-input-token-amount-input-and-simulated-success-failure-feedback-the-ui-must-remain-safe-no-canister-write-calls-while-being-structured-so-it-can-be-switched-to-real-transfers-later-when-canister-technical-details-are-provided",
-      "title": "Add a simulated “Send QMY” flow to the Wallet page that does not execute any real on-chain transfers, including: a visible “Send QMY” button, destination Principal input, token amount input, and simulated success/failure feedback. The UI must remain safe (no canister write calls) while being structured so it can be switched to real transfers later when canister technical details are provided.",
+      "id": "feature-fix-the-runtime-error-uselanguage-must-be-used-within-a-languageprovider-by-ensuring-the-entire-routed-application-tree-is-wrapped-in-languageprovider-without-editing-any-immutable-entry-files",
+      "title": "Fix the runtime error \"useLanguage must be used within a LanguageProvider\" by ensuring the entire routed application tree is wrapped in LanguageProvider (without editing any immutable entry files).",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-implement-simulated-available-vs-locked-qmy-balances-for-the-send-flow-that-respect-the-requested-vesting-schedule-100-qmy-unlocked-immediately-and-900-qmy-released-as-100-qmy-every-30-days-the-wallet-must-display-these-simulated-available-locked-amounts-in-a-clear-way-when-simulation-mode-is-active-without-overwriting-the-existing-real-on-chain-read-only-balance-display",
-      "title": "Implement simulated available vs locked QMY balances for the send flow that respect the requested vesting schedule: 100 QMY unlocked immediately and 900 QMY released as 100 QMY every 30 days. The wallet must display these simulated available/locked amounts in a clear way when simulation mode is active, without overwriting the existing real on-chain read-only balance display.",
+      "id": "feature-enforce-simulated-public-chat-behavior-as-ui-only-with-no-backend-calls-and-no-persistence-messages-must-not-be-stored-in-localstorage-indexeddb-they-should-exist-only-for-the-current-browser-session-tab-in-memory",
+      "title": "Enforce simulated/public chat behavior as UI-only with no backend calls and no persistence: messages must not be stored in localStorage/IndexedDB; they should exist only for the current browser session/tab in memory.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-create-a-qmy-central-bank-informational-dashboard-page-and-route-with-a-clean-modern-responsive-layout-showing-total-circulating-vs-locked-supply-distribution-by-category-founders-team-presale-first-players-usage-stats-presale-stats-and-geographic-distribution-data-can-be-simulated-static-for-now-but-must-be-structured-so-it-can-later-reflect-ar-hotspots-and-the-future-600m-qmy-strategic-distribution",
-      "title": "Create a “QMY Central Bank” informational dashboard page and route, with a clean, modern, responsive layout showing: total circulating vs locked supply; distribution by category (founders, team, presale, first players); usage stats; presale stats; and geographic distribution. Data can be simulated/static for now but must be structured so it can later reflect AR hotspots and the future 600M QMY strategic distribution.",
+      "id": "feature-ensure-the-global-layout-matches-the-agreed-simulated-pro-build-requirements-responsive-full-height-layout-using-100dvh-semantics-premium-black-gold-styling-and-consistent-hud-map-info-window-visual-language-aligned-to-quantumoneyar-app-visual-sync-only-no-external-connections",
+      "title": "Ensure the global layout matches the agreed simulated/pro build requirements: responsive full-height layout using 100dvh semantics, premium black/gold styling, and consistent HUD/map-info-window visual language aligned to QuantumoneyAR.app (visual sync only; no external connections).",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-implement-a-public-community-chat-feature-with-messages-visible-to-all-users-timestamps-and-infinite-scroll-use-an-internet-computer-backend-based-storage-api-and-client-side-polling-or-periodic-refetch-to-approximate-real-time-behavior-no-websockets",
-      "title": "Implement a public community chat feature with messages visible to all users, timestamps, and infinite scroll. Use an Internet Computer backend-based storage API and client-side polling (or periodic refetch) to approximate real-time behavior (no WebSockets).",
+      "id": "feature-update-verify-the-footer-to-be-visible-and-usable-on-all-common-resolutions-and-remove-any-remaining-caffeine-references-across-the-entire-site-ui-text-footer-metadata-comments-and-any-other-surfaced-strings-while-preserving-all-existing-content-already-present",
+      "title": "Update/verify the footer to be visible and usable on all common resolutions and remove any remaining \"Caffeine\" references across the entire site (UI text, footer, metadata, comments, and any other surfaced strings), while preserving all existing content already present.",
       "reqIds": [
         "REQ-4"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-a-pre-proposals-educational-section-where-users-can-browse-proposal-drafts-title-description-objective-impact-and-click-learn-more-to-view-full-details-this-must-not-submit-anything-to-a-dao-or-execute-on-chain-governance",
-      "title": "Add a “Pre-Proposals” educational section where users can browse proposal drafts (title, description, objective, impact) and click “Learn more” to view full details. This must not submit anything to a DAO or execute on-chain governance.",
+      "id": "feature-ensure-terms-of-service-and-privacy-policy-pages-are-fully-populated-with-the-complete-feb-2026-text-content-no-placeholders-truncation-and-remain-fully-navigable-via-site-links-keep-the-cookie-consent-banner-visible-on-entry-with-working-links-to-the-privacy-policy",
+      "title": "Ensure Terms of Service and Privacy Policy pages are fully populated with the complete Feb/2026 text content (no placeholders/truncation) and remain fully navigable via site links; keep the cookie consent banner visible on entry with working links to the Privacy Policy.",
       "reqIds": [
         "REQ-5"
       ],
       "version": 1
     },
     {
-      "id": "feature-implement-a-detailed-qmy-presale-section-with-interactive-responsive-ui-that-presents-token-lots-acquisition-rules-time-based-distribution-and-an-unlock-visualization-include-visual-counters-and-filters-for-exploring-the-lots-phases-using-simulated-data-for-now",
-      "title": "Implement a detailed “QMY Presale” section with interactive, responsive UI that presents: token lots, acquisition rules, time-based distribution, and an unlock visualization. Include visual counters and filters for exploring the lots/phases using simulated data for now.",
+      "id": "feature-keep-presale-and-gold-paper-features-strictly-simulated-static-ui-do-not-add-real-purchase-logic-transactions-or-backend-changing-behavior-preserve-all-existing-presale-gold-paper-content-and-visuals-already-implemented",
+      "title": "Keep presale and gold paper features strictly simulated/static UI: do not add real purchase logic, transactions, or backend-changing behavior; preserve all existing presale/gold-paper content and visuals already implemented.",
       "reqIds": [
         "REQ-6"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-upgrade-the-gold-paper-papel-dourado-experience-into-an-interactive-visualization-page-that-includes-global-distribution-of-600-million-strategic-qmy-geographic-hotspot-tourist-point-visualization-and-a-floating-universe-style-layout-stars-planets-comets-consistent-with-the-app-s-existing-quantum-universe-visuals-and-ready-to-visually-sync-with-quantumoneyar-app",
-      "title": "Upgrade the “Gold Paper / Papel Dourado” experience into an interactive visualization page that includes: global distribution of 600 million strategic QMY, geographic hotspot/tourist-point visualization, and a floating ‘universe’ style layout (stars, planets, comets) consistent with the app’s existing quantum universe visuals and ready to visually sync with QuantumoneyAR.app.",
-      "reqIds": [
-        "REQ-7"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-remove-all-visible-references-to-caffeine-across-quantumoney-app-including-footer-attribution-metadata-and-remove-any-code-comments-mentioning-caffeine-ensuring-the-site-presents-as-100-quantumoney-branded",
-      "title": "Remove all visible references to “Caffeine” across Quantumoney.app (including footer/attribution/metadata) and remove any code comments mentioning Caffeine, ensuring the site presents as 100% Quantumoney-branded.",
-      "reqIds": [
-        "REQ-8"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-adjust-navigation-and-routes-so-the-new-sections-central-bank-public-chat-pre-proposals-presale-upgraded-gold-paper-visualization-are-discoverable-and-consistent-with-existing-routing-patterns-and-styling",
-      "title": "Add/adjust navigation and routes so the new sections (Central Bank, Public Chat, Pre-Proposals, Presale, upgraded Gold Paper visualization) are discoverable and consistent with existing routing patterns and styling.",
-      "reqIds": [
-        "REQ-9"
       ],
       "version": 1
     }
@@ -87,48 +63,53 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Implement Send-Tokens Flow in simulated mode (Enviar QMY button, destination principal + amount inputs, simulate available vs locked balance with vesting 100 unlocked + 900 releasing 100/30 days, simulate success/failure feedback; ready to swap to real canister later).",
+      "summary": "Fix useLanguage error by wrapping the entire app with <LanguageProvider> so all components using useLanguage() are within provider",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Add 'Banco Central QMY' informational dashboard (circulating vs locked totals, distribution by category, usage/pre-sale stats, geographic distribution; prepared to reflect AR hotspots and future 600M QMY distribution).",
+      "summary": "Ensure visual-only synchronization with QuantumoneyAR.app (matching layout/colors/HUD/windows/footer) with no external connections",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Integrate public real-time community chat (messages visible to all, infinite scroll, timestamps, desktop+mobile compatible).",
+      "summary": "Implement public chat as fully simulated/static browser UI (no backend, no message storage, no real sending)",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-4",
-      "summary": "Create 'Pré-propostas' educational section (proposal cards with title/description/objective/impact and Learn more button; no on-chain execution).",
+      "summary": "Add fully clickable Terms of Service and Privacy Policy pages and insert complete text content (Feb/2026 version)",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-5",
-      "summary": "Create 'Pré-venda QMY' section (lots, acquisition rules, temporal distribution/unlock visualization, interactive responsive UI with counters/filters).",
+      "summary": "Add/ensure sitewide footer fixed/visible at all resolutions with required text (by HTgamers, helpdesk@quantumoney.net, “On-chain na Internet Computer (ICP)”) and remove all references to “Caffeine”",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-6",
-      "summary": "Create 'Papel Dourado' interactive page (global distribution of 600M QMY, hotspots/tourist points map, floating universe-style background; visually syncable with QuantumoneyAR.app).",
+      "summary": "Add visible clickable cookie message/banner on entry",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-7",
-      "summary": "Remove all references to Caffeine from Quantumoney.app (UI/footer and code comments) to ensure site is 100% Quantumoney-branded.",
+      "summary": "Keep pre-sale and golden paper sections as static/simulated UI only (no purchase logic/transactions)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Maintain existing responsive global layout (100dvh), premium black/gold aesthetic, HUD and AR map info window, and optimize performance without backend changes",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "gameProjectType": "none",
   "projectName": "Quantumoney.app",
   "clarification_mode": "instant",
   "clarification_rounds": 0
