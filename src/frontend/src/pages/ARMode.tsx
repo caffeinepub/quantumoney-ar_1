@@ -1,31 +1,47 @@
 import PageShell from '@/components/PageShell';
 import Container from '@/components/Container';
-import { PageTitle, BodyText } from '@/components/Typography';
+import { PageTitle } from '@/components/Typography';
 import { Camera } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import StaticMapView from '@/components/map/StaticMapView';
+import HUDOverlay from '@/components/HUDOverlay';
+import CapturedMonstersPanel from '@/components/monsters/CapturedMonstersPanel';
+import AuthGate from '@/components/auth/AuthGate';
 
 export default function ARMode() {
   return (
     <PageShell>
-      <Container>
-        <div className="py-16 space-y-8">
-          <div className="text-center space-y-4">
-            <PageTitle icon={<Camera className="w-12 h-12" />} className="justify-center">
+      <AuthGate>
+        <Container>
+          <div className="py-4 md:py-8 space-y-4 md:space-y-6">
+            <PageTitle icon={<Camera className="w-8 h-8 md:w-10 md:h-10" />}>
               AR Mode
             </PageTitle>
-            <BodyText className="max-w-2xl mx-auto text-center">
-              Augmented Reality experience placeholder
-            </BodyText>
-          </div>
 
-          <Card className="glass-card border-primary/30">
-            <CardContent className="p-16 text-center">
-              <Camera className="w-24 h-24 text-muted-foreground/50 mx-auto mb-6" />
-              <p className="text-muted-foreground text-lg">AR Mode content coming soon</p>
-            </CardContent>
-          </Card>
-        </div>
-      </Container>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+              <div className="lg:col-span-2 space-y-4 md:space-y-6">
+                <Card className="glass-card border-primary">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-primary text-base md:text-lg">AR View</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pb-4">
+                    <StaticMapView className="mb-4" />
+                    <p className="text-primary text-xs md:text-sm text-center">
+                      Simulated AR environment with synchronized markers
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <CapturedMonstersPanel />
+              </div>
+
+              <div className="lg:col-span-1 space-y-4">
+                <HUDOverlay variant="inline" />
+              </div>
+            </div>
+          </div>
+        </Container>
+      </AuthGate>
     </PageShell>
   );
 }

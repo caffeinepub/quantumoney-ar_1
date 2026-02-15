@@ -1,40 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
-interface LocalChatMessage {
-  authorName: string;
+export interface ChatMessage {
+  id: string;
+  sender: string;
   content: string;
   timestamp: number;
-  id: string;
 }
 
 export function usePublicChat() {
-  const [messages, setMessages] = useState<LocalChatMessage[]>([]);
-  const [isSending, setIsSending] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-  const sendMessage = async (authorName: string, content: string) => {
-    setIsSending(true);
-    
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    const newMessage: LocalChatMessage = {
-      authorName,
+  const sendMessage = useCallback((sender: string, content: string) => {
+    const newMessage: ChatMessage = {
+      id: `${Date.now()}-${Math.random()}`,
+      sender,
       content,
       timestamp: Date.now(),
-      id: `${Date.now()}_${Math.random()}`,
     };
+    setMessages((prev) => [...prev, newMessage]);
+  }, []);
 
-    setMessages(prev => [...prev, newMessage]);
-    
-    setIsSending(false);
-  };
+  const getMessages = useCallback(() => {
+    return messages;
+  }, [messages]);
 
   return {
     messages,
-    isLoading: false,
-    isSending,
     sendMessage,
-    loadMore: () => {},
-    hasMore: false,
-    isLoadingMore: false,
+    getMessages,
   };
 }

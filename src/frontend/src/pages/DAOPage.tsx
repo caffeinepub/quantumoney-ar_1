@@ -1,82 +1,176 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, AlertCircle } from 'lucide-react';
-import StatusBadge from '@/components/StatusBadge';
+import { Users, AlertCircle, TrendingUp, FileText, BarChart3, MessageSquare } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import PageShell from '@/components/PageShell';
+import Container from '@/components/Container';
+import { PageTitle } from '@/components/Typography';
+import { Link } from '@tanstack/react-router';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { daoTopics } from '@/lib/dao/daoForumSimData';
+import DAOProfilePanel from '@/components/dao/DAOProfilePanel';
 
 export default function DAOPage() {
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'voting': return 'border-green-500/40 text-green-500';
+      case 'discussion': return 'border-blue-500/40 text-blue-500';
+      case 'passed': return 'border-primary/40 text-primary';
+      case 'rejected': return 'border-red-500/40 text-red-500';
+      case 'draft': return 'border-gray-500/40 text-gray-500';
+      default: return 'border-primary/40 text-primary';
+    }
+  };
+
   return (
-    <section className="py-32 px-6 bg-gradient-to-b from-gray-900 to-black min-h-screen">
-      <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-block p-6 rounded-full bg-amber-600/20 border-2 border-amber-600 mb-6">
-            <Users className="w-16 h-16 text-amber-500" />
+    <PageShell>
+      <Container>
+        <div className="py-12 space-y-8">
+          <div className="space-y-3">
+            <PageTitle icon={<Users className="w-12 h-12" />}>
+              DAO Governance Forum
+            </PageTitle>
+            <Badge variant="outline" className="border-amber-500/40 text-amber-500">
+              Simulated / Not Active
+            </Badge>
           </div>
-          <h1 className="text-5xl md:text-6xl font-serif font-bold text-amber-500 mb-4">
-            DAO Governance
-          </h1>
-          <StatusBadge status="planned" className="mb-4" />
-          <p className="text-2xl text-gray-300 max-w-3xl mx-auto">
-            Planned / Not Active
-          </p>
-        </div>
 
-        {/* Critical Notice */}
-        <Card className="mb-12 bg-red-900/20 border-red-500/40 glass-card">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-8 h-8 text-red-400" />
-              <CardTitle className="text-2xl font-serif text-red-400">
-                DAO Not Active
-              </CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-red-200 leading-relaxed">
-              The DAO governance system is planned but not active. No voting is enabled. No proposals can be created. 
-              No governance execution exists. This page provides conceptual information only for educational purposes.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Conceptual Framework */}
-        <Card className="mb-12 bg-black/50 border-amber-500/30 glass-card">
-          <CardHeader>
-            <CardTitle className="text-3xl font-serif text-amber-400">
-              Conceptual Governance Framework
-            </CardTitle>
-            <StatusBadge status="planned" className="mt-2" />
-          </CardHeader>
-          <CardContent className="space-y-4 text-gray-300">
-            <p className="leading-relaxed">
-              The conceptual DAO governance model explores theoretical mechanisms for decentralized decision-making. 
-              This framework is educational and does not represent operational governance.
-            </p>
-            <div className="p-4 bg-amber-900/10 border border-amber-500/20 rounded-lg">
-              <p className="text-sm text-amber-300 italic">
-                Content pending final Gold Paper. This section will describe conceptual governance principles 
-                without asserting voting thresholds, treasury amounts, or operational parameters.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* No Interaction Elements */}
-        <Card className="bg-black/50 border-amber-500/30 glass-card">
-          <CardContent className="p-6">
-            <div className="flex items-start gap-4">
-              <AlertCircle className="w-6 h-6 text-amber-400 flex-shrink-0 mt-1" />
-              <div>
-                <h3 className="text-amber-400 font-bold text-lg mb-2">No Governance Execution</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">
-                  No voting buttons, proposal forms, or governance execution UI are present. 
-                  All DAO content is conceptual and informational only. 
-                  Complies with MiCA (EU) and GDPR (EU 2016/679).
-                </p>
+          <Card className="glass-card border-red-900/30 bg-red-900/10">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <AlertCircle className="w-8 h-8 text-red-400" />
+                <CardTitle className="text-2xl font-serif text-red-400">
+                  DAO Not Active
+                </CardTitle>
               </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-red-200 leading-relaxed">
+                The DAO governance system is planned but not active. No voting is enabled. No proposals can be created. 
+                No governance execution exists. This page provides conceptual information only for educational purposes.
+              </p>
+            </CardContent>
+          </Card>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card className="glass-card border-primary/30">
+                  <CardHeader>
+                    <CardTitle className="text-primary flex items-center gap-2 text-lg">
+                      <TrendingUp className="w-5 h-5" />
+                      Total Topics
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-4xl font-bold text-primary mb-1">{daoTopics.length}</p>
+                    <p className="text-sm text-muted-foreground">(Simulated)</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="glass-card border-primary/30">
+                  <CardHeader>
+                    <CardTitle className="text-primary flex items-center gap-2 text-lg">
+                      <Users className="w-5 h-5" />
+                      Active Members
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-4xl font-bold text-primary mb-1">1,250</p>
+                    <p className="text-sm text-muted-foreground">(Simulated)</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="glass-card border-primary/30">
+                  <CardHeader>
+                    <CardTitle className="text-primary flex items-center gap-2 text-lg">
+                      <BarChart3 className="w-5 h-5" />
+                      Participation
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-4xl font-bold text-primary mb-1">68%</p>
+                    <p className="text-sm text-muted-foreground">(Simulated)</p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card className="glass-card border-primary/30">
+                <CardHeader>
+                  <CardTitle className="text-primary flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    Forum Topics (Simulated)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-primary/20">
+                        <TableHead className="text-primary">Title</TableHead>
+                        <TableHead className="text-primary">Category</TableHead>
+                        <TableHead className="text-primary">Status</TableHead>
+                        <TableHead className="text-primary text-right">Votes</TableHead>
+                        <TableHead className="text-primary text-right">Comments</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {daoTopics.map((topic) => (
+                        <TableRow key={topic.id} className="border-primary/10">
+                          <TableCell className="text-primary font-medium">
+                            <Link 
+                              to="/dao/$topicId"
+                              params={{ topicId: topic.id }}
+                              className="hover:text-primary/80 transition-colors"
+                            >
+                              {topic.title}
+                            </Link>
+                          </TableCell>
+                          <TableCell className="text-primary">{topic.category}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className={getStatusColor(topic.status)}>
+                              {topic.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-primary text-right">{topic.votes.toLocaleString()}</TableCell>
+                          <TableCell className="text-primary text-right">
+                            <div className="flex items-center justify-end gap-1">
+                              <MessageSquare className="w-3 h-3" />
+                              {topic.comments}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    </section>
+
+            <div className="space-y-6">
+              <DAOProfilePanel />
+
+              <Card className="glass-card border-primary/30">
+                <CardHeader>
+                  <CardTitle className="text-primary">Governance Cycle</CardTitle>
+                </CardHeader>
+                <CardContent className="flex justify-center">
+                  <img
+                    src="/assets/generated/dao-governance-cycle-conceptual.dim_800x600.png"
+                    alt="DAO Governance Cycle"
+                    className="w-full rounded-lg border border-primary/20"
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </PageShell>
   );
 }

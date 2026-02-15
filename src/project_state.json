@@ -1,61 +1,53 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Quantumoney.app simulated/pro patch: fix useLanguage provider error by wrapping app in LanguageProvider while preserving existing premium black/gold responsive UI (100dvh), HUD + AR map info window, aesthetic-only visual sync with QuantumoneyAR.app, sitewide footer (no 'Caffeine'), cookie notice, clickable Terms of Service & Privacy Policy pages with full Feb/2026 text, and simulated-only features (public chat UI, presale & golden paper static UI) with no backend/transactions.",
+  "summary": "Quantumoney.app & QuantumoneyAR.app: apply platform-compatible 'patch máximo realista' in stages. Current confirmed build scope is Etapas 1 e 2: (1) global UI visual refinement with fully transparent windows, thin yellow borders, yellow text, mobile-safe HUD layout; (2) new simulated map page (image + markers) for QMY coins and monsters using shared internal state to simulate site↔AR sync, with no external calls and no changes to existing functionality/footers.",
   "architectural_notes": [
-    "All functionality is simulated/UI-only: no backend integration, no real transactions, and no external app connections (visual sync only).",
-    "Internationalization must be provided app-wide via a top-level LanguageProvider wrapper around App/Root."
+    "Sem chamadas externas (ex.: Leaflet/tiles OSM, NNS real, APIs externas); usar estado interno compartilhado para simular sincronização site ↔ app AR.",
+    "Implementação por etapas para minimizar risco: aplicar primeiro ajustes visuais/HUD, depois página de mapa simulado; não alterar funcionalidades/rodapés existentes fora do escopo."
   ],
   "known_issues": [
-    "Current runtime error: useLanguage must be used within a LanguageProvider."
+    "Build anterior do patch máximo realista falhou com erro genérico ('AI was unable to fulfill' / 'couldn't complete your request'); pode exigir dividir em etapas e simplificar escopo de build."
   ],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-fix-the-runtime-error-uselanguage-must-be-used-within-a-languageprovider-by-ensuring-the-entire-routed-application-tree-is-wrapped-in-languageprovider-without-editing-any-immutable-entry-files",
-      "title": "Fix the runtime error \"useLanguage must be used within a LanguageProvider\" by ensuring the entire routed application tree is wrapped in LanguageProvider (without editing any immutable entry files).",
+      "id": "feature-implement-stage-1-visual-patch-across-the-main-app-ui-make-all-in-app-window-panel-surfaces-fully-transparent-with-thin-yellow-borders-and-yellow-text-without-changing-any-existing-page-structure-routes-or-feature-behavior",
+      "title": "Implement Stage 1 visual patch across the main app UI: make all in-app window/panel surfaces fully transparent with thin yellow borders and yellow text, without changing any existing page structure, routes, or feature behavior.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-enforce-simulated-public-chat-behavior-as-ui-only-with-no-backend-calls-and-no-persistence-messages-must-not-be-stored-in-localstorage-indexeddb-they-should-exist-only-for-the-current-browser-session-tab-in-memory",
-      "title": "Enforce simulated/public chat behavior as UI-only with no backend calls and no persistence: messages must not be stored in localStorage/IndexedDB; they should exist only for the current browser session/tab in memory.",
+      "id": "feature-preserve-the-existing-footer-exactly-as-is-structure-styling-text-content-links-and-ensure-no-new-caffeine-references-are-introduced-anywhere-in-the-ui-as-part-of-stages-1-2-changes",
+      "title": "Preserve the existing footer exactly as-is (structure, styling, text content, links) and ensure no new 'Caffeine' references are introduced anywhere in the UI as part of Stages 1–2 changes.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-ensure-the-global-layout-matches-the-agreed-simulated-pro-build-requirements-responsive-full-height-layout-using-100dvh-semantics-premium-black-gold-styling-and-consistent-hud-map-info-window-visual-language-aligned-to-quantumoneyar-app-visual-sync-only-no-external-connections",
-      "title": "Ensure the global layout matches the agreed simulated/pro build requirements: responsive full-height layout using 100dvh semantics, premium black/gold styling, and consistent HUD/map-info-window visual language aligned to QuantumoneyAR.app (visual sync only; no external connections).",
+      "id": "feature-make-stage-1-mobile-safe-adjust-in-app-window-panel-spacing-and-hud-placement-so-that-hud-xp-coins-monsters-are-not-obscured-or-clipped-on-small-screens-including-safe-area-insets-while-keeping-the-same-information-and-components",
+      "title": "Make Stage 1 mobile-safe: adjust in-app window/panel spacing and HUD placement so that HUD/XP/coins/monsters are not obscured or clipped on small screens, including safe-area insets, while keeping the same information and components.",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-update-verify-the-footer-to-be-visible-and-usable-on-all-common-resolutions-and-remove-any-remaining-caffeine-references-across-the-entire-site-ui-text-footer-metadata-comments-and-any-other-surfaced-strings-while-preserving-all-existing-content-already-present",
-      "title": "Update/verify the footer to be visible and usable on all common resolutions and remove any remaining \"Caffeine\" references across the entire site (UI text, footer, metadata, comments, and any other surfaced strings), while preserving all existing content already present.",
+      "id": "feature-implement-stage-2-simulated-map-page-behavior-using-an-image-based-map-with-internal-coordinate-markers-for-qmy-coins-and-monsters-with-no-leaflet-openstreetmap-dependency-and-no-external-geolocation-or-external-map-network-calls",
+      "title": "Implement Stage 2 simulated map page behavior using an image-based map with internal-coordinate markers for QMY coins and monsters, with no Leaflet/OpenStreetMap dependency and no external geolocation or external map/network calls.",
       "reqIds": [
         "REQ-4"
       ],
       "version": 1
     },
     {
-      "id": "feature-ensure-terms-of-service-and-privacy-policy-pages-are-fully-populated-with-the-complete-feb-2026-text-content-no-placeholders-truncation-and-remain-fully-navigable-via-site-links-keep-the-cookie-consent-banner-visible-on-entry-with-working-links-to-the-privacy-policy",
-      "title": "Ensure Terms of Service and Privacy Policy pages are fully populated with the complete Feb/2026 text content (no placeholders/truncation) and remain fully navigable via site links; keep the cookie consent banner visible on entry with working links to the Privacy Policy.",
+      "id": "feature-simulate-internal-synchronization-between-the-website-map-and-the-ar-mode-map-by-sharing-the-same-internal-marker-state-source-so-actions-state-changes-in-one-view-are-reflected-in-the-other-within-the-same-user-session-without-introducing-real-time-networking",
+      "title": "Simulate internal synchronization between the website map and the AR mode map by sharing the same internal marker/state source so actions/state changes in one view are reflected in the other (within the same user session), without introducing real-time networking.",
       "reqIds": [
         "REQ-5"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-keep-presale-and-gold-paper-features-strictly-simulated-static-ui-do-not-add-real-purchase-logic-transactions-or-backend-changing-behavior-preserve-all-existing-presale-gold-paper-content-and-visuals-already-implemented",
-      "title": "Keep presale and gold paper features strictly simulated/static UI: do not add real purchase logic, transactions, or backend-changing behavior; preserve all existing presale/gold-paper content and visuals already implemented.",
-      "reqIds": [
-        "REQ-6"
       ],
       "version": 1
     }
@@ -63,54 +55,18 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Fix useLanguage error by wrapping the entire app with <LanguageProvider> so all components using useLanguage() are within provider",
+      "summary": "Etapa 1: Todas as janelas/HUD com transparência total, bordas finas amarelas e texto amarelo; ajustar layout (incl. mobile) para não bloquear HUD/XP/moedas/monstros sem alterar funcionalidades existentes",
       "reqIds": [],
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "id": "AR-2",
-      "summary": "Ensure visual-only synchronization with QuantumoneyAR.app (matching layout/colors/HUD/windows/footer) with no external connections",
+      "summary": "Etapa 2: Criar nova página de mapa simulado (imagem + marcadores) com moedas QMY e monstros em coordenadas internas, compartilhando estado interno para sincronização simulada site ↔ app AR",
       "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-3",
-      "summary": "Implement public chat as fully simulated/static browser UI (no backend, no message storage, no real sending)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-4",
-      "summary": "Add fully clickable Terms of Service and Privacy Policy pages and insert complete text content (Feb/2026 version)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-5",
-      "summary": "Add/ensure sitewide footer fixed/visible at all resolutions with required text (by HTgamers, helpdesk@quantumoney.net, “On-chain na Internet Computer (ICP)”) and remove all references to “Caffeine”",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-6",
-      "summary": "Add visible clickable cookie message/banner on entry",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-7",
-      "summary": "Keep pre-sale and golden paper sections as static/simulated UI only (no purchase logic/transactions)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-8",
-      "summary": "Maintain existing responsive global layout (100dvh), premium black/gold aesthetic, HUD and AR map info window, and optimize performance without backend changes",
-      "reqIds": [],
-      "status": "pending"
+      "status": "in_progress"
     }
   ],
-  "projectName": "Quantumoney.app",
+  "projectName": "Stage 1+2: Transparent yellow HUD/windows + simulated image-based map with shared internal state",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

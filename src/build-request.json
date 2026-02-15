@@ -1,136 +1,111 @@
 {
   "kind": "build_request",
-  "title": "Quantumoney.app simulated/pro patch: fix LanguageProvider error and enforce simulated UI rules (footer, chat, presale, gold paper, AR-style HUD)",
+  "title": "Stage 1+2: Transparent yellow HUD/windows + simulated image-based map with shared internal state",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Fix the runtime error \"useLanguage must be used within a LanguageProvider\" by ensuring the entire routed application tree is wrapped in LanguageProvider (without editing any immutable entry files).",
+      "text": "Implement Stage 1 visual patch across the main app UI: make all in-app window/panel surfaces fully transparent with thin yellow borders and yellow text, without changing any existing page structure, routes, or feature behavior.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-user-latest"
         ],
         "quotes": [
-          "PATCH FINAL – QUANTUMONEY.APP (VERSÃO SIMULADA COMPLETA)\nObjetivo: Corrigir erro useLanguage must be used within a LanguageProvider",
-          "Sim — confirmei que você deve iniciar o build agora mesmo, em modo simulado/pro, aplicando todas as instruções que discutimos"
+          "iniciar build das Etapas 1 e 2"
         ]
       },
       "acceptanceCriteria": [
-        "Navigating to any route that uses useLanguage() no longer throws the LanguageProvider runtime error.",
-        "No changes are made to immutable paths (including frontend/src/main.tsx).",
-        "LanguageProvider wrapping does not remove or break any existing pages, routes, or UI content."
+        "All non-footer window/panel containers render with fully transparent backgrounds (no tinted fill), thin yellow border, and yellow text.",
+        "Existing layouts (grid/stacking) remain unchanged; only styling is adjusted.",
+        "No existing interactive behavior is removed or altered (auth gating, navigation, buttons, modals continue to work)."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Enforce simulated/public chat behavior as UI-only with no backend calls and no persistence: messages must not be stored in localStorage/IndexedDB; they should exist only for the current browser session/tab in memory.",
+      "text": "Preserve the existing footer exactly as-is (structure, styling, text content, links) and ensure no new 'Caffeine' references are introduced anywhere in the UI as part of Stages 1–2 changes.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-user-latest"
         ],
         "quotes": [
-          "Chat público – SIM, totalmente estático/simulado, sem backend, sem armazenamento de mensagens, apenas visual no navegador.",
-          "Sim — confirmei que você deve iniciar o build agora mesmo, em modo simulado/pro... chat público simulado"
+          "Nada do que já está construído será alterado.",
+          "Rodapé\nNão alterar nada que já exista.\nRemover qualquer referência a Caffeine, sem mudanças adicionais."
         ]
       },
       "acceptanceCriteria": [
-        "Reloading the page clears the chat messages (no persisted history).",
-        "Public chat continues to function visually (send button, message list updates) without any backend actor calls.",
-        "Any explanatory text in the chat UI accurately states that messages are session-only and not synchronized."
+        "frontend/src/components/Footer.tsx is unchanged in rendered output (no visual/style/text/link changes).",
+        "No new UI text includes the word 'Caffeine'."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Ensure the global layout matches the agreed simulated/pro build requirements: responsive full-height layout using 100dvh semantics, premium black/gold styling, and consistent HUD/map-info-window visual language aligned to QuantumoneyAR.app (visual sync only; no external connections).",
+      "text": "Make Stage 1 mobile-safe: adjust in-app window/panel spacing and HUD placement so that HUD/XP/coins/monsters are not obscured or clipped on small screens, including safe-area insets, while keeping the same information and components.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-user-latest"
         ],
         "quotes": [
-          "Layout global responsivo 100dvh.",
-          "HUD, janela de info no mapa AR e sincronização visual com QuantumoneyAR.app.",
-          "Sincronização visual com QuantumoneyAR.app – SIM, apenas estética... Sem conexão real com apps externos."
+          "Garantir que nada já funcional seja alterado.\nAjustar para visualização em dispositivos móveis."
         ]
       },
       "acceptanceCriteria": [
-        "The app shell uses a 100dvh-aware min height so pages consistently fill the viewport on mobile (including browser UI variations).",
-        "No code introduces any real integration/connection to QuantumoneyAR.app; alignment is strictly visual (layout/colors/HUD/windows/footer).",
-        "Existing premium black/gold look-and-feel remains consistent across core pages (no unintended theme regressions)."
+        "On narrow viewports, HUD content remains fully visible without overlapping primary controls/content in Map Mode and AR Mode.",
+        "Safe-area padding utilities are applied where needed so content is not hidden behind notches/home indicators.",
+        "No routes/components are removed; only responsive spacing/positioning is adjusted."
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Update/verify the footer to be visible and usable on all common resolutions and remove any remaining \"Caffeine\" references across the entire site (UI text, footer, metadata, comments, and any other surfaced strings), while preserving all existing content already present.",
+      "text": "Implement Stage 2 simulated map page behavior using an image-based map with internal-coordinate markers for QMY coins and monsters, with no Leaflet/OpenStreetMap dependency and no external geolocation or external map/network calls.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-user-latest"
         ],
         "quotes": [
-          "Rodapé visível em todas as resoluções...",
-          "Remoção completa de Caffeine de todo o site e rodapés.",
-          "...mantendo todos os conteúdos já existentes."
+          "Nova página com mapa baseado em imagem (substituindo Leaflet/OpenStreetMap real).\nMarcadores de moedas e monstros posicionados conforme coordenadas internas."
         ]
       },
       "acceptanceCriteria": [
-        "Footer remains readable and links are clickable on mobile and desktop breakpoints.",
-        "Footer includes: \"by HTgamers\", support email helpdesk@quantumoney.net, and the phrase \"On-chain na Internet Computer (ICP)\".",
-        "A project-wide check finds no visible references to \"Caffeine\" in any rendered page, footer, header, or HTML metadata."
+        "The map renders as a static image background with an overlay of coin and monster markers.",
+        "Marker positions are computed from internal (simulated) coordinates and are deterministic (no external APIs).",
+        "No Leaflet/OpenStreetMap scripts/libraries are used for this page."
       ]
     },
     {
       "id": "REQ-5",
-      "text": "Ensure Terms of Service and Privacy Policy pages are fully populated with the complete Feb/2026 text content (no placeholders/truncation) and remain fully navigable via site links; keep the cookie consent banner visible on entry with working links to the Privacy Policy.",
+      "text": "Simulate internal synchronization between the website map and the AR mode map by sharing the same internal marker/state source so actions/state changes in one view are reflected in the other (within the same user session), without introducing real-time networking.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-user-latest"
         ],
         "quotes": [
-          "Termos de Serviço e Política de Privacidade completos (fev/2026), totalmente clicáveis.",
-          "Termos de Serviço e Política de Privacidade – PRECISO QUE VOCÊ INSIRA os textos completos (versão fev/2026).",
-          "Mensagem de cookies ao entrar na página, visível e clicável."
+          "Sincronização interna simulada entre site e app AR, compartilhando o mesmo estado."
         ]
       },
       "acceptanceCriteria": [
-        "/terms and /privacy routes render complete readable documents with headings/lists intact and no truncated sections.",
-        "Footer (and any other existing navigation locations) successfully links to /terms and /privacy.",
-        "Cookie consent banner appears on first entry (when consent not yet given) and its links to /privacy work."
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Keep presale and gold paper features strictly simulated/static UI: do not add real purchase logic, transactions, or backend-changing behavior; preserve all existing presale/gold-paper content and visuals already implemented.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "Pré-venda & papel dourado apenas UI estática simulada, sem lógica real de compra.",
-          "Todas as funcionalidades simuladas... sem backend real, sem transações reais, apenas UI.",
-          "...mantendo todos os conteúdos já existentes."
-        ]
-      },
-      "acceptanceCriteria": [
-        "No new backend methods are added or called to process purchases/transactions for presale or gold paper.",
-        "Presale and gold paper screens remain accessible and visually intact, behaving as static/simulated UI.",
-        "No UI element implies a completed real-world purchase or triggers real ledger/Stripe flows as part of the presale simulation."
+        "Map Mode and AR Mode consume the same shared internal marker/state source (single source of truth in the frontend).",
+        "A state change made in one view (e.g., selecting a marker if selection is implemented) is reflected when switching to the other view in the same session.",
+        "No WebSockets or external sync services are added."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files listed as immutable, including frontend/src/main.tsx and anything under frontend/src/components/ui.",
-    "Respect the single-actor backend architecture; avoid backend schema/state changes unless strictly necessary.",
-    "Do not introduce any real-time communication, external app connections, or real purchase/transaction flows; this build is simulated/pro UI-first."
+    "Do not modify any paths listed as immutable in SYSTEM_CONTEXT (e.g., frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui/*).",
+    "Backend must remain a single Motoko actor (no additional backend services).",
+    "Do not change or remove any existing functionality or routes outside the Stage 1–2 scope.",
+    "Do not alter the footer (visual or content).",
+    "Do not add Leaflet/OpenStreetMap or any external geolocation/map services.",
+    "No new references to 'Caffeine' may be added anywhere."
   ],
   "nonGoals": [
-    "Implementing real multi-user public chat synchronization or any server-side chat persistence.",
-    "Adding real presale purchase processing, payment handling, or on-chain transactions as part of presale/gold paper.",
-    "Integrating with QuantumoneyAR.app via APIs/deep links beyond visual/aesthetic alignment."
+    "Do not implement Stage 3 (Central Bank/DAO/Profile expansions beyond what already exists).",
+    "Do not add real NNS wallet integration or real ICP/QMY on-chain transactions beyond existing simulated/read-only behavior.",
+    "Do not implement real cross-device sync, push notifications, or real-time communication."
   ],
   "imageRequirements": {
     "required": [],

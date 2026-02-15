@@ -4,206 +4,60 @@
 
 @layer base {
   :root {
-    /* Premium Black/Gold OKLCH Color System */
-    --background: oklch(0.12 0.01 240);
-    --foreground: oklch(0.95 0.01 60);
-
-    --card: oklch(0.15 0.015 240);
-    --card-foreground: oklch(0.95 0.01 60);
-
-    --popover: oklch(0.14 0.015 240);
-    --popover-foreground: oklch(0.95 0.01 60);
-
-    --primary: oklch(0.75 0.15 85);
-    --primary-foreground: oklch(0.15 0.01 240);
-
-    --secondary: oklch(0.25 0.02 240);
-    --secondary-foreground: oklch(0.95 0.01 60);
-
-    --muted: oklch(0.22 0.015 240);
-    --muted-foreground: oklch(0.65 0.02 240);
-
-    --accent: oklch(0.65 0.18 45);
-    --accent-foreground: oklch(0.15 0.01 240);
-
-    --destructive: oklch(0.55 0.22 25);
-    --destructive-foreground: oklch(0.98 0.01 60);
-
-    --success: oklch(0.65 0.18 145);
-    --success-foreground: oklch(0.15 0.01 240);
-
-    --warning: oklch(0.70 0.18 75);
-    --warning-foreground: oklch(0.15 0.01 240);
-
-    --border: oklch(0.25 0.02 240);
-    --input: oklch(0.25 0.02 240);
-    --ring: oklch(0.75 0.15 85);
-
-    --radius: 0.75rem;
-
-    --chart-1: oklch(0.75 0.15 85);
-    --chart-2: oklch(0.65 0.18 45);
-    --chart-3: oklch(0.55 0.20 145);
-    --chart-4: oklch(0.60 0.18 275);
-    --chart-5: oklch(0.70 0.18 25);
+    --background: oklch(15% 0.02 240);
+    --foreground: oklch(48% 100% 60);
+    --card: oklch(18% 0.02 240);
+    --card-foreground: oklch(48% 100% 60);
+    --popover: oklch(18% 0.02 240);
+    --popover-foreground: oklch(48% 100% 60);
+    --primary: oklch(48% 100% 60);
+    --primary-foreground: oklch(15% 0.02 240);
+    --secondary: oklch(25% 0.03 240);
+    --secondary-foreground: oklch(48% 100% 60);
+    --muted: oklch(25% 0.03 240);
+    --muted-foreground: oklch(60% 0.05 240);
+    --accent: oklch(30% 0.04 240);
+    --accent-foreground: oklch(48% 100% 60);
+    --destructive: oklch(50% 0.2 25);
+    --destructive-foreground: oklch(98% 0 0);
+    --border: oklch(30% 0.04 240);
+    --input: oklch(30% 0.04 240);
+    --ring: oklch(48% 100% 60);
+    --radius: 0.5rem;
   }
 
-  .dark {
-    --background: oklch(0.12 0.01 240);
-    --foreground: oklch(0.95 0.01 60);
-
-    --card: oklch(0.15 0.015 240);
-    --card-foreground: oklch(0.95 0.01 60);
-
-    --popover: oklch(0.14 0.015 240);
-    --popover-foreground: oklch(0.95 0.01 60);
-
-    --primary: oklch(0.75 0.15 85);
-    --primary-foreground: oklch(0.15 0.01 240);
-
-    --secondary: oklch(0.25 0.02 240);
-    --secondary-foreground: oklch(0.95 0.01 60);
-
-    --muted: oklch(0.22 0.015 240);
-    --muted-foreground: oklch(0.65 0.02 240);
-
-    --accent: oklch(0.65 0.18 45);
-    --accent-foreground: oklch(0.15 0.01 240);
-
-    --destructive: oklch(0.55 0.22 25);
-    --destructive-foreground: oklch(0.98 0.01 60);
-
-    --success: oklch(0.65 0.18 145);
-    --success-foreground: oklch(0.15 0.01 240);
-
-    --warning: oklch(0.70 0.18 75);
-    --warning-foreground: oklch(0.15 0.01 240);
-
-    --border: oklch(0.25 0.02 240);
-    --input: oklch(0.25 0.02 240);
-    --ring: oklch(0.75 0.15 85);
-  }
-}
-
-@layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+
+  h1, h2, h3, h4, h5, h6, p, span, a, button, label, input, textarea {
+    @apply text-primary;
   }
 }
 
 @layer utilities {
-  /* 100dvh support for mobile viewport */
-  .min-h-screen-dvh {
-    min-height: 100vh;
-    min-height: 100dvh;
+  .glass-card {
+    @apply bg-transparent backdrop-blur-sm border border-primary;
   }
 
-  .h-screen-dvh {
-    height: 100vh;
-    height: 100dvh;
+  .glass-card-elevated {
+    @apply bg-background/60 backdrop-blur-lg border border-primary/30 shadow-lg shadow-primary/5;
   }
 
-  /* Safe area padding for mobile notches/home indicators */
+  .hud-panel {
+    @apply bg-transparent backdrop-blur-sm border border-primary;
+  }
+
   .pb-safe {
-    padding-bottom: env(safe-area-inset-bottom, 1rem);
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0));
   }
 
   .pt-safe {
     padding-top: env(safe-area-inset-top, 0);
-  }
-
-  /* Glass morphism effects */
-  .glass-card {
-    @apply backdrop-blur-md bg-background/40 border border-primary/20;
-  }
-
-  .glass-card-elevated {
-    @apply backdrop-blur-lg bg-background/60 border border-primary/30;
-  }
-
-  /* Premium shadows */
-  .shadow-gold-subtle {
-    box-shadow: 0 4px 20px -2px oklch(0.75 0.15 85 / 0.15);
-  }
-
-  .shadow-gold-strong {
-    box-shadow: 0 8px 32px -4px oklch(0.75 0.15 85 / 0.25);
-  }
-
-  /* HUD-style elements (AR visual sync) */
-  .hud-panel {
-    @apply glass-card-elevated border-primary/40 rounded-lg p-4;
-    box-shadow: 0 0 20px oklch(0.75 0.15 85 / 0.2), inset 0 0 10px oklch(0.75 0.15 85 / 0.05);
-  }
-
-  .hud-border {
-    @apply border-2 border-primary/50;
-    box-shadow: 0 0 10px oklch(0.75 0.15 85 / 0.3);
-  }
-
-  /* Map info window style (AR visual sync) */
-  .map-info-window {
-    @apply glass-card-elevated rounded-xl p-6 border-primary/40;
-    box-shadow: 0 8px 32px oklch(0.75 0.15 85 / 0.2);
-  }
-
-  /* Animations */
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .animate-fade-in {
-    animation: fade-in 0.4s ease-out;
-  }
-
-  @keyframes pulse-gold {
-    0%, 100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.6;
-    }
-  }
-
-  .animate-pulse-gold {
-    animation: pulse-gold 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  /* Typography utilities */
-  .text-balance {
-    text-wrap: balance;
-  }
-
-  /* Scrollbar styling */
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-track {
-    @apply bg-background/20;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    @apply bg-primary/30 rounded-full;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    @apply bg-primary/50;
   }
 }
