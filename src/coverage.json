@@ -1,109 +1,97 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-15T22:09:32.850Z",
+  "generatedAt": "2026-02-17T23:03:52.439Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 5,
-    "implemented": 5,
+    "total": 6,
+    "implemented": 6,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Implement Stage 1 visual patch across the main app UI: make all in-app window/panel surfaces fully transparent with thin yellow borders and yellow text, without changing any existing page structure, routes, or feature behavior.",
+        "summary": "Update the QMY Token page coin image reference to use a QMY coin asset (replace the current QTM coin image) and ensure all visible token naming on that page reflects “QMY” (not “QTM”).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/index.css",
-          "frontend/src/pages/MapMode.tsx",
-          "frontend/src/pages/ARMode.tsx",
-          "frontend/src/components/HUDOverlay.tsx"
+          "frontend/public/assets/generated/qmy-coin-gold-3d-transparent.dim_128x128.png",
+          "frontend/src/pages/QMYTokenPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/index.css",
-          "frontend/src/pages/MapMode.tsx",
-          "frontend/src/pages/ARMode.tsx",
-          "frontend/src/components/HUDOverlay.tsx"
+          "frontend/public/assets/generated/qmy-coin-gold-3d-transparent.dim_128x128.png",
+          "frontend/src/pages/QMYTokenPage.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Preserve the existing footer exactly as-is (structure, styling, text content, links) and ensure no new 'Caffeine' references are introduced anywhere in the UI as part of Stages 1–2 changes.",
+        "summary": "Remove the QMY Token page’s black static background so the global dynamic background effect (the same effect used on other pages) is visible behind the page content.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/VALIDATION_REQUIRED.md"
+          "frontend/src/pages/QMYTokenPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/VALIDATION_REQUIRED.md"
+          "frontend/src/pages/QMYTokenPage.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Make Stage 1 mobile-safe: adjust in-app window/panel spacing and HUD placement so that HUD/XP/coins/monsters are not obscured or clipped on small screens, including safe-area insets, while keeping the same information and components.",
+        "summary": "Restyle all content “windows” (cards/sections) on the QMY Token page to be transparent/glass with very thin yellow borders and yellow typography, while keeping the page layout and content structure otherwise unchanged.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/PageShell.tsx",
-          "frontend/src/pages/MapMode.tsx",
-          "frontend/src/pages/ARMode.tsx",
-          "frontend/src/index.css"
+          "frontend/src/index.css",
+          "frontend/src/pages/QMYTokenPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/PageShell.tsx",
-          "frontend/src/pages/MapMode.tsx",
-          "frontend/src/pages/ARMode.tsx",
-          "frontend/src/index.css"
+          "frontend/src/index.css",
+          "frontend/src/pages/QMYTokenPage.tsx"
         ]
       },
       {
         "id": "REQ-4",
-        "summary": "Implement Stage 2 simulated map page behavior using an image-based map with internal-coordinate markers for QMY coins and monsters, with no Leaflet/OpenStreetMap dependency and no external geolocation or external map/network calls.",
+        "summary": "Keep the site footer component and its content intact and ensure no Caffeine references are added or reintroduced while applying this patch.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/lib/map/staticMapProjection.ts",
-          "frontend/src/components/map/StaticMapView.tsx"
+          "frontend/src/pages/QMYTokenPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/lib/map/staticMapProjection.ts",
-          "frontend/src/components/map/StaticMapView.tsx"
+          "frontend/src/pages/QMYTokenPage.tsx"
         ]
       },
       {
         "id": "REQ-5",
-        "summary": "Simulate internal synchronization between the website map and the AR mode map by sharing the same internal marker/state source so actions/state changes in one view are reflected in the other (within the same user session), without introducing real-time networking.",
+        "summary": "Do not modify any other page routes, modules, or functionality outside the QMY Token page patch scope.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/contexts/SharedMapStateContext.tsx",
-          "frontend/src/App.tsx",
-          "frontend/src/components/map/StaticMapView.tsx",
-          "frontend/src/pages/MapMode.tsx",
-          "frontend/src/pages/ARMode.tsx"
+          "frontend/src/pages/QMYTokenPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/contexts/SharedMapStateContext.tsx",
-          "frontend/src/App.tsx",
-          "frontend/src/components/map/StaticMapView.tsx",
-          "frontend/src/pages/MapMode.tsx",
-          "frontend/src/pages/ARMode.tsx"
+          "frontend/src/pages/QMYTokenPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-6",
+        "summary": "Resolve the build-blocking configuration error so the project can successfully rebuild and publish with this patch applied.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/tailwind.config.js"
+        ],
+        "matchedFiles": [
+          "frontend/tailwind.config.js"
         ]
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/VALIDATION_REQUIRED.md",
-    "frontend/src/components/HUDOverlay.tsx",
-    "frontend/src/components/PageShell.tsx",
-    "frontend/src/components/map/StaticMapView.tsx",
-    "frontend/src/contexts/SharedMapStateContext.tsx",
+    "frontend/public/assets/generated/qmy-coin-gold-3d-transparent.dim_128x128.png",
     "frontend/src/index.css",
-    "frontend/src/lib/map/staticMapProjection.ts",
-    "frontend/src/pages/ARMode.tsx",
-    "frontend/src/pages/MapMode.tsx",
+    "frontend/src/pages/QMYTokenPage.tsx",
+    "frontend/tailwind.config.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

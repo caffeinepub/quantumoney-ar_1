@@ -1,53 +1,61 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Quantumoney.app & QuantumoneyAR.app: apply platform-compatible 'patch máximo realista' in stages. Current confirmed build scope is Etapas 1 e 2: (1) global UI visual refinement with fully transparent windows, thin yellow borders, yellow text, mobile-safe HUD layout; (2) new simulated map page (image + markers) for QMY coins and monsters using shared internal state to simulate site↔AR sync, with no external calls and no changes to existing functionality/footers.",
+  "summary": "Project includes a single scoped UI patch for the QMY Token page (rename QTM→QMY, dynamic background, transparent yellow-styled windows, footer unchanged) and a current build blocked by a configuration error.",
   "architectural_notes": [
-    "Sem chamadas externas (ex.: Leaflet/tiles OSM, NNS real, APIs externas); usar estado interno compartilhado para simular sincronização site ↔ app AR.",
-    "Implementação por etapas para minimizar risco: aplicar primeiro ajustes visuais/HUD, depois página de mapa simulado; não alterar funcionalidades/rodapés existentes fora do escopo."
+    "Scope constraint: only modify the QMY Token page; all other pages/modules/features must remain unchanged."
   ],
   "known_issues": [
-    "Build anterior do patch máximo realista falhou com erro genérico ('AI was unable to fulfill' / 'couldn't complete your request'); pode exigir dividir em etapas e simplificar escopo de build."
+    "Build/rebuild fails with a configuration error; requires Caffeine team support or configuration fix before build can complete."
   ],
-  "isFixRequest": false,
+  "isFixRequest": true,
+  "imageRequirements": "## Required Images\n- Gold 3D coin with “QMY” mark on a transparent background (qmy-coin-gold-3d-transparent.dim_128x128.png)",
   "existing_features": [
     {
-      "id": "feature-implement-stage-1-visual-patch-across-the-main-app-ui-make-all-in-app-window-panel-surfaces-fully-transparent-with-thin-yellow-borders-and-yellow-text-without-changing-any-existing-page-structure-routes-or-feature-behavior",
-      "title": "Implement Stage 1 visual patch across the main app UI: make all in-app window/panel surfaces fully transparent with thin yellow borders and yellow text, without changing any existing page structure, routes, or feature behavior.",
+      "id": "feature-update-the-qmy-token-page-coin-image-reference-to-use-a-qmy-coin-asset-replace-the-current-qtm-coin-image-and-ensure-all-visible-token-naming-on-that-page-reflects-qmy-not-qtm",
+      "title": "Update the QMY Token page coin image reference to use a QMY coin asset (replace the current QTM coin image) and ensure all visible token naming on that page reflects “QMY” (not “QTM”).",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-preserve-the-existing-footer-exactly-as-is-structure-styling-text-content-links-and-ensure-no-new-caffeine-references-are-introduced-anywhere-in-the-ui-as-part-of-stages-1-2-changes",
-      "title": "Preserve the existing footer exactly as-is (structure, styling, text content, links) and ensure no new 'Caffeine' references are introduced anywhere in the UI as part of Stages 1–2 changes.",
+      "id": "feature-remove-the-qmy-token-page-s-black-static-background-so-the-global-dynamic-background-effect-the-same-effect-used-on-other-pages-is-visible-behind-the-page-content",
+      "title": "Remove the QMY Token page’s black static background so the global dynamic background effect (the same effect used on other pages) is visible behind the page content.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-make-stage-1-mobile-safe-adjust-in-app-window-panel-spacing-and-hud-placement-so-that-hud-xp-coins-monsters-are-not-obscured-or-clipped-on-small-screens-including-safe-area-insets-while-keeping-the-same-information-and-components",
-      "title": "Make Stage 1 mobile-safe: adjust in-app window/panel spacing and HUD placement so that HUD/XP/coins/monsters are not obscured or clipped on small screens, including safe-area insets, while keeping the same information and components.",
+      "id": "feature-restyle-all-content-windows-cards-sections-on-the-qmy-token-page-to-be-transparent-glass-with-very-thin-yellow-borders-and-yellow-typography-while-keeping-the-page-layout-and-content-structure-otherwise-unchanged",
+      "title": "Restyle all content “windows” (cards/sections) on the QMY Token page to be transparent/glass with very thin yellow borders and yellow typography, while keeping the page layout and content structure otherwise unchanged.",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-implement-stage-2-simulated-map-page-behavior-using-an-image-based-map-with-internal-coordinate-markers-for-qmy-coins-and-monsters-with-no-leaflet-openstreetmap-dependency-and-no-external-geolocation-or-external-map-network-calls",
-      "title": "Implement Stage 2 simulated map page behavior using an image-based map with internal-coordinate markers for QMY coins and monsters, with no Leaflet/OpenStreetMap dependency and no external geolocation or external map/network calls.",
+      "id": "feature-keep-the-site-footer-component-and-its-content-intact-and-ensure-no-caffeine-references-are-added-or-reintroduced-while-applying-this-patch",
+      "title": "Keep the site footer component and its content intact and ensure no Caffeine references are added or reintroduced while applying this patch.",
       "reqIds": [
         "REQ-4"
       ],
       "version": 1
     },
     {
-      "id": "feature-simulate-internal-synchronization-between-the-website-map-and-the-ar-mode-map-by-sharing-the-same-internal-marker-state-source-so-actions-state-changes-in-one-view-are-reflected-in-the-other-within-the-same-user-session-without-introducing-real-time-networking",
-      "title": "Simulate internal synchronization between the website map and the AR mode map by sharing the same internal marker/state source so actions/state changes in one view are reflected in the other (within the same user session), without introducing real-time networking.",
+      "id": "feature-do-not-modify-any-other-page-routes-modules-or-functionality-outside-the-qmy-token-page-patch-scope",
+      "title": "Do not modify any other page routes, modules, or functionality outside the QMY Token page patch scope.",
       "reqIds": [
         "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-resolve-the-build-blocking-configuration-error-so-the-project-can-successfully-rebuild-and-publish-with-this-patch-applied",
+      "title": "Resolve the build-blocking configuration error so the project can successfully rebuild and publish with this patch applied.",
+      "reqIds": [
+        "REQ-6"
       ],
       "version": 1
     }
@@ -55,18 +63,13 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Etapa 1: Todas as janelas/HUD com transparência total, bordas finas amarelas e texto amarelo; ajustar layout (incl. mobile) para não bloquear HUD/XP/moedas/monstros sem alterar funcionalidades existentes",
+      "summary": "Apply safe scoped patch to QMY Token page: rename QTM→QMY, use dynamic background like other pages (no black), make windows transparent with thin yellow borders and yellow text, keep footer intact with no Caffeine references; do not change any other pages/features.",
       "reqIds": [],
-      "status": "in_progress"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Etapa 2: Criar nova página de mapa simulado (imagem + marcadores) com moedas QMY e monstros em coordenadas internas, compartilhando estado interno para sincronização simulada site ↔ app AR",
-      "reqIds": [],
-      "status": "in_progress"
+      "status": "pending"
     }
   ],
-  "projectName": "Stage 1+2: Transparent yellow HUD/windows + simulated image-based map with shared internal state",
+  "gameProjectType": "none",
+  "projectName": "Quantumoney",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

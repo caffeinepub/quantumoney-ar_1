@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { Menu, X, Wallet, Coins, Building2, MessageSquare, FileText, ShoppingCart, Scale } from 'lucide-react';
+import { Menu, X, Wallet, Coins, Building2, MessageSquare, FileText, ShoppingCart, Scale, Map } from 'lucide-react';
 import LoginButton from './LoginButton';
 
 export default function Header() {
@@ -43,11 +43,25 @@ export default function Header() {
               Wallet
             </Link>
             <Link
+              to="/map"
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
+            >
+              <Map className="w-4 h-4" />
+              Map
+            </Link>
+            <Link
               to="/central-bank"
               className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
             >
               <Building2 className="w-4 h-4" />
-              Central Bank
+              Bank
+            </Link>
+            <Link
+              to="/dao"
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
+            >
+              <Scale className="w-4 h-4" />
+              DAO
             </Link>
             <Link
               to="/chat"
@@ -56,48 +70,34 @@ export default function Header() {
               <MessageSquare className="w-4 h-4" />
               Chat
             </Link>
-            <Link
-              to="/presale"
-              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
-            >
-              <ShoppingCart className="w-4 h-4" />
-              Presale
-            </Link>
-            <Link
-              to="/terms"
-              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
-            >
-              <Scale className="w-4 h-4" />
-              Legal
-            </Link>
-            <div className="ml-2">
-              <LoginButton />
-            </div>
           </nav>
 
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 text-primary hover:text-primary/80 transition-colors duration-200 rounded-lg hover:bg-primary/5"
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="flex items-center gap-4">
+            <LoginButton />
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+            >
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
+        {/* Mobile Menu */}
         {isMenuOpen && (
-          <nav className="md:hidden py-6 border-t border-primary/20 animate-fade-in">
-            <div className="flex flex-col gap-2">
+          <div className="md:hidden py-4 border-t border-primary/20">
+            <nav className="flex flex-col gap-2">
               <Link
                 to="/"
                 onClick={() => setIsMenuOpen(false)}
-                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5"
+                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg transition-colors"
               >
                 Home
               </Link>
               <Link
                 to="/qmy-token"
                 onClick={() => setIsMenuOpen(false)}
-                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
+                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg transition-colors flex items-center gap-2"
               >
                 <Coins className="w-4 h-4" />
                 QMY Token
@@ -105,56 +105,45 @@ export default function Header() {
               <Link
                 to="/wallet"
                 onClick={() => setIsMenuOpen(false)}
-                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
+                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg transition-colors flex items-center gap-2"
               >
                 <Wallet className="w-4 h-4" />
                 Wallet
               </Link>
               <Link
+                to="/map"
+                onClick={() => setIsMenuOpen(false)}
+                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg transition-colors flex items-center gap-2"
+              >
+                <Map className="w-4 h-4" />
+                Map
+              </Link>
+              <Link
                 to="/central-bank"
                 onClick={() => setIsMenuOpen(false)}
-                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
+                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg transition-colors flex items-center gap-2"
               >
                 <Building2 className="w-4 h-4" />
-                Central Bank
-              </Link>
-              <Link
-                to="/chat"
-                onClick={() => setIsMenuOpen(false)}
-                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
-              >
-                <MessageSquare className="w-4 h-4" />
-                Chat
-              </Link>
-              <Link
-                to="/presale"
-                onClick={() => setIsMenuOpen(false)}
-                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
-              >
-                <ShoppingCart className="w-4 h-4" />
-                Presale
+                Bank
               </Link>
               <Link
                 to="/dao"
                 onClick={() => setIsMenuOpen(false)}
-                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
+                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg transition-colors flex items-center gap-2"
               >
-                <FileText className="w-4 h-4" />
+                <Scale className="w-4 h-4" />
                 DAO
               </Link>
               <Link
-                to="/terms"
+                to="/chat"
                 onClick={() => setIsMenuOpen(false)}
-                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
+                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg transition-colors flex items-center gap-2"
               >
-                <Scale className="w-4 h-4" />
-                Legal
+                <MessageSquare className="w-4 h-4" />
+                Chat
               </Link>
-              <div className="pt-4 px-4">
-                <LoginButton />
-              </div>
-            </div>
-          </nav>
+            </nav>
+          </div>
         )}
       </div>
     </header>

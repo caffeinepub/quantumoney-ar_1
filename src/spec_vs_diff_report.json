@@ -1,131 +1,64 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-15T22:09:32.846Z",
-  "summary": "Stage 2 static image-based map with deterministic internal markers and a shared frontend context appears implemented for Map Mode and AR Mode, along with some Stage 1 styling utilities and mobile spacing/safe-area helpers. However, the diff summary indicates numerous unrelated feature/behavior changes outside the Stage 1–2 scope (DAO, Central Bank, modals, bottom nav, energy bar, tutorial/rules pages, login button, hooks), and Stage 1 “across the main app UI” transparency/yellow styling is not clearly applied globally beyond specific components/utilities. There is also a terminology mismatch: map markers are labeled “QTM” rather than “QMY”.",
+  "generatedAt": "2026-02-17T23:03:52.435Z",
+  "summary": "The diff implements most of the QMY Token page visual changes (coin image path, glass/yellow card styling) via QMYTokenPage.tsx plus new CSS utilities, but it also includes out-of-scope changes (notably backend/main.mo) and provides no clear evidence that the build-blocking configuration error was resolved or that no other pages/modules were affected.",
   "missing_requirements": [
     {
       "id": "REQ-1",
-      "requirement": "Implement Stage 1 visual patch across the main app UI: make all in-app window/panel surfaces fully transparent with thin yellow borders and yellow text, without changing any existing page structure, routes, or feature behavior.",
-      "reason": "The diff shows new utilities (.glass-card, .hud-panel) and updates to Map/AR pages, but does not provide evidence that all non-footer window/panel containers across the entire app were updated to fully transparent surfaces with thin yellow borders/yellow text. Only a subset of pages/components are shown, and base theme variables still define non-transparent card/popover colors.",
+      "requirement": "Ensure all visible token naming on the QMY Token page reflects “QMY” (and does not show “QTM”).",
+      "reason": "The QMY token page content is truncated in the diff summary, so it cannot be verified that no other visible text on the page still mentions “QTM”.",
       "evidence": [
+        "frontend/src/pages/QMYTokenPage.tsx (truncated)"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "requirement": "Do not modify any other page routes, modules, or functionality outside the QMY Token page patch scope.",
+      "reason": "Multiple files outside the QMY Token page and its direct static asset needs were modified (including backend and global styling/config). This violates the requirement that only the QMY Token page (and its direct asset) changes.",
+      "evidence": [
+        "backend/main.mo",
         "frontend/src/index.css",
-        "frontend/src/pages/MapMode.tsx",
-        "frontend/src/pages/ARMode.tsx",
-        "frontend/src/components/HUDOverlay.tsx"
+        "frontend/tailwind.config.js",
+        "project_state.json",
+        "frontend-file-summaries.txt"
       ]
     },
     {
-      "id": "REQ-3",
-      "requirement": "Make Stage 1 mobile-safe: adjust in-app window/panel spacing and HUD placement so that HUD/XP/coins/monsters are not obscured or clipped on small screens, including safe-area insets.",
-      "reason": "There is evidence of bottom safe-area padding (pb-safe) and reduced mobile spacing in Map/AR pages, but no clear evidence that HUD placement accounts for top safe-area insets/notches when using the fixed HUD variant (HUDOverlay uses fixed top-24/right-4, and pt-safe exists but is not shown applied).",
+      "id": "REQ-6",
+      "requirement": "Resolve the build-blocking configuration error so the project can successfully rebuild and publish with this patch applied.",
+      "reason": "The diff summary does not mention or show a specific configuration fix (e.g., package/build config changes) nor any evidence that a rebuild/publish succeeds; only code/style changes are shown.",
       "evidence": [
-        "frontend/src/components/HUDOverlay.tsx",
-        "frontend/src/components/PageShell.tsx",
-        "frontend/src/index.css"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "requirement": "Simulated map page uses an image-based map with internal-coordinate markers for QMY coins and monsters.",
-      "reason": "The static image + deterministic marker overlay is implemented, but the marker label text uses 'QTM' rather than 'QMY', which does not match the requirement wording for QMY coins.",
-      "evidence": [
-        "frontend/src/components/map/StaticMapView.tsx"
+        "frontend/tailwind.config.js (truncated)",
+        "frontend/src/index.css",
+        "backend/main.mo",
+        "project_state.json"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Major enhancements to Plant/Rescue confirmation modals including social sharing and +1 XP reward flows.",
-      "reason": "Not requested in Stage 1–2 requirements; also conflicts with the constraint to not change existing functionality outside the Stage 1–2 scope.",
+      "description": "Backend changes in backend/main.mo unrelated to the scoped QMY Token page UI patch.",
+      "reason": "The BuildRequest scope explicitly limits changes to the QMY Token page UI (and direct static asset needs) and forbids broader module/functionality changes; backend modifications are not requested for the UI patch.",
       "evidence": [
-        "frontend-file-summaries.txt (frontend/src/components/PlantConfirmationModal.tsx, frontend/src/components/RescueConfirmationModal.tsx)"
+        "backend/main.mo"
       ]
     },
     {
-      "description": "TokenInfoModal additions including print functionality and social sharing buttons across multiple networks.",
-      "reason": "Not requested in Stage 1–2 requirements and appears to add new behavior outside the scoped visual/map work.",
+      "description": "New QMY token page copy implying swap functionality (e.g., “Exchange QMY ↔ ICP through internal swap logic”).",
+      "reason": "The request explicitly states as a non-goal: implementing new token functionality beyond existing UI copy; this adds new functional claims/features in the UI content that were not requested as part of the styling/background/rename patch.",
       "evidence": [
-        "frontend-file-summaries.txt (frontend/src/components/TokenInfoModal.tsx)"
-      ]
-    },
-    {
-      "description": "Central Bank (BancoCentral) dashboard expansion with new sections/charts and reconciled totals.",
-      "reason": "Explicitly outside Stage 1–2 scope per non-goals/constraints (no Stage 3 expansions beyond what already exists).",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/pages/BancoCentral.tsx)"
-      ]
-    },
-    {
-      "description": "DAO governance page changes described as “full backend integration”, voting system updates, and real-time dynamic status updates.",
-      "reason": "Not requested for Stage 1–2 (and Stage 3 expansions are a non-goal); also indicates functionality changes outside visual/map scope.",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/pages/DAO.tsx)"
-      ]
-    },
-    {
-      "description": "New/changed Tutorial and QTM Rules pages content and structure.",
-      "reason": "Not requested in Stage 1–2 requirements and adds/changes routes/pages outside the defined scope.",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/pages/Tutorial.tsx, frontend/src/pages/QTMRules.tsx)"
-      ]
-    },
-    {
-      "description": "Bottom navigation bar with 7 tabs and safe-area padding support.",
-      "reason": "Not requested; adds/changes navigation UI outside the Stage 1–2 styling/map requirements.",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/components/BottomNav.tsx)"
-      ]
-    },
-    {
-      "description": "EnergyBar timer/progress component with multiple display modes and visual states.",
-      "reason": "Not requested in Stage 1–2 requirements.",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/components/EnergyBar.tsx)"
-      ]
-    },
-    {
-      "description": "LoginButton behavioral/styling refinements beyond the specified Stage 1 panel/HUD work.",
-      "reason": "Not requested; may alter existing interactive behavior outside Stage 1–2 scope.",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/components/LoginButton.tsx)"
-      ]
-    },
-    {
-      "description": "useQueries hook changes with “simulated wallet logic removed.”",
-      "reason": "Not requested and appears to change application behavior outside the Stage 1–2 UI styling and simulated map work.",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/hooks/useQueries.ts)"
-      ]
-    },
-    {
-      "description": "Profile page (Perfil) expanded functionality (editing, uploads, integrations).",
-      "reason": "Not requested in Stage 1–2; constitutes feature changes outside scope.",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/pages/Perfil.tsx)"
-      ]
-    },
-    {
-      "description": "Changes to the HTML entry point (metadata/viewport-fit=cover/SEO tags).",
-      "reason": "Not requested by Stage 1–2 requirements; while it may support safe-areas, it is still an extra change outside the explicitly requested items.",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/index.html)"
+        "frontend/src/pages/QMYTokenPage.tsx (truncated)"
       ]
     }
   ],
-  "confidence": 0.68,
+  "confidence": 0.74,
   "changed_files": [
+    "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/App.tsx",
-    "frontend/src/VALIDATION_REQUIRED.md",
-    "frontend/src/components/HUDOverlay.tsx",
-    "frontend/src/components/PageShell.tsx",
-    "frontend/src/components/map/StaticMapView.tsx",
-    "frontend/src/contexts/SharedMapStateContext.tsx",
     "frontend/src/index.css",
-    "frontend/src/lib/map/staticMapProjection.ts",
-    "frontend/src/pages/ARMode.tsx",
-    "frontend/src/pages/MapMode.tsx",
+    "frontend/src/pages/QMYTokenPage.tsx",
+    "frontend/tailwind.config.js",
     "project_state.json"
   ]
 }

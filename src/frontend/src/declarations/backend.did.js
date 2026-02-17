@@ -144,7 +144,7 @@ export const idlService = IDL.Service({
       [IDL.Vec(ChatMessage)],
       ['query'],
     ),
-  'getPlayerState' : IDL.Func([], [IDL.Opt(PlayerProfile)], []),
+  'getPlayerState' : IDL.Func([], [IDL.Opt(PlayerProfile)], ['query']),
   'getTotalMessagesCount' : IDL.Func([], [IDL.Nat], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
@@ -476,7 +476,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(ChatMessage)],
         ['query'],
       ),
-    'getPlayerState' : IDL.Func([], [IDL.Opt(PlayerProfile)], []),
+    'getPlayerState' : IDL.Func([], [IDL.Opt(PlayerProfile)], ['query']),
     'getTotalMessagesCount' : IDL.Func([], [IDL.Nat], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],

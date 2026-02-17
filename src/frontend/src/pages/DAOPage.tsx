@@ -1,31 +1,34 @@
+import { useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, AlertCircle, TrendingUp, FileText, BarChart3, MessageSquare } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Users, Plus, AlertCircle, Vote, FileText } from 'lucide-react';
 import PageShell from '@/components/PageShell';
 import Container from '@/components/Container';
-import { PageTitle } from '@/components/Typography';
-import { Link } from '@tanstack/react-router';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { daoTopics } from '@/lib/dao/daoForumSimData';
-import DAOProfilePanel from '@/components/dao/DAOProfilePanel';
+import { PageTitle, BodyText } from '@/components/Typography';
+import { useInternetIdentity } from '@/hooks/useInternetIdentity';
+import { useGetCallerUserProfile } from '@/hooks/useQueries';
+import { useGetProposals } from '@/hooks/useDao';
 
 export default function DAOPage() {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'voting': return 'border-green-500/40 text-green-500';
-      case 'discussion': return 'border-blue-500/40 text-blue-500';
-      case 'passed': return 'border-primary/40 text-primary';
-      case 'rejected': return 'border-red-500/40 text-red-500';
-      case 'draft': return 'border-gray-500/40 text-gray-500';
-      default: return 'border-primary/40 text-primary';
+  const navigate = useNavigate();
+  const { identity } = useInternetIdentity();
+  const { data: userProfile, isLoading: profileLoading } = useGetCallerUserProfile();
+  const { data: proposals, isLoading: proposalsLoading } = useGetProposals();
+
+  const isAuthenticated = !!identity;
+  const isRegistered = userProfile?.registered ?? false;
+
+  const handleCreateProposal = () => {
+    if (!isAuthenticated || !isRegistered) {
+      return;
     }
+    navigate({ to: '/dao/new' });
+  };
+
+  const handleViewProposal = (proposalId: string) => {
+    navigate({ to: '/dao/$proposalId', params: { proposalId } });
   };
 
   return (
@@ -34,141 +37,119 @@ export default function DAOPage() {
         <div className="py-12 space-y-8">
           <div className="space-y-3">
             <PageTitle icon={<Users className="w-12 h-12" />}>
-              DAO Governance Forum
+              DAO Governance
             </PageTitle>
+            <BodyText className="max-w-2xl">
+              Internal simulated governance system for community proposals and voting
+            </BodyText>
             <Badge variant="outline" className="border-amber-500/40 text-amber-500">
-              Simulated / Not Active
+              Simulated / Internal
             </Badge>
           </div>
 
-          <Card className="glass-card border-red-900/30 bg-red-900/10">
+          {!isAuthenticated && (
+            <Card className="glass-card border-amber-900/30 bg-amber-900/10">
+              <CardContent className="p-6 flex items-start gap-4">
+                <AlertCircle className="w-6 h-6 text-amber-400 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-amber-400 font-bold text-lg mb-2">Login Required</h3>
+                  <p className="text-amber-300 text-sm leading-relaxed">
+                    Please log in with Internet Identity to view proposals and participate in DAO governance.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {isAuthenticated && !isRegistered && !profileLoading && (
+            <Card className="glass-card border-amber-900/30 bg-amber-900/10">
+              <CardContent className="p-6 flex items-start gap-4">
+                <AlertCircle className="w-6 h-6 text-amber-400 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-amber-400 font-bold text-lg mb-2">Registration Required</h3>
+                  <p className="text-amber-300 text-sm leading-relaxed">
+                    Please complete your profile registration to create proposals and vote.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {isAuthenticated && isRegistered && (
+            <div className="flex justify-end">
+              <Button
+                onClick={handleCreateProposal}
+                className="bg-primary hover:bg-primary/90 text-black font-semibold"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create Proposal
+              </Button>
+            </div>
+          )}
+
+          <Card className="glass-card border-primary/30">
             <CardHeader>
-              <div className="flex items-center gap-3">
-                <AlertCircle className="w-8 h-8 text-red-400" />
-                <CardTitle className="text-2xl font-serif text-red-400">
-                  DAO Not Active
-                </CardTitle>
-              </div>
+              <CardTitle className="text-primary flex items-center gap-3">
+                <FileText className="w-6 h-6" />
+                Active Proposals
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-red-200 leading-relaxed">
-                The DAO governance system is planned but not active. No voting is enabled. No proposals can be created. 
-                No governance execution exists. This page provides conceptual information only for educational purposes.
-              </p>
+              {proposalsLoading ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">Loading proposals...</p>
+                </div>
+              ) : !proposals || proposals.length === 0 ? (
+                <div className="text-center py-8">
+                  <FileText className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+                  <p className="text-muted-foreground">No proposals yet. Be the first to create one!</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {proposals.map((proposal) => (
+                    <Card
+                      key={proposal.id}
+                      className="glass-card border-primary/20 hover:border-primary/40 transition-colors cursor-pointer"
+                      onClick={() => handleViewProposal(proposal.id)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <h3 className="text-primary font-semibold text-lg mb-2">{proposal.title}</h3>
+                            <p className="text-muted-foreground text-sm line-clamp-2 mb-3">{proposal.description}</p>
+                            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                              <span>By: {proposal.authorName || 'Anonymous'}</span>
+                              <span>•</span>
+                              <span>{new Date(Number(proposal.createdAt) / 1_000_000).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end gap-2">
+                            <Badge variant="outline" className="border-green-500/40 text-green-500">
+                              {proposal.status}
+                            </Badge>
+                            <div className="flex items-center gap-2 text-sm">
+                              <Vote className="w-4 h-4 text-primary" />
+                              <span className="text-primary font-semibold">{proposal.totalVotes || 0} votes</span>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="glass-card border-primary/30">
-                  <CardHeader>
-                    <CardTitle className="text-primary flex items-center gap-2 text-lg">
-                      <TrendingUp className="w-5 h-5" />
-                      Total Topics
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-4xl font-bold text-primary mb-1">{daoTopics.length}</p>
-                    <p className="text-sm text-muted-foreground">(Simulated)</p>
-                  </CardContent>
-                </Card>
-
-                <Card className="glass-card border-primary/30">
-                  <CardHeader>
-                    <CardTitle className="text-primary flex items-center gap-2 text-lg">
-                      <Users className="w-5 h-5" />
-                      Active Members
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-4xl font-bold text-primary mb-1">1,250</p>
-                    <p className="text-sm text-muted-foreground">(Simulated)</p>
-                  </CardContent>
-                </Card>
-
-                <Card className="glass-card border-primary/30">
-                  <CardHeader>
-                    <CardTitle className="text-primary flex items-center gap-2 text-lg">
-                      <BarChart3 className="w-5 h-5" />
-                      Participation
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-4xl font-bold text-primary mb-1">68%</p>
-                    <p className="text-sm text-muted-foreground">(Simulated)</p>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <Card className="glass-card border-primary/30">
-                <CardHeader>
-                  <CardTitle className="text-primary flex items-center gap-2">
-                    <FileText className="w-5 h-5" />
-                    Forum Topics (Simulated)
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-primary/20">
-                        <TableHead className="text-primary">Title</TableHead>
-                        <TableHead className="text-primary">Category</TableHead>
-                        <TableHead className="text-primary">Status</TableHead>
-                        <TableHead className="text-primary text-right">Votes</TableHead>
-                        <TableHead className="text-primary text-right">Comments</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {daoTopics.map((topic) => (
-                        <TableRow key={topic.id} className="border-primary/10">
-                          <TableCell className="text-primary font-medium">
-                            <Link 
-                              to="/dao/$topicId"
-                              params={{ topicId: topic.id }}
-                              className="hover:text-primary/80 transition-colors"
-                            >
-                              {topic.title}
-                            </Link>
-                          </TableCell>
-                          <TableCell className="text-primary">{topic.category}</TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className={getStatusColor(topic.status)}>
-                              {topic.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-primary text-right">{topic.votes.toLocaleString()}</TableCell>
-                          <TableCell className="text-primary text-right">
-                            <div className="flex items-center justify-end gap-1">
-                              <MessageSquare className="w-3 h-3" />
-                              {topic.comments}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="space-y-6">
-              <DAOProfilePanel />
-
-              <Card className="glass-card border-primary/30">
-                <CardHeader>
-                  <CardTitle className="text-primary">Governance Cycle</CardTitle>
-                </CardHeader>
-                <CardContent className="flex justify-center">
-                  <img
-                    src="/assets/generated/dao-governance-cycle-conceptual.dim_800x600.png"
-                    alt="DAO Governance Cycle"
-                    className="w-full rounded-lg border border-primary/20"
-                  />
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+          <Card className="glass-card border-amber-900/30 bg-amber-900/10">
+            <CardContent className="p-6">
+              <p className="text-sm text-amber-300 leading-relaxed">
+                <strong>Note:</strong> This is a simulated/internal DAO governance system. All proposals and votes 
+                are stored in the canister but do not execute real on-chain governance actions. This system is for 
+                educational and community engagement purposes only.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </Container>
     </PageShell>

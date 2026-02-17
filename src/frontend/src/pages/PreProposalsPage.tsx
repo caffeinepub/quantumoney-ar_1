@@ -1,162 +1,89 @@
-import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FileText, ArrowRight, BookOpen } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import PageShell from '@/components/PageShell';
 import Container from '@/components/Container';
-import { PageTitle, SectionTitle } from '@/components/Typography';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { FileText, Plus, MessageSquare } from 'lucide-react';
-import { toast } from 'sonner';
-import { usePreProposalsStore } from '@/hooks/usePreProposalsStore';
-import { Link } from '@tanstack/react-router';
-import AuthGate from '@/components/auth/AuthGate';
+import { PageTitle } from '@/components/Typography';
+import { useNavigate } from '@tanstack/react-router';
+import { getPreProposals } from '@/lib/dao/preProposalsData';
 
 export default function PreProposalsPage() {
-  const { proposals, createProposal } = usePreProposalsStore();
-  const [showForm, setShowForm] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = async () => {
-    if (!title.trim() || !description.trim()) {
-      toast.error('Please fill in all fields');
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      createProposal(title, description);
-      toast.success('Pre-proposal created successfully!');
-      setTitle('');
-      setDescription('');
-      setShowForm(false);
-    } catch (error) {
-      toast.error('Failed to create pre-proposal');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const proposals = getPreProposals();
+  const navigate = useNavigate();
 
   return (
     <PageShell>
-      <AuthGate>
-        <Container>
-          <div className="py-12 space-y-8">
-            <div className="flex items-center justify-between">
-              <PageTitle icon={<FileText className="w-12 h-12" />}>
-                Pre-Proposals
-              </PageTitle>
-              <Button
-                onClick={() => setShowForm(!showForm)}
-                className="flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                New Pre-Proposal
-              </Button>
-            </div>
+      <Container>
+        <div className="py-12 space-y-8">
+          <div className="space-y-3">
+            <PageTitle icon={<FileText className="w-12 h-12" />}>
+              Pre-Proposals
+            </PageTitle>
+            <p className="text-muted-foreground text-lg">
+              Educational proposals for community review before DAO submission
+            </p>
+            <Badge variant="outline" className="border-amber-500/40 text-amber-500">
+              Educational / Informational
+            </Badge>
+          </div>
 
-            <Card className="glass-card border-primary/30">
-              <CardHeader>
-                <CardTitle className="text-primary">About Pre-Proposals</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Pre-proposals are simulated governance items for testing and discussion.
-                  Create and explore proposals before formal DAO submission.
+          <Card className="glass-card border-amber-900/30 bg-amber-900/10">
+            <CardContent className="p-6 flex items-start gap-3">
+              <BookOpen className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-amber-300 text-sm leading-relaxed">
+                  <strong>Educational Purpose:</strong> These pre-proposals are for learning and discussion only. 
+                  No governance actions, voting, or execution are available. This section helps the community 
+                  understand potential future governance topics.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </CardContent>
+          </Card>
 
-            {showForm && (
-              <Card className="glass-card border-primary/30">
+          <div className="grid grid-cols-1 gap-6">
+            {proposals.map((proposal) => (
+              <Card key={proposal.id} className="glass-card border-primary/30 hover:border-primary/50 transition-all">
                 <CardHeader>
-                  <CardTitle className="text-primary">Create Pre-Proposal</CardTitle>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <CardTitle className="text-primary text-xl mb-2">
+                        {proposal.title}
+                      </CardTitle>
+                      <p className="text-muted-foreground text-sm">
+                        {proposal.description}
+                      </p>
+                    </div>
+                    <Badge variant="outline" className="border-primary/40 text-primary shrink-0">
+                      {proposal.category}
+                    </Badge>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="title" className="text-primary">Title</Label>
-                    <Input
-                      id="title"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      placeholder="Enter proposal title"
-                      className="mt-2 border-primary/40"
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="text-sm font-semibold text-primary mb-2">Objective</h4>
+                      <p className="text-sm text-muted-foreground">{proposal.objective}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-primary mb-2">Impact</h4>
+                      <p className="text-sm text-muted-foreground">{proposal.impact}</p>
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="description" className="text-primary">Description</Label>
-                    <Textarea
-                      id="description"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Describe your proposal"
-                      rows={6}
-                      className="mt-2 border-primary/40"
-                    />
-                  </div>
-                  <div className="flex gap-3">
-                    <Button
-                      onClick={handleSubmit}
-                      disabled={isSubmitting}
-                      className="flex-1"
-                    >
-                      {isSubmitting ? 'Creating...' : 'Create Pre-Proposal'}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => setShowForm(false)}
-                      className="border-primary/40"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="w-full border-primary/40 text-primary hover:bg-primary/10"
+                    onClick={() => navigate({ to: '/pre-proposals/$proposalId', params: { proposalId: proposal.id } })}
+                  >
+                    Learn More
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
                 </CardContent>
               </Card>
-            )}
-
-            <div className="space-y-4">
-              <SectionTitle>All Pre-Proposals</SectionTitle>
-              {proposals.length === 0 ? (
-                <Card className="glass-card border-primary/30">
-                  <CardContent className="p-12 text-center">
-                    <MessageSquare className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
-                    <p className="text-muted-foreground">No pre-proposals yet. Create the first one!</p>
-                  </CardContent>
-                </Card>
-              ) : (
-                proposals.map((proposal) => (
-                  <Link
-                    key={proposal.id}
-                    to="/pre-proposals/$proposalId"
-                    params={{ proposalId: proposal.id }}
-                  >
-                    <Card className="glass-card border-primary/30 hover:border-primary/50 transition-colors cursor-pointer">
-                      <CardHeader>
-                        <CardTitle className="text-primary">{proposal.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-muted-foreground line-clamp-2 mb-3">
-                          {proposal.description}
-                        </p>
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                          <span>By: {proposal.author.slice(0, 8)}...</span>
-                          <span>•</span>
-                          <span>{new Date(proposal.createdAt).toLocaleDateString()}</span>
-                          <span>•</span>
-                          <span className="text-primary">Simulated</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))
-              )}
-            </div>
+            ))}
           </div>
-        </Container>
-      </AuthGate>
+        </div>
+      </Container>
     </PageShell>
   );
 }

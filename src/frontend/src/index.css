@@ -4,60 +4,124 @@
 
 @layer base {
   :root {
-    --background: oklch(15% 0.02 240);
-    --foreground: oklch(48% 100% 60);
-    --card: oklch(18% 0.02 240);
-    --card-foreground: oklch(48% 100% 60);
-    --popover: oklch(18% 0.02 240);
-    --popover-foreground: oklch(48% 100% 60);
-    --primary: oklch(48% 100% 60);
-    --primary-foreground: oklch(15% 0.02 240);
-    --secondary: oklch(25% 0.03 240);
-    --secondary-foreground: oklch(48% 100% 60);
-    --muted: oklch(25% 0.03 240);
-    --muted-foreground: oklch(60% 0.05 240);
-    --accent: oklch(30% 0.04 240);
-    --accent-foreground: oklch(48% 100% 60);
-    --destructive: oklch(50% 0.2 25);
-    --destructive-foreground: oklch(98% 0 0);
-    --border: oklch(30% 0.04 240);
-    --input: oklch(30% 0.04 240);
-    --ring: oklch(48% 100% 60);
+    --background: oklch(0.15 0.02 240);
+    --foreground: oklch(0.95 0.01 240);
+    --card: oklch(0.18 0.02 240);
+    --card-foreground: oklch(0.95 0.01 240);
+    --popover: oklch(0.18 0.02 240);
+    --popover-foreground: oklch(0.95 0.01 240);
+    --primary: oklch(0.85 0.15 85);
+    --primary-foreground: oklch(0.15 0.02 85);
+    --secondary: oklch(0.25 0.03 240);
+    --secondary-foreground: oklch(0.95 0.01 240);
+    --muted: oklch(0.25 0.02 240);
+    --muted-foreground: oklch(0.65 0.02 240);
+    --accent: oklch(0.35 0.08 280);
+    --accent-foreground: oklch(0.95 0.01 280);
+    --destructive: oklch(0.55 0.22 25);
+    --destructive-foreground: oklch(0.95 0.01 25);
+    --border: oklch(0.85 0.15 85 / 0.3);
+    --input: oklch(0.85 0.15 85 / 0.3);
+    --ring: oklch(0.85 0.15 85);
     --radius: 0.5rem;
+    --qmy-yellow: oklch(0.85 0.15 85);
   }
 
+  .dark {
+    --background: oklch(0.15 0.02 240);
+    --foreground: oklch(0.95 0.01 240);
+    --card: oklch(0.18 0.02 240);
+    --card-foreground: oklch(0.95 0.01 240);
+    --popover: oklch(0.18 0.02 240);
+    --popover-foreground: oklch(0.95 0.01 240);
+    --primary: oklch(0.85 0.15 85);
+    --primary-foreground: oklch(0.15 0.02 85);
+    --secondary: oklch(0.25 0.03 240);
+    --secondary-foreground: oklch(0.95 0.01 240);
+    --muted: oklch(0.25 0.02 240);
+    --muted-foreground: oklch(0.65 0.02 240);
+    --accent: oklch(0.35 0.08 280);
+    --accent-foreground: oklch(0.95 0.01 280);
+    --destructive: oklch(0.55 0.22 25);
+    --destructive-foreground: oklch(0.95 0.01 25);
+    --border: oklch(0.85 0.15 85 / 0.3);
+    --input: oklch(0.85 0.15 85 / 0.3);
+    --ring: oklch(0.85 0.15 85);
+    --qmy-yellow: oklch(0.85 0.15 85);
+  }
+}
+
+@layer base {
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
-
-  h1, h2, h3, h4, h5, h6, p, span, a, button, label, input, textarea {
-    @apply text-primary;
-  }
 }
 
 @layer utilities {
-  .glass-card {
-    @apply bg-transparent backdrop-blur-sm border border-primary;
+  .min-h-screen-safe {
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 
-  .glass-card-elevated {
-    @apply bg-background/60 backdrop-blur-lg border border-primary/30 shadow-lg shadow-primary/5;
-  }
-
-  .hud-panel {
-    @apply bg-transparent backdrop-blur-sm border border-primary;
+  .h-screen-safe {
+    height: 100vh;
+    height: 100dvh;
   }
 
   .pb-safe {
-    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0));
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   .pt-safe {
-    padding-top: env(safe-area-inset-top, 0);
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .glass-card {
+    @apply bg-card/40 backdrop-blur-md border border-primary/30;
+  }
+
+  .glass-card-elevated {
+    @apply bg-card/60 backdrop-blur-lg border border-primary/30 shadow-lg;
+  }
+
+  /* Profile & HUD Module Styles */
+  .profile-glass-panel {
+    @apply bg-background/20 backdrop-blur-md border border-primary;
+    border-width: 1px;
+  }
+
+  .profile-hud-panel {
+    @apply bg-background/30 backdrop-blur-md border border-primary;
+    border-width: 1px;
+    @apply rounded-md shadow-lg;
+  }
+
+  .profile-text-primary {
+    @apply text-primary;
+  }
+
+  .profile-border-thin {
+    border-width: 1px;
+    @apply border-primary;
+  }
+
+  /* QMY Token Page Styles */
+  .qmy-glass-card {
+    @apply bg-transparent backdrop-blur-md border;
+    border-width: 1px;
+    border-color: var(--qmy-yellow);
+  }
+
+  .qmy-border-thin {
+    border-width: 1px;
+    border-color: var(--qmy-yellow);
+  }
+
+  .text-qmy-yellow {
+    color: var(--qmy-yellow);
   }
 }

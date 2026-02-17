@@ -2,13 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-implement-stage-1-visual-patch-across-the-main-app-ui-make-all-in-app-window-panel-surfaces-fully-transparent-with-thin-yellow-borders-and-yellow-text-without-changing-any-existing-page-structure-routes-or-feature-behavior",
-      "featureTitle": "Implement Stage 1 visual patch across the main app UI: make all in-app window/panel surfaces fully transparent with thin yellow borders and yellow text, without changing any existing page structure, routes, or feature behavior.",
+      "featureId": "feature-update-the-qmy-token-page-coin-image-reference-to-use-a-qmy-coin-asset-replace-the-current-qtm-coin-image-and-ensure-all-visible-token-naming-on-that-page-reflects-qmy-not-qtm",
+      "featureTitle": "Update the QMY Token page coin image reference to use a QMY coin asset (replace the current QTM coin image) and ensure all visible token naming on that page reflects “QMY” (not “QTM”).",
       "files": [
-        "frontend/src/components/HUDOverlay.tsx",
-        "frontend/src/index.css",
-        "frontend/src/pages/ARMode.tsx",
-        "frontend/src/pages/MapMode.tsx"
+        "frontend/src/pages/QMYTokenPage.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -28,10 +25,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-preserve-the-existing-footer-exactly-as-is-structure-styling-text-content-links-and-ensure-no-new-caffeine-references-are-introduced-anywhere-in-the-ui-as-part-of-stages-1-2-changes",
-      "featureTitle": "Preserve the existing footer exactly as-is (structure, styling, text content, links) and ensure no new 'Caffeine' references are introduced anywhere in the UI as part of Stages 1–2 changes.",
+      "featureId": "feature-remove-the-qmy-token-page-s-black-static-background-so-the-global-dynamic-background-effect-the-same-effect-used-on-other-pages-is-visible-behind-the-page-content",
+      "featureTitle": "Remove the QMY Token page’s black static background so the global dynamic background effect (the same effect used on other pages) is visible behind the page content.",
       "files": [
-        "frontend/src/VALIDATION_REQUIRED.md"
+        "frontend/src/pages/QMYTokenPage.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -51,13 +48,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-make-stage-1-mobile-safe-adjust-in-app-window-panel-spacing-and-hud-placement-so-that-hud-xp-coins-monsters-are-not-obscured-or-clipped-on-small-screens-including-safe-area-insets-while-keeping-the-same-information-and-components",
-      "featureTitle": "Make Stage 1 mobile-safe: adjust in-app window/panel spacing and HUD placement so that HUD/XP/coins/monsters are not obscured or clipped on small screens, including safe-area insets, while keeping the same information and components.",
+      "featureId": "feature-restyle-all-content-windows-cards-sections-on-the-qmy-token-page-to-be-transparent-glass-with-very-thin-yellow-borders-and-yellow-typography-while-keeping-the-page-layout-and-content-structure-otherwise-unchanged",
+      "featureTitle": "Restyle all content “windows” (cards/sections) on the QMY Token page to be transparent/glass with very thin yellow borders and yellow typography, while keeping the page layout and content structure otherwise unchanged.",
       "files": [
-        "frontend/src/components/PageShell.tsx",
         "frontend/src/index.css",
-        "frontend/src/pages/ARMode.tsx",
-        "frontend/src/pages/MapMode.tsx"
+        "frontend/src/pages/QMYTokenPage.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -77,11 +72,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-stage-2-simulated-map-page-behavior-using-an-image-based-map-with-internal-coordinate-markers-for-qmy-coins-and-monsters-with-no-leaflet-openstreetmap-dependency-and-no-external-geolocation-or-external-map-network-calls",
-      "featureTitle": "Implement Stage 2 simulated map page behavior using an image-based map with internal-coordinate markers for QMY coins and monsters, with no Leaflet/OpenStreetMap dependency and no external geolocation or external map/network calls.",
+      "featureId": "feature-keep-the-site-footer-component-and-its-content-intact-and-ensure-no-caffeine-references-are-added-or-reintroduced-while-applying-this-patch",
+      "featureTitle": "Keep the site footer component and its content intact and ensure no Caffeine references are added or reintroduced while applying this patch.",
       "files": [
-        "frontend/src/components/map/StaticMapView.tsx",
-        "frontend/src/lib/map/staticMapProjection.ts"
+        "frontend/src/pages/QMYTokenPage.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -101,14 +95,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-simulate-internal-synchronization-between-the-website-map-and-the-ar-mode-map-by-sharing-the-same-internal-marker-state-source-so-actions-state-changes-in-one-view-are-reflected-in-the-other-within-the-same-user-session-without-introducing-real-time-networking",
-      "featureTitle": "Simulate internal synchronization between the website map and the AR mode map by sharing the same internal marker/state source so actions/state changes in one view are reflected in the other (within the same user session), without introducing real-time networking.",
+      "featureId": "feature-do-not-modify-any-other-page-routes-modules-or-functionality-outside-the-qmy-token-page-patch-scope",
+      "featureTitle": "Do not modify any other page routes, modules, or functionality outside the QMY Token page patch scope.",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/map/StaticMapView.tsx",
-        "frontend/src/contexts/SharedMapStateContext.tsx",
-        "frontend/src/pages/ARMode.tsx",
-        "frontend/src/pages/MapMode.tsx"
+        "frontend/src/pages/QMYTokenPage.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -124,6 +114,29 @@
       ],
       "testIds": [
         "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-resolve-the-build-blocking-configuration-error-so-the-project-can-successfully-rebuild-and-publish-with-this-patch-applied",
+      "featureTitle": "Resolve the build-blocking configuration error so the project can successfully rebuild and publish with this patch applied.",
+      "files": [
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
       ],
       "confidence": "high"
     }

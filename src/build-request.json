@@ -1,114 +1,129 @@
 {
   "kind": "build_request",
-  "title": "Stage 1+2: Transparent yellow HUD/windows + simulated image-based map with shared internal state",
+  "title": "Safe scoped UI patch: QMY Token page background + glass yellow styling + QTM→QMY coin update",
+  "projectName": "Quantumoney",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Implement Stage 1 visual patch across the main app UI: make all in-app window/panel surfaces fully transparent with thin yellow borders and yellow text, without changing any existing page structure, routes, or feature behavior.",
+      "text": "Update the QMY Token page coin image reference to use a QMY coin asset (replace the current QTM coin image) and ensure all visible token naming on that page reflects “QMY” (not “QTM”).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-latest"
+          "msg-7"
         ],
         "quotes": [
-          "iniciar build das Etapas 1 e 2"
+          "Imagem e nome da criptomoeda: substituir “QTM” por “QMY”."
         ]
       },
       "acceptanceCriteria": [
-        "All non-footer window/panel containers render with fully transparent backgrounds (no tinted fill), thin yellow border, and yellow text.",
-        "Existing layouts (grid/stacking) remain unchanged; only styling is adjusted.",
-        "No existing interactive behavior is removed or altered (auth gating, navigation, buttons, modals continue to work)."
+        "On /qmy-token, the coin image is no longer sourced from /assets/generated/qtm-coin-gold-3d-transparent.dim_128x128.png.",
+        "Any visible token name on the QMY Token page shows “QMY” (and does not show “QTM”)."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Preserve the existing footer exactly as-is (structure, styling, text content, links) and ensure no new 'Caffeine' references are introduced anywhere in the UI as part of Stages 1–2 changes.",
+      "text": "Remove the QMY Token page’s black static background so the global dynamic background effect (the same effect used on other pages) is visible behind the page content.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-latest"
+          "msg-7"
         ],
         "quotes": [
-          "Nada do que já está construído será alterado.",
-          "Rodapé\nNão alterar nada que já exista.\nRemover qualquer referência a Caffeine, sem mudanças adicionais."
+          "Fundo dinâmico: mesmo efeito que as outras páginas do site, não mais fundo preto."
         ]
       },
       "acceptanceCriteria": [
-        "frontend/src/components/Footer.tsx is unchanged in rendered output (no visual/style/text/link changes).",
-        "No new UI text includes the word 'Caffeine'."
+        "The QMY Token page no longer sets a solid black page background that obscures the global background scene.",
+        "The QMY Token page visually shows the same dynamic background effect as other routed pages that rely on the global layout background."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Make Stage 1 mobile-safe: adjust in-app window/panel spacing and HUD placement so that HUD/XP/coins/monsters are not obscured or clipped on small screens, including safe-area insets, while keeping the same information and components.",
+      "text": "Restyle all content “windows” (cards/sections) on the QMY Token page to be transparent/glass with very thin yellow borders and yellow typography, while keeping the page layout and content structure otherwise unchanged.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-latest"
+          "msg-7"
         ],
         "quotes": [
-          "Garantir que nada já funcional seja alterado.\nAjustar para visualização em dispositivos móveis."
+          "Janelas: transparentes, com bordas finas amarelas e textos em amarelo."
         ]
       },
       "acceptanceCriteria": [
-        "On narrow viewports, HUD content remains fully visible without overlapping primary controls/content in Map Mode and AR Mode.",
-        "Safe-area padding utilities are applied where needed so content is not hidden behind notches/home indicators.",
-        "No routes/components are removed; only responsive spacing/positioning is adjusted."
+        "All Card-based sections on /qmy-token are visually transparent/glass (no opaque black fills).",
+        "Card borders are thin and yellow across the page.",
+        "Primary text within the card windows is yellow (including headings/titles)."
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Implement Stage 2 simulated map page behavior using an image-based map with internal-coordinate markers for QMY coins and monsters, with no Leaflet/OpenStreetMap dependency and no external geolocation or external map/network calls.",
+      "text": "Keep the site footer component and its content intact and ensure no Caffeine references are added or reintroduced while applying this patch.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-latest"
+          "msg-7"
         ],
         "quotes": [
-          "Nova página com mapa baseado em imagem (substituindo Leaflet/OpenStreetMap real).\nMarcadores de moedas e monstros posicionados conforme coordenadas internas."
+          "Rodapé: permanece intacto, sem referências a Caffeine."
         ]
       },
       "acceptanceCriteria": [
-        "The map renders as a static image background with an overlay of coin and monster markers.",
-        "Marker positions are computed from internal (simulated) coordinates and are deterministic (no external APIs).",
-        "No Leaflet/OpenStreetMap scripts/libraries are used for this page."
+        "frontend/src/components/Footer.tsx is not modified by this patch.",
+        "No new “Caffeine” references appear anywhere in the UI after the patch."
       ]
     },
     {
       "id": "REQ-5",
-      "text": "Simulate internal synchronization between the website map and the AR mode map by sharing the same internal marker/state source so actions/state changes in one view are reflected in the other (within the same user session), without introducing real-time networking.",
-      "target": "frontend",
+      "text": "Do not modify any other page routes, modules, or functionality outside the QMY Token page patch scope.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-user-latest"
+          "msg-7"
         ],
         "quotes": [
-          "Sincronização interna simulada entre site e app AR, compartilhando o mesmo estado."
+          "Nenhuma outra página ou funcionalidade será alterada."
         ]
       },
       "acceptanceCriteria": [
-        "Map Mode and AR Mode consume the same shared internal marker/state source (single source of truth in the frontend).",
-        "A state change made in one view (e.g., selecting a marker if selection is implemented) is reflected when switching to the other view in the same session.",
-        "No WebSockets or external sync services are added."
+        "Only the QMY Token page (and its direct static asset needs for the coin image) changes; all other pages behave and render as before."
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Resolve the build-blocking configuration error so the project can successfully rebuild and publish with this patch applied.",
+      "target": "unknown",
+      "source": {
+        "messageIds": [
+          "msg-12",
+          "msg-13"
+        ],
+        "quotes": [
+          "⚠️ Configuration error encountered. Please reach out to the Caffeine team.",
+          "Sim"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A rebuild completes without configuration errors.",
+        "The published app includes the QMY Token page patch and loads successfully."
       ]
     }
   ],
   "constraints": [
-    "Do not modify any paths listed as immutable in SYSTEM_CONTEXT (e.g., frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui/*).",
-    "Backend must remain a single Motoko actor (no additional backend services).",
-    "Do not change or remove any existing functionality or routes outside the Stage 1–2 scope.",
-    "Do not alter the footer (visual or content).",
-    "Do not add Leaflet/OpenStreetMap or any external geolocation/map services.",
-    "No new references to 'Caffeine' may be added anywhere."
+    "Frontend files under frontend/src/components/ui are read-only and must not be edited; compose them instead.",
+    "Do not edit immutable frontend paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui.",
+    "Backend must remain single-actor (backend/main.mo); do not introduce additional canisters/services.",
+    "No external databases, third-party auth providers, WebSockets, or external APIs."
   ],
   "nonGoals": [
-    "Do not implement Stage 3 (Central Bank/DAO/Profile expansions beyond what already exists).",
-    "Do not add real NNS wallet integration or real ICP/QMY on-chain transactions beyond existing simulated/read-only behavior.",
-    "Do not implement real cross-device sync, push notifications, or real-time communication."
+    "Changing footer layout/content or redesigning the global layout/background system.",
+    "Implementing new token functionality (swaps, ledger operations) beyond the existing UI copy.",
+    "Refactoring unrelated pages, routes, or shared components."
   ],
   "imageRequirements": {
-    "required": [],
+    "required": [
+      "Gold 3D coin with “QMY” mark on a transparent background (qmy-coin-gold-3d-transparent.dim_128x128.png)"
+    ],
     "edits": []
   }
 }

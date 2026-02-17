@@ -95,7 +95,6 @@ export interface backendInterface {
     getCallerUserRole(): Promise<UserRole>;
     getCapturedMonsters(user: Principal): Promise<Array<CapturedMonster>>;
     getMessages(limit: bigint, offset: bigint): Promise<Array<ChatMessage>>;
-    getMonsterShares(monsterName: string): Promise<bigint>;
     getPlayerState(): Promise<PlayerProfile | null>;
     getTotalMessagesCount(): Promise<bigint>;
     getUserProfile(user: Principal): Promise<PlayerProfile | null>;
@@ -187,6 +186,5 @@ export interface backendInterface {
     restoreEnergy(): Promise<void>;
     saveCallerUserProfile(profile: PlayerProfile): Promise<void>;
     sendMessage(authorName: string, content: string): Promise<void>;
-    shareMonsterAction(monsterName: string): Promise<boolean>;
     updateXP(xpChange: bigint): Promise<void>;
 }

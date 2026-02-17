@@ -1,255 +1,329 @@
-import { useState, useRef } from 'react';
-import { useLocalProfile } from '@/contexts/LocalProfileContext';
-import { useUnifiedPlayerState } from '@/hooks/useUnifiedPlayerState';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from 'react';
+import PageShell from '@/components/PageShell';
+import Container from '@/components/Container';
+import { PageTitle, BodyText } from '@/components/Typography';
+import { User, Loader2 } from 'lucide-react';
+import { useInternetIdentity } from '@/hooks/useInternetIdentity';
+import { useGetCallerUserProfile, useSaveCallerUserProfile, useRegisterPlayer, useGetPlayerState } from '@/hooks/useQueries';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import PageShell from '@/components/PageShell';
-import Container from '@/components/Container';
-import { PageTitle } from '@/components/Typography';
-import { User, Upload, Image as ImageIcon, CheckCircle } from 'lucide-react';
+import ProfileGlassPanel from '@/components/profile/ProfileGlassPanel';
+import ProfileHudOverlay from '@/components/profile/ProfileHudOverlay';
+import ProfilePlaceholders from '@/components/profile/ProfilePlaceholders';
+import { useProfileModuleState } from '@/components/profile/useProfileModuleState';
 import { toast } from 'sonner';
-import CapturedMonstersPanel from '@/components/monsters/CapturedMonstersPanel';
-import AuthGate from '@/components/auth/AuthGate';
-import { useRegisterPlayer, useSaveCallerUserProfile } from '@/hooks/useQueries';
 
-export default function ProfilePage() {
-  const { profile, setGender, setAvatarImage, setMonsterAvatar } = useLocalProfile();
-  const { playerState, isAuthenticated, refresh } = useUnifiedPlayerState();
-  const [selectedGender, setSelectedGender] = useState<'male' | 'female' | 'other'>(profile.gender || 'male');
-  const [displayName, setDisplayName] = useState(playerState?.nickname || '');
-  const [uploadSuccess, setUploadSuccess] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+export default function Perfil() {
+  const { identity, login, loginStatus } = useInternetIdentity();
+  const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
+  const { data: playerState } = useGetPlayerState();
+  const saveProfile = useSaveCallerUserProfile();
+  const registerPlayer = useRegisterPlayer();
 
-  const registerMutation = useRegisterPlayer();
-  const saveProfileMutation = useSaveCallerUserProfile();
+  const [editedNickname, setEditedNickname] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
 
-  const handleGenderChange = (value: string) => {
-    const gender = value as 'male' | 'female' | 'other';
-    setSelectedGender(gender);
-    setGender(gender);
-    toast.success('Gender updated successfully');
-  };
+  const { isAuthenticated, isRegistered, showProfileSetup } = useProfileModuleState(
+    identity,
+    userProfile,
+    profileLoading,
+    isFetched
+  );
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select a valid image file');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrl = e.target?.result as string;
-      setAvatarImage(dataUrl);
-      setUploadSuccess(true);
-      toast.success('Avatar uploaded and saved successfully!');
-      setTimeout(() => setUploadSuccess(false), 3000);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleMonsterSelect = (monsterId: string) => {
-    setMonsterAvatar(monsterId);
-    toast.success('Monster avatar selected');
-  };
-
-  const handleSaveProfile = async () => {
-    if (!isAuthenticated) {
-      toast.error('Please log in first');
-      return;
-    }
-
-    if (!displayName.trim()) {
-      toast.error('Please enter a display name');
+  const handleRegister = async () => {
+    if (!editedNickname.trim()) {
+      toast.error('Please enter a nickname');
       return;
     }
 
     try {
-      if (!playerState?.registered) {
-        await registerMutation.mutateAsync(displayName);
-        toast.success('Profile registered successfully!');
-      } else if (playerState) {
-        await saveProfileMutation.mutateAsync({
-          ...playerState,
-          nickname: displayName,
-        });
-        toast.success('Profile updated successfully!');
-      }
-      refresh();
-    } catch (error) {
-      toast.error('Failed to save profile');
+      await registerPlayer.mutateAsync(editedNickname.trim());
+      toast.success('Profile created successfully!');
+      setEditedNickname('');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create profile');
     }
   };
 
-  const monsters = [
-    { id: 'btc', name: 'BTC Monster', image: '/assets/generated/btc-monster-transparent.dim_128x128.png' },
-    { id: 'eth', name: 'ETH Monster', image: '/assets/generated/eth-monster-transparent.dim_128x128.png' },
-    { id: 'icp', name: 'ICP Monster', image: '/assets/generated/icp-monster-transparent.dim_128x128.png' },
-    { id: 'sol', name: 'SOL Monster', image: '/assets/generated/sol-monster-transparent.dim_128x128.png' },
-  ];
+  const handleSave = async () => {
+    if (!userProfile || !editedNickname.trim()) {
+      toast.error('Please enter a valid nickname');
+      return;
+    }
 
-  const isUnlocked = playerState?.registered || false;
+    try {
+      await saveProfile.mutateAsync({
+        ...userProfile,
+        nickname: editedNickname.trim(),
+      });
+      toast.success('Profile updated successfully!');
+      setIsEditing(false);
+      setEditedNickname('');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to update profile');
+    }
+  };
+
+  const startEditing = () => {
+    if (userProfile) {
+      setEditedNickname(userProfile.nickname);
+      setIsEditing(true);
+    }
+  };
+
+  const cancelEditing = () => {
+    setIsEditing(false);
+    setEditedNickname('');
+  };
+
+  // Not authenticated
+  if (!isAuthenticated) {
+    return (
+      <PageShell>
+        <Container>
+          <div className="py-16 space-y-8">
+            <div className="text-center space-y-4">
+              <PageTitle icon={<User className="w-12 h-12" />} className="justify-center">
+                Profile
+              </PageTitle>
+              <BodyText className="max-w-2xl mx-auto text-center">
+                Please log in to view your profile
+              </BodyText>
+            </div>
+
+            <ProfileGlassPanel>
+              <div className="p-16 text-center space-y-6">
+                <User className="w-24 h-24 text-primary/50 mx-auto" />
+                <p className="text-primary text-lg">Authentication required</p>
+                <Button
+                  onClick={login}
+                  disabled={loginStatus === 'logging-in'}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                >
+                  {loginStatus === 'logging-in' ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Logging in...
+                    </>
+                  ) : (
+                    'Login'
+                  )}
+                </Button>
+              </div>
+            </ProfileGlassPanel>
+          </div>
+        </Container>
+      </PageShell>
+    );
+  }
+
+  // Loading state
+  if (profileLoading) {
+    return (
+      <PageShell>
+        <Container>
+          <div className="py-16 space-y-8">
+            <div className="text-center space-y-4">
+              <PageTitle icon={<User className="w-12 h-12" />} className="justify-center">
+                Profile
+              </PageTitle>
+            </div>
+
+            <ProfileGlassPanel>
+              <div className="p-16 text-center space-y-6">
+                <Loader2 className="w-24 h-24 text-primary/50 mx-auto animate-spin" />
+                <p className="text-primary text-lg">Loading profile...</p>
+              </div>
+            </ProfileGlassPanel>
+          </div>
+        </Container>
+      </PageShell>
+    );
+  }
+
+  // Registration required
+  if (showProfileSetup) {
+    return (
+      <PageShell>
+        <Container>
+          <div className="py-16 space-y-8">
+            <div className="text-center space-y-4">
+              <PageTitle icon={<User className="w-12 h-12" />} className="justify-center">
+                Profile Setup
+              </PageTitle>
+              <BodyText className="max-w-2xl mx-auto text-center">
+                Create your player profile to start playing
+              </BodyText>
+            </div>
+
+            <ProfileGlassPanel>
+              <div className="p-8 space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="nickname" className="text-primary">
+                    Nickname
+                  </Label>
+                  <Input
+                    id="nickname"
+                    value={editedNickname}
+                    onChange={(e) => setEditedNickname(e.target.value)}
+                    placeholder="Enter your nickname"
+                    className="bg-background/50 border-primary/30 text-foreground focus:border-primary"
+                    maxLength={30}
+                  />
+                </div>
+
+                <Button
+                  onClick={handleRegister}
+                  disabled={registerPlayer.isPending || !editedNickname.trim()}
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                >
+                  {registerPlayer.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating profile...
+                    </>
+                  ) : (
+                    'Create Profile'
+                  )}
+                </Button>
+              </div>
+            </ProfileGlassPanel>
+          </div>
+        </Container>
+      </PageShell>
+    );
+  }
+
+  // Registered user - show profile
+  const profile = userProfile || playerState;
 
   return (
     <PageShell>
-      <AuthGate>
-        <Container>
-          <div className="py-12 space-y-8 pb-32">
-            <PageTitle icon={<User className="w-12 h-12" />}>
-              Profile Settings
+      <Container>
+        <div className="py-16 space-y-8 relative">
+          {/* HUD Overlay */}
+          {profile && <ProfileHudOverlay profile={profile} />}
+
+          <div className="text-center space-y-4">
+            <PageTitle icon={<User className="w-12 h-12" />} className="justify-center">
+              Profile
             </PageTitle>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <Card className="glass-card border-primary/30">
-                <CardHeader>
-                  <CardTitle className="text-primary">Avatar Preview</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center gap-4">
-                  <div className="w-32 h-32 rounded-full border-4 border-primary overflow-hidden bg-background/50">
-                    <img
-                      src={profile.avatarImage || '/assets/generated/player-marker-transparent.dim_64x64.png'}
-                      alt="Avatar"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-primary font-semibold">{displayName || 'Player'}</p>
-                    {profile.gender && (
-                      <p className="text-muted-foreground text-sm capitalize">{profile.gender}</p>
-                    )}
-                    <div className="flex items-center justify-center gap-2 mt-2">
-                      {isUnlocked ? (
-                        <>
-                          <CheckCircle className="w-4 h-4 text-green-500" />
-                          <span className="text-green-500 text-sm">Unlocked</span>
-                        </>
-                      ) : (
-                        <span className="text-muted-foreground text-sm">Not registered</span>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="glass-card border-primary/30">
-                <CardHeader>
-                  <CardTitle className="text-primary">Profile Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="displayName" className="text-primary">Display Name</Label>
-                    <Input
-                      id="displayName"
-                      value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
-                      placeholder="Enter your name"
-                      className="mt-2 border-primary/40"
-                    />
-                  </div>
-
-                  <div>
-                    <Label className="text-primary mb-3 block">Gender</Label>
-                    <RadioGroup value={selectedGender} onValueChange={handleGenderChange}>
-                      <div className="flex items-center space-x-2 mb-3">
-                        <RadioGroupItem value="male" id="male" />
-                        <Label htmlFor="male" className="text-primary cursor-pointer">Male</Label>
-                      </div>
-                      <div className="flex items-center space-x-2 mb-3">
-                        <RadioGroupItem value="female" id="female" />
-                        <Label htmlFor="female" className="text-primary cursor-pointer">Female</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="other" id="other" />
-                        <Label htmlFor="other" className="text-primary cursor-pointer">Other</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  <Button
-                    onClick={handleSaveProfile}
-                    className="w-full"
-                    disabled={registerMutation.isPending || saveProfileMutation.isPending}
-                  >
-                    {registerMutation.isPending || saveProfileMutation.isPending
-                      ? 'Saving...'
-                      : 'Save Profile'}
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Card className="glass-card border-primary/30">
-              <CardHeader>
-                <CardTitle className="text-primary flex items-center gap-2">
-                  <Upload className="w-5 h-5" />
-                  Upload Personal Image
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-                <Button
-                  onClick={() => fileInputRef.current?.click()}
-                  variant="outline"
-                  className="w-full border-primary/40 text-primary hover:bg-primary/10"
-                >
-                  <ImageIcon className="w-4 h-4 mr-2" />
-                  Choose Image
-                </Button>
-                {uploadSuccess && (
-                  <div className="flex items-center justify-center gap-2 mt-3 text-green-500">
-                    <CheckCircle className="w-4 h-4" />
-                    <span className="text-sm">Upload confirmed and saved!</span>
-                  </div>
-                )}
-                <p className="text-muted-foreground text-xs mt-2 text-center">
-                  Upload a personal photo to use as your avatar
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="glass-card border-primary/30">
-              <CardHeader>
-                <CardTitle className="text-primary">Select Monster Avatar</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {monsters.map((monster) => (
-                    <button
-                      key={monster.id}
-                      onClick={() => handleMonsterSelect(monster.id)}
-                      className={`p-4 rounded-lg border-2 transition-all hover:scale-105 ${
-                        profile.monsterAvatarId === monster.id
-                          ? 'border-primary bg-primary/10'
-                          : 'border-primary/30 hover:border-primary/50'
-                      }`}
-                    >
-                      <img
-                        src={monster.image}
-                        alt={monster.name}
-                        className="w-full h-auto mb-2"
-                      />
-                      <p className="text-primary text-xs text-center">{monster.name}</p>
-                    </button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <CapturedMonstersPanel />
+            <BodyText className="max-w-2xl mx-auto text-center">
+              Manage your player profile and view your stats
+            </BodyText>
           </div>
-        </Container>
-      </AuthGate>
+
+          {profile && (
+            <>
+              {/* Main Profile Panel */}
+              <ProfileGlassPanel>
+                <div className="p-8 space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-2xl font-bold text-primary">Player Information</h3>
+                    {!isEditing && (
+                      <Button
+                        onClick={startEditing}
+                        variant="outline"
+                        className="border-primary/30 text-primary hover:bg-primary/10"
+                      >
+                        Edit Nickname
+                      </Button>
+                    )}
+                  </div>
+
+                  {isEditing ? (
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-nickname" className="text-primary">
+                          Nickname
+                        </Label>
+                        <Input
+                          id="edit-nickname"
+                          value={editedNickname}
+                          onChange={(e) => setEditedNickname(e.target.value)}
+                          placeholder="Enter your nickname"
+                          className="bg-background/50 border-primary/30 text-foreground focus:border-primary"
+                          maxLength={30}
+                        />
+                      </div>
+
+                      <div className="flex gap-3">
+                        <Button
+                          onClick={handleSave}
+                          disabled={saveProfile.isPending || !editedNickname.trim()}
+                          className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+                        >
+                          {saveProfile.isPending ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Saving...
+                            </>
+                          ) : (
+                            'Save Changes'
+                          )}
+                        </Button>
+                        <Button
+                          onClick={cancelEditing}
+                          variant="outline"
+                          className="flex-1 border-primary/30 text-primary hover:bg-primary/10"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <p className="text-sm text-primary/70">Nickname</p>
+                        <p className="text-xl font-semibold text-primary">{profile.nickname}</p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <p className="text-sm text-primary/70">Level</p>
+                        <p className="text-xl font-semibold text-primary">{profile.level.toString()}</p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <p className="text-sm text-primary/70">Experience Points</p>
+                        <p className="text-xl font-semibold text-primary">{profile.xp.toString()} XP</p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <p className="text-sm text-primary/70">Energy</p>
+                        <p className="text-xl font-semibold text-primary">{profile.energy.toString()}%</p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <p className="text-sm text-primary/70">Available Tokens</p>
+                        <p className="text-xl font-semibold text-primary">{profile.availableTokens.toString()} QTM</p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <p className="text-sm text-primary/70">Planted Tokens</p>
+                        <p className="text-xl font-semibold text-primary">{profile.plantedTokens.toString()} QTM</p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <p className="text-sm text-primary/70">Bonus Tokens</p>
+                        <p className="text-xl font-semibold text-primary">{profile.bonusTokens.toString()} QTM</p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <p className="text-sm text-primary/70">Captured Monsters</p>
+                        <p className="text-xl font-semibold text-primary">{profile.capturedMonsters.length}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </ProfileGlassPanel>
+
+              {/* Placeholder sections for future expansion */}
+              <ProfilePlaceholders />
+            </>
+          )}
+        </div>
+      </Container>
     </PageShell>
   );
 }

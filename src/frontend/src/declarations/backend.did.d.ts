@@ -113,7 +113,6 @@ export interface _SERVICE {
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getCapturedMonsters' : ActorMethod<[Principal], Array<CapturedMonster>>,
   'getMessages' : ActorMethod<[bigint, bigint], Array<ChatMessage>>,
-  'getMonsterShares' : ActorMethod<[string], bigint>,
   'getPlayerState' : ActorMethod<[], [] | [PlayerProfile]>,
   'getTotalMessagesCount' : ActorMethod<[], bigint>,
   'getUserProfile' : ActorMethod<[Principal], [] | [PlayerProfile]>,
@@ -241,7 +240,6 @@ export interface _SERVICE {
   'restoreEnergy' : ActorMethod<[], undefined>,
   'saveCallerUserProfile' : ActorMethod<[PlayerProfile], undefined>,
   'sendMessage' : ActorMethod<[string, string], undefined>,
-  'shareMonsterAction' : ActorMethod<[string], boolean>,
   'updateXP' : ActorMethod<[bigint], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;

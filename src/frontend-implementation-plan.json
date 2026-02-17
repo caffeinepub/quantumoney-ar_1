@@ -1,139 +1,105 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Stage 1+2: Transparent yellow HUD/windows + image-based simulated map with shared internal state",
+  "title": "Quantumoney: QMY Token page scoped UI patch (coin asset + background + glass yellow styling) + build config fix",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Apply Stage 1 transparent window/panel styling (transparent surfaces, thin yellow borders, yellow text) across the in-app UI without changing structure or behavior.",
+      "summary": "Replace QTM coin image with QMY coin asset and ensure all visible naming on /qmy-token shows QMY only.",
       "acceptanceCriteria": [
-        "All non-footer window/panel containers render with fully transparent backgrounds (no tinted fill), thin yellow border, and yellow text.",
-        "Existing layouts (grid/stacking) remain unchanged; only styling is adjusted.",
-        "No existing interactive behavior is removed or altered (auth gating, navigation, buttons, modals continue to work)."
+        "On /qmy-token, the coin image is no longer sourced from /assets/generated/qtm-coin-gold-3d-transparent.dim_128x128.png.",
+        "Any visible token name on the QMY Token page shows “QMY” (and does not show “QTM”)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Update Stage 1 styling utilities (notably .glass-card and .hud-panel) so in-app panels render fully transparent with thin yellow borders and yellow text, while leaving .glass-card-elevated intact to avoid affecting the footer."
+          "path": "frontend/public/assets/generated/qmy-coin-gold-3d-transparent.dim_128x128.png",
+          "operation": "create",
+          "description": "Add the required generated QMY coin asset at frontend/public/assets/generated/qmy-coin-gold-3d-transparent.dim_128x128.png (dim_128x128) for use on the QMY Token page."
         },
         {
-          "path": "frontend/src/pages/MapMode.tsx",
+          "path": "frontend/src/pages/QMYTokenPage.tsx",
           "operation": "modify",
-          "description": "Ensure Map Mode's primary panel(s) use the Stage 1 transparent panel styling via existing classes (no layout/structure changes)."
-        },
-        {
-          "path": "frontend/src/pages/ARMode.tsx",
-          "operation": "modify",
-          "description": "Ensure AR Mode's primary panel(s) use the Stage 1 transparent panel styling via existing classes (no layout/structure changes)."
-        },
-        {
-          "path": "frontend/src/components/HUDOverlay.tsx",
-          "operation": "modify",
-          "description": "Align HUD overlay styling with Stage 1 (transparent surface, thin yellow border, yellow text) without changing the HUD information or behavior."
+          "description": "Update the hero coin <img> to reference frontend/public/assets/generated/qmy-coin-gold-3d-transparent.dim_128x128.png (and remove the QTM coin reference), and audit/adjust any remaining visible copy on this page to ensure it displays “QMY” only. Use existing shadcn-ui Card composition (do not edit frontend/src/components/ui/*). Verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Preserve the existing footer exactly as-is and prevent any new 'Caffeine' references from being introduced in Stage 1–2 work.",
+      "summary": "Remove the QMY Token page black static background so the global dynamic background scene shows through.",
       "acceptanceCriteria": [
-        "frontend/src/components/Footer.tsx is unchanged in rendered output (no visual/style/text/link changes).",
-        "No new UI text includes the word 'Caffeine'."
+        "The QMY Token page no longer sets a solid black page background that obscures the global background scene.",
+        "The QMY Token page visually shows the same dynamic background effect as other routed pages that rely on the global layout background."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/VALIDATION_REQUIRED.md",
+          "path": "frontend/src/pages/QMYTokenPage.tsx",
           "operation": "modify",
-          "description": "Add/extend validation checklist items to explicitly confirm Footer rendered output remains unchanged and that no new UI strings include the word 'Caffeine' after Stage 1–2 changes."
+          "description": "Remove/replace the top-level bg-black styling (and any other opaque background styling on the page wrapper) so the Layout’s global background scene remains visible behind the page content while preserving spacing/padding and layout structure."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Make Stage 1 mobile-safe by adjusting responsive spacing and safe-area padding so HUD and key UI are not clipped/obscured in Map Mode and AR Mode.",
+      "summary": "Restyle all QMY Token page card/section windows to glass/transparent with thin yellow borders and yellow typography without changing layout/content structure.",
       "acceptanceCriteria": [
-        "On narrow viewports, HUD content remains fully visible without overlapping primary controls/content in Map Mode and AR Mode.",
-        "Safe-area padding utilities are applied where needed so content is not hidden behind notches/home indicators.",
-        "No routes/components are removed; only responsive spacing/positioning is adjusted."
+        "All Card-based sections on /qmy-token are visually transparent/glass (no opaque black fills).",
+        "Card borders are thin and yellow across the page.",
+        "Primary text within the card windows is yellow (including headings/titles)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/PageShell.tsx",
-          "operation": "modify",
-          "description": "Add bottom safe-area-aware padding (e.g., using existing pb-safe utility and/or additional bottom padding) so page content/HUD is not obscured by the fixed bottom navigation on small screens."
-        },
-        {
-          "path": "frontend/src/pages/MapMode.tsx",
-          "operation": "modify",
-          "description": "Adjust responsive spacing/padding (without changing components) to keep HUD and map content visible on narrow viewports (e.g., reduce vertical padding, ensure stacked layout spacing, avoid overflow clipping)."
-        },
-        {
-          "path": "frontend/src/pages/ARMode.tsx",
-          "operation": "modify",
-          "description": "Adjust responsive spacing/padding (without changing components) to keep HUD and AR/map content visible on narrow viewports (including safe-area considerations)."
-        },
-        {
           "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "If needed, extend safe-area utilities (pt-safe/pb-safe) or add additional safe-area-aware utility classes to support mobile-safe spacing while keeping styling-only changes."
+          "description": "Add page-scoped utility classes for the /qmy-token glass windows (transparent/glass surface), thin yellow borders, and yellow typography that can be applied without modifying any read-only shadcn-ui components."
+        },
+        {
+          "path": "frontend/src/pages/QMYTokenPage.tsx",
+          "operation": "modify",
+          "description": "Apply the new /qmy-token glass + thin yellow border + yellow text styling consistently across all Card-based sections and headings, removing black/opaque fills (e.g., bg-black/60) while keeping the existing grid/layout and content structure unchanged. Use existing shadcn-ui Card composition (do not edit frontend/src/components/ui/*). Verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Implement Stage 2 simulated map rendering using a static image map with deterministic internal-coordinate markers for QMY coins and monsters, without Leaflet/OSM or external calls.",
+      "summary": "Preserve the existing footer unchanged and ensure no Caffeine references exist in the UI after the patch.",
       "acceptanceCriteria": [
-        "The map renders as a static image background with an overlay of coin and monster markers.",
-        "Marker positions are computed from internal (simulated) coordinates and are deterministic (no external APIs).",
-        "No Leaflet/OpenStreetMap scripts/libraries are used for this page."
+        "frontend/src/components/Footer.tsx is not modified by this patch.",
+        "No new “Caffeine” references appear anywhere in the UI after the patch."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/lib/map/staticMapProjection.ts",
+          "path": "frontend/src/pages/QMYTokenPage.tsx",
           "operation": "modify",
-          "description": "Refactor projection/marker generation to support an internal simulated coordinate system (e.g., normalized X/Y space) and deterministic marker generation for coin/monster types, ensuring no geolocation/external calls are introduced."
-        },
-        {
-          "path": "frontend/src/components/map/StaticMapView.tsx",
-          "operation": "modify",
-          "description": "Update StaticMapView to render the image-based map background with an overlay of coin/monster markers positioned via internal simulated coordinates (deterministic), and remove any reliance on lat/lng semantics for this Stage 2 view."
+          "description": "Verify the QMY Token page contains no “Caffeine” text and does not introduce any new references while applying the scoped styling and asset updates (no changes to the footer component)."
         }
       ]
     },
     {
       "id": "REQ-5",
-      "summary": "Simulate internal synchronization between Map Mode and AR Mode by sharing a single frontend marker/state source across both views within the same session (no real-time networking).",
+      "summary": "Keep the patch strictly scoped to the QMY Token page (and required static coin asset) without altering other routes or features.",
       "acceptanceCriteria": [
-        "Map Mode and AR Mode consume the same shared internal marker/state source (single source of truth in the frontend).",
-        "A state change made in one view (e.g., selecting a marker if selection is implemented) is reflected when switching to the other view in the same session.",
-        "No WebSockets or external sync services are added."
+        "Only the QMY Token page (and its direct static asset needs for the coin image) changes; all other pages behave and render as before."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/contexts/SharedMapStateContext.tsx",
-          "operation": "create",
-          "description": "Create a shared map state context/provider that owns the deterministic marker list (coins/monsters) and shared UI state (e.g., selected marker) to act as the single source of truth for Map Mode and AR Mode within the same session."
-        },
-        {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/pages/QMYTokenPage.tsx",
           "operation": "modify",
-          "description": "Wire the SharedMapState provider into the app composition (above routed pages) so Map Mode and AR Mode share the same marker/state source without adding new routes or changing feature behavior."
-        },
+          "description": "Consolidate all UI changes for this patch within the QMY Token page only (and shared CSS utilities if needed), ensuring no route definitions, navigation, or unrelated modules/pages are modified."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Fix the frontend build-blocking configuration issue so the app rebuilds and can be published with the QMY Token page patch.",
+      "acceptanceCriteria": [
+        "A rebuild completes without configuration errors.",
+        "The published app includes the QMY Token page patch and loads successfully."
+      ],
+      "file_operations": [
         {
-          "path": "frontend/src/components/map/StaticMapView.tsx",
+          "path": "frontend/tailwind.config.js",
           "operation": "modify",
-          "description": "Consume shared map state from SharedMapStateContext (markers + shared selection/state) so interactions/state changes in one view persist when navigating to the other within the same session."
-        },
-        {
-          "path": "frontend/src/pages/MapMode.tsx",
-          "operation": "modify",
-          "description": "Ensure Map Mode uses the shared map-state-powered StaticMapView so shared marker/state changes are reflected consistently when switching between Map and AR views."
-        },
-        {
-          "path": "frontend/src/pages/ARMode.tsx",
-          "operation": "modify",
-          "description": "Ensure AR Mode uses the same shared map-state-powered StaticMapView so shared marker/state changes are reflected consistently when switching between AR and Map views."
+          "description": "Adjust the Tailwind configuration to a build-compatible module format for the current toolchain (e.g., ensure correct JS module export style and valid config shape) so rebuild/publish completes without configuration errors."
         }
       ]
     }
