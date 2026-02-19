@@ -7,7 +7,6 @@ import Nat "mo:core/Nat";
 import Float "mo:core/Float";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
-import Text "mo:core/Text";
 import Array "mo:core/Array";
 import Time "mo:core/Time";
 import Int "mo:core/Int";
@@ -175,7 +174,28 @@ actor {
     if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
       Runtime.trap("Unauthorized: Only registered users can save profiles");
     };
-    playerProfiles.add(caller, profile);
+
+    switch (playerProfiles.get(caller)) {
+      case (?existingProfile) {
+        // Only allow updating editable fields (nickname)
+        // Preserve all game stats to prevent cheating
+        let updatedProfile : PlayerProfile = {
+          energy = existingProfile.energy;
+          nickname = profile.nickname;
+          availableTokens = existingProfile.availableTokens;
+          plantedTokens = existingProfile.plantedTokens;
+          bonusTokens = existingProfile.bonusTokens;
+          xp = existingProfile.xp;
+          level = existingProfile.level;
+          registered = existingProfile.registered;
+          capturedMonsters = existingProfile.capturedMonsters;
+        };
+        playerProfiles.add(caller, updatedProfile);
+      };
+      case (null) {
+        Runtime.trap("Unauthorized: Player not registered. Use registerPlayer first.");
+      };
+    };
   };
 
   public query ({ caller }) func getAllPlayerProfiles() : async [(Principal, PlayerProfile)] {
@@ -217,7 +237,7 @@ actor {
     };
   };
 
-  public shared ({ caller }) func getPlayerState() : async ?PlayerProfile {
+  public query ({ caller }) func getPlayerState() : async ?PlayerProfile {
     if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
       Runtime.trap("Unauthorized: Only authenticated users can check state");
     };

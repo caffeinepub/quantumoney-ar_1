@@ -29,14 +29,14 @@ export default function LandingPage() {
           <div className="mb-12 flex justify-center animate-fade-in">
             <img 
               src="/assets/generated/quantumoney-ar-logo-transparent.dim_200x200.png" 
-              alt="Quantumoney AR Logo" 
+              alt="Quantumoney Logo" 
               className="w-32 h-32 md:w-48 md:h-48 drop-shadow-[0_0_40px_rgba(217,165,32,0.7)]"
             />
           </div>
 
           {/* Main Title */}
           <PageTitle className="mb-8 drop-shadow-[0_0_30px_rgba(217,165,32,0.6)] animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            Quantumoney AR
+            Quantumoney
           </PageTitle>
 
           {/* Subtitle */}
@@ -97,7 +97,7 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-2xl font-serif font-bold text-primary">Swap</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Exchange QMY ↔ ICP with real-time quotes and slippage protection.
+                  Exchange QMY and ICP tokens seamlessly with decentralized trading.
                 </p>
               </CardContent>
             </Card>
@@ -112,7 +112,7 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-2xl font-serif font-bold text-primary">QMY Token</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Native token of the Quantumoney ecosystem with real on-chain functionality.
+                  Explore the native token powering the Quantumoney ecosystem.
                 </p>
               </CardContent>
             </Card>

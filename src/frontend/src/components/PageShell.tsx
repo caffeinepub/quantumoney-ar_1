@@ -7,7 +7,7 @@ interface PageShellProps {
 
 export default function PageShell({ children, className = '' }: PageShellProps) {
   return (
-    <div className={`min-h-screen pt-20 ${className}`}>
+    <div className={`min-h-[100dvh] pt-20 ${className}`}>
       {children}
     </div>
   );

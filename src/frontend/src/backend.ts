@@ -152,6 +152,12 @@ export interface Monster {
     energyBoost: bigint;
     spawnFrequency: bigint;
 }
+export interface ChatMessage {
+    content: string;
+    authorName: string;
+    sender: Principal;
+    timestamp: bigint;
+}
 export interface _CaffeineStorageRefillResult {
     success?: boolean;
     topped_up_amount?: bigint;
@@ -181,12 +187,15 @@ export interface backendInterface {
     captureMonster(monster: Monster): Promise<void>;
     checkout(items: Array<LineItem>): Promise<CreatePaymentResponse>;
     claimARSpot(spotId: string, qtmAmount: bigint): Promise<void>;
+    clearAllMessages(): Promise<void>;
     getARSpotDistribution(spotId: string): Promise<ARSpotDistribution | null>;
     getAllPlayerProfiles(): Promise<Array<[Principal, PlayerProfile]>>;
     getCallerUserProfile(): Promise<PlayerProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getCapturedMonsters(user: Principal): Promise<Array<CapturedMonster>>;
+    getMessages(limit: bigint, offset: bigint): Promise<Array<ChatMessage>>;
     getPlayerState(): Promise<PlayerProfile | null>;
+    getTotalMessagesCount(): Promise<bigint>;
     getUserProfile(user: Principal): Promise<PlayerProfile | null>;
     hasClaimedARSpot(spotId: string, user: Principal): Promise<boolean>;
     initializeAccessControl(): Promise<void>;
@@ -275,6 +284,7 @@ export interface backendInterface {
     rescueSingleCoin(coinId: string, playerLocation: CoordinatedPoint): Promise<void>;
     restoreEnergy(): Promise<void>;
     saveCallerUserProfile(profile: PlayerProfile): Promise<void>;
+    sendMessage(authorName: string, content: string): Promise<void>;
     updateXP(xpChange: bigint): Promise<void>;
 }
 import type { ARSpotDistribution as _ARSpotDistribution, LineItem as _LineItem, PlayerProfile as _PlayerProfile, QMYPurchaseRequest as _QMYPurchaseRequest, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
@@ -448,6 +458,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async clearAllMessages(): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.clearAllMessages();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.clearAllMessages();
+            return result;
+        }
+    }
     async getARSpotDistribution(arg0: string): Promise<ARSpotDistribution | null> {
         if (this.processError) {
             try {
@@ -518,6 +542,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getMessages(arg0: bigint, arg1: bigint): Promise<Array<ChatMessage>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getMessages(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getMessages(arg0, arg1);
+            return result;
+        }
+    }
     async getPlayerState(): Promise<PlayerProfile | null> {
         if (this.processError) {
             try {
@@ -530,6 +568,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getPlayerState();
             return from_candid_opt_n14(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getTotalMessagesCount(): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getTotalMessagesCount();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getTotalMessagesCount();
+            return result;
         }
     }
     async getUserProfile(arg0: Principal): Promise<PlayerProfile | null> {
@@ -1059,6 +1111,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.saveCallerUserProfile(arg0);
+            return result;
+        }
+    }
+    async sendMessage(arg0: string, arg1: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.sendMessage(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.sendMessage(arg0, arg1);
             return result;
         }
     }

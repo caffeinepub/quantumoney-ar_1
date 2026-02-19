@@ -1,103 +1,77 @@
-import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
+import { X, Home, Wallet, Repeat, Coins, Users, FileText, Building2, MessageSquare, ShoppingCart, BookOpen, Map } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { 
-  Home, 
-  Coins, 
-  Wallet, 
-  Repeat, 
-  GitBranch, 
-  Users, 
-  Gamepad2,
-  X 
-} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
-interface Section {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-  path: string;
-  available: boolean;
+interface SectionNavigatorProps {
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-const sections: Section[] = [
-  { id: 'home', name: 'Home / Quantum Universe', icon: <Home className="w-6 h-6" />, path: '/', available: true },
-  { id: 'qmy', name: 'QMY Token', icon: <Coins className="w-6 h-6" />, path: '/qmy-token', available: true },
-  { id: 'wallet', name: 'Wallet / Dashboard', icon: <Wallet className="w-6 h-6" />, path: '/wallet', available: true },
-  { id: 'swap', name: 'Swap', icon: <Repeat className="w-6 h-6" />, path: '/swap', available: true },
-  { id: 'bridge', name: 'Bridge', icon: <GitBranch className="w-6 h-6" />, path: '#', available: false },
-  { id: 'dao', name: 'DAO / Governance', icon: <Users className="w-6 h-6" />, path: '/dao', available: false },
-  { id: 'game', name: 'Game / AR Experience', icon: <Gamepad2 className="w-6 h-6" />, path: '#', available: false },
-];
+export default function SectionNavigator({ isOpen, onClose }: SectionNavigatorProps) {
+  if (!isOpen) return null;
 
-export default function SectionNavigator({ onClose }: { onClose: () => void }) {
+  const sections = [
+    { path: '/', icon: Home, label: 'Home', available: true },
+    { path: '/qmy-token', icon: Coins, label: 'QMY Token', available: true },
+    { path: '/wallet', icon: Wallet, label: 'Wallet', available: true },
+    { path: '/map', icon: Map, label: 'Map', available: true },
+    { path: '/swap', icon: Repeat, label: 'Swap', available: false },
+    { path: '/central-bank', icon: Building2, label: 'Central Bank', available: true },
+    { path: '/chat', icon: MessageSquare, label: 'Public Chat', available: true },
+    { path: '/presale', icon: ShoppingCart, label: 'Presale', available: true },
+    { path: '/dao', icon: Users, label: 'DAO', available: true },
+    { path: '/pre-proposals', icon: FileText, label: 'Pre-Proposals', available: true },
+    { path: '/gold-paper', icon: BookOpen, label: 'Gold Paper', available: true },
+    { path: '/docs', icon: FileText, label: 'Documentation', available: true },
+  ];
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-      <Card className="glass-card bg-black/90 border-amber-500/50 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <CardContent className="p-8">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-serif font-bold text-amber-500">
-              Navigate Quantum Universe
-            </h2>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              className="text-amber-500 hover:bg-amber-900/20"
-            >
-              <X className="w-6 h-6" />
-            </Button>
-          </div>
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm animate-fade-in">
+      <div className="container mx-auto px-4 py-8 h-full flex flex-col">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-serif font-bold text-primary">Navigation</h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="text-primary hover:text-primary/80"
+          >
+            <X className="w-6 h-6" />
+          </Button>
+        </div>
 
-          {/* Sections Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {sections.map((section) => (
-              <div key={section.id}>
-                {section.available ? (
-                  <Link to={section.path} onClick={onClose}>
-                    <Card className="glass-card bg-black/40 border-amber-500/30 hover:border-amber-500 transition-all duration-300 hover:scale-105 cursor-pointer group">
-                      <CardContent className="p-6 flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500/20 transition-all">
-                          <div className="text-amber-500">{section.icon}</div>
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-lg font-bold text-amber-400 group-hover:text-amber-300 transition-colors">
-                            {section.name}
-                          </h3>
-                          <p className="text-xs text-green-400">Available</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ) : (
-                  <Card className="glass-card bg-black/40 border-gray-600/30 opacity-60 cursor-not-allowed">
-                    <CardContent className="p-6 flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-gray-500/10 flex items-center justify-center">
-                        <div className="text-gray-500">{section.icon}</div>
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-bold text-gray-400">
-                          {section.name}
-                        </h3>
-                        <p className="text-xs text-gray-500">Coming Soon</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Footer Note */}
-          <div className="mt-8 pt-6 border-t border-amber-500/20 text-center">
-            <p className="text-sm text-gray-400">
-              Sections marked as "Coming Soon" are planned for future releases
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto">
+          {sections.map((section) => {
+            const Icon = section.icon;
+            return (
+              <Link
+                key={section.path}
+                to={section.path}
+                onClick={onClose}
+                className={`glass-card border-primary/30 p-6 rounded-xl transition-all hover:border-primary/60 ${
+                  !section.available ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+              >
+                <div className="flex items-center gap-4 mb-3">
+                  <Icon className="w-8 h-8 text-primary" />
+                  <h3 className="text-xl font-semibold text-primary">{section.label}</h3>
+                </div>
+                <Badge
+                  variant="outline"
+                  className={
+                    section.available
+                      ? 'border-green-500/40 text-green-500'
+                      : 'border-muted-foreground/40 text-muted-foreground'
+                  }
+                >
+                  {section.available ? 'Available' : 'Coming Soon'}
+                </Badge>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }

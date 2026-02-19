@@ -92,7 +92,7 @@ export default function SwapPage() {
                 </div>
                 <div className="bg-primary/5 border border-primary/30 rounded-xl p-6 max-w-md mx-auto">
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    <strong className="text-primary">Note:</strong> This is an institutional read-only dashboard. 
+                    <strong className="text-primary">Note:</strong> This is a read-only dashboard. 
                     No swap operations can be executed at this time.
                   </p>
                 </div>

@@ -1,27 +1,27 @@
 import { Outlet } from '@tanstack/react-router';
+import { Suspense, lazy } from 'react';
 import Header from './Header';
 import Footer from './Footer';
-import { LanguageProvider } from '@/contexts/LanguageContext';
-import { Suspense, lazy } from 'react';
+import CookieConsentBanner from './CookieConsentBanner';
 
 const QuantumUniverseScene = lazy(() => import('./quantum/QuantumUniverseScene'));
 
 export default function Layout() {
   return (
-    <LanguageProvider>
-      {/* 3D Quantum Universe Background */}
+    <div className="relative min-h-[100dvh] flex flex-col bg-background text-foreground overflow-x-hidden">
       <Suspense fallback={null}>
         <QuantumUniverseScene />
       </Suspense>
-
-      {/* Main Content */}
-      <div className="relative z-10 min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1">
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
-    </LanguageProvider>
+      
+      <Header />
+      
+      <main className="relative z-10 flex-1">
+        <Outlet />
+      </main>
+      
+      <Footer />
+      
+      <CookieConsentBanner />
+    </div>
   );
 }
