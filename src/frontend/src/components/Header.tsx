@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { Menu, X, Wallet, Coins, Building2, MessageSquare, FileText, ShoppingCart, Scale, Map } from 'lucide-react';
+import { Menu, X, Wallet, Coins, Building2, MessageSquare, FileText, ShoppingCart, Scale, Map, User } from 'lucide-react';
 import LoginButton from './LoginButton';
 
 export default function Header() {
@@ -41,6 +41,13 @@ export default function Header() {
             >
               <Wallet className="w-4 h-4" />
               Wallet
+            </Link>
+            <Link
+              to="/profile"
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-primary/5 flex items-center gap-2"
+            >
+              <User className="w-4 h-4" />
+              AR Profile
             </Link>
             <Link
               to="/map"
@@ -109,6 +116,14 @@ export default function Header() {
               >
                 <Wallet className="w-4 h-4" />
                 Wallet
+              </Link>
+              <Link
+                to="/profile"
+                onClick={() => setIsMenuOpen(false)}
+                className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg transition-colors flex items-center gap-2"
+              >
+                <User className="w-4 h-4" />
+                AR Profile
               </Link>
               <Link
                 to="/map"

@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-17T23:03:52.439Z",
+  "generatedAt": "2026-02-19T18:20:36.002Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -12,86 +12,98 @@
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Update the QMY Token page coin image reference to use a QMY coin asset (replace the current QTM coin image) and ensure all visible token naming on that page reflects “QMY” (not “QTM”).",
+        "summary": "Create a new Profile page route at /profile on Quantumoney.app that displays player data synchronized from QuantumoneyAR.app game canisters (ippxc-5iaaa-aaaae-qgwqq-cai, x5shd-hqaaa-aaaap-qrdgq-cai, i7nyb-2yaaa-aaaaj-qowiq-cai, lkawl-3qaaa-aaaac-qdsoq-cai)",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/public/assets/generated/qmy-coin-gold-3d-transparent.dim_128x128.png",
-          "frontend/src/pages/QMYTokenPage.tsx"
+          "frontend/src/pages/ProfilePage.tsx",
+          "frontend/src/hooks/useARGameData.ts",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Header.tsx"
         ],
         "matchedFiles": [
-          "frontend/public/assets/generated/qmy-coin-gold-3d-transparent.dim_128x128.png",
-          "frontend/src/pages/QMYTokenPage.tsx"
+          "frontend/src/pages/ProfilePage.tsx",
+          "frontend/src/hooks/useARGameData.ts",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Header.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Remove the QMY Token page’s black static background so the global dynamic background effect (the same effect used on other pages) is visible behind the page content.",
+        "summary": "Display player XP (experience points) from the AR game canisters in the profile view with real-time synchronization",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/QMYTokenPage.tsx"
+          "frontend/src/components/profile/ARPlayerStats.tsx",
+          "frontend/src/pages/ProfilePage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/QMYTokenPage.tsx"
+          "frontend/src/components/profile/ARPlayerStats.tsx",
+          "frontend/src/pages/ProfilePage.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Restyle all content “windows” (cards/sections) on the QMY Token page to be transparent/glass with very thin yellow borders and yellow typography, while keeping the page layout and content structure otherwise unchanged.",
+        "summary": "Display player coins/currency balance from the AR game canisters in the profile view with real-time synchronization",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/index.css",
-          "frontend/src/pages/QMYTokenPage.tsx"
+          "frontend/src/components/profile/ARCoinBalance.tsx",
+          "frontend/src/pages/ProfilePage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/index.css",
-          "frontend/src/pages/QMYTokenPage.tsx"
+          "frontend/src/components/profile/ARCoinBalance.tsx",
+          "frontend/src/pages/ProfilePage.tsx"
         ]
       },
       {
         "id": "REQ-4",
-        "summary": "Keep the site footer component and its content intact and ensure no Caffeine references are added or reintroduced while applying this patch.",
+        "summary": "Display captured monsters collection from the AR game canisters showing all monsters the player has caught",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/QMYTokenPage.tsx"
+          "frontend/src/components/profile/ARMonsterCollection.tsx",
+          "frontend/src/pages/ProfilePage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/QMYTokenPage.tsx"
+          "frontend/src/components/profile/ARMonsterCollection.tsx",
+          "frontend/src/pages/ProfilePage.tsx"
         ]
       },
       {
         "id": "REQ-5",
-        "summary": "Do not modify any other page routes, modules, or functionality outside the QMY Token page patch scope.",
+        "summary": "Apply dynamic background styling to the profile page with transparent window panels, yellow borders on all containers, and yellow text for headings and key information",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/QMYTokenPage.tsx"
+          "frontend/src/pages/ProfilePage.tsx",
+          "frontend/src/components/profile/ProfileARGlassPanel.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/QMYTokenPage.tsx"
+          "frontend/src/pages/ProfilePage.tsx"
         ]
       },
       {
         "id": "REQ-6",
-        "summary": "Resolve the build-blocking configuration error so the project can successfully rebuild and publish with this patch applied.",
+        "summary": "Ensure the footer remains unmodified and does not include any Caffeine credits or references",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/tailwind.config.js"
+          "frontend/src/pages/ProfilePage.tsx"
         ],
         "matchedFiles": [
-          "frontend/tailwind.config.js"
+          "frontend/src/pages/ProfilePage.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
     "build-request.json",
+    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/public/assets/generated/qmy-coin-gold-3d-transparent.dim_128x128.png",
-    "frontend/src/index.css",
-    "frontend/src/pages/QMYTokenPage.tsx",
-    "frontend/tailwind.config.js",
+    "frontend/src/App.tsx",
+    "frontend/src/components/Header.tsx",
+    "frontend/src/components/profile/ARCoinBalance.tsx",
+    "frontend/src/components/profile/ARMonsterCollection.tsx",
+    "frontend/src/components/profile/ARPlayerStats.tsx",
+    "frontend/src/hooks/useARGameData.ts",
+    "frontend/src/pages/ProfilePage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -2,10 +2,13 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-qmy-token-page-coin-image-reference-to-use-a-qmy-coin-asset-replace-the-current-qtm-coin-image-and-ensure-all-visible-token-naming-on-that-page-reflects-qmy-not-qtm",
-      "featureTitle": "Update the QMY Token page coin image reference to use a QMY coin asset (replace the current QTM coin image) and ensure all visible token naming on that page reflects “QMY” (not “QTM”).",
+      "featureId": "feature-create-a-new-profile-page-route-at-profile-on-quantumoney-app-that-displays-player-data-synchronized-from-quantumoneyar-app-game-canisters-ippxc-5iaaa-aaaae-qgwqq-cai-x5shd-hqaaa-aaaap-qrdgq-cai-i7nyb-2yaaa-aaaaj-qowiq-cai-lkawl-3qaaa-aaaac-qdsoq-cai",
+      "featureTitle": "Create a new Profile page route at /profile on Quantumoney.app that displays player data synchronized from QuantumoneyAR.app game canisters (ippxc-5iaaa-aaaae-qgwqq-cai, x5shd-hqaaa-aaaap-qrdgq-cai, i7nyb-2yaaa-aaaaj-qowiq-cai, lkawl-3qaaa-aaaac-qdsoq-cai)",
       "files": [
-        "frontend/src/pages/QMYTokenPage.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/components/Header.tsx",
+        "frontend/src/hooks/useARGameData.ts",
+        "frontend/src/pages/ProfilePage.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -25,10 +28,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-remove-the-qmy-token-page-s-black-static-background-so-the-global-dynamic-background-effect-the-same-effect-used-on-other-pages-is-visible-behind-the-page-content",
-      "featureTitle": "Remove the QMY Token page’s black static background so the global dynamic background effect (the same effect used on other pages) is visible behind the page content.",
+      "featureId": "feature-display-player-xp-experience-points-from-the-ar-game-canisters-in-the-profile-view-with-real-time-synchronization",
+      "featureTitle": "Display player XP (experience points) from the AR game canisters in the profile view with real-time synchronization",
       "files": [
-        "frontend/src/pages/QMYTokenPage.tsx"
+        "frontend/src/components/profile/ARPlayerStats.tsx",
+        "frontend/src/pages/ProfilePage.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -48,11 +52,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-restyle-all-content-windows-cards-sections-on-the-qmy-token-page-to-be-transparent-glass-with-very-thin-yellow-borders-and-yellow-typography-while-keeping-the-page-layout-and-content-structure-otherwise-unchanged",
-      "featureTitle": "Restyle all content “windows” (cards/sections) on the QMY Token page to be transparent/glass with very thin yellow borders and yellow typography, while keeping the page layout and content structure otherwise unchanged.",
+      "featureId": "feature-display-player-coins-currency-balance-from-the-ar-game-canisters-in-the-profile-view-with-real-time-synchronization",
+      "featureTitle": "Display player coins/currency balance from the AR game canisters in the profile view with real-time synchronization",
       "files": [
-        "frontend/src/index.css",
-        "frontend/src/pages/QMYTokenPage.tsx"
+        "frontend/src/components/profile/ARCoinBalance.tsx",
+        "frontend/src/pages/ProfilePage.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -72,10 +76,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-keep-the-site-footer-component-and-its-content-intact-and-ensure-no-caffeine-references-are-added-or-reintroduced-while-applying-this-patch",
-      "featureTitle": "Keep the site footer component and its content intact and ensure no Caffeine references are added or reintroduced while applying this patch.",
+      "featureId": "feature-display-captured-monsters-collection-from-the-ar-game-canisters-showing-all-monsters-the-player-has-caught",
+      "featureTitle": "Display captured monsters collection from the AR game canisters showing all monsters the player has caught",
       "files": [
-        "frontend/src/pages/QMYTokenPage.tsx"
+        "frontend/src/components/profile/ARMonsterCollection.tsx",
+        "frontend/src/pages/ProfilePage.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -95,10 +100,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-do-not-modify-any-other-page-routes-modules-or-functionality-outside-the-qmy-token-page-patch-scope",
-      "featureTitle": "Do not modify any other page routes, modules, or functionality outside the QMY Token page patch scope.",
+      "featureId": "feature-apply-dynamic-background-styling-to-the-profile-page-with-transparent-window-panels-yellow-borders-on-all-containers-and-yellow-text-for-headings-and-key-information",
+      "featureTitle": "Apply dynamic background styling to the profile page with transparent window panels, yellow borders on all containers, and yellow text for headings and key information",
       "files": [
-        "frontend/src/pages/QMYTokenPage.tsx"
+        "frontend/src/pages/ProfilePage.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -118,10 +123,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-resolve-the-build-blocking-configuration-error-so-the-project-can-successfully-rebuild-and-publish-with-this-patch-applied",
-      "featureTitle": "Resolve the build-blocking configuration error so the project can successfully rebuild and publish with this patch applied.",
+      "featureId": "feature-ensure-the-footer-remains-unmodified-and-does-not-include-any-caffeine-credits-or-references",
+      "featureTitle": "Ensure the footer remains unmodified and does not include any Caffeine credits or references",
       "files": [
-        "frontend/tailwind.config.js"
+        "frontend/src/pages/ProfilePage.tsx"
       ],
       "components": [
         "camera@1.0.0",

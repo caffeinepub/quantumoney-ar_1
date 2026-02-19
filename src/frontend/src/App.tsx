@@ -23,6 +23,7 @@ import MapMode from './pages/MapMode';
 import DAOCreateProposalPage from './pages/DAOCreateProposalPage';
 import DAOProposalDetailPage from './pages/DAOProposalDetailPage';
 import Perfil from './pages/Perfil';
+import ProfilePage from './pages/ProfilePage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -147,8 +148,14 @@ const mapRoute = createRoute({
 
 const perfilRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/profile',
+  path: '/perfil',
   component: Perfil,
+});
+
+const profileRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/profile',
+  component: ProfilePage,
 });
 
 const routeTree = rootRoute.addChildren([
@@ -171,6 +178,7 @@ const routeTree = rootRoute.addChildren([
   privacyRoute,
   mapRoute,
   perfilRoute,
+  profileRoute,
 ]);
 
 const router = createRouter({ routeTree });

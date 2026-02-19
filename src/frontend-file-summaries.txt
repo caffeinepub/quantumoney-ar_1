@@ -1,5 +1,5 @@
 {
-  "frontend/src/App.tsx": "Main app component with QueryClient, ThemeProvider, LanguageProvider wrapping RouterProvider, TanStack Router setup including Profile route at /profile.",
+  "frontend/src/App.tsx": "Main app component with QueryClient, ThemeProvider, LanguageProvider wrapping RouterProvider, TanStack Router setup including both Profile route at /profile (AR sync) and Perfil route at /perfil (local profile).",
   "frontend/src/hooks/useQueries.ts": "React Query hooks for player profile management with simulated wallet logic removed.",
   "frontend/src/pages/MapMode.tsx": "Simulated global map page with SVG-based world projection, interactive controls for center/zoom, coin and monster markers at tourist landmarks, and legend showing marker counts.",
   "frontend/src/pages/ARMode.tsx": "AR Mode placeholder page using PageShell, Container, and Typography components with consistent layout and spacing.",
@@ -57,7 +57,7 @@
   "frontend/src/pages/LandingPage.tsx": "Landing page with hero section and core features grid using Quantumoney branding and consistent spacing throughout.",
   "frontend/tailwind.config.js": "Extended Tailwind configuration with luxury color palette, typography scale, border radius system, shadows, and animations, now using proper ES module export format for build compatibility.",
   "frontend/src/components/Layout.tsx": "Root layout component with 100dvh-aware min-height, lazy-loaded QuantumUniverseScene background, Header, routed Outlet content, Footer, and CookieConsentBanner.",
-  "frontend/src/components/Header.tsx": "Fixed navigation header with Map link added to desktop and mobile menus, glass morphism styling, and responsive mobile menu.",
+  "frontend/src/components/Header.tsx": "Fixed navigation header with AR Profile link added to desktop and mobile menus, glass morphism styling, and responsive mobile menu.",
   "frontend/src/components/Footer.tsx": "Footer component with responsive spacing, clickable links on all breakpoints, HTgamers attribution, ICP on-chain phrase, support email helpdesk@quantumoney.net, and legal page links.",
   "frontend/src/pages/HomePage.tsx": "Fullscreen hero homepage with animated galaxy background, bilingual text cycle, language toggle, and install button using Quantumoney branding.",
   "frontend/src/pages/AboutPage.tsx": "About page with \"Draft / In Progress\" status, executive summary placeholder, ecosystem overview clarifying separation between Quantumoney.app (institutional) and QuantumoneyAR.app (gaming), and conditional future synchronization section with no-sync/no-issuance disclaimers.",
@@ -116,5 +116,10 @@
   "frontend/src/components/profile/ProfileGlassPanel.tsx": "Reusable glass panel wrapper component for Profile module with transparent background, thin yellow border, and consistent styling using shadcn Card primitives.",
   "frontend/src/components/profile/ProfileHudOverlay.tsx": "Fixed-position HUD overlay displaying player stats (nickname, energy, XP, level, available/planted/bonus tokens) with transparent panels, thin yellow borders, and yellow text, mounted only on the Profile page.",
   "frontend/src/components/profile/ProfilePlaceholders.tsx": "Placeholder sections for future Profile module expansion (Captured Monsters, Recent Activity, Quick Actions) using consistent transparent/yellow styling with glass panels.",
-  "frontend/src/components/profile/useProfileModuleState.ts": "Module-local hook normalizing Profile module state (authentication status, registration status, profile setup visibility) for clean component logic."
+  "frontend/src/components/profile/useProfileModuleState.ts": "Module-local hook normalizing Profile module state (authentication status, registration status, profile setup visibility) for clean component logic.",
+  "frontend/src/pages/ProfilePage.tsx": "New AR Profile page at /profile route that displays player data synchronized from QuantumoneyAR.app game canisters with dynamic background, transparent panels, yellow borders, and yellow text throughout.",
+  "frontend/src/hooks/useARGameData.ts": "React Query hook that connects to the four AR game canisters to fetch and aggregate player XP, coins, and captured monsters data with proper TypeScript type handling for Candid Option types (both array and object formats) and automatic refetching every minute.",
+  "frontend/src/components/profile/ARPlayerStats.tsx": "Component displaying player XP and level from AR game data with progress bar to next level, using transparent background, yellow borders, and yellow text styling.",
+  "frontend/src/components/profile/ARCoinBalance.tsx": "Component showing player coin balances (available, locked, bonus) from AR game data in a grid layout with coin icon, transparent panels, yellow borders, and yellow text.",
+  "frontend/src/components/profile/ARMonsterCollection.tsx": "Grid component displaying all captured monsters from AR game with monster icons, capture dates, and energy boost values, using transparent cards with yellow borders and yellow text."
 }

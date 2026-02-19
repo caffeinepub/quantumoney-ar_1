@@ -1,129 +1,134 @@
 {
   "kind": "build_request",
-  "title": "Safe scoped UI patch: QMY Token page background + glass yellow styling + QTM→QMY coin update",
+  "title": "Create Profile page with AR game synchronization",
   "projectName": "Quantumoney",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the QMY Token page coin image reference to use a QMY coin asset (replace the current QTM coin image) and ensure all visible token naming on that page reflects “QMY” (not “QTM”).",
+      "text": "Create a new Profile page route at /profile on Quantumoney.app that displays player data synchronized from QuantumoneyAR.app game canisters (ippxc-5iaaa-aaaae-qgwqq-cai, x5shd-hqaaa-aaaap-qrdgq-cai, i7nyb-2yaaa-aaaaj-qowiq-cai, lkawl-3qaaa-aaaac-qdsoq-cai)",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-7"
+          "msg-latest"
         ],
         "quotes": [
-          "Imagem e nome da criptomoeda: substituir “QTM” por “QMY”."
+          "Criar página de Perfil no site Quantumoney.app com sincronização total com QuantumoneyAR.app"
         ]
       },
       "acceptanceCriteria": [
-        "On /qmy-token, the coin image is no longer sourced from /assets/generated/qtm-coin-gold-3d-transparent.dim_128x128.png.",
-        "Any visible token name on the QMY Token page shows “QMY” (and does not show “QTM”)."
+        "New route /profile is accessible from the main site navigation",
+        "Page connects to all four specified game canisters",
+        "Profile page is an isolated patch that does not modify other existing pages"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Remove the QMY Token page’s black static background so the global dynamic background effect (the same effect used on other pages) is visible behind the page content.",
+      "text": "Display player XP (experience points) from the AR game canisters in the profile view with real-time synchronization",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-7"
+          "msg-latest"
         ],
         "quotes": [
-          "Fundo dinâmico: mesmo efeito que as outras páginas do site, não mais fundo preto."
+          "mostrar XP, moedas, monstros capturados"
         ]
       },
       "acceptanceCriteria": [
-        "The QMY Token page no longer sets a solid black page background that obscures the global background scene.",
-        "The QMY Token page visually shows the same dynamic background effect as other routed pages that rely on the global layout background."
+        "XP value is fetched from the game canisters",
+        "XP is displayed in a prominent, readable format",
+        "Value updates when data changes"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Restyle all content “windows” (cards/sections) on the QMY Token page to be transparent/glass with very thin yellow borders and yellow typography, while keeping the page layout and content structure otherwise unchanged.",
+      "text": "Display player coins/currency balance from the AR game canisters in the profile view with real-time synchronization",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-7"
+          "msg-latest"
         ],
         "quotes": [
-          "Janelas: transparentes, com bordas finas amarelas e textos em amarelo."
+          "mostrar XP, moedas, monstros capturados"
         ]
       },
       "acceptanceCriteria": [
-        "All Card-based sections on /qmy-token are visually transparent/glass (no opaque black fills).",
-        "Card borders are thin and yellow across the page.",
-        "Primary text within the card windows is yellow (including headings/titles)."
+        "Coin balance is fetched from the game canisters",
+        "Balance is displayed with appropriate formatting",
+        "Value updates when data changes"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Keep the site footer component and its content intact and ensure no Caffeine references are added or reintroduced while applying this patch.",
+      "text": "Display captured monsters collection from the AR game canisters showing all monsters the player has caught",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-7"
+          "msg-latest"
         ],
         "quotes": [
-          "Rodapé: permanece intacto, sem referências a Caffeine."
+          "mostrar XP, moedas, monstros capturados"
         ]
       },
       "acceptanceCriteria": [
-        "frontend/src/components/Footer.tsx is not modified by this patch.",
-        "No new “Caffeine” references appear anywhere in the UI after the patch."
+        "Monster data is fetched from the game canisters",
+        "All captured monsters are displayed in an organized view",
+        "Each monster shows relevant details (name, type, or other identifying info)"
       ]
     },
     {
       "id": "REQ-5",
-      "text": "Do not modify any other page routes, modules, or functionality outside the QMY Token page patch scope.",
-      "target": "both",
+      "text": "Apply dynamic background styling to the profile page with transparent window panels, yellow borders on all containers, and yellow text for headings and key information",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-7"
+          "msg-latest"
         ],
         "quotes": [
-          "Nenhuma outra página ou funcionalidade será alterada."
+          "Layout: fundo dinâmico, janelas transparentes, bordas amarelas, textos amarelos"
         ]
       },
       "acceptanceCriteria": [
-        "Only the QMY Token page (and its direct static asset needs for the coin image) changes; all other pages behave and render as before."
+        "Background has dynamic visual effects",
+        "All panel/card elements use transparent backgrounds with visible yellow borders",
+        "Primary text elements (headings, labels) are rendered in yellow",
+        "Design is visually cohesive and distinct from other pages"
       ]
     },
     {
       "id": "REQ-6",
-      "text": "Resolve the build-blocking configuration error so the project can successfully rebuild and publish with this patch applied.",
-      "target": "unknown",
+      "text": "Ensure the footer remains unmodified and does not include any Caffeine credits or references",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-12",
-          "msg-13"
+          "msg-latest"
         ],
         "quotes": [
-          "⚠️ Configuration error encountered. Please reach out to the Caffeine team.",
-          "Sim"
+          "sem referências á Caffeine nos rodapés, sem alterações no rodapé"
         ]
       },
       "acceptanceCriteria": [
-        "A rebuild completes without configuration errors.",
-        "The published app includes the QMY Token page patch and loads successfully."
+        "Footer component is not modified by this patch",
+        "No Caffeine branding or credits appear in the footer",
+        "Existing footer content and styling remain intact"
       ]
     }
   ],
   "constraints": [
-    "Frontend files under frontend/src/components/ui are read-only and must not be edited; compose them instead.",
-    "Do not edit immutable frontend paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui.",
-    "Backend must remain single-actor (backend/main.mo); do not introduce additional canisters/services.",
-    "No external databases, third-party auth providers, WebSockets, or external APIs."
+    "Do not modify any existing pages or routes outside of the new Profile page",
+    "Do not alter the Footer component or any footer content",
+    "Must connect to exactly these four game canisters: ippxc-5iaaa-aaaae-qgwqq-cai, x5shd-hqaaa-aaaap-qrdgq-cai, i7nyb-2yaaa-aaaaj-qowiq-cai, lkawl-3qaaa-aaaac-qdsoq-cai",
+    "All game data synchronization must be read-only from the AR app canisters"
   ],
   "nonGoals": [
-    "Changing footer layout/content or redesigning the global layout/background system.",
-    "Implementing new token functionality (swaps, ledger operations) beyond the existing UI copy.",
-    "Refactoring unrelated pages, routes, or shared components."
+    "Modifying authentication or Internet Identity flows",
+    "Changing the Header or navigation structure",
+    "Altering any other existing pages (Home, Wallet, DAO, etc.)",
+    "Adding write capabilities to modify game data",
+    "Creating new backend endpoints or modifying main.mo"
   ],
   "imageRequirements": {
-    "required": [
-      "Gold 3D coin with “QMY” mark on a transparent background (qmy-coin-gold-3d-transparent.dim_128x128.png)"
-    ],
+    "required": [],
     "edits": []
   }
 }

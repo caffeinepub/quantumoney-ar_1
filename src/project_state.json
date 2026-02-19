@@ -1,59 +1,60 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Project includes a single scoped UI patch for the QMY Token page (rename QTM→QMY, dynamic background, transparent yellow-styled windows, footer unchanged) and a current build blocked by a configuration error.",
+  "summary": "Quantumoney.app website with profile page synced to QuantumoneyAR.app game data",
   "architectural_notes": [
-    "Scope constraint: only modify the QMY Token page; all other pages/modules/features must remain unchanged."
+    "Profile page integrates with game canisters: ippxc-5iaaa-aaaae-qgwqq-cai (main profile), x5shd-hqaaa-aaaap-qrdgq-cai (DAO), i7nyb-2yaaa-aaaaj-qowiq-cai (bridge), lkawl-3qaaa-aaaac-qdsoq-cai (additional)",
+    "Profile displays synced game data: XP points, locked/unlocked coins, captured monsters",
+    "Visual design: dynamic background, transparent windows, thin yellow borders, yellow text",
+    "Isolated patch - no modifications to other pages or footer",
+    "Website canisters: crjop-jyaaa-aaaah-atfaq-cai (frontend), whu4t-kiaaa-aaaah-qsc5q-cai (docs), ckmsk-taaaa-aaaah-atfca-cai (QMY logic), nemlr-6aaaa-aaaan-q32la-cai (governance)"
   ],
-  "known_issues": [
-    "Build/rebuild fails with a configuration error; requires Caffeine team support or configuration fix before build can complete."
-  ],
-  "isFixRequest": true,
-  "imageRequirements": "## Required Images\n- Gold 3D coin with “QMY” mark on a transparent background (qmy-coin-gold-3d-transparent.dim_128x128.png)",
+  "known_issues": [],
+  "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-update-the-qmy-token-page-coin-image-reference-to-use-a-qmy-coin-asset-replace-the-current-qtm-coin-image-and-ensure-all-visible-token-naming-on-that-page-reflects-qmy-not-qtm",
-      "title": "Update the QMY Token page coin image reference to use a QMY coin asset (replace the current QTM coin image) and ensure all visible token naming on that page reflects “QMY” (not “QTM”).",
+      "id": "feature-create-a-new-profile-page-route-at-profile-on-quantumoney-app-that-displays-player-data-synchronized-from-quantumoneyar-app-game-canisters-ippxc-5iaaa-aaaae-qgwqq-cai-x5shd-hqaaa-aaaap-qrdgq-cai-i7nyb-2yaaa-aaaaj-qowiq-cai-lkawl-3qaaa-aaaac-qdsoq-cai",
+      "title": "Create a new Profile page route at /profile on Quantumoney.app that displays player data synchronized from QuantumoneyAR.app game canisters (ippxc-5iaaa-aaaae-qgwqq-cai, x5shd-hqaaa-aaaap-qrdgq-cai, i7nyb-2yaaa-aaaaj-qowiq-cai, lkawl-3qaaa-aaaac-qdsoq-cai)",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-remove-the-qmy-token-page-s-black-static-background-so-the-global-dynamic-background-effect-the-same-effect-used-on-other-pages-is-visible-behind-the-page-content",
-      "title": "Remove the QMY Token page’s black static background so the global dynamic background effect (the same effect used on other pages) is visible behind the page content.",
+      "id": "feature-display-player-xp-experience-points-from-the-ar-game-canisters-in-the-profile-view-with-real-time-synchronization",
+      "title": "Display player XP (experience points) from the AR game canisters in the profile view with real-time synchronization",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-restyle-all-content-windows-cards-sections-on-the-qmy-token-page-to-be-transparent-glass-with-very-thin-yellow-borders-and-yellow-typography-while-keeping-the-page-layout-and-content-structure-otherwise-unchanged",
-      "title": "Restyle all content “windows” (cards/sections) on the QMY Token page to be transparent/glass with very thin yellow borders and yellow typography, while keeping the page layout and content structure otherwise unchanged.",
+      "id": "feature-display-player-coins-currency-balance-from-the-ar-game-canisters-in-the-profile-view-with-real-time-synchronization",
+      "title": "Display player coins/currency balance from the AR game canisters in the profile view with real-time synchronization",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-keep-the-site-footer-component-and-its-content-intact-and-ensure-no-caffeine-references-are-added-or-reintroduced-while-applying-this-patch",
-      "title": "Keep the site footer component and its content intact and ensure no Caffeine references are added or reintroduced while applying this patch.",
+      "id": "feature-display-captured-monsters-collection-from-the-ar-game-canisters-showing-all-monsters-the-player-has-caught",
+      "title": "Display captured monsters collection from the AR game canisters showing all monsters the player has caught",
       "reqIds": [
         "REQ-4"
       ],
       "version": 1
     },
     {
-      "id": "feature-do-not-modify-any-other-page-routes-modules-or-functionality-outside-the-qmy-token-page-patch-scope",
-      "title": "Do not modify any other page routes, modules, or functionality outside the QMY Token page patch scope.",
+      "id": "feature-apply-dynamic-background-styling-to-the-profile-page-with-transparent-window-panels-yellow-borders-on-all-containers-and-yellow-text-for-headings-and-key-information",
+      "title": "Apply dynamic background styling to the profile page with transparent window panels, yellow borders on all containers, and yellow text for headings and key information",
       "reqIds": [
         "REQ-5"
       ],
       "version": 1
     },
     {
-      "id": "feature-resolve-the-build-blocking-configuration-error-so-the-project-can-successfully-rebuild-and-publish-with-this-patch-applied",
-      "title": "Resolve the build-blocking configuration error so the project can successfully rebuild and publish with this patch applied.",
+      "id": "feature-ensure-the-footer-remains-unmodified-and-does-not-include-any-caffeine-credits-or-references",
+      "title": "Ensure the footer remains unmodified and does not include any Caffeine credits or references",
       "reqIds": [
         "REQ-6"
       ],
@@ -63,13 +64,12 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Apply safe scoped patch to QMY Token page: rename QTM→QMY, use dynamic background like other pages (no black), make windows transparent with thin yellow borders and yellow text, keep footer intact with no Caffeine references; do not change any other pages/features.",
+      "summary": "Create Profile page on Quantumoney.app with full sync to QuantumoneyAR.app game data",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "gameProjectType": "none",
-  "projectName": "Quantumoney",
+  "projectName": "Quantumoney.app",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }
