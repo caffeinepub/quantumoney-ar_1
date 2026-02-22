@@ -1,137 +1,51 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Create Profile page with AR game synchronization",
+  "title": "Display Canister IDs and Unified Architecture Information on Banco Central Page",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Create a new Profile page route at /profile that displays player data synchronized from QuantumoneyAR.app game canisters",
+      "summary": "Display Principal ID, internal UserID, and all active canister IDs with their functions on the Banco Central page in a clear, organized, and readable format",
       "acceptanceCriteria": [
-        "New route /profile is accessible from the main site navigation",
-        "Page connects to all four specified game canisters",
-        "Profile page is an isolated patch that does not modify other existing pages"
+        "Banco Central page displays the authenticated user's Principal ID",
+        "Banco Central page displays the internal UserID",
+        "All seven canister IDs are listed with their corresponding functions",
+        "Information is presented in a legible and organized format",
+        "No changes to existing page layout, footers, or visual styling"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/ProfilePage.tsx",
+          "path": "frontend/src/components/profile/CanisterArchitecturePanel.tsx",
           "operation": "create",
-          "description": "Create the new Profile page component at /profile route. This page will fetch and display player data from the four AR game canisters (ippxc-5iaaa-aaaae-qgwqq-cai, x5shd-hqaaa-aaaap-qrdgq-cai, i7nyb-2yaaa-aaaaj-qowiq-cai, lkawl-3qaaa-aaaac-qdsoq-cai). Include authentication checks, loading states, and error handling for canister connections."
+          "description": "Create a new component that displays the unified canister architecture information. The component will show the user's Principal ID, internal UserID (derived from the authenticated identity), and a structured list of all seven active canisters with their IDs and function descriptions. Use the ProfileGlassPanel styling pattern for visual consistency with the existing Banco Central page. The canister list should include: crjop-jyaaa-aaaah-atfaq-cai (Frontend/UI), ckmsk-taaaa-aaaah-atfca-cai (Game Logic/Profile/Progression), nemlr-6aaaa-aaaan-q32la-cai (Governance/Treasury), ippxc-5iaaa-aaaae-qgwqq-cai (Main Profile/Unified UserID), x5shd-hqaaa-aaaap-qrdgq-cai (DAO/Game Data Warehouse), i7nyb-2yaaa-aaaaj-qowiq-cai (Bridge/Integration), lkawl-3qaaa-aaaac-qdsoq-cai (Extra Canister/Supplementary Game Data). Display each canister with its ID and function description in a clear, readable card-based layout."
         },
         {
-          "path": "frontend/src/hooks/useARGameData.ts",
-          "operation": "create",
-          "description": "Create a custom hook to fetch player data from the four AR game canisters. This hook will use HttpAgent to connect to each canister, aggregate the data (XP, coins, captured monsters), and provide loading/error states. Use react-query for caching and automatic refetching."
-        },
-        {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/pages/BancoCentral.tsx",
           "operation": "modify",
-          "description": "Add the new /profile route to the router configuration. Import ProfilePage and register it as a new route alongside existing routes like /perfil, /wallet, /dao. Ensure the route is accessible without conflicting with the existing /perfil route."
-        },
-        {
-          "path": "frontend/src/components/Header.tsx",
-          "operation": "modify",
-          "description": "Add a navigation link to the new /profile page in the main site header. Include both desktop and mobile navigation sections. Use appropriate translation keys for English and Portuguese labels (e.g., 'Profile' / 'Perfil AR')."
+          "description": "Integrate the new CanisterArchitecturePanel component into the Banco Central page. Add the component within the existing page structure, positioned below the current luxury bank dashboard metrics. Ensure the component receives the authenticated identity from useInternetIdentity hook to derive Principal ID and UserID. Maintain all existing functionality and visual styling of the page without modifications to the layout, footers, or other visual elements."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Display player XP from the AR game canisters with real-time synchronization",
+      "summary": "Ensure all profile data, progression, coins, and bonuses are accessible via the unified canister architecture, confirming that the system uses internal UserID for data storage and retrieval",
       "acceptanceCriteria": [
-        "XP value is fetched from the game canisters",
-        "XP is displayed in a prominent, readable format",
-        "Value updates when data changes"
+        "Profile data queries use internal UserID as the primary key",
+        "Progression data (XP, level, energy) is retrieved using internal UserID",
+        "Coin balances (available, planted, bonus) are stored and accessed via internal UserID",
+        "All bonus distributions and actions continue to function normally",
+        "No data operations rely on Principal as the primary identifier"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/profile/ARPlayerStats.tsx",
-          "operation": "create",
-          "description": "Create a stats component to display XP prominently. Use the ProfileGlassPanel wrapper for consistent styling. Show XP value with an icon (use frontend/public/assets/generated/xp-icon-transparent.dim_32x32.png), current level, and progress bar. Include loading skeleton and error state handling."
+          "path": "frontend/src/components/profile/CanisterArchitecturePanel.tsx",
+          "operation": "modify",
+          "description": "Add a data verification section to the CanisterArchitecturePanel component that displays which data types (profile, progression, coins, bonuses) are associated with the internal UserID. Include a visual indicator showing that the unified architecture uses internal UserID as the primary key for all data operations across the canister network. Display a timestamp of the last successful data read operation to confirm data accessibility."
         },
         {
-          "path": "frontend/src/pages/ProfilePage.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Integrate the ARPlayerStats component into the ProfilePage layout. Position it prominently at the top of the page. Pass the XP data from the useARGameData hook and ensure real-time updates are reflected when the query refetches."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Display player coins/currency balance from the AR game canisters with real-time synchronization",
-      "acceptanceCriteria": [
-        "Coin balance is fetched from the game canisters",
-        "Balance is displayed with appropriate formatting",
-        "Value updates when data changes"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/profile/ARCoinBalance.tsx",
-          "operation": "create",
-          "description": "Create a component to display the player's coin balance from AR game data. Show available tokens, planted tokens, and bonus tokens separately with proper number formatting. Use the ProfileGlassPanel wrapper and include the coin icon (frontend/public/assets/generated/qmy-coin-gold-3d-transparent.dim_128x128.png or qtm-coin-gold-3d-transparent.dim_128x128.png). Include loading and error states."
-        },
-        {
-          "path": "frontend/src/pages/ProfilePage.tsx",
-          "operation": "modify",
-          "description": "Integrate the ARCoinBalance component into the ProfilePage below the stats section. Pass coin data from useARGameData hook and ensure the display updates reactively when data changes."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Display captured monsters collection from the AR game canisters",
-      "acceptanceCriteria": [
-        "Monster data is fetched from the game canisters",
-        "All captured monsters are displayed in an organized view",
-        "Each monster shows relevant details (name, type, or other identifying info)"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/profile/ARMonsterCollection.tsx",
-          "operation": "create",
-          "description": "Create a grid component to display captured monsters. Each monster card should show the monster's name, capture time, and energy boost value. Use appropriate monster icons from frontend/public/assets/generated/ (e.g., btc-monster-transparent.dim_128x128.png, eth-monster-transparent.dim_128x128.png, etc.). Include empty state when no monsters are captured, loading skeletons, and error handling."
-        },
-        {
-          "path": "frontend/src/pages/ProfilePage.tsx",
-          "operation": "modify",
-          "description": "Integrate the ARMonsterCollection component into the ProfilePage below the coin balance section. Pass the capturedMonsters array from useARGameData hook. Ensure the collection updates when new monsters are captured in the AR app."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Apply dynamic background styling with transparent panels, yellow borders, and yellow text",
-      "acceptanceCriteria": [
-        "Background has dynamic visual effects",
-        "All panel/card elements use transparent backgrounds with visible yellow borders",
-        "Primary text elements (headings, labels) are rendered in yellow",
-        "Design is visually cohesive and distinct from other pages"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/ProfilePage.tsx",
-          "operation": "modify",
-          "description": "Apply custom styling to the ProfilePage. Add a dynamic background using CSS animations or the QuantumUniverseScene component. Wrap all content sections in containers with transparent backgrounds (using rgba or backdrop-blur), yellow borders (border-yellow-400 or custom yellow), and yellow text for headings (text-yellow-400). Ensure the styling is scoped to this page only and does not affect other routes."
-        },
-        {
-          "path": "frontend/src/components/profile/ProfileARGlassPanel.tsx",
-          "operation": "create",
-          "description": "Create a specialized glass panel component for the AR Profile page. Extend or customize the existing ProfileGlassPanel with yellow borders (2px solid yellow or border-2 border-yellow-400), transparent background with slight blur, and ensure all headings and key information use yellow text color. This component will be used consistently across all AR profile sections."
-        }
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "summary": "Ensure the footer remains unmodified and contains no Caffeine references",
-      "acceptanceCriteria": [
-        "Footer component is not modified by this patch",
-        "No Caffeine branding or credits appear in the footer",
-        "Existing footer content and styling remain intact"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/ProfilePage.tsx",
-          "operation": "modify",
-          "description": "Verify that the ProfilePage uses the standard Layout component which includes the existing Footer. Do not create a custom footer or modify footer behavior. The page should render within the normal app layout structure to ensure the footer remains consistent with other pages."
+          "description": "Review and document that all existing profile data queries (getCallerUserProfile, usePlayerState) use the authenticated caller context, which internally maps to the UserID in the backend. Add JSDoc comments clarifying that profile data, progression, coins, and bonuses are all accessed via the caller's identity, which the backend resolves to the internal UserID. No functional changes are required as the existing implementation already follows this pattern."
         }
       ]
     }

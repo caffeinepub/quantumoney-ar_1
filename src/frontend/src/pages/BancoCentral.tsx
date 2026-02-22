@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2, TrendingUp, Users, Globe, PieChart, BarChart3, DollarSign, Activity } from 'lucide-react';
+import { Building2, TrendingUp, Users, PieChart, BarChart3, DollarSign, Activity } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import PageShell from '@/components/PageShell';
 import Container from '@/components/Container';
@@ -7,6 +7,7 @@ import { PageTitle } from '@/components/Typography';
 import { useLuxuryBankData } from '@/hooks/useLuxuryBank';
 import { formatLargeNumber, generateSparklineData } from '@/lib/bank/luxuryDerivations';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import CanisterArchitecturePanel from '@/components/profile/CanisterArchitecturePanel';
 
 export default function BancoCentralPage() {
   const { data, isLoading } = useLuxuryBankData();
@@ -106,6 +107,9 @@ export default function BancoCentralPage() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Canister Architecture Panel - NEW */}
+          <CanisterArchitecturePanel />
 
           {/* Time Series Chart */}
           <Card className="glass-card border-primary/30">

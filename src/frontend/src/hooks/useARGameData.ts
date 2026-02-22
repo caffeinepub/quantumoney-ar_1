@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { HttpAgent, Actor } from '@dfinity/agent';
-import { Principal } from '@dfinity/principal';
 import { useInternetIdentity } from './useInternetIdentity';
 
-// AR Game Canister IDs
+// AR Game Canister IDs - all four canisters from QuantumoneyAR.app
 const AR_CANISTERS = {
   profile: 'ippxc-5iaaa-aaaae-qgwqq-cai',
   dao: 'x5shd-hqaaa-aaaap-qrdgq-cai',
@@ -69,49 +68,44 @@ async function fetchARGameData(identity: any): Promise<ARGameData> {
       });
     }
 
-    // Try to fetch from the main profile canister
-    const profileActor = Actor.createActor(arGameIdl, {
-      agent,
-      canisterId: AR_CANISTERS.profile,
-    });
+    // Try to fetch from all four canisters and aggregate data
+    const results = await Promise.allSettled([
+      // Profile canister
+      (async () => {
+        const actor = Actor.createActor(arGameIdl, {
+          agent,
+          canisterId: AR_CANISTERS.profile,
+        });
+        return actor.getCallerUserProfile();
+      })(),
+      // DAO canister
+      (async () => {
+        const actor = Actor.createActor(arGameIdl, {
+          agent,
+          canisterId: AR_CANISTERS.dao,
+        });
+        return actor.getCallerUserProfile();
+      })(),
+      // Bridge canister
+      (async () => {
+        const actor = Actor.createActor(arGameIdl, {
+          agent,
+          canisterId: AR_CANISTERS.bridge,
+        });
+        return actor.getCallerUserProfile();
+      })(),
+      // Additional canister
+      (async () => {
+        const actor = Actor.createActor(arGameIdl, {
+          agent,
+          canisterId: AR_CANISTERS.additional,
+        });
+        return actor.getCallerUserProfile();
+      })(),
+    ]);
 
-    const profileResult: any = await profileActor.getCallerUserProfile();
-
-    // Check if profileResult is an array (Option type from Candid)
-    if (Array.isArray(profileResult) && profileResult.length > 0 && profileResult[0]) {
-      const profile = profileResult[0];
-      return {
-        xp: Number(profile.xp),
-        level: Number(profile.level),
-        availableCoins: Number(profile.availableTokens),
-        lockedCoins: Number(profile.plantedTokens),
-        bonusCoins: Number(profile.bonusTokens),
-        capturedMonsters: profile.capturedMonsters.map((cm: any) => ({
-          name: cm.monster.name,
-          captureTime: Number(cm.captureTime),
-          energyBoost: Number(cm.monster.energyBoost),
-        })),
-      };
-    }
-
-    // Check if profileResult is a direct object (null check)
-    if (profileResult && typeof profileResult === 'object' && !Array.isArray(profileResult)) {
-      return {
-        xp: Number(profileResult.xp || 0),
-        level: Number(profileResult.level || 1),
-        availableCoins: Number(profileResult.availableTokens || 0),
-        lockedCoins: Number(profileResult.plantedTokens || 0),
-        bonusCoins: Number(profileResult.bonusTokens || 0),
-        capturedMonsters: (profileResult.capturedMonsters || []).map((cm: any) => ({
-          name: cm.monster.name,
-          captureTime: Number(cm.captureTime),
-          energyBoost: Number(cm.monster.energyBoost),
-        })),
-      };
-    }
-
-    // Return default data if no profile found
-    return {
+    // Aggregate data from all successful canister calls
+    let aggregatedData: ARGameData = {
       xp: 0,
       level: 1,
       availableCoins: 0,
@@ -119,6 +113,57 @@ async function fetchARGameData(identity: any): Promise<ARGameData> {
       bonusCoins: 0,
       capturedMonsters: [],
     };
+
+    for (const result of results) {
+      if (result.status === 'fulfilled') {
+        const profileResult: any = result.value;
+
+        // Handle array format (Option type from Candid)
+        if (Array.isArray(profileResult) && profileResult.length > 0 && profileResult[0]) {
+          const profile = profileResult[0];
+          aggregatedData.xp += Number(profile.xp || 0);
+          aggregatedData.level = Math.max(aggregatedData.level, Number(profile.level || 1));
+          aggregatedData.availableCoins += Number(profile.availableTokens || 0);
+          aggregatedData.lockedCoins += Number(profile.plantedTokens || 0);
+          aggregatedData.bonusCoins += Number(profile.bonusTokens || 0);
+          
+          if (profile.capturedMonsters && Array.isArray(profile.capturedMonsters)) {
+            const monsters = profile.capturedMonsters.map((cm: any) => ({
+              name: cm.monster.name,
+              captureTime: Number(cm.captureTime),
+              energyBoost: Number(cm.monster.energyBoost),
+            }));
+            aggregatedData.capturedMonsters.push(...monsters);
+          }
+        }
+        // Handle object format
+        else if (profileResult && typeof profileResult === 'object' && !Array.isArray(profileResult)) {
+          aggregatedData.xp += Number(profileResult.xp || 0);
+          aggregatedData.level = Math.max(aggregatedData.level, Number(profileResult.level || 1));
+          aggregatedData.availableCoins += Number(profileResult.availableTokens || 0);
+          aggregatedData.lockedCoins += Number(profileResult.plantedTokens || 0);
+          aggregatedData.bonusCoins += Number(profileResult.bonusTokens || 0);
+          
+          if (profileResult.capturedMonsters && Array.isArray(profileResult.capturedMonsters)) {
+            const monsters = profileResult.capturedMonsters.map((cm: any) => ({
+              name: cm.monster.name,
+              captureTime: Number(cm.captureTime),
+              energyBoost: Number(cm.monster.energyBoost),
+            }));
+            aggregatedData.capturedMonsters.push(...monsters);
+          }
+        }
+      }
+    }
+
+    // Remove duplicate monsters based on name and capture time
+    const uniqueMonsters = aggregatedData.capturedMonsters.filter(
+      (monster, index, self) =>
+        index === self.findIndex((m) => m.name === monster.name && m.captureTime === monster.captureTime)
+    );
+    aggregatedData.capturedMonsters = uniqueMonsters;
+
+    return aggregatedData;
   } catch (error) {
     console.error('Error fetching AR game data:', error);
     throw new Error('Não foi possível conectar aos canisters do jogo AR');

@@ -2,9 +2,10 @@ import { Suspense, lazy } from 'react';
 import PageShell from '@/components/PageShell';
 import Container from '@/components/Container';
 import { PageTitle, BodyText } from '@/components/Typography';
-import { User, Loader2, Trophy, Coins as CoinsIcon } from 'lucide-react';
+import { User, Loader2, Trophy } from 'lucide-react';
 import { useInternetIdentity } from '@/hooks/useInternetIdentity';
 import { useARGameData } from '@/hooks/useARGameData';
+import TechnicalValidationPanel from '@/components/profile/TechnicalValidationPanel';
 import ARPlayerStats from '@/components/profile/ARPlayerStats';
 import ARCoinBalance from '@/components/profile/ARCoinBalance';
 import ARMonsterCollection from '@/components/profile/ARMonsterCollection';
@@ -31,7 +32,7 @@ export default function ProfilePage() {
           <div className="py-16 space-y-8">
             <div className="text-center space-y-4">
               <PageTitle icon={<User className="w-12 h-12 text-yellow-400" />} className="justify-center">
-                <span className="text-yellow-400">AR Profile</span>
+                <span className="text-yellow-400">Perfil AR</span>
               </PageTitle>
               <BodyText className="max-w-2xl mx-auto text-center text-yellow-400">
                 Conecte-se para ver seu perfil sincronizado com QuantumoneyAR.app
@@ -75,7 +76,7 @@ export default function ProfilePage() {
           <div className="py-16 space-y-8">
             <div className="text-center space-y-4">
               <PageTitle icon={<User className="w-12 h-12 text-yellow-400" />} className="justify-center">
-                <span className="text-yellow-400">AR Profile</span>
+                <span className="text-yellow-400">Perfil AR</span>
               </PageTitle>
             </div>
 
@@ -102,7 +103,7 @@ export default function ProfilePage() {
           <div className="py-16 space-y-8">
             <div className="text-center space-y-4">
               <PageTitle icon={<User className="w-12 h-12 text-yellow-400" />} className="justify-center">
-                <span className="text-yellow-400">AR Profile</span>
+                <span className="text-yellow-400">Perfil AR</span>
               </PageTitle>
             </div>
 
@@ -134,10 +135,13 @@ export default function ProfilePage() {
             </BodyText>
           </div>
 
-          {/* Player Stats */}
+          {/* Technical Validation Panel - Temporary */}
+          <TechnicalValidationPanel />
+
+          {/* Player Stats - XP and Level */}
           <ARPlayerStats data={arData} />
 
-          {/* Coin Balance */}
+          {/* Coin Balance - Available, Locked, Bonus */}
           <ARCoinBalance data={arData} />
 
           {/* Monster Collection */}

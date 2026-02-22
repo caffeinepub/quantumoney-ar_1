@@ -8,7 +8,7 @@ interface ProfileGlassPanelProps {
 
 export default function ProfileGlassPanel({ children, className = '' }: ProfileGlassPanelProps) {
   return (
-    <Card className={`profile-glass-panel ${className}`}>
+    <Card className={`bg-transparent backdrop-blur-md border-2 border-yellow-400 ${className}`}>
       <CardContent className="p-0">{children}</CardContent>
     </Card>
   );

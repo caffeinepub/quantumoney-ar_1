@@ -1,20 +1,66 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-19T18:20:35.997Z",
-  "summary": "The diff implements the Profile page with AR game synchronization, including routing, components for XP/coins/monsters, canister integration, and yellow-bordered styling. All six requirements are implemented with appropriate evidence in the modified and added files.",
-  "missing_requirements": [],
-  "hallucinated_features": [],
-  "confidence": 0.95,
+  "generatedAt": "2026-02-22T15:55:36.822Z",
+  "summary": "The diff implements REQ-1 (displaying canister architecture information on Banco Central page) but does not fully implement REQ-2 (unified canister architecture using internal UserID as primary key). The backend migration creates a UserID system, but profile data queries still use Principal as the primary key in most operations.",
+  "missing_requirements": [
+    {
+      "id": "REQ-2",
+      "requirement": "Profile data queries use internal UserID as the primary key",
+      "reason": "While the backend creates a principalToUserId mapping and getUserIdInternal function, the playerProfiles Map still uses Principal as the key (Map.empty<Principal, PlayerProfile>), not UserId. Profile queries would continue using Principal-based lookups.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "Progression data (XP, level, energy) is retrieved using internal UserID",
+      "reason": "The PlayerProfile type and playerProfiles data structure remain keyed by Principal, not UserId. No evidence of conversion to UserId-based retrieval for progression data.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "Coin balances (available, planted, bonus) are stored and accessed via internal UserID",
+      "reason": "PlayerProfile containing token balances (availableTokens, plantedTokens, bonusTokens) remains in a Principal-keyed Map. No refactoring to UserId-based storage is shown.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "No data operations rely on Principal as the primary identifier",
+      "reason": "Multiple data structures still use Principal as primary key: playerProfiles, legacyDailyLimits, qmyPurchaseRequests, and various type definitions reference Principal (PlantedCoin.owner, ARSpotClaim.claimedBy, etc.).",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Migration module for converting legacy data structures",
+      "reason": "The BuildRequest does not mention creating a migration system or migrating existing data. The migration.mo file and Migration.run() call were not requested.",
+      "evidence": [
+        "backend/migration.mo",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Simplified UserID display format in frontend",
+      "reason": "The CanisterArchitecturePanel creates a display format 'UID-{slice}...{slice}' which is a frontend-only representation. The requirement asks to display the internal UserID, but this is a derived/formatted display rather than the actual backend UserID value.",
+      "evidence": [
+        "frontend/src/components/profile/CanisterArchitecturePanel.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.85,
   "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/App.tsx",
-    "frontend/src/components/Header.tsx",
-    "frontend/src/components/profile/ARCoinBalance.tsx",
-    "frontend/src/components/profile/ARMonsterCollection.tsx",
-    "frontend/src/components/profile/ARPlayerStats.tsx",
-    "frontend/src/hooks/useARGameData.ts",
-    "frontend/src/pages/ProfilePage.tsx",
+    "frontend/src/components/profile/CanisterArchitecturePanel.tsx",
+    "frontend/src/pages/BancoCentral.tsx",
     "project_state.json"
   ]
 }

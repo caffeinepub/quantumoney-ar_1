@@ -2,13 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-create-a-new-profile-page-route-at-profile-on-quantumoney-app-that-displays-player-data-synchronized-from-quantumoneyar-app-game-canisters-ippxc-5iaaa-aaaae-qgwqq-cai-x5shd-hqaaa-aaaap-qrdgq-cai-i7nyb-2yaaa-aaaaj-qowiq-cai-lkawl-3qaaa-aaaac-qdsoq-cai",
-      "featureTitle": "Create a new Profile page route at /profile on Quantumoney.app that displays player data synchronized from QuantumoneyAR.app game canisters (ippxc-5iaaa-aaaae-qgwqq-cai, x5shd-hqaaa-aaaap-qrdgq-cai, i7nyb-2yaaa-aaaaj-qowiq-cai, lkawl-3qaaa-aaaac-qdsoq-cai)",
+      "featureId": "feature-display-principal-id-internal-userid-and-all-active-canister-ids-with-their-functions-on-the-banco-central-page-show-the-following-canisters-with-their-descriptions-crjop-jyaaa-aaaah-atfaq-cai-frontend-ui-page-and-interface-control-ckmsk-taaaa-aaaah-atfca-cai-game-logic-profile-progression-xp-qmy-icp-coins-captured-monsters-nemlr-6aaaa-aaaan-q32la-cai-governance-treasury-bonus-and-rewards-distribution-ippxc-5iaaa-aaaae-qgwqq-cai-main-profile-unified-userid-real-site-app-synchronization-x5shd-hqaaa-aaaap-qrdgq-cai-dao-game-data-warehouse-transaction-history-player-actions-i7nyb-2yaaa-aaaaj-qowiq-cai-bridge-integration-communication-between-additional-canisters-lkawl-3qaaa-aaaac-qdsoq-cai-extra-canister-supplementary-game-data-present-this-information-in-a-clear-organized-and-readable-format",
+      "featureTitle": "Display Principal ID, internal UserID, and all active canister IDs with their functions on the Banco Central page. Show the following canisters with their descriptions: crjop-jyaaa-aaaah-atfaq-cai (Frontend/UI - page and interface control), ckmsk-taaaa-aaaah-atfca-cai (Game Logic/Profile/Progression - XP, QMY/ICP coins, captured monsters), nemlr-6aaaa-aaaan-q32la-cai (Governance/Treasury - bonus and rewards distribution), ippxc-5iaaa-aaaae-qgwqq-cai (Main Profile/Unified UserID - real site ↔ app synchronization), x5shd-hqaaa-aaaap-qrdgq-cai (DAO/Game Data Warehouse - transaction history, player actions), i7nyb-2yaaa-aaaaj-qowiq-cai (Bridge/Integration - communication between additional canisters), lkawl-3qaaa-aaaac-qdsoq-cai (Extra Canister/Supplementary Game Data). Present this information in a clear, organized, and readable format.",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/Header.tsx",
-        "frontend/src/hooks/useARGameData.ts",
-        "frontend/src/pages/ProfilePage.tsx"
+        "frontend/src/components/profile/CanisterArchitecturePanel.tsx",
+        "frontend/src/pages/BancoCentral.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -28,11 +26,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-display-player-xp-experience-points-from-the-ar-game-canisters-in-the-profile-view-with-real-time-synchronization",
-      "featureTitle": "Display player XP (experience points) from the AR game canisters in the profile view with real-time synchronization",
+      "featureId": "feature-ensure-all-profile-data-progression-coins-and-bonuses-are-accessible-via-the-unified-canister-architecture-listed-in-req-1-confirm-that-no-data-depends-on-separate-principals-and-that-the-system-uses-the-internal-userid-for-data-storage-and-retrieval-across-all-canisters",
+      "featureTitle": "Ensure all profile data, progression, coins, and bonuses are accessible via the unified canister architecture listed in REQ-1. Confirm that no data depends on separate Principals and that the system uses the internal UserID for data storage and retrieval across all canisters.",
       "files": [
-        "frontend/src/components/profile/ARPlayerStats.tsx",
-        "frontend/src/pages/ProfilePage.tsx"
+        "frontend/src/components/profile/CanisterArchitecturePanel.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -48,100 +45,6 @@
       ],
       "testIds": [
         "REQ-2"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-display-player-coins-currency-balance-from-the-ar-game-canisters-in-the-profile-view-with-real-time-synchronization",
-      "featureTitle": "Display player coins/currency balance from the AR game canisters in the profile view with real-time synchronization",
-      "files": [
-        "frontend/src/components/profile/ARCoinBalance.tsx",
-        "frontend/src/pages/ProfilePage.tsx"
-      ],
-      "components": [
-        "camera@1.0.0",
-        "http-outcalls@3.0.0",
-        "authorization@3.0.0",
-        "blob-storage@4.0.0",
-        "qr-code@1.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-3"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-display-captured-monsters-collection-from-the-ar-game-canisters-showing-all-monsters-the-player-has-caught",
-      "featureTitle": "Display captured monsters collection from the AR game canisters showing all monsters the player has caught",
-      "files": [
-        "frontend/src/components/profile/ARMonsterCollection.tsx",
-        "frontend/src/pages/ProfilePage.tsx"
-      ],
-      "components": [
-        "camera@1.0.0",
-        "http-outcalls@3.0.0",
-        "authorization@3.0.0",
-        "blob-storage@4.0.0",
-        "qr-code@1.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-4"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-apply-dynamic-background-styling-to-the-profile-page-with-transparent-window-panels-yellow-borders-on-all-containers-and-yellow-text-for-headings-and-key-information",
-      "featureTitle": "Apply dynamic background styling to the profile page with transparent window panels, yellow borders on all containers, and yellow text for headings and key information",
-      "files": [
-        "frontend/src/pages/ProfilePage.tsx"
-      ],
-      "components": [
-        "camera@1.0.0",
-        "http-outcalls@3.0.0",
-        "authorization@3.0.0",
-        "blob-storage@4.0.0",
-        "qr-code@1.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-5"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-ensure-the-footer-remains-unmodified-and-does-not-include-any-caffeine-credits-or-references",
-      "featureTitle": "Ensure the footer remains unmodified and does not include any Caffeine credits or references",
-      "files": [
-        "frontend/src/pages/ProfilePage.tsx"
-      ],
-      "components": [
-        "camera@1.0.0",
-        "http-outcalls@3.0.0",
-        "authorization@3.0.0",
-        "blob-storage@4.0.0",
-        "qr-code@1.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-6"
       ],
       "confidence": "high"
     }

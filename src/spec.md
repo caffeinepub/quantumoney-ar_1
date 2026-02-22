@@ -1,15 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Create a Profile page on Quantumoney.app that displays player data synchronized from QuantumoneyAR.app game canisters.
+**Goal:** Display canister architecture information and unified user identification on the Banco Central page.
 
 **Planned changes:**
-- Add new /profile route accessible from main site navigation
-- Connect to four game canisters (ippxc-5iaaa-aaaae-qgwqq-cai, x5shd-hqaaa-aaaap-qrdgq-cai, i7nyb-2yaaa-aaaaj-qowiq-cai, lkawl-3qaaa-aaaac-qdsoq-cai)
-- Display player XP with real-time synchronization
-- Display player coins/currency balance with real-time synchronization
-- Display captured monsters collection with relevant details
-- Apply dynamic background styling with transparent panels, yellow borders, and yellow text for headings
-- Keep footer unmodified without Caffeine references
+- Add display of Principal ID and internal UserID on Banco Central page
+- List all seven active canister IDs with their function descriptions (Frontend/UI, Game Logic/Profile, Governance/Treasury, Main Profile/Unified UserID, DAO/Game Data Warehouse, Bridge/Integration, Extra Canister/Supplementary Game Data)
+- Present canister information in a clear, organized, and readable format
+- Verify all profile data, progression, coins, and bonuses use internal UserID for storage and retrieval across canisters
+- Ensure no data operations rely on Principal as primary identifier
 
-**User-visible outcome:** Players can view their AR game profile on Quantumoney.app, seeing their XP, coins, and captured monsters in a styled interface with yellow-themed transparent panels.
+**User-visible outcome:** Users can view their Principal ID, internal UserID, and a complete list of active canisters with their functions on the Banco Central page, providing transparency into the unified architecture that synchronizes data between the website and QuantumoneyAR.app.

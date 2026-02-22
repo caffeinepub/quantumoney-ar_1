@@ -2,6 +2,7 @@ import AccessControl "authorization/access-control";
 import Stripe "stripe/Stripe";
 import StripeMixin "stripe/StripeMixin";
 import MixinStorage "blob-storage/Mixin";
+import Migration "migration";
 import Map "mo:core/Map";
 import Nat "mo:core/Nat";
 import Float "mo:core/Float";
@@ -11,9 +12,12 @@ import Array "mo:core/Array";
 import Time "mo:core/Time";
 import Int "mo:core/Int";
 
+// Apply migration
+(with migration = Migration.run)
 actor {
   include MixinStorage();
 
+  type UserId = Nat;
   type Monster = {
     name : Text;
     energyBoost : Nat;
@@ -85,7 +89,7 @@ actor {
   let stripe = Stripe.init(accessControlState, "usd");
 
   let playerProfiles = Map.empty<Principal, PlayerProfile>();
-  let dailyLimits = Map.empty<Principal, DailyLimits>();
+  let legacyDailyLimits = Map.empty<Principal, DailyLimits>();
   let plantedCoins = Map.empty<Text, PlantedCoin>();
   let arSpotClaims = Map.empty<Text, ARSpotClaim>();
   let arSpotDistributions = Map.empty<Text, ARSpotDistribution>();
@@ -95,16 +99,41 @@ actor {
   var fixedQmyPrice : Float = 0.02;
   var chatMessageCounter = 0;
 
+  // New daily limits mapping
+  let dailyLimits = Map.empty<UserId, DailyLimits>();
+
+  // New principal to userId mapping
+  let principalToUserId = Map.empty<Principal, UserId>();
+
+  // New userId counter
+  var nextUserId : UserId = 1;
+
   include StripeMixin(stripe);
 
-  private func resetDailyLimitsIfNeeded(caller : Principal) {
+  private func getUserIdInternal(principal : Principal) : UserId {
+    switch (principalToUserId.get(principal)) {
+      case (?userId) { userId };
+      case (null) {
+        let newUserId = nextUserId;
+        principalToUserId.add(principal, newUserId);
+        nextUserId += 1;
+        newUserId;
+      };
+    };
+  };
+
+  private func getCallerUserId(caller : Principal) : UserId {
+    getUserIdInternal(caller);
+  };
+
+  private func resetDailyLimitsIfNeeded(userId : UserId) {
     let now = Time.now();
     let oneDayNanos : Int = 24 * 60 * 60 * 1_000_000_000;
 
-    switch (dailyLimits.get(caller)) {
+    switch (dailyLimits.get(userId)) {
       case (?limits) {
         if (now - limits.lastResetTime >= oneDayNanos) {
-          dailyLimits.add(caller, {
+          dailyLimits.add(userId, {
             plantsToday = 0;
             rescuesToday = 0;
             lastResetTime = now;
@@ -112,7 +141,7 @@ actor {
         };
       };
       case (null) {
-        dailyLimits.add(caller, {
+        dailyLimits.add(userId, {
           plantsToday = 0;
           rescuesToday = 0;
           lastResetTime = now;
@@ -228,7 +257,8 @@ actor {
         };
         playerProfiles.add(caller, newProfile);
 
-        dailyLimits.add(caller, {
+        let userId = getUserIdInternal(caller);
+        dailyLimits.add(userId, {
           plantsToday = 0;
           rescuesToday = 0;
           lastResetTime = Time.now();
@@ -274,9 +304,10 @@ actor {
       Runtime.trap("Unauthorized: Only registered users can plant coins");
     };
 
-    resetDailyLimitsIfNeeded(caller);
+    let userId = getCallerUserId(caller);
+    resetDailyLimitsIfNeeded(userId);
 
-    switch (dailyLimits.get(caller)) {
+    switch (dailyLimits.get(userId)) {
       case (?limits) {
         if (limits.plantsToday >= 3) {
           Runtime.trap("Unauthorized: Daily plant limit of 3 reached");
@@ -320,9 +351,9 @@ actor {
         };
         playerProfiles.add(caller, updatedProfile);
 
-        switch (dailyLimits.get(caller)) {
+        switch (dailyLimits.get(userId)) {
           case (?limits) {
-            dailyLimits.add(caller, {
+            dailyLimits.add(userId, {
               limits with plantsToday = limits.plantsToday + 1
             });
           };
@@ -340,9 +371,10 @@ actor {
       Runtime.trap("Unauthorized: Only registered users can rescue coins");
     };
 
-    resetDailyLimitsIfNeeded(caller);
+    let userId = getCallerUserId(caller);
+    resetDailyLimitsIfNeeded(userId);
 
-    switch (dailyLimits.get(caller)) {
+    switch (dailyLimits.get(userId)) {
       case (?limits) {
         if (limits.rescuesToday >= 100) {
           Runtime.trap("Unauthorized: Daily rescue limit of 100 QTM reached");
@@ -407,9 +439,9 @@ actor {
 
             plantedCoins.remove(coinId);
 
-            switch (dailyLimits.get(caller)) {
+            switch (dailyLimits.get(userId)) {
               case (?limits) {
-                dailyLimits.add(caller, {
+                dailyLimits.add(userId, {
                   limits with rescuesToday = limits.rescuesToday + 1
                 });
               };
@@ -564,7 +596,8 @@ actor {
     };
 
     playerProfiles.remove(user);
-    dailyLimits.remove(user);
+    let userId = getUserIdInternal(user);
+    dailyLimits.remove(userId);
   };
 
   public query ({ caller }) func adminGetPlayerCount() : async Nat {

@@ -1,131 +1,62 @@
 {
   "kind": "build_request",
-  "title": "Create Profile page with AR game synchronization",
+  "title": "Display Canister IDs and Unified Architecture Information on Banco Central Page",
   "projectName": "Quantumoney",
-  "priority": "normal",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Create a new Profile page route at /profile on Quantumoney.app that displays player data synchronized from QuantumoneyAR.app game canisters (ippxc-5iaaa-aaaae-qgwqq-cai, x5shd-hqaaa-aaaap-qrdgq-cai, i7nyb-2yaaa-aaaaj-qowiq-cai, lkawl-3qaaa-aaaac-qdsoq-cai)",
+      "text": "Display Principal ID, internal UserID, and all active canister IDs with their functions on the Banco Central page. Show the following canisters with their descriptions: crjop-jyaaa-aaaah-atfaq-cai (Frontend/UI - page and interface control), ckmsk-taaaa-aaaah-atfca-cai (Game Logic/Profile/Progression - XP, QMY/ICP coins, captured monsters), nemlr-6aaaa-aaaan-q32la-cai (Governance/Treasury - bonus and rewards distribution), ippxc-5iaaa-aaaae-qgwqq-cai (Main Profile/Unified UserID - real site ↔ app synchronization), x5shd-hqaaa-aaaap-qrdgq-cai (DAO/Game Data Warehouse - transaction history, player actions), i7nyb-2yaaa-aaaaj-qowiq-cai (Bridge/Integration - communication between additional canisters), lkawl-3qaaa-aaaac-qdsoq-cai (Extra Canister/Supplementary Game Data). Present this information in a clear, organized, and readable format.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-20"
         ],
         "quotes": [
-          "Criar página de Perfil no site Quantumoney.app com sincronização total com QuantumoneyAR.app"
+          "Mostrar de forma clara e discriminada: Principal ID, UserID interno, Todos os canisters ativos com suas funções detalhadas",
+          "A página Banco Central deve exibir claramente: Principal ID, UserID Interno, Todos os canisters ativos e suas funções"
         ]
       },
       "acceptanceCriteria": [
-        "New route /profile is accessible from the main site navigation",
-        "Page connects to all four specified game canisters",
-        "Profile page is an isolated patch that does not modify other existing pages"
+        "Banco Central page displays the authenticated user's Principal ID",
+        "Banco Central page displays the internal UserID",
+        "All seven canister IDs are listed with their corresponding functions",
+        "Information is presented in a legible and organized format",
+        "No changes to existing page layout, footers, or visual styling"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Display player XP (experience points) from the AR game canisters in the profile view with real-time synchronization",
-      "target": "frontend",
+      "text": "Ensure all profile data, progression, coins, and bonuses are accessible via the unified canister architecture listed in REQ-1. Confirm that no data depends on separate Principals and that the system uses the internal UserID for data storage and retrieval across all canisters.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-20"
         ],
         "quotes": [
-          "mostrar XP, moedas, monstros capturados"
+          "Todos os dados de perfil, progresso, moedas e bónus devem ser acessíveis via esses canisters unificados. Nenhum dado deve depender de Principals separados.",
+          "Garantir que todas as ações e bónus continuem funcionando normalmente"
         ]
       },
       "acceptanceCriteria": [
-        "XP value is fetched from the game canisters",
-        "XP is displayed in a prominent, readable format",
-        "Value updates when data changes"
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Display player coins/currency balance from the AR game canisters in the profile view with real-time synchronization",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-latest"
-        ],
-        "quotes": [
-          "mostrar XP, moedas, monstros capturados"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Coin balance is fetched from the game canisters",
-        "Balance is displayed with appropriate formatting",
-        "Value updates when data changes"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Display captured monsters collection from the AR game canisters showing all monsters the player has caught",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-latest"
-        ],
-        "quotes": [
-          "mostrar XP, moedas, monstros capturados"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Monster data is fetched from the game canisters",
-        "All captured monsters are displayed in an organized view",
-        "Each monster shows relevant details (name, type, or other identifying info)"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Apply dynamic background styling to the profile page with transparent window panels, yellow borders on all containers, and yellow text for headings and key information",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-latest"
-        ],
-        "quotes": [
-          "Layout: fundo dinâmico, janelas transparentes, bordas amarelas, textos amarelos"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Background has dynamic visual effects",
-        "All panel/card elements use transparent backgrounds with visible yellow borders",
-        "Primary text elements (headings, labels) are rendered in yellow",
-        "Design is visually cohesive and distinct from other pages"
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Ensure the footer remains unmodified and does not include any Caffeine credits or references",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-latest"
-        ],
-        "quotes": [
-          "sem referências á Caffeine nos rodapés, sem alterações no rodapé"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Footer component is not modified by this patch",
-        "No Caffeine branding or credits appear in the footer",
-        "Existing footer content and styling remain intact"
+        "Profile data queries use internal UserID as the primary key",
+        "Progression data (XP, level, energy) is retrieved using internal UserID",
+        "Coin balances (available, planted, bonus) are stored and accessed via internal UserID",
+        "All bonus distributions and actions continue to function normally",
+        "No data operations rely on Principal as the primary identifier"
       ]
     }
   ],
   "constraints": [
-    "Do not modify any existing pages or routes outside of the new Profile page",
-    "Do not alter the Footer component or any footer content",
-    "Must connect to exactly these four game canisters: ippxc-5iaaa-aaaae-qgwqq-cai, x5shd-hqaaa-aaaap-qrdgq-cai, i7nyb-2yaaa-aaaaj-qowiq-cai, lkawl-3qaaa-aaaac-qdsoq-cai",
-    "All game data synchronization must be read-only from the AR app canisters"
+    "Do not alter the existing layout, footers, or pages of the site",
+    "Do not modify the visual design or styling of the Banco Central page",
+    "Maintain all existing functionality for actions and bonuses"
   ],
   "nonGoals": [
-    "Modifying authentication or Internet Identity flows",
-    "Changing the Header or navigation structure",
-    "Altering any other existing pages (Home, Wallet, DAO, etc.)",
-    "Adding write capabilities to modify game data",
-    "Creating new backend endpoints or modifying main.mo"
+    "Implementing new features beyond canister visibility",
+    "Changing the authentication flow or Internet Identity integration",
+    "Modifying the QuantumoneyAR.app application itself",
+    "Creating new backend endpoints not related to canister information retrieval"
   ],
   "imageRequirements": {
     "required": [],
