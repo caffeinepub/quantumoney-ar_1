@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: oklch(0.15 0.02 240);
+    --foreground: oklch(0.95 0.01 240);
+    --card: oklch(0.18 0.02 240);
+    --card-foreground: oklch(0.95 0.01 240);
+    --popover: oklch(0.18 0.02 240);
+    --popover-foreground: oklch(0.95 0.01 240);
+    --primary: oklch(0.85 0.15 85);
+    --primary-foreground: oklch(0.15 0.02 85);
+    --secondary: oklch(0.25 0.03 240);
+    --secondary-foreground: oklch(0.95 0.01 240);
+    --muted: oklch(0.25 0.02 240);
+    --muted-foreground: oklch(0.65 0.02 240);
+    --accent: oklch(0.35 0.08 280);
+    --accent-foreground: oklch(0.95 0.01 280);
+    --destructive: oklch(0.55 0.22 25);
+    --destructive-foreground: oklch(0.95 0.01 25);
+    --border: oklch(0.85 0.15 85 / 0.3);
+    --input: oklch(0.85 0.15 85 / 0.3);
+    --ring: oklch(0.85 0.15 85);
+    --radius: 0.5rem;
+    --qmy-yellow: oklch(0.85 0.15 85);
+  }
+
+  .dark {
+    --background: oklch(0.15 0.02 240);
+    --foreground: oklch(0.95 0.01 240);
+    --card: oklch(0.18 0.02 240);
+    --card-foreground: oklch(0.95 0.01 240);
+    --popover: oklch(0.18 0.02 240);
+    --popover-foreground: oklch(0.95 0.01 240);
+    --primary: oklch(0.85 0.15 85);
+    --primary-foreground: oklch(0.15 0.02 85);
+    --secondary: oklch(0.25 0.03 240);
+    --secondary-foreground: oklch(0.95 0.01 240);
+    --muted: oklch(0.25 0.02 240);
+    --muted-foreground: oklch(0.65 0.02 240);
+    --accent: oklch(0.35 0.08 280);
+    --accent-foreground: oklch(0.95 0.01 280);
+    --destructive: oklch(0.55 0.22 25);
+    --destructive-foreground: oklch(0.95 0.01 25);
+    --border: oklch(0.85 0.15 85 / 0.3);
+    --input: oklch(0.85 0.15 85 / 0.3);
+    --ring: oklch(0.85 0.15 85);
+    --qmy-yellow: oklch(0.85 0.15 85);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .min-h-screen-safe {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .h-screen-safe {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* glass-card: transparent panel with yellow/gold border on all pages */
+  .glass-card {
+    @apply bg-card/40 backdrop-blur-md;
+    border-width: 1px;
+    border-color: var(--qmy-yellow);
+  }
+
+  .glass-card-elevated {
+    @apply bg-card/60 backdrop-blur-lg shadow-lg;
+    border-width: 1px;
+    border-color: var(--qmy-yellow);
+  }
+
+  /* Profile & HUD Module Styles */
+  .profile-glass-panel {
+    @apply bg-background/20 backdrop-blur-md;
+    border-width: 1px;
+    border-color: var(--qmy-yellow);
+  }
+
+  .profile-hud-panel {
+    @apply bg-background/30 backdrop-blur-md rounded-md shadow-lg;
+    border-width: 1px;
+    border-color: var(--qmy-yellow);
+  }
+
+  .profile-text-primary {
+    @apply text-primary;
+  }
+
+  .profile-border-thin {
+    border-width: 1px;
+    border-color: var(--qmy-yellow);
+  }
+
+  /* QMY Token Page Styles */
+  .qmy-glass-card {
+    @apply bg-transparent backdrop-blur-md;
+    border-width: 1px;
+    border-color: var(--qmy-yellow);
+  }
+
+  .qmy-border-thin {
+    border-width: 1px;
+    border-color: var(--qmy-yellow);
+  }
+
+  .text-qmy-yellow {
+    color: var(--qmy-yellow);
+  }
+}

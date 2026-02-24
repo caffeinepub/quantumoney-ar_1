@@ -1,0 +1,103 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-24T21:59:44.397Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 4,
+    "implemented": 3,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Remove the Map page entirely: delete or empty frontend/src/pages/MapMode.tsx, remove its route from App.tsx, and remove any navigation link pointing to the map from Header.tsx and SectionNavigator.tsx.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/MapMode.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/components/SectionNavigator.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/MapMode.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/components/SectionNavigator.tsx"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Apply a consistent yellow border (using the existing QMY yellow brand color, e.g. border-yellow-400 or the custom gold color from tailwind.config.js) to all card/panel/window containers across every page. This includes glass-card panels, profile panels, wallet cards, DAO cards, bank dashboard tiles, presale cards, tokenomics sections, and any other bordered containers throughout the entire application.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/index.css",
+          "frontend/src/components/profile/ProfileGlassPanel.tsx",
+          "frontend/src/pages/WalletPage.tsx",
+          "frontend/src/pages/BancoCentral.tsx",
+          "frontend/src/pages/DAOPage.tsx",
+          "frontend/src/pages/DAOProposalDetailPage.tsx",
+          "frontend/src/pages/DAOCreateProposalPage.tsx",
+          "frontend/src/pages/PresalePage.tsx",
+          "frontend/src/pages/ProfilePage.tsx",
+          "frontend/src/pages/SwapPage.tsx",
+          "frontend/src/pages/PublicChatPage.tsx",
+          "frontend/src/components/wallet/VestingBreakdown.tsx",
+          "frontend/src/components/wallet/QMYTransactionHistory.tsx",
+          "frontend/src/components/wallet/SendQMYSimulatedCard.tsx",
+          "frontend/src/components/presale/PresaleLotsExplorer.tsx",
+          "frontend/src/components/presale/PresaleUnlockVisualization.tsx",
+          "frontend/src/components/profile/ARCoinBalance.tsx",
+          "frontend/src/components/profile/ARMonsterCollection.tsx",
+          "frontend/src/components/profile/ARPlayerStats.tsx",
+          "frontend/src/pages/ARMode.tsx",
+          "frontend/src/pages/DocsPage.tsx",
+          "frontend/src/pages/GoldPaper.tsx",
+          "frontend/src/pages/PreProposalsPage.tsx",
+          "frontend/src/pages/PreProposalDetailPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/index.css"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Update the Header navigation (Header.tsx) to include links to all active pages in the application, replacing or removing the Map link and ensuring all other sections (Home, QMY Token, Wallet, AR Profile, Bank, DAO, Chat, Docs, Presale, About, Legal, Contact, etc.) are accessible. Also update SectionNavigator.tsx to reflect the same complete and accurate page list.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/Header.tsx",
+          "frontend/src/components/SectionNavigator.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/Header.tsx",
+          "frontend/src/components/SectionNavigator.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Remove all references to 'Caffeine' from the Footer component (Footer.tsx), including any branding text, links, or powered-by mentions. The footer should only display Quantumoney branding, navigation links, and legal information.",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/components/Footer.tsx"
+        ],
+        "matchedFiles": []
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/App.tsx",
+    "frontend/src/components/Header.tsx",
+    "frontend/src/components/SectionNavigator.tsx",
+    "frontend/src/index.css",
+    "frontend/src/pages/MapMode.tsx",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

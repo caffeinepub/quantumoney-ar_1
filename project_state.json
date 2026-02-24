@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Project Quantumoney - user wants to fix ongoing issues: remove map page, add yellow borders to all page windows, ensure menu accesses all pages, and footer without Caffeine references.",
+  "architectural_notes": [],
+  "known_issues": [
+    "Map page removal and yellow borders on all pages have been requested repeatedly without successful implementation"
+  ],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-remove-the-map-page-entirely-delete-or-empty-frontend-src-pages-mapmode-tsx-remove-its-route-from-app-tsx-and-remove-any-navigation-link-pointing-to-the-map-from-header-tsx-and-sectionnavigator-tsx",
+      "title": "Remove the Map page entirely: delete or empty frontend/src/pages/MapMode.tsx, remove its route from App.tsx, and remove any navigation link pointing to the map from Header.tsx and SectionNavigator.tsx.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-consistent-yellow-border-using-the-existing-qmy-yellow-brand-color-e-g-border-yellow-400-or-the-custom-gold-color-from-tailwind-config-js-to-all-card-panel-window-containers-across-every-page-this-includes-glass-card-panels-profile-panels-wallet-cards-dao-cards-bank-dashboard-tiles-presale-cards-tokenomics-sections-and-any-other-bordered-containers-throughout-the-entire-application",
+      "title": "Apply a consistent yellow border (using the existing QMY yellow brand color, e.g. border-yellow-400 or the custom gold color from tailwind.config.js) to all card/panel/window containers across every page. This includes glass-card panels, profile panels, wallet cards, DAO cards, bank dashboard tiles, presale cards, tokenomics sections, and any other bordered containers throughout the entire application.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-header-navigation-header-tsx-to-include-links-to-all-active-pages-in-the-application-replacing-or-removing-the-map-link-and-ensuring-all-other-sections-home-qmy-token-wallet-ar-profile-bank-dao-chat-docs-presale-about-legal-contact-etc-are-accessible-also-update-sectionnavigator-tsx-to-reflect-the-same-complete-and-accurate-page-list",
+      "title": "Update the Header navigation (Header.tsx) to include links to all active pages in the application, replacing or removing the Map link and ensuring all other sections (Home, QMY Token, Wallet, AR Profile, Bank, DAO, Chat, Docs, Presale, About, Legal, Contact, etc.) are accessible. Also update SectionNavigator.tsx to reflect the same complete and accurate page list.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Remove the map page from the project",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Add yellow window/card borders on all pages",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Ensure menu has access to all pages",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Remove Caffeine references from footer",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Remove all references to 'Caffeine' from the Footer component (Footer.tsx), including any branding text, links, or powered-by mentions. The footer should only display Quantumoney branding, navigation links, and legal information.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Quantumoney",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

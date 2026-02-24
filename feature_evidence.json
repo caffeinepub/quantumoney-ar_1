@@ -1,0 +1,78 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-remove-the-map-page-entirely-delete-or-empty-frontend-src-pages-mapmode-tsx-remove-its-route-from-app-tsx-and-remove-any-navigation-link-pointing-to-the-map-from-header-tsx-and-sectionnavigator-tsx",
+      "featureTitle": "Remove the Map page entirely: delete or empty frontend/src/pages/MapMode.tsx, remove its route from App.tsx, and remove any navigation link pointing to the map from Header.tsx and SectionNavigator.tsx.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/Header.tsx",
+        "frontend/src/components/SectionNavigator.tsx",
+        "frontend/src/pages/MapMode.tsx"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-apply-a-consistent-yellow-border-using-the-existing-qmy-yellow-brand-color-e-g-border-yellow-400-or-the-custom-gold-color-from-tailwind-config-js-to-all-card-panel-window-containers-across-every-page-this-includes-glass-card-panels-profile-panels-wallet-cards-dao-cards-bank-dashboard-tiles-presale-cards-tokenomics-sections-and-any-other-bordered-containers-throughout-the-entire-application",
+      "featureTitle": "Apply a consistent yellow border (using the existing QMY yellow brand color, e.g. border-yellow-400 or the custom gold color from tailwind.config.js) to all card/panel/window containers across every page. This includes glass-card panels, profile panels, wallet cards, DAO cards, bank dashboard tiles, presale cards, tokenomics sections, and any other bordered containers throughout the entire application.",
+      "files": [
+        "frontend/src/index.css"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-header-navigation-header-tsx-to-include-links-to-all-active-pages-in-the-application-replacing-or-removing-the-map-link-and-ensuring-all-other-sections-home-qmy-token-wallet-ar-profile-bank-dao-chat-docs-presale-about-legal-contact-etc-are-accessible-also-update-sectionnavigator-tsx-to-reflect-the-same-complete-and-accurate-page-list",
+      "featureTitle": "Update the Header navigation (Header.tsx) to include links to all active pages in the application, replacing or removing the Map link and ensuring all other sections (Home, QMY Token, Wallet, AR Profile, Bank, DAO, Chat, Docs, Presale, About, Legal, Contact, etc.) are accessible. Also update SectionNavigator.tsx to reflect the same complete and accurate page list.",
+      "files": [
+        "frontend/src/components/Header.tsx",
+        "frontend/src/components/SectionNavigator.tsx"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

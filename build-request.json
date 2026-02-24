@@ -1,0 +1,99 @@
+{
+  "kind": "build_request",
+  "title": "Remove map page, apply yellow borders to all pages, update navigation and footer",
+  "projectName": "Quantumoney",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Remove the Map page entirely: delete or empty frontend/src/pages/MapMode.tsx, remove its route from App.tsx, and remove any navigation link pointing to the map from Header.tsx and SectionNavigator.tsx.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-10"
+        ],
+        "quotes": [
+          "remover o mapa que não serve para nada"
+        ]
+      },
+      "acceptanceCriteria": [
+        "No map route exists in App.tsx",
+        "No map link appears in the header or section navigator",
+        "Navigating to the old map URL returns a 404 or redirects to home"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Apply a consistent yellow border (using the existing QMY yellow brand color, e.g. border-yellow-400 or the custom gold color from tailwind.config.js) to all card/panel/window containers across every page. This includes glass-card panels, profile panels, wallet cards, DAO cards, bank dashboard tiles, presale cards, tokenomics sections, and any other bordered containers throughout the entire application.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-10"
+        ],
+        "quotes": [
+          "colocar as bordas das janelas em cor amarela em todas as páginas"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Every card, panel, or windowed container on every page has a visible yellow border",
+        "The yellow border color is consistent and uses the QMY brand yellow defined in tailwind.config.js",
+        "The global glass-card utility class in index.css is updated to include the yellow border so all components using it inherit it automatically",
+        "ProfileGlassPanel, wallet cards, DAO cards, bank tiles, presale cards, and all other container components display yellow borders"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Update the Header navigation (Header.tsx) to include links to all active pages in the application, replacing or removing the Map link and ensuring all other sections (Home, QMY Token, Wallet, AR Profile, Bank, DAO, Chat, Docs, Presale, About, Legal, Contact, etc.) are accessible. Also update SectionNavigator.tsx to reflect the same complete and accurate page list.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "Menu com acesso a todas as páginas"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The Map link is removed from the header navigation",
+        "All active application pages are accessible from the header or section navigator",
+        "No broken or dead navigation links exist"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Remove all references to 'Caffeine' from the Footer component (Footer.tsx), including any branding text, links, or powered-by mentions. The footer should only display Quantumoney branding, navigation links, and legal information.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "Rodapé sem referências à Caffeine"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The word 'Caffeine' does not appear anywhere in the rendered footer",
+        "No links to Caffeine domains appear in the footer",
+        "Footer retains Quantumoney logo, tagline, and navigation columns"
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not alter any immutable frontend paths (hooks/useInternetIdentity, hooks/useActor, main.tsx, components/ui)",
+    "Use the existing QMY yellow/gold color already defined in tailwind.config.js — do not introduce new color values",
+    "Do not modify backend/main.mo — all changes are frontend only",
+    "Do not remove or restructure any page content other than the map page"
+  ],
+  "nonGoals": [
+    "Adding new pages or features",
+    "Changing the overall layout or design theme beyond yellow borders",
+    "Modifying backend logic or data models",
+    "Redesigning the header or footer structure beyond the specified changes"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}
