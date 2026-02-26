@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { X, Home, Wallet, Repeat, Coins, Users, FileText, Building2, MessageSquare, ShoppingCart, BookOpen, User } from 'lucide-react';
+import { X, Home, Repeat, Coins, Users, FileText, Building2, MessageSquare, ShoppingCart, BookOpen, User, Map } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -14,8 +14,8 @@ export default function SectionNavigator({ isOpen, onClose }: SectionNavigatorPr
   const sections = [
     { path: '/', icon: Home, label: 'Home', available: true },
     { path: '/qmy-token', icon: Coins, label: 'QMY Token', available: true },
-    { path: '/wallet', icon: Wallet, label: 'Wallet', available: true },
-    { path: '/profile', icon: User, label: 'AR Profile', available: true },
+    { path: '/profile', icon: User, label: 'Perfil & Carteira', available: true },
+    { path: '/map', icon: Map, label: 'Map', available: true },
     { path: '/swap', icon: Repeat, label: 'Swap', available: false },
     { path: '/central-bank', icon: Building2, label: 'Central Bank', available: true },
     { path: '/chat', icon: MessageSquare, label: 'Public Chat', available: true },
@@ -24,7 +24,7 @@ export default function SectionNavigator({ isOpen, onClose }: SectionNavigatorPr
     { path: '/pre-proposals', icon: FileText, label: 'Pre-Proposals', available: true },
     { path: '/gold-paper', icon: BookOpen, label: 'Gold Paper', available: true },
     { path: '/docs', icon: FileText, label: 'Documentation', available: true },
-  ];
+  ] as const;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm animate-fade-in">
@@ -50,7 +50,7 @@ export default function SectionNavigator({ isOpen, onClose }: SectionNavigatorPr
                 to={section.path}
                 onClick={onClose}
                 className={`glass-card border-primary/30 p-6 rounded-xl transition-all hover:border-primary/60 ${
-                  !section.available ? 'opacity-50 cursor-not-allowed' : ''
+                  !section.available ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''
                 }`}
               >
                 <div className="flex items-center gap-4 mb-3">

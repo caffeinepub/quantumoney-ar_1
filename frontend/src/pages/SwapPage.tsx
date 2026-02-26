@@ -92,7 +92,7 @@ export default function SwapPage() {
                 </div>
                 <div className="bg-primary/5 border border-primary/30 rounded-xl p-6 max-w-md mx-auto">
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    <strong className="text-primary">Note:</strong> This is a read-only dashboard. 
+                    <strong className="text-primary">Note:</strong> This is a read-only dashboard.
                     No swap operations can be executed at this time.
                   </p>
                 </div>
@@ -127,11 +127,11 @@ export default function SwapPage() {
             </CardContent>
           </Card>
 
-          {/* Back to Wallet */}
+          {/* Back to Profile/Wallet */}
           <div className="text-center pt-4">
-            <Link to="/wallet">
+            <Link to="/profile">
               <Button variant="outline" size="lg" className="border-primary/40 text-primary hover:bg-primary/10">
-                Back to Wallet
+                Ir para Perfil & Carteira
               </Button>
             </Link>
           </div>

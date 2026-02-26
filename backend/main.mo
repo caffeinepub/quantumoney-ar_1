@@ -2,7 +2,6 @@ import AccessControl "authorization/access-control";
 import Stripe "stripe/Stripe";
 import StripeMixin "stripe/StripeMixin";
 import MixinStorage "blob-storage/Mixin";
-
 import Map "mo:core/Map";
 import Nat "mo:core/Nat";
 import Float "mo:core/Float";
@@ -12,7 +11,7 @@ import Array "mo:core/Array";
 import Time "mo:core/Time";
 import Int "mo:core/Int";
 
-// Apply migration
+
 
 actor {
   include MixinStorage();
@@ -72,6 +71,14 @@ actor {
     address : Text;
   };
 
+  type MapMarker = {
+    id : Text;
+    latitude : Float;
+    longitude : Float;
+    markerType : { #coin; #monster };
+    description : Text;
+  };
+
   type QMYPurchaseRequest = {
     buyer : Principal;
     tokensRequested : Nat;
@@ -93,19 +100,15 @@ actor {
   let plantedCoins = Map.empty<Text, PlantedCoin>();
   let arSpotClaims = Map.empty<Text, ARSpotClaim>();
   let arSpotDistributions = Map.empty<Text, ARSpotDistribution>();
+  let mapMarkers = Map.empty<Text, MapMarker>();
   var qmyPurchaseRequests = Map.empty<Principal, QMYPurchaseRequest>();
   let chatMessages = Map.empty<Nat, ChatMessage>();
 
   var fixedQmyPrice : Float = 0.02;
   var chatMessageCounter = 0;
 
-  // New daily limits mapping
   let dailyLimits = Map.empty<UserId, DailyLimits>();
-
-  // New principal to userId mapping
   let principalToUserId = Map.empty<Principal, UserId>();
-
-  // New userId counter
   var nextUserId : UserId = 1;
 
   include StripeMixin(stripe);
@@ -206,8 +209,6 @@ actor {
 
     switch (playerProfiles.get(caller)) {
       case (?existingProfile) {
-        // Only allow updating editable fields (nickname)
-        // Preserve all game stats to prevent cheating
         let updatedProfile : PlayerProfile = {
           energy = existingProfile.energy;
           nickname = profile.nickname;
@@ -1038,5 +1039,50 @@ actor {
       chatMessageCounter := 0;
     };
   };
-};
 
+  // --- Map Marker and Monster Storage/Retrieval ---
+  public shared ({ caller }) func initializeMapMarkers(seedMarkers : [MapMarker]) : async () {
+    if (not AccessControl.hasPermission(accessControlState, caller, #admin)) {
+      Runtime.trap("Unauthorized: Only admins can initialize map markers");
+    };
+
+    for (marker in seedMarkers.values()) {
+      mapMarkers.add(marker.id, marker);
+    };
+  };
+
+  public query ({ caller }) func getAllMapMarkers() : async [MapMarker] {
+    mapMarkers.values().toArray();
+  };
+
+  public query ({ caller }) func getCoinMarkers() : async [MapMarker] {
+    mapMarkers.values().toArray().filter(func(marker) { marker.markerType == #coin });
+  };
+
+  public query ({ caller }) func getMonsterMarkers() : async [MapMarker] {
+    mapMarkers.values().toArray().filter(func(marker) { marker.markerType == #monster });
+  };
+
+  public shared ({ caller }) func addMapMarker(marker : MapMarker) : async () {
+    if (not AccessControl.hasPermission(accessControlState, caller, #admin)) {
+      Runtime.trap("Unauthorized: Only admins can add map markers");
+    };
+    mapMarkers.add(marker.id, marker);
+  };
+
+  public shared ({ caller }) func removeMapMarker(markerId : Text) : async () {
+    if (not AccessControl.hasPermission(accessControlState, caller, #admin)) {
+      Runtime.trap("Unauthorized: Only admins can remove map markers");
+    };
+    mapMarkers.remove(markerId);
+  };
+
+  public query ({ caller }) func getNearbyMarkers(lat : Float, lon : Float, radiusMeters : Float) : async [MapMarker] {
+    mapMarkers.values().toArray().filter(
+      func(marker) {
+        let distance = calculateDistance(lat, lon, marker.latitude, marker.longitude);
+        distance <= radiusMeters;
+      }
+    );
+  };
+};

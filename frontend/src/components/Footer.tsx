@@ -1,115 +1,68 @@
-import { Link } from '@tanstack/react-router';
+import { SiWhatsapp, SiTelegram, SiInstagram } from 'react-icons/si';
+import { XIcon } from 'lucide-react';
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
+  const appUrl = typeof window !== 'undefined' ? window.location.href : 'https://quantumoney.app';
+  const shareText = encodeURIComponent('Quantumoney – O futuro das moedas digitais AR!');
+  const shareUrl = encodeURIComponent(appUrl);
+
+  const shareLinks = {
+    whatsapp: `https://wa.me/?text=${shareText}%20${shareUrl}`,
+    x: `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`,
+    telegram: `https://t.me/share/url?url=${shareUrl}&text=${shareText}`,
+    instagram: `https://www.instagram.com/`,
+  };
 
   return (
-    <footer className="relative z-10 glass-card-elevated border-t border-primary/20 py-12 md:py-16 px-4">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-8 md:mb-12">
-          <div className="text-center md:text-left">
-            <img 
-              src="/assets/generated/quantumoney-ar-logo-transparent.dim_200x200.png" 
-              alt="Quantumoney" 
-              className="w-16 h-16 mb-4 mx-auto md:mx-0 opacity-90"
-            />
-            <p className="text-muted-foreground text-sm leading-relaxed mb-3">
-              Quantum universe Web3 application on Internet Computer.
-            </p>
-            <p className="text-primary text-xs font-semibold">
-              On-chain na Internet Computer (ICP)
-            </p>
-          </div>
-
-          <div className="text-center md:text-left">
-            <h3 className="text-primary font-bold mb-4 text-sm uppercase tracking-wider">Resources</h3>
-            <ul className="space-y-2 md:space-y-3">
-              <li>
-                <Link to="/qmy-token" className="text-muted-foreground hover:text-primary transition-colors text-sm block py-1">
-                  QMY Token
-                </Link>
-              </li>
-              <li>
-                <Link to="/wallet" className="text-muted-foreground hover:text-primary transition-colors text-sm block py-1">
-                  Wallet
-                </Link>
-              </li>
-              <li>
-                <Link to="/central-bank" className="text-muted-foreground hover:text-primary transition-colors text-sm block py-1">
-                  Central Bank
-                </Link>
-              </li>
-              <li>
-                <Link to="/chat" className="text-muted-foreground hover:text-primary transition-colors text-sm block py-1">
-                  Public Chat
-                </Link>
-              </li>
-              <li>
-                <Link to="/presale" className="text-muted-foreground hover:text-primary transition-colors text-sm block py-1">
-                  Presale
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div className="text-center md:text-left">
-            <h3 className="text-primary font-bold mb-4 text-sm uppercase tracking-wider">Governance</h3>
-            <ul className="space-y-2 md:space-y-3">
-              <li>
-                <Link to="/dao" className="text-muted-foreground hover:text-primary transition-colors text-sm block py-1">
-                  DAO
-                </Link>
-              </li>
-              <li>
-                <Link to="/pre-proposals" className="text-muted-foreground hover:text-primary transition-colors text-sm block py-1">
-                  Pre-Proposals
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div className="text-center md:text-left">
-            <h3 className="text-primary font-bold mb-4 text-sm uppercase tracking-wider">Legal</h3>
-            <ul className="space-y-2 md:space-y-3">
-              <li>
-                <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors text-sm block py-1">
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors text-sm block py-1">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link to="/gold-paper" className="text-muted-foreground hover:text-primary transition-colors text-sm block py-1">
-                  Gold Paper
-                </Link>
-              </li>
-              <li>
-                <Link to="/docs" className="text-muted-foreground hover:text-primary transition-colors text-sm block py-1">
-                  Documentation Hub
-                </Link>
-              </li>
-            </ul>
-          </div>
+    <footer className="w-full border-t border-yellow-500/30 bg-black/60 backdrop-blur-sm py-3 px-4">
+      <div className="max-w-7xl mx-auto flex flex-col items-center gap-2">
+        {/* Share buttons */}
+        <div className="flex items-center gap-3">
+          <span className="text-yellow-400/70 text-xs">Partilhar:</span>
+          <a
+            href={shareLinks.whatsapp}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Partilhar no WhatsApp"
+            className="text-yellow-400/70 hover:text-yellow-400 transition-colors"
+          >
+            <SiWhatsapp size={16} />
+          </a>
+          <a
+            href={shareLinks.x}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Partilhar no X"
+            className="text-yellow-400/70 hover:text-yellow-400 transition-colors"
+          >
+            <XIcon size={16} />
+          </a>
+          <a
+            href={shareLinks.telegram}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Partilhar no Telegram"
+            className="text-yellow-400/70 hover:text-yellow-400 transition-colors"
+          >
+            <SiTelegram size={16} />
+          </a>
+          <a
+            href={shareLinks.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Partilhar no Instagram"
+            className="text-yellow-400/70 hover:text-yellow-400 transition-colors"
+          >
+            <SiInstagram size={16} />
+          </a>
         </div>
 
-        <div className="border-t border-primary/10 pt-6 md:pt-8">
-          <div className="text-center space-y-2">
-            <p className="text-muted-foreground text-sm">
-              © {currentYear} Quantumoney
-            </p>
-            <p className="text-muted-foreground/70 text-xs leading-relaxed">
-              by HTgamers | 
-              <a href="mailto:helpdesk@quantumoney.net" className="text-primary hover:underline ml-1 mr-1">
-                helpdesk@quantumoney.net
-              </a> | 
-              <a href="https://www.quantumoney.net" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline ml-1">
-                www.quantumoney.net
-              </a>
-            </p>
-          </div>
+        {/* Copyright */}
+        <div className="text-center">
+          <p className="text-yellow-400/60 text-xs">
+            © 2026 Quantumoney. Todos os direitos reservados.
+          </p>
+          <p className="text-yellow-400/50 text-xs">By HTgamers</p>
         </div>
       </div>
     </footer>

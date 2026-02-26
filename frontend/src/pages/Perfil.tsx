@@ -1,329 +1,373 @@
 import { useState } from 'react';
-import PageShell from '@/components/PageShell';
-import Container from '@/components/Container';
-import { PageTitle, BodyText } from '@/components/Typography';
-import { User, Loader2 } from 'lucide-react';
-import { useInternetIdentity } from '@/hooks/useInternetIdentity';
-import { useGetCallerUserProfile, useSaveCallerUserProfile, useRegisterPlayer, useGetPlayerState } from '@/hooks/useQueries';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import ProfileGlassPanel from '@/components/profile/ProfileGlassPanel';
-import ProfileHudOverlay from '@/components/profile/ProfileHudOverlay';
-import ProfilePlaceholders from '@/components/profile/ProfilePlaceholders';
-import { useProfileModuleState } from '@/components/profile/useProfileModuleState';
-import { toast } from 'sonner';
+import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useQueryClient } from '@tanstack/react-query';
+import { useGetCallerUserProfile, useRegisterPlayer, useSaveCallerUserProfile } from '../hooks/useQueries';
+import ProfileGlassPanel from '../components/profile/ProfileGlassPanel';
+import ProfileHudOverlay from '../components/profile/ProfileHudOverlay';
+import ProfilePlaceholders from '../components/profile/ProfilePlaceholders';
+import ARPlayerStats from '../components/profile/ARPlayerStats';
+import ARCoinBalance from '../components/profile/ARCoinBalance';
+import ARMonsterCollection from '../components/profile/ARMonsterCollection';
+import TechnicalValidationPanel from '../components/profile/TechnicalValidationPanel';
+import { useARGameData } from '../hooks/useARGameData';
+import { useQMYLedger } from '../hooks/useQMYLedger';
+import { useICPLedger } from '../hooks/useICPLedger';
+import { useQMYVesting } from '../hooks/useQMYVesting';
+import { useQMYTransactions } from '../hooks/useQMYTransactions';
+import VestingBreakdown from '../components/wallet/VestingBreakdown';
+import QMYTransactionHistory from '../components/wallet/QMYTransactionHistory';
+import { Coins, Wallet, User, Shield, RefreshCw, LogIn } from 'lucide-react';
+
+function SendQMYSimulatedCard() {
+  return (
+    <ProfileGlassPanel>
+      <div className="flex items-center gap-2 mb-3">
+        <RefreshCw size={16} className="text-yellow-400" />
+        <h3 className="text-yellow-400 font-semibold text-sm uppercase tracking-wider">Enviar QMY</h3>
+      </div>
+      <div className="bg-yellow-400/5 border border-yellow-400/20 rounded-lg p-3 text-center">
+        <p className="text-yellow-400/70 text-xs">
+          Transferências QMY disponíveis em breve via ICP Ledger.
+        </p>
+        <p className="text-yellow-400/50 text-xs mt-1">
+          Modo simulado ativo — sem transferências reais.
+        </p>
+      </div>
+    </ProfileGlassPanel>
+  );
+}
 
 export default function Perfil() {
   const { identity, login, loginStatus } = useInternetIdentity();
+  const queryClient = useQueryClient();
+  const isAuthenticated = !!identity;
+  const isLoggingIn = loginStatus === 'logging-in';
+
   const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
-  const { data: playerState } = useGetPlayerState();
-  const saveProfile = useSaveCallerUserProfile();
-  const registerPlayer = useRegisterPlayer();
+  const { mutateAsync: registerPlayer, isPending: isRegistering } = useRegisterPlayer();
+  const { mutateAsync: saveProfile, isPending: isSaving } = useSaveCallerUserProfile();
 
-  const [editedNickname, setEditedNickname] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
+  const { data: arProfile } = useARGameData();
+  const { data: qmyBalance, isLoading: qmyLoading } = useQMYLedger();
+  const { data: icpBalance, isLoading: icpLoading } = useICPLedger();
+  const { data: vestingData } = useQMYVesting();
+  const { data: transactions, isLoading: txLoading } = useQMYTransactions();
 
-  const { isAuthenticated, isRegistered, showProfileSetup } = useProfileModuleState(
-    identity,
-    userProfile,
-    profileLoading,
-    isFetched
-  );
+  const [editMode, setEditMode] = useState(false);
+  const [nickname, setNickname] = useState('');
+  const [registerNickname, setRegisterNickname] = useState('');
+
+  const showProfileSetup = isAuthenticated && !profileLoading && isFetched && userProfile === null;
+  const isRegistered = userProfile?.registered === true;
 
   const handleRegister = async () => {
-    if (!editedNickname.trim()) {
-      toast.error('Please enter a nickname');
-      return;
-    }
-
+    if (!registerNickname.trim()) return;
     try {
-      await registerPlayer.mutateAsync(editedNickname.trim());
-      toast.success('Profile created successfully!');
-      setEditedNickname('');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to create profile');
+      await registerPlayer(registerNickname.trim());
+      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
+    } catch (e) {
+      console.error('Registration error:', e);
     }
   };
 
   const handleSave = async () => {
-    if (!userProfile || !editedNickname.trim()) {
-      toast.error('Please enter a valid nickname');
-      return;
-    }
-
+    if (!userProfile || !nickname.trim()) return;
     try {
-      await saveProfile.mutateAsync({
-        ...userProfile,
-        nickname: editedNickname.trim(),
-      });
-      toast.success('Profile updated successfully!');
-      setIsEditing(false);
-      setEditedNickname('');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to update profile');
+      await saveProfile({ ...userProfile, nickname: nickname.trim() });
+      setEditMode(false);
+      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
+    } catch (e) {
+      console.error('Save error:', e);
     }
-  };
-
-  const startEditing = () => {
-    if (userProfile) {
-      setEditedNickname(userProfile.nickname);
-      setIsEditing(true);
-    }
-  };
-
-  const cancelEditing = () => {
-    setIsEditing(false);
-    setEditedNickname('');
   };
 
   // Not authenticated
   if (!isAuthenticated) {
     return (
-      <PageShell>
-        <Container>
-          <div className="py-16 space-y-8">
-            <div className="text-center space-y-4">
-              <PageTitle icon={<User className="w-12 h-12" />} className="justify-center">
-                Profile
-              </PageTitle>
-              <BodyText className="max-w-2xl mx-auto text-center">
-                Please log in to view your profile
-              </BodyText>
-            </div>
-
-            <ProfileGlassPanel>
-              <div className="p-16 text-center space-y-6">
-                <User className="w-24 h-24 text-primary/50 mx-auto" />
-                <p className="text-primary text-lg">Authentication required</p>
-                <Button
-                  onClick={login}
-                  disabled={loginStatus === 'logging-in'}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                >
-                  {loginStatus === 'logging-in' ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Logging in...
-                    </>
-                  ) : (
-                    'Login'
-                  )}
-                </Button>
-              </div>
-            </ProfileGlassPanel>
+      <div className="min-h-screen flex items-center justify-center pt-20 pb-10 px-4">
+        <ProfileGlassPanel className="max-w-md w-full text-center">
+          <div className="flex flex-col items-center gap-4 py-6">
+            <LogIn size={40} className="text-yellow-400" />
+            <h2 className="text-yellow-400 text-xl font-bold">Acesso Restrito</h2>
+            <p className="text-yellow-400/70 text-sm">
+              Faça login para aceder ao seu perfil e carteira.
+            </p>
+            <button
+              onClick={login}
+              disabled={isLoggingIn}
+              className="mt-2 px-6 py-2 bg-yellow-400/20 border border-yellow-400/50 text-yellow-400 rounded-lg hover:bg-yellow-400/30 transition-colors disabled:opacity-50 text-sm font-medium"
+            >
+              {isLoggingIn ? 'A entrar...' : 'Entrar com Internet Identity'}
+            </button>
           </div>
-        </Container>
-      </PageShell>
+        </ProfileGlassPanel>
+      </div>
     );
   }
 
-  // Loading state
+  // Loading
   if (profileLoading) {
     return (
-      <PageShell>
-        <Container>
-          <div className="py-16 space-y-8">
-            <div className="text-center space-y-4">
-              <PageTitle icon={<User className="w-12 h-12" />} className="justify-center">
-                Profile
-              </PageTitle>
-            </div>
-
-            <ProfileGlassPanel>
-              <div className="p-16 text-center space-y-6">
-                <Loader2 className="w-24 h-24 text-primary/50 mx-auto animate-spin" />
-                <p className="text-primary text-lg">Loading profile...</p>
-              </div>
-            </ProfileGlassPanel>
-          </div>
-        </Container>
-      </PageShell>
+      <div className="min-h-screen flex items-center justify-center pt-20">
+        <div className="text-yellow-400 text-sm animate-pulse">A carregar perfil...</div>
+      </div>
     );
   }
 
-  // Registration required
+  // Registration flow
   if (showProfileSetup) {
     return (
-      <PageShell>
-        <Container>
-          <div className="py-16 space-y-8">
-            <div className="text-center space-y-4">
-              <PageTitle icon={<User className="w-12 h-12" />} className="justify-center">
-                Profile Setup
-              </PageTitle>
-              <BodyText className="max-w-2xl mx-auto text-center">
-                Create your player profile to start playing
-              </BodyText>
+      <div className="min-h-screen flex items-center justify-center pt-20 pb-10 px-4">
+        <ProfileGlassPanel className="max-w-md w-full">
+          <div className="flex flex-col gap-4 py-4">
+            <div className="flex items-center gap-2">
+              <User size={20} className="text-yellow-400" />
+              <h2 className="text-yellow-400 text-lg font-bold">Criar Perfil</h2>
             </div>
-
-            <ProfileGlassPanel>
-              <div className="p-8 space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="nickname" className="text-primary">
-                    Nickname
-                  </Label>
-                  <Input
-                    id="nickname"
-                    value={editedNickname}
-                    onChange={(e) => setEditedNickname(e.target.value)}
-                    placeholder="Enter your nickname"
-                    className="bg-background/50 border-primary/30 text-foreground focus:border-primary"
-                    maxLength={30}
-                  />
-                </div>
-
-                <Button
-                  onClick={handleRegister}
-                  disabled={registerPlayer.isPending || !editedNickname.trim()}
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-                >
-                  {registerPlayer.isPending ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating profile...
-                    </>
-                  ) : (
-                    'Create Profile'
-                  )}
-                </Button>
-              </div>
-            </ProfileGlassPanel>
+            <p className="text-yellow-400/70 text-sm">
+              Bem-vindo ao Quantumoney! Escolhe o teu nickname para começar.
+            </p>
+            <div className="flex flex-col gap-2">
+              <label className="text-yellow-400/80 text-xs uppercase tracking-wider">Nickname</label>
+              <input
+                type="text"
+                value={registerNickname}
+                onChange={(e) => setRegisterNickname(e.target.value)}
+                placeholder="O teu nickname..."
+                className="bg-black/40 border border-yellow-400/40 text-yellow-400 rounded-lg px-3 py-2 text-sm placeholder:text-yellow-400/30 focus:outline-none focus:border-yellow-400/70"
+                maxLength={30}
+              />
+            </div>
+            <div className="bg-yellow-400/10 border border-yellow-400/20 rounded-lg p-3 text-xs text-yellow-400/70">
+              <p className="font-semibold text-yellow-400 mb-1">Bónus de Boas-Vindas:</p>
+              <p>• 100 QTM disponíveis imediatamente</p>
+              <p>• 900 QTM bloqueados (vesting 9 meses)</p>
+              <p>• 100 XP iniciais</p>
+              <p>• 100% energia</p>
+            </div>
+            <button
+              onClick={handleRegister}
+              disabled={isRegistering || !registerNickname.trim()}
+              className="px-6 py-2 bg-yellow-400/20 border border-yellow-400/50 text-yellow-400 rounded-lg hover:bg-yellow-400/30 transition-colors disabled:opacity-50 text-sm font-medium"
+            >
+              {isRegistering ? 'A registar...' : 'Criar Perfil'}
+            </button>
           </div>
-        </Container>
-      </PageShell>
+        </ProfileGlassPanel>
+      </div>
     );
   }
 
-  // Registered user - show profile
-  const profile = userProfile || playerState;
+  const principalId = identity?.getPrincipal().toString() ?? '';
+
+  // Build data objects matching the exact prop shapes of each component
+  const arStatsData = arProfile
+    ? { xp: Number(arProfile.xp), level: Number(arProfile.level) }
+    : undefined;
+
+  const arCoinData = arProfile
+    ? {
+        availableCoins: Number(arProfile.availableTokens),
+        lockedCoins: Number(arProfile.plantedTokens),
+        bonusCoins: Number(arProfile.bonusTokens),
+      }
+    : undefined;
+
+  const arMonsterData = arProfile
+    ? {
+        capturedMonsters: arProfile.capturedMonsters.map((cm) => ({
+          name: cm.monster.name,
+          captureTime: Number(cm.captureTime),
+          energyBoost: Number(cm.monster.energyBoost),
+        })),
+      }
+    : undefined;
 
   return (
-    <PageShell>
-      <Container>
-        <div className="py-16 space-y-8 relative">
-          {/* HUD Overlay */}
-          {profile && <ProfileHudOverlay profile={profile} />}
+    <div className="min-h-screen pt-20 pb-24 px-4">
+      {isRegistered && arProfile && (
+        <ProfileHudOverlay profile={arProfile} />
+      )}
 
-          <div className="text-center space-y-4">
-            <PageTitle icon={<User className="w-12 h-12" />} className="justify-center">
-              Profile
-            </PageTitle>
-            <BodyText className="max-w-2xl mx-auto text-center">
-              Manage your player profile and view your stats
-            </BodyText>
+      <div className="max-w-2xl mx-auto space-y-4">
+        {/* Header */}
+        <div className="text-center py-2">
+          <h1 className="text-yellow-400 text-2xl font-bold tracking-wider">MEU PERFIL</h1>
+          <p className="text-yellow-400/50 text-xs mt-1">Perfil & Carteira Integrados</p>
+        </div>
+
+        {/* ── PROFILE SECTION ── */}
+        <ProfileGlassPanel>
+          <div className="flex items-center gap-2 mb-3">
+            <User size={16} className="text-yellow-400" />
+            <h3 className="text-yellow-400 font-semibold text-sm uppercase tracking-wider">Informações do Utilizador</h3>
           </div>
 
-          {profile && (
-            <>
-              {/* Main Profile Panel */}
-              <ProfileGlassPanel>
-                <div className="p-8 space-y-6">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-2xl font-bold text-primary">Player Information</h3>
-                    {!isEditing && (
-                      <Button
-                        onClick={startEditing}
-                        variant="outline"
-                        className="border-primary/30 text-primary hover:bg-primary/10"
-                      >
-                        Edit Nickname
-                      </Button>
-                    )}
+          {userProfile ? (
+            <div className="space-y-3">
+              {editMode ? (
+                <div className="flex flex-col gap-2">
+                  <input
+                    type="text"
+                    value={nickname}
+                    onChange={(e) => setNickname(e.target.value)}
+                    placeholder={userProfile.nickname}
+                    className="bg-black/40 border border-yellow-400/40 text-yellow-400 rounded-lg px-3 py-2 text-sm placeholder:text-yellow-400/30 focus:outline-none focus:border-yellow-400/70"
+                    maxLength={30}
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleSave}
+                      disabled={isSaving || !nickname.trim()}
+                      className="flex-1 px-4 py-1.5 bg-yellow-400/20 border border-yellow-400/50 text-yellow-400 rounded-lg hover:bg-yellow-400/30 transition-colors disabled:opacity-50 text-xs"
+                    >
+                      {isSaving ? 'A guardar...' : 'Guardar'}
+                    </button>
+                    <button
+                      onClick={() => setEditMode(false)}
+                      className="flex-1 px-4 py-1.5 bg-black/40 border border-yellow-400/20 text-yellow-400/60 rounded-lg hover:bg-black/60 transition-colors text-xs"
+                    >
+                      Cancelar
+                    </button>
                   </div>
-
-                  {isEditing ? (
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="edit-nickname" className="text-primary">
-                          Nickname
-                        </Label>
-                        <Input
-                          id="edit-nickname"
-                          value={editedNickname}
-                          onChange={(e) => setEditedNickname(e.target.value)}
-                          placeholder="Enter your nickname"
-                          className="bg-background/50 border-primary/30 text-foreground focus:border-primary"
-                          maxLength={30}
-                        />
-                      </div>
-
-                      <div className="flex gap-3">
-                        <Button
-                          onClick={handleSave}
-                          disabled={saveProfile.isPending || !editedNickname.trim()}
-                          className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
-                        >
-                          {saveProfile.isPending ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Saving...
-                            </>
-                          ) : (
-                            'Save Changes'
-                          )}
-                        </Button>
-                        <Button
-                          onClick={cancelEditing}
-                          variant="outline"
-                          className="flex-1 border-primary/30 text-primary hover:bg-primary/10"
-                        >
-                          Cancel
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <p className="text-sm text-primary/70">Nickname</p>
-                        <p className="text-xl font-semibold text-primary">{profile.nickname}</p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <p className="text-sm text-primary/70">Level</p>
-                        <p className="text-xl font-semibold text-primary">{profile.level.toString()}</p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <p className="text-sm text-primary/70">Experience Points</p>
-                        <p className="text-xl font-semibold text-primary">{profile.xp.toString()} XP</p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <p className="text-sm text-primary/70">Energy</p>
-                        <p className="text-xl font-semibold text-primary">{profile.energy.toString()}%</p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <p className="text-sm text-primary/70">Available Tokens</p>
-                        <p className="text-xl font-semibold text-primary">{profile.availableTokens.toString()} QTM</p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <p className="text-sm text-primary/70">Planted Tokens</p>
-                        <p className="text-xl font-semibold text-primary">{profile.plantedTokens.toString()} QTM</p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <p className="text-sm text-primary/70">Bonus Tokens</p>
-                        <p className="text-xl font-semibold text-primary">{profile.bonusTokens.toString()} QTM</p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <p className="text-sm text-primary/70">Captured Monsters</p>
-                        <p className="text-xl font-semibold text-primary">{profile.capturedMonsters.length}</p>
-                      </div>
-                    </div>
-                  )}
                 </div>
-              </ProfileGlassPanel>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-yellow-400 font-semibold">{userProfile.nickname}</p>
+                    <p className="text-yellow-400/50 text-xs mt-0.5">
+                      Nível {Number(userProfile.level)} · {Number(userProfile.xp)} XP
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => { setNickname(userProfile.nickname); setEditMode(true); }}
+                    className="px-3 py-1 bg-yellow-400/10 border border-yellow-400/30 text-yellow-400/70 rounded-lg hover:bg-yellow-400/20 transition-colors text-xs"
+                  >
+                    Editar
+                  </button>
+                </div>
+              )}
 
-              {/* Placeholder sections for future expansion */}
-              <ProfilePlaceholders />
-            </>
+              <div className="grid grid-cols-3 gap-2 pt-1">
+                <div className="bg-black/30 border border-yellow-400/20 rounded-lg p-2 text-center">
+                  <p className="text-yellow-400 font-bold text-sm">{Number(userProfile.availableTokens)}</p>
+                  <p className="text-yellow-400/50 text-xs">QTM Livres</p>
+                </div>
+                <div className="bg-black/30 border border-yellow-400/20 rounded-lg p-2 text-center">
+                  <p className="text-yellow-400 font-bold text-sm">{Number(userProfile.plantedTokens)}</p>
+                  <p className="text-yellow-400/50 text-xs">Plantados</p>
+                </div>
+                <div className="bg-black/30 border border-yellow-400/20 rounded-lg p-2 text-center">
+                  <p className="text-yellow-400 font-bold text-sm">{Number(userProfile.bonusTokens)}</p>
+                  <p className="text-yellow-400/50 text-xs">Bónus</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <div className="flex-1 bg-black/30 border border-yellow-400/20 rounded-lg p-2 text-center">
+                  <p className="text-yellow-400 font-bold text-sm">{Number(userProfile.energy)}%</p>
+                  <p className="text-yellow-400/50 text-xs">Energia</p>
+                </div>
+                <div className="flex-1 bg-black/30 border border-yellow-400/20 rounded-lg p-2 text-center">
+                  <p className="text-yellow-400 font-bold text-sm">{userProfile.capturedMonsters.length}</p>
+                  <p className="text-yellow-400/50 text-xs">Monstros</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <p className="text-yellow-400/50 text-sm">Perfil não encontrado.</p>
           )}
-        </div>
-      </Container>
-    </PageShell>
+        </ProfileGlassPanel>
+
+        {/* ── AR STATS ── */}
+        <ARPlayerStats data={arStatsData} />
+
+        {/* ── AR COIN BALANCE ── */}
+        <ARCoinBalance data={arCoinData} />
+
+        {/* ── WALLET SECTION ── */}
+        <ProfileGlassPanel>
+          <div className="flex items-center gap-2 mb-3">
+            <Wallet size={16} className="text-yellow-400" />
+            <h3 className="text-yellow-400 font-semibold text-sm uppercase tracking-wider">Carteira</h3>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            {/* QMY Balance */}
+            <div className="bg-black/30 border border-yellow-400/20 rounded-lg p-3">
+              <div className="flex items-center gap-1.5 mb-1">
+                <Coins size={12} className="text-yellow-400" />
+                <p className="text-yellow-400/70 text-xs uppercase tracking-wider">QMY</p>
+              </div>
+              {qmyLoading ? (
+                <p className="text-yellow-400/50 text-xs animate-pulse">A carregar...</p>
+              ) : (
+                <p className="text-yellow-400 font-bold text-lg">
+                  {qmyBalance !== undefined && qmyBalance !== null
+                    ? (qmyBalance as { formatted?: string }).formatted ?? String(qmyBalance)
+                    : '—'}
+                </p>
+              )}
+            </div>
+
+            {/* ICP Balance */}
+            <div className="bg-black/30 border border-yellow-400/20 rounded-lg p-3">
+              <div className="flex items-center gap-1.5 mb-1">
+                <Shield size={12} className="text-yellow-400" />
+                <p className="text-yellow-400/70 text-xs uppercase tracking-wider">ICP</p>
+              </div>
+              {icpLoading ? (
+                <p className="text-yellow-400/50 text-xs animate-pulse">A carregar...</p>
+              ) : (
+                <p className="text-yellow-400 font-bold text-lg">
+                  {icpBalance !== undefined && icpBalance !== null
+                    ? (icpBalance as { formatted?: string }).formatted ?? String(icpBalance)
+                    : '—'}
+                </p>
+              )}
+            </div>
+          </div>
+        </ProfileGlassPanel>
+
+        {/* ── VESTING BREAKDOWN ── */}
+        {vestingData && (
+          <ProfileGlassPanel>
+            <div className="flex items-center gap-2 mb-3">
+              <Shield size={16} className="text-yellow-400" />
+              <h3 className="text-yellow-400 font-semibold text-sm uppercase tracking-wider">Vesting</h3>
+            </div>
+            <VestingBreakdown
+              available={vestingData.available}
+              locked={vestingData.locked}
+              nextUnlock={vestingData.nextUnlock}
+            />
+          </ProfileGlassPanel>
+        )}
+
+        {/* ── SEND QMY (Simulated) ── */}
+        <SendQMYSimulatedCard />
+
+        {/* ── TRANSACTION HISTORY ── */}
+        <ProfileGlassPanel>
+          <div className="flex items-center gap-2 mb-3">
+            <RefreshCw size={16} className="text-yellow-400" />
+            <h3 className="text-yellow-400 font-semibold text-sm uppercase tracking-wider">Histórico de Transações</h3>
+          </div>
+          <QMYTransactionHistory
+            transactions={transactions ?? null}
+            isLoading={txLoading}
+          />
+        </ProfileGlassPanel>
+
+        {/* ── MONSTER COLLECTION ── */}
+        <ARMonsterCollection data={arMonsterData} />
+
+        {/* ── TECHNICAL PANEL ── */}
+        <TechnicalValidationPanel />
+
+        {/* ── PLACEHOLDERS ── */}
+        <ProfilePlaceholders />
+      </div>
+    </div>
   );
 }

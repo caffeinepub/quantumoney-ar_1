@@ -1,42 +1,76 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-24T21:59:44.389Z",
-  "summary": "The diff implements most requirements partially. REQ-1 (map removal) is addressed in App.tsx and navigation files, but MapMode.tsx is listed as modified (not deleted/emptied). REQ-2 (yellow borders) is implemented via index.css for glass-card utilities but individual component files are not shown as modified. REQ-3 (header/navigator updates) appears implemented in Header.tsx and SectionNavigator.tsx. REQ-4 (Caffeine removal) is not evidenced — Footer.tsx is not in the diff.",
+  "generatedAt": "2026-02-25T22:22:40.113Z",
+  "summary": "The diff implements most of the requested requirements: Footer is updated with share buttons and copyright (REQ-1), Caffeine references appear removed from footer and index.html (REQ-2 partially evidenced), Profile page is unified with wallet content (REQ-3), and Central Bank page is restored with public data (REQ-4). However, several specific acceptance criteria have gaps or cannot be fully verified.",
   "missing_requirements": [
     {
-      "id": "REQ-1",
-      "requirement": "Delete or empty frontend/src/pages/MapMode.tsx",
-      "reason": "MapMode.tsx appears in the diff as a modified file but its content is not shown as emptied or deleted. The file-summaries.txt still describes it as a simulated global map page with full content, indicating it was not deleted or emptied.",
+      "id": "REQ-2",
+      "requirement": "Scan the entire frontend codebase and remove every occurrence of Caffeine branding, links, or references from all pages, components, and layout files — not just the footer.",
+      "reason": "The diff shows index.html and Footer.tsx are cleaned of Caffeine references, but there is no evidence of a systematic scan across all other pages and components. Only a subset of files are shown as modified, and no confirmation of a codebase-wide removal is present.",
       "evidence": [
-        "frontend/src/pages/MapMode.tsx",
-        "frontend-file-summaries.txt"
+        "frontend/src/components/Footer.tsx",
+        "frontend/index.html"
       ]
     },
     {
-      "id": "REQ-2",
-      "requirement": "Apply yellow borders to all individual card/panel/window containers across every page including wallet cards, DAO cards, bank tiles, presale cards, tokenomics sections, and any components not using the glass-card utility classes.",
-      "reason": "Only index.css is modified to add yellow borders to utility classes. No individual page or component files such as WalletPage, DAOPage, BancoCentral, PresalePage, or QMYTokenPage are shown as modified, so components not using the glass-card utility classes may not have received yellow borders.",
+      "id": "REQ-3",
+      "requirement": "No standalone wallet route (/wallet) exists or is linked in navigation.",
+      "reason": "The diff shows App.tsx routes and the Perfil.tsx unified page, but WalletPage.tsx is not shown as removed, and there is no explicit evidence the /wallet route has been deleted from routing. The file diff shows 0 removed files.",
       "evidence": [
-        "frontend/src/index.css"
+        "frontend/src/App.tsx"
       ]
     },
     {
       "id": "REQ-4",
-      "requirement": "Remove all references to Caffeine from Footer.tsx",
-      "reason": "Footer.tsx does not appear anywhere in the diff. It is neither in the modified files list nor the added files list, so there is no evidence that Caffeine references were removed from the footer.",
-      "evidence": []
+      "requirement": "Page displays recent transactions fetched from Carteira A canisters.",
+      "reason": "The BancoCentral.tsx diff (truncated) shows supply, XP, vesting, monster, and bonus data aggregated from player profiles, but no explicit transaction history section or hook for recent transactions is visible in the truncated content.",
+      "evidence": [
+        "frontend/src/pages/BancoCentral.tsx"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "requirement": "Ensure all Leaflet OpenStreetMap map pages continue to display coin and monster marker positions in sync with the Carteira A canisters, using the same canister actor and hooks already in place.",
+      "reason": "MapPage.tsx is not included as a modified file. The frontend-file-summaries.txt references MapMode.tsx with SVG-based simulation rather than Leaflet with real canister data, casting doubt on whether the map remains synced with Carteira A canisters.",
+      "evidence": [
+        "frontend-file-summaries.txt"
+      ]
     }
   ],
-  "hallucinated_features": [],
-  "confidence": 0.78,
+  "hallucinated_features": [
+    {
+      "description": "ProfilePage.tsx is imported alongside Perfil.tsx in App.tsx, suggesting a duplicate profile page module may exist.",
+      "reason": "App.tsx imports both Perfil from ./pages/Perfil and ProfilePage from ./pages/ProfilePage, but REQ-3 explicitly requires a single unified profile page and no duplicate pages or routes.",
+      "evidence": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "description": "MapMode.tsx uses SVG-based world projection with simulated coin and monster markers at tourist landmarks rather than real Leaflet OpenStreetMap with Carteira A canister data.",
+      "reason": "The file summary for MapMode.tsx describes SVG-based world projection and markers at tourist landmarks, which appears to be a simulated hardcoded implementation rather than syncing with Carteira A canisters via existing hooks as required by REQ-5.",
+      "evidence": [
+        "frontend-file-summaries.txt"
+      ]
+    },
+    {
+      "description": "CanisterArchitecturePanel component is imported and used in BancoCentral.tsx.",
+      "reason": "REQ-4 specifies displaying coin supply, circulating and locked tokens, vesting, XP totals, bonus distributions, monster counts, and recent transactions. A CanisterArchitecturePanel is not part of the specified requirements and represents an unrequested addition.",
+      "evidence": [
+        "frontend/src/pages/BancoCentral.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.65,
   "changed_files": [
     "frontend-file-summaries.txt",
     "frontend/src/App.tsx",
+    "frontend/src/components/Footer.tsx",
     "frontend/src/components/Header.tsx",
     "frontend/src/components/SectionNavigator.tsx",
-    "frontend/src/index.css",
-    "frontend/src/pages/MapMode.tsx",
+    "frontend/src/pages/BancoCentral.tsx",
+    "frontend/src/pages/Perfil.tsx",
+    "frontend/src/pages/SwapPage.tsx",
     "project_state.json"
   ]
 }

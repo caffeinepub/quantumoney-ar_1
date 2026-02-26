@@ -19,6 +19,13 @@ export const _CaffeineStorageRefillResult = IDL.Record({
   'success' : IDL.Opt(IDL.Bool),
   'topped_up_amount' : IDL.Opt(IDL.Nat),
 });
+export const MapMarker = IDL.Record({
+  'id' : IDL.Text,
+  'latitude' : IDL.Float64,
+  'description' : IDL.Text,
+  'longitude' : IDL.Float64,
+  'markerType' : IDL.Variant({ 'coin' : IDL.Null, 'monster' : IDL.Null }),
+});
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
@@ -115,6 +122,7 @@ export const idlService = IDL.Service({
       [],
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
+  'addMapMarker' : IDL.Func([MapMarker], [], []),
   'adminGetPlayerCount' : IDL.Func([], [IDL.Nat], ['query']),
   'adminResetPlayer' : IDL.Func([IDL.Principal], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
@@ -127,6 +135,7 @@ export const idlService = IDL.Service({
       [IDL.Opt(ARSpotDistribution)],
       ['query'],
     ),
+  'getAllMapMarkers' : IDL.Func([], [IDL.Vec(MapMarker)], ['query']),
   'getAllPlayerProfiles' : IDL.Func(
       [],
       [IDL.Vec(IDL.Tuple(IDL.Principal, PlayerProfile))],
@@ -139,9 +148,16 @@ export const idlService = IDL.Service({
       [IDL.Vec(CapturedMonster)],
       ['query'],
     ),
+  'getCoinMarkers' : IDL.Func([], [IDL.Vec(MapMarker)], ['query']),
   'getMessages' : IDL.Func(
       [IDL.Nat, IDL.Nat],
       [IDL.Vec(ChatMessage)],
+      ['query'],
+    ),
+  'getMonsterMarkers' : IDL.Func([], [IDL.Vec(MapMarker)], ['query']),
+  'getNearbyMarkers' : IDL.Func(
+      [IDL.Float64, IDL.Float64, IDL.Float64],
+      [IDL.Vec(MapMarker)],
       ['query'],
     ),
   'getPlayerState' : IDL.Func([], [IDL.Opt(PlayerProfile)], ['query']),
@@ -157,6 +173,7 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'initializeAccessControl' : IDL.Func([], [], []),
+  'initializeMapMarkers' : IDL.Func([IDL.Vec(MapMarker)], [], []),
   'initializeMerkleStorePrices' : IDL.Func([], [], []),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'paymentCancel' : IDL.Func([IDL.Text], [PaymentCancelResponse], []),
@@ -330,6 +347,7 @@ export const idlService = IDL.Service({
       [],
     ),
   'registerPlayer' : IDL.Func([IDL.Text], [], []),
+  'removeMapMarker' : IDL.Func([IDL.Text], [], []),
   'rescueSingleCoin' : IDL.Func([IDL.Text, CoordinatedPoint], [], []),
   'restoreEnergy' : IDL.Func([], [], []),
   'saveCallerUserProfile' : IDL.Func([PlayerProfile], [], []),
@@ -350,6 +368,13 @@ export const idlFactory = ({ IDL }) => {
   const _CaffeineStorageRefillResult = IDL.Record({
     'success' : IDL.Opt(IDL.Bool),
     'topped_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const MapMarker = IDL.Record({
+    'id' : IDL.Text,
+    'latitude' : IDL.Float64,
+    'description' : IDL.Text,
+    'longitude' : IDL.Float64,
+    'markerType' : IDL.Variant({ 'coin' : IDL.Null, 'monster' : IDL.Null }),
   });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
@@ -447,6 +472,7 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
+    'addMapMarker' : IDL.Func([MapMarker], [], []),
     'adminGetPlayerCount' : IDL.Func([], [IDL.Nat], ['query']),
     'adminResetPlayer' : IDL.Func([IDL.Principal], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
@@ -459,6 +485,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(ARSpotDistribution)],
         ['query'],
       ),
+    'getAllMapMarkers' : IDL.Func([], [IDL.Vec(MapMarker)], ['query']),
     'getAllPlayerProfiles' : IDL.Func(
         [],
         [IDL.Vec(IDL.Tuple(IDL.Principal, PlayerProfile))],
@@ -471,9 +498,16 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(CapturedMonster)],
         ['query'],
       ),
+    'getCoinMarkers' : IDL.Func([], [IDL.Vec(MapMarker)], ['query']),
     'getMessages' : IDL.Func(
         [IDL.Nat, IDL.Nat],
         [IDL.Vec(ChatMessage)],
+        ['query'],
+      ),
+    'getMonsterMarkers' : IDL.Func([], [IDL.Vec(MapMarker)], ['query']),
+    'getNearbyMarkers' : IDL.Func(
+        [IDL.Float64, IDL.Float64, IDL.Float64],
+        [IDL.Vec(MapMarker)],
         ['query'],
       ),
     'getPlayerState' : IDL.Func([], [IDL.Opt(PlayerProfile)], ['query']),
@@ -489,6 +523,7 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'initializeAccessControl' : IDL.Func([], [], []),
+    'initializeMapMarkers' : IDL.Func([IDL.Vec(MapMarker)], [], []),
     'initializeMerkleStorePrices' : IDL.Func([], [], []),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'paymentCancel' : IDL.Func([IDL.Text], [PaymentCancelResponse], []),
@@ -662,6 +697,7 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'registerPlayer' : IDL.Func([IDL.Text], [], []),
+    'removeMapMarker' : IDL.Func([IDL.Text], [], []),
     'rescueSingleCoin' : IDL.Func([IDL.Text, CoordinatedPoint], [], []),
     'restoreEnergy' : IDL.Func([], [], []),
     'saveCallerUserProfile' : IDL.Func([PlayerProfile], [], []),

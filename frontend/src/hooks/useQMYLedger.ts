@@ -3,39 +3,30 @@ import { useInternetIdentity } from './useInternetIdentity';
 import { HttpAgent } from '@dfinity/agent';
 import { ICRCLedgerClient, formatBalance } from '../lib/icrc/ledgerClient';
 
-// QMY Ledger canister ID
+// Carteira A — QMY Ledger / Token Standard
 const QMY_LEDGER_CANISTER_ID = '5o54h-giaaa-aaaad-aentq-cai';
 
-/**
- * Hook to fetch real QMY balance from on-chain ledger
- */
 export function useQMYLedger() {
   const { identity, isInitializing } = useInternetIdentity();
 
   return useQuery({
-    queryKey: ['qmyBalance', identity?.getPrincipal().toString()],
+    queryKey: ['qmyLedger', identity?.getPrincipal().toString()],
     queryFn: async () => {
-      if (!identity) {
-        throw new Error('Not authenticated');
-      }
+      if (!identity) return null;
 
-      const principal = identity.getPrincipal();
-      
-      // Create agent with the authenticated identity
       const agent = new HttpAgent({
         identity,
         host: 'https://ic0.app',
       });
 
-      // In development, fetch root key
       if (process.env.NODE_ENV !== 'production') {
-        await agent.fetchRootKey().catch(err => {
-          console.warn('Unable to fetch root key:', err);
+        await agent.fetchRootKey().catch(() => {
+          // ignore in dev
         });
       }
 
       const client = new ICRCLedgerClient(QMY_LEDGER_CANISTER_ID, agent);
-      const balanceData = await client.getBalanceWithMetadata(principal);
+      const balanceData = await client.getBalanceWithMetadata(identity.getPrincipal());
 
       return {
         balance: balanceData.balance,
@@ -45,7 +36,8 @@ export function useQMYLedger() {
       };
     },
     enabled: !!identity && !isInitializing,
-    staleTime: 10000, // 10 seconds
+    staleTime: 30_000,
+    refetchInterval: 60_000,
     retry: 2,
   });
 }

@@ -33,8 +33,8 @@ export default function PreProposalsPage() {
               <BookOpen className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-amber-300 text-sm leading-relaxed">
-                  <strong>Educational Purpose:</strong> These pre-proposals are for learning and discussion only. 
-                  No governance actions, voting, or execution are available. This section helps the community 
+                  <strong>Educational Purpose:</strong> These pre-proposals are for learning and discussion only.
+                  No governance actions, voting, or execution are available. This section helps the community
                   understand potential future governance topics.
                 </p>
               </div>
@@ -70,8 +70,8 @@ export default function PreProposalsPage() {
                       <p className="text-sm text-muted-foreground">{proposal.impact}</p>
                     </div>
                   </div>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full border-primary/40 text-primary hover:bg-primary/10"
                     onClick={() => navigate({ to: '/pre-proposals/$proposalId', params: { proposalId: proposal.id } })}
                   >

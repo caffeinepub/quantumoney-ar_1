@@ -1,96 +1,128 @@
 {
   "kind": "build_request",
-  "title": "Remove map page, apply yellow borders to all pages, update navigation and footer",
+  "title": "Footer Share Buttons, Unified Profile+Wallet Page, and Restored Central Bank Page",
   "projectName": "Quantumoney",
-  "priority": "high",
+  "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Remove the Map page entirely: delete or empty frontend/src/pages/MapMode.tsx, remove its route from App.tsx, and remove any navigation link pointing to the map from Header.tsx and SectionNavigator.tsx.",
+      "text": "Update the Footer component (frontend/src/components/Footer.tsx) to display only: the copyright line '© 2026 Quantumoney. Todos os direitos reservados.' and 'By HTgamers', plus four social share icon buttons for WhatsApp, X (Twitter), Telegram, and Instagram. Remove any and all references, links, or mentions of Caffeine from the footer. Do not change footer height, padding, or overall layout.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4",
-          "msg-10"
+          "msg-3"
         ],
         "quotes": [
-          "remover o mapa que não serve para nada"
+          "Mantém o rodapé como está atualmente: baixo, limpo",
+          "Adicionar apenas botões de partilha para: WhatsApp, X, Telegram e Instagram.",
+          "Remover completamente qualquer menção ou link Caffeine.",
+          "Não alterar altura ou layout do rodapé."
         ]
       },
       "acceptanceCriteria": [
-        "No map route exists in App.tsx",
-        "No map link appears in the header or section navigator",
-        "Navigating to the old map URL returns a 404 or redirects to home"
+        "Footer shows exactly '© 2026 Quantumoney. Todos os direitos reservados.' and 'By HTgamers'",
+        "Four share buttons are present: WhatsApp, X, Telegram, Instagram",
+        "Each share button opens the respective platform share URL with the app's URL pre-filled",
+        "No Caffeine branding, links, or text appears anywhere in the footer",
+        "Footer height and layout are unchanged"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Apply a consistent yellow border (using the existing QMY yellow brand color, e.g. border-yellow-400 or the custom gold color from tailwind.config.js) to all card/panel/window containers across every page. This includes glass-card panels, profile panels, wallet cards, DAO cards, bank dashboard tiles, presale cards, tokenomics sections, and any other bordered containers throughout the entire application.",
+      "text": "Scan the entire frontend codebase and remove every occurrence of Caffeine branding, links, or references from all pages, components, and layout files — not just the footer.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4",
-          "msg-10"
+          "msg-3"
         ],
         "quotes": [
-          "colocar as bordas das janelas em cor amarela em todas as páginas"
+          "Remover completamente qualquer menção ou link Caffeine.",
+          "Nenhum elemento de teste ou Caffeine deve aparecer no site."
         ]
       },
       "acceptanceCriteria": [
-        "Every card, panel, or windowed container on every page has a visible yellow border",
-        "The yellow border color is consistent and uses the QMY brand yellow defined in tailwind.config.js",
-        "The global glass-card utility class in index.css is updated to include the yellow border so all components using it inherit it automatically",
-        "ProfileGlassPanel, wallet cards, DAO cards, bank tiles, presale cards, and all other container components display yellow borders"
+        "No page, component, or layout file contains any visible Caffeine text, link, logo, or badge",
+        "No Caffeine-related href or external URL remains in the rendered HTML"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Update the Header navigation (Header.tsx) to include links to all active pages in the application, replacing or removing the Map link and ensuring all other sections (Home, QMY Token, Wallet, AR Profile, Bank, DAO, Chat, Docs, Presale, About, Legal, Contact, etc.) are accessible. Also update SectionNavigator.tsx to reflect the same complete and accurate page list.",
+      "text": "Merge the Profile page (frontend/src/pages/Perfil.tsx or ProfilePage.tsx) and the Wallet page (frontend/src/pages/WalletPage.tsx) into a single unified Profile page. The page must display: authenticated user info (principal, nickname, XP/level, energy), QMY and ICP balances, vesting breakdown, transaction history, and the simulated send card — all within one page. Use the existing glass panel style with yellow borders and yellow text. Do not create a separate wallet page or route; wallet content is embedded directly in the profile. Preserve existing authentication/registration guards.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-3"
         ],
         "quotes": [
-          "Menu com acesso a todas as páginas"
+          "Criar uma única página de Perfil que inclua: Informações do usuário. Carteira do usuário integrada diretamente na página de Perfil (não criar página separada para carteira).",
+          "Manter o restante layout, cores e elementos visuais do site como estão."
         ]
       },
       "acceptanceCriteria": [
-        "The Map link is removed from the header navigation",
-        "All active application pages are accessible from the header or section navigator",
-        "No broken or dead navigation links exist"
+        "Navigating to /profile (or equivalent route) shows user info and wallet content on the same page",
+        "QMY balance, ICP balance, vesting breakdown, transaction history, and simulated send card are all visible on the Profile page",
+        "No standalone wallet route (/wallet) exists or is linked in navigation",
+        "Yellow borders and yellow text styling are applied consistently",
+        "Unauthenticated users see a login prompt"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Remove all references to 'Caffeine' from the Footer component (Footer.tsx), including any branding text, links, or powered-by mentions. The footer should only display Quantumoney branding, navigation links, and legal information.",
+      "text": "Restore and complete the Central Bank page (frontend/src/pages/BancoCentral.tsx) so it publicly displays all of the following data synced from the Carteira A canisters: total QMY coin supply, circulating coins, locked/vesting coins, XP totals, bonus distributions, monster counts, and recent transactions. Use the existing canister IDs already configured in the project (from project_state.json / Carteira A). Data must be fetched via the same hooks and canister actors already used elsewhere in the app (e.g., useLuxuryBank, useQMYLedger). The page must be publicly visible without login. Maintain the existing yellow-on-dark glass panel visual style.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-3"
         ],
         "quotes": [
-          "Rodapé sem referências à Caffeine"
+          "Restaurar a página Banco Central, garantindo que: Todas as moedas, monstros, XP, bônus, vesting e transações ficam visíveis ao público.",
+          "Informações totalmente sincronizadas com os canisters da Carteira A.",
+          "Não mexer no layout geral ou cores do site."
         ]
       },
       "acceptanceCriteria": [
-        "The word 'Caffeine' does not appear anywhere in the rendered footer",
-        "No links to Caffeine domains appear in the footer",
-        "Footer retains Quantumoney logo, tagline, and navigation columns"
+        "Central Bank page is accessible without authentication",
+        "Page displays: coin supply breakdown, circulating vs. locked tokens, vesting info, XP totals, bonus distributions, monster counts, and recent transactions",
+        "All data is fetched from the Carteira A canister IDs already configured in the project",
+        "Yellow text and yellow-bordered glass panels are used consistently",
+        "No layout or color changes are introduced to other pages"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Ensure all Leaflet OpenStreetMap map pages (frontend/src/pages/MapPage.tsx and any AR map components) continue to display coin and monster marker positions in sync with the Carteira A canisters, using the same canister actor and hooks already in place. Do not alter map layout, styling, or configuration.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-3"
+        ],
+        "quotes": [
+          "Usar os mesmos canisters da Carteira A que o site já está a usar.",
+          "Garantir que todos os mapas (Mapa Leaflet OpenStreetMap) e localização de moedas/monstros estão sincronizados com a aplicação QuantumoneyAR.app."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Map page renders coin and monster markers using data from the Carteira A canisters",
+        "No new canister IDs are introduced; existing configured IDs are used",
+        "Map layout, zoom, tile layer, and styling are unchanged"
       ]
     }
   ],
   "constraints": [
-    "Do not alter any immutable frontend paths (hooks/useInternetIdentity, hooks/useActor, main.tsx, components/ui)",
-    "Use the existing QMY yellow/gold color already defined in tailwind.config.js — do not introduce new color values",
-    "Do not modify backend/main.mo — all changes are frontend only",
-    "Do not remove or restructure any page content other than the map page"
+    "Do not alter header, map pages, AR/PWA pages, or any already-configured pages beyond what is specified",
+    "Do not create duplicate pages or routes",
+    "All yellow text and yellow borders must be preserved across modified components",
+    "Window/panel transparency (glassmorphism) must be maintained",
+    "Use only the existing Carteira A canister IDs already configured in the project — do not introduce new ones",
+    "Do not modify any file listed in frontend.immutablePaths"
   ],
   "nonGoals": [
-    "Adding new pages or features",
-    "Changing the overall layout or design theme beyond yellow borders",
-    "Modifying backend logic or data models",
-    "Redesigning the header or footer structure beyond the specified changes"
+    "Adding any new pages beyond the unified Profile page",
+    "Changing navigation structure beyond removing the standalone wallet route",
+    "Modifying backend canister logic or data models",
+    "Altering colors, fonts, or global theme beyond enforcing existing yellow styling",
+    "Adding real-time WebSocket sync or push notifications",
+    "Any Caffeine-related UI or branding anywhere in the app"
   ],
   "imageRequirements": {
     "required": [],

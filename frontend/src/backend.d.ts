@@ -37,6 +37,13 @@ export interface CapturedMonster {
     monster: Monster;
     captureTime: bigint;
 }
+export interface MapMarker {
+    id: string;
+    latitude: number;
+    description: string;
+    longitude: number;
+    markerType: Variant_coin_monster;
+}
 export interface PaymentSuccessResponse {
     message: string;
     payment: {
@@ -78,10 +85,15 @@ export enum UserRole {
     user = "user",
     guest = "guest"
 }
+export enum Variant_coin_monster {
+    coin = "coin",
+    monster = "monster"
+}
 export enum Variant_pending {
     pending = "pending"
 }
 export interface backendInterface {
+    addMapMarker(marker: MapMarker): Promise<void>;
     adminGetPlayerCount(): Promise<bigint>;
     adminResetPlayer(user: Principal): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
@@ -90,16 +102,21 @@ export interface backendInterface {
     claimARSpot(spotId: string, qtmAmount: bigint): Promise<void>;
     clearAllMessages(): Promise<void>;
     getARSpotDistribution(spotId: string): Promise<ARSpotDistribution | null>;
+    getAllMapMarkers(): Promise<Array<MapMarker>>;
     getAllPlayerProfiles(): Promise<Array<[Principal, PlayerProfile]>>;
     getCallerUserProfile(): Promise<PlayerProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getCapturedMonsters(user: Principal): Promise<Array<CapturedMonster>>;
+    getCoinMarkers(): Promise<Array<MapMarker>>;
     getMessages(limit: bigint, offset: bigint): Promise<Array<ChatMessage>>;
+    getMonsterMarkers(): Promise<Array<MapMarker>>;
+    getNearbyMarkers(lat: number, lon: number, radiusMeters: number): Promise<Array<MapMarker>>;
     getPlayerState(): Promise<PlayerProfile | null>;
     getTotalMessagesCount(): Promise<bigint>;
     getUserProfile(user: Principal): Promise<PlayerProfile | null>;
     hasClaimedARSpot(spotId: string, user: Principal): Promise<boolean>;
     initializeAccessControl(): Promise<void>;
+    initializeMapMarkers(seedMarkers: Array<MapMarker>): Promise<void>;
     initializeMerkleStorePrices(): Promise<void>;
     isCallerAdmin(): Promise<boolean>;
     paymentCancel(sessionId: string): Promise<PaymentCancelResponse>;
@@ -182,6 +199,7 @@ export interface backendInterface {
         tokens_remaining: bigint;
     }>;
     registerPlayer(nickname: string): Promise<void>;
+    removeMapMarker(markerId: string): Promise<void>;
     rescueSingleCoin(coinId: string, playerLocation: CoordinatedPoint): Promise<void>;
     restoreEnergy(): Promise<void>;
     saveCallerUserProfile(profile: PlayerProfile): Promise<void>;

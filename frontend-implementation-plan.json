@@ -1,205 +1,125 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Remove map page, apply yellow borders to all pages, update navigation and footer",
+  "title": "Footer Share Buttons, Unified Profile+Wallet Page, and Restored Central Bank Page",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Remove the Map page entirely from the application",
+      "summary": "Update Footer component to display copyright, 'By HTgamers', and four social share icon buttons (WhatsApp, X, Telegram, Instagram). Remove all Caffeine references from the footer while preserving layout and height.",
       "acceptanceCriteria": [
-        "No map route exists in App.tsx",
-        "No map link appears in the header or section navigator",
-        "Navigating to the old map URL returns a 404 or redirects to home"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/MapMode.tsx",
-          "operation": "delete",
-          "description": "Delete the MapMode.tsx page component file entirely"
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Remove the /map route definition and its lazy import from the router configuration"
-        },
-        {
-          "path": "frontend/src/components/Header.tsx",
-          "operation": "modify",
-          "description": "Remove the Map navigation link from the desktop navigation menu"
-        },
-        {
-          "path": "frontend/src/components/SectionNavigator.tsx",
-          "operation": "modify",
-          "description": "Remove the Map section entry from the sections array in the full-screen navigation overlay"
-        }
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "summary": "Apply consistent yellow borders to all card/panel containers across the application",
-      "acceptanceCriteria": [
-        "Every card, panel, or windowed container on every page has a visible yellow border",
-        "The yellow border color is consistent and uses the QMY brand yellow defined in tailwind.config.js",
-        "The global glass-card utility class in index.css is updated to include the yellow border so all components using it inherit it automatically",
-        "ProfileGlassPanel, wallet cards, DAO cards, bank tiles, presale cards, and all other container components display yellow borders"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Update the .glass-card utility class definition to include a yellow border (border-2 border-yellow-400 or border-amber-400) so all components using this class automatically inherit the yellow border styling"
-        },
-        {
-          "path": "frontend/src/components/profile/ProfileGlassPanel.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes (border-2 border-yellow-400) to the ProfileGlassPanel wrapper div to ensure profile panels display yellow borders"
-        },
-        {
-          "path": "frontend/src/pages/WalletPage.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to all wallet card containers (QMY balance, ICP balance, vesting breakdown, transaction history, send card) to ensure consistent yellow borders across all wallet UI elements"
-        },
-        {
-          "path": "frontend/src/pages/BancoCentral.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to all bank dashboard tiles, KPI cards, and panel containers to ensure yellow borders on all bank interface elements"
-        },
-        {
-          "path": "frontend/src/pages/DAOPage.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to the proposal list container and individual proposal cards"
-        },
-        {
-          "path": "frontend/src/pages/DAOProposalDetailPage.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to the proposal detail card and voting interface containers"
-        },
-        {
-          "path": "frontend/src/pages/DAOCreateProposalPage.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to the proposal creation form card container"
-        },
-        {
-          "path": "frontend/src/pages/PresalePage.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to all presale cards, stats containers, lots explorer, and unlock visualization panels"
-        },
-        {
-          "path": "frontend/src/pages/ProfilePage.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to profile stats cards, coin balance panels, and monster collection containers"
-        },
-        {
-          "path": "frontend/src/pages/SwapPage.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to the swap interface card container"
-        },
-        {
-          "path": "frontend/src/pages/PublicChatPage.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to the chat message container and input form card"
-        },
-        {
-          "path": "frontend/src/components/wallet/VestingBreakdown.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to the vesting breakdown card wrapper"
-        },
-        {
-          "path": "frontend/src/components/wallet/QMYTransactionHistory.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to the transaction history card wrapper"
-        },
-        {
-          "path": "frontend/src/components/wallet/SendQMYSimulatedCard.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to the send QMY form card wrapper"
-        },
-        {
-          "path": "frontend/src/components/presale/PresaleLotsExplorer.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to the presale lots explorer card container"
-        },
-        {
-          "path": "frontend/src/components/presale/PresaleUnlockVisualization.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to the unlock visualization timeline container"
-        },
-        {
-          "path": "frontend/src/components/profile/ARCoinBalance.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to individual coin balance cards"
-        },
-        {
-          "path": "frontend/src/components/profile/ARMonsterCollection.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to the monster collection grid container and individual monster cards"
-        },
-        {
-          "path": "frontend/src/components/profile/ARPlayerStats.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to the player stats card wrapper"
-        },
-        {
-          "path": "frontend/src/pages/ARMode.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to the AR mode placeholder card container"
-        },
-        {
-          "path": "frontend/src/pages/DocsPage.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to all documentation section cards in the grid"
-        },
-        {
-          "path": "frontend/src/pages/GoldPaper.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to the table of contents card and all section containers"
-        },
-        {
-          "path": "frontend/src/pages/PreProposalsPage.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to all pre-proposal cards in the grid"
-        },
-        {
-          "path": "frontend/src/pages/PreProposalDetailPage.tsx",
-          "operation": "modify",
-          "description": "Add yellow border classes to the pre-proposal detail card container"
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Update navigation to include all active pages and remove Map link",
-      "acceptanceCriteria": [
-        "The Map link is removed from the header navigation",
-        "All active application pages are accessible from the header or section navigator",
-        "No broken or dead navigation links exist"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/Header.tsx",
-          "operation": "modify",
-          "description": "Remove the Map link from the desktop navigation array and ensure all other active pages (Home, QMY Token, Wallet, AR Profile, Bank, DAO, Chat, Docs, Presale, About, Legal, Contact) are present and correctly linked"
-        },
-        {
-          "path": "frontend/src/components/SectionNavigator.tsx",
-          "operation": "modify",
-          "description": "Remove the Map section from the sections array and verify that all other active application pages are listed with correct routes, availability badges, and no broken links"
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Remove all Caffeine references from the footer",
-      "acceptanceCriteria": [
-        "The word 'Caffeine' does not appear anywhere in the rendered footer",
-        "No links to Caffeine domains appear in the footer",
-        "Footer retains Quantumoney logo, tagline, and navigation columns"
+        "Footer shows exactly '© 2026 Quantumoney. Todos os direitos reservados.' and 'By HTgamers'",
+        "Four share buttons are present: WhatsApp, X, Telegram, Instagram",
+        "Each share button opens the respective platform share URL with the app's URL pre-filled",
+        "No Caffeine branding, links, or text appears anywhere in the footer",
+        "Footer height and layout are unchanged"
       ],
       "file_operations": [
         {
           "path": "frontend/src/components/Footer.tsx",
           "operation": "modify",
-          "description": "Remove all references to 'Caffeine' from the footer text, links, and branding while retaining the Quantumoney logo, tagline, and all navigation column links (Resources, Governance, Legal)"
+          "description": "Replace existing footer content with only the copyright line '© 2026 Quantumoney. Todos os direitos reservados.', 'By HTgamers', and four social share icon buttons (WhatsApp, X, Telegram, Instagram). Remove all Caffeine-related links, text, and branding. Each share button should open the respective platform's share URL with the current app URL pre-filled. Maintain existing footer height, padding, and glassmorphism styling with yellow borders."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Remove all Caffeine branding, links, and references from the entire frontend codebase including all pages, components, and layout files.",
+      "acceptanceCriteria": [
+        "No page, component, or layout file contains any visible Caffeine text, link, logo, or badge",
+        "No Caffeine-related href or external URL remains in the rendered HTML"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/HomePage.tsx",
+          "operation": "modify",
+          "description": "Scan and remove any Caffeine references, links, or branding if present."
+        },
+        {
+          "path": "frontend/src/pages/LandingPage.tsx",
+          "operation": "modify",
+          "description": "Scan and remove any Caffeine references, links, or branding if present."
+        },
+        {
+          "path": "frontend/src/pages/AboutPage.tsx",
+          "operation": "modify",
+          "description": "Scan and remove any Caffeine references, links, or branding if present."
+        },
+        {
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "modify",
+          "description": "Scan and remove any Caffeine references, links, or branding if present."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Scan and remove any Caffeine references, links, or branding if present."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Merge Profile and Wallet pages into a single unified Profile page displaying user info, QMY/ICP balances, vesting breakdown, transaction history, and simulated send card with yellow borders and yellow text styling.",
+      "acceptanceCriteria": [
+        "Navigating to /profile (or equivalent route) shows user info and wallet content on the same page",
+        "QMY balance, ICP balance, vesting breakdown, transaction history, and simulated send card are all visible on the Profile page",
+        "No standalone wallet route (/wallet) exists or is linked in navigation",
+        "Yellow borders and yellow text styling are applied consistently",
+        "Unauthenticated users see a login prompt"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Perfil.tsx",
+          "operation": "modify",
+          "description": "Merge wallet content from WalletPage.tsx into this unified Profile page. Include all wallet UI elements: QMY balance display using useQMYLedger hook, ICP balance display using useICPLedger hook, VestingBreakdown component, QMYTransactionHistory component, and SendQMYSimulatedCard component. Preserve existing ProfileGlassPanel styling with yellow borders and yellow text. Maintain authentication guards and registration flow. Arrange content in a logical vertical layout with appropriate spacing."
+        },
+        {
+          "path": "frontend/src/pages/WalletPage.tsx",
+          "operation": "modify",
+          "description": "Mark this file as deprecated or convert it to redirect to /profile route, since all wallet functionality is now embedded in the unified Profile page. Remove this page from active use but keep the file for reference during the transition."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Remove or comment out the standalone /wallet route registration. Ensure navigation links point to /profile for both profile and wallet access. Update any breadcrumb or navigation logic to reflect the unified Profile page."
+        },
+        {
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "modify",
+          "description": "Update navigation links to remove any standalone 'Wallet' or 'Carteira' link if present. Ensure 'Profile' or 'Perfil' navigation item remains and points to /profile route."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Restore and complete the Central Bank page to publicly display all QMY supply data, XP totals, bonus distributions, monster counts, and recent transactions synced from Carteira A canisters using existing hooks and canister IDs.",
+      "acceptanceCriteria": [
+        "Central Bank page is accessible without authentication",
+        "Page displays: coin supply breakdown, circulating vs. locked tokens, vesting info, XP totals, bonus distributions, monster counts, and recent transactions",
+        "All data is fetched from the Carteira A canister IDs already configured in the project",
+        "Yellow text and yellow-bordered glass panels are used consistently",
+        "No layout or color changes are introduced to other pages"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/BancoCentral.tsx",
+          "operation": "modify",
+          "description": "Expand this page to display comprehensive public data from Carteira A canisters. Use the existing useLuxuryBank hook to fetch total supply, circulating coins, locked/vesting coins. Add calls to useARGameData or useQueries hooks to fetch XP totals, bonus distributions, and monster counts aggregated across all players. Display recent transaction summaries using the existing QMY transaction hooks. Organize data into yellow-bordered ProfileGlassPanel components or similar styled cards. Ensure the page is publicly accessible without authentication checks. Maintain the existing yellow-on-dark glassmorphism visual style from the current dashboard."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Ensure all Leaflet OpenStreetMap map pages display coin and monster marker positions synced with Carteira A canisters using existing hooks and actors without altering map layout or styling.",
+      "acceptanceCriteria": [
+        "Map page renders coin and monster markers using data from the Carteira A canisters",
+        "No new canister IDs are introduced; existing configured IDs are used",
+        "Map layout, zoom, tile layer, and styling are unchanged"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/MapPage.tsx",
+          "operation": "modify",
+          "description": "Verify that the map page uses the useMapMarkers hook to fetch live coin and monster marker data from the Carteira A canisters. Ensure markers are rendered correctly on the Leaflet map instance. Confirm that no hardcoded static markers override canister data unless the canister returns empty results (in which case fallback is acceptable). Do not modify map configuration, tile layers, zoom settings, or styling. Confirm map is synced with the same canister IDs already used elsewhere in the app."
         }
       ]
     }

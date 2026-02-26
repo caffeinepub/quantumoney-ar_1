@@ -36,6 +36,14 @@ export interface LineItem {
   'comment' : [] | [string],
   'quantity' : bigint,
 }
+export interface MapMarker {
+  'id' : string,
+  'latitude' : number,
+  'description' : string,
+  'longitude' : number,
+  'markerType' : { 'coin' : null } |
+    { 'monster' : null },
+}
 export interface Monster {
   'name' : string,
   'energyBoost' : bigint,
@@ -100,6 +108,7 @@ export interface _SERVICE {
     _CaffeineStorageRefillResult
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
+  'addMapMarker' : ActorMethod<[MapMarker], undefined>,
   'adminGetPlayerCount' : ActorMethod<[], bigint>,
   'adminResetPlayer' : ActorMethod<[Principal], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
@@ -108,16 +117,21 @@ export interface _SERVICE {
   'claimARSpot' : ActorMethod<[string, bigint], undefined>,
   'clearAllMessages' : ActorMethod<[], undefined>,
   'getARSpotDistribution' : ActorMethod<[string], [] | [ARSpotDistribution]>,
+  'getAllMapMarkers' : ActorMethod<[], Array<MapMarker>>,
   'getAllPlayerProfiles' : ActorMethod<[], Array<[Principal, PlayerProfile]>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [PlayerProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getCapturedMonsters' : ActorMethod<[Principal], Array<CapturedMonster>>,
+  'getCoinMarkers' : ActorMethod<[], Array<MapMarker>>,
   'getMessages' : ActorMethod<[bigint, bigint], Array<ChatMessage>>,
+  'getMonsterMarkers' : ActorMethod<[], Array<MapMarker>>,
+  'getNearbyMarkers' : ActorMethod<[number, number, number], Array<MapMarker>>,
   'getPlayerState' : ActorMethod<[], [] | [PlayerProfile]>,
   'getTotalMessagesCount' : ActorMethod<[], bigint>,
   'getUserProfile' : ActorMethod<[Principal], [] | [PlayerProfile]>,
   'hasClaimedARSpot' : ActorMethod<[string, Principal], boolean>,
   'initializeAccessControl' : ActorMethod<[], undefined>,
+  'initializeMapMarkers' : ActorMethod<[Array<MapMarker>], undefined>,
   'initializeMerkleStorePrices' : ActorMethod<[], undefined>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'paymentCancel' : ActorMethod<[string], PaymentCancelResponse>,
@@ -236,6 +250,7 @@ export interface _SERVICE {
     }
   >,
   'registerPlayer' : ActorMethod<[string], undefined>,
+  'removeMapMarker' : ActorMethod<[string], undefined>,
   'rescueSingleCoin' : ActorMethod<[string, CoordinatedPoint], undefined>,
   'restoreEnergy' : ActorMethod<[], undefined>,
   'saveCallerUserProfile' : ActorMethod<[PlayerProfile], undefined>,

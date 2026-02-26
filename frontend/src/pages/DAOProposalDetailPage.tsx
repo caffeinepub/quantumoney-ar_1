@@ -30,13 +30,12 @@ export default function DAOProposalDetailPage() {
       toast.error('Please log in to vote');
       return;
     }
-
     try {
       await voteOnProposal.mutateAsync({ proposalId, vote: voteType });
       toast.success(`Vote cast: ${voteType.toUpperCase()}`);
-    } catch (error: any) {
-      console.error('Failed to vote:', error);
-      toast.error(error.message || 'Failed to cast vote');
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : 'Failed to cast vote';
+      toast.error(msg);
     }
   };
 
@@ -45,13 +44,12 @@ export default function DAOProposalDetailPage() {
       toast.error('Please log in to revoke vote');
       return;
     }
-
     try {
       await revokeVote.mutateAsync(proposalId);
       toast.success('Vote revoked successfully');
-    } catch (error: any) {
-      console.error('Failed to revoke vote:', error);
-      toast.error(error.message || 'Failed to revoke vote');
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : 'Failed to revoke vote';
+      toast.error(msg);
     }
   };
 
@@ -157,7 +155,9 @@ export default function DAOProposalDetailPage() {
               </div>
 
               <div className="text-center">
-                <p className="text-muted-foreground text-sm">Total Votes: <span className="text-primary font-semibold">{totalVotes}</span></p>
+                <p className="text-muted-foreground text-sm">
+                  Total Votes: <span className="text-primary font-semibold">{totalVotes}</span>
+                </p>
               </div>
 
               {isAuthenticated && (
@@ -211,7 +211,7 @@ export default function DAOProposalDetailPage() {
           <Card className="glass-card border-amber-900/30 bg-amber-900/10">
             <CardContent className="p-6">
               <p className="text-sm text-amber-300 leading-relaxed">
-                <strong>Note:</strong> Voting is simulated/internal. Results are persisted in the canister but do not 
+                <strong>Note:</strong> Voting is simulated/internal. Results are persisted in the canister but do not
                 execute real on-chain governance actions. You can change or revoke your vote at any time.
               </p>
             </CardContent>

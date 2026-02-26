@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,9 +20,7 @@ export default function DAOPage() {
   const isRegistered = userProfile?.registered ?? false;
 
   const handleCreateProposal = () => {
-    if (!isAuthenticated || !isRegistered) {
-      return;
-    }
+    if (!isAuthenticated || !isRegistered) return;
     navigate({ to: '/dao/new' });
   };
 
@@ -144,8 +141,8 @@ export default function DAOPage() {
           <Card className="glass-card border-amber-900/30 bg-amber-900/10">
             <CardContent className="p-6">
               <p className="text-sm text-amber-300 leading-relaxed">
-                <strong>Note:</strong> This is a simulated/internal DAO governance system. All proposals and votes 
-                are stored in the canister but do not execute real on-chain governance actions. This system is for 
+                <strong>Note:</strong> This is a simulated/internal DAO governance system. All proposals and votes
+                are stored in the canister but do not execute real on-chain governance actions. This system is for
                 educational and community engagement purposes only.
               </p>
             </CardContent>

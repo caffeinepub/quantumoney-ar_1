@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, ArrowLeft, Target, Zap, Users } from 'lucide-react';
+import { FileText, ArrowLeft, Target, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import PageShell from '@/components/PageShell';
@@ -42,24 +42,23 @@ export default function PreProposalDetailPage() {
           </Link>
 
           <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <PageTitle icon={<FileText className="w-12 h-12" />}>
-                {proposal.title}
-              </PageTitle>
-            </div>
-            <div className="flex items-center gap-3">
-              <Badge variant="outline" className="border-primary/40 text-primary">
-                {proposal.category}
-              </Badge>
-              <Badge variant="outline" className="border-amber-500/40 text-amber-500">
-                Educational
-              </Badge>
-            </div>
+            <PageTitle icon={<FileText className="w-12 h-12" />}>
+              {proposal.title}
+            </PageTitle>
+            <Badge variant="outline" className="border-primary/40 text-primary">
+              {proposal.category}
+            </Badge>
+            <Badge variant="outline" className="border-amber-500/40 text-amber-500 ml-2">
+              Educational / Informational
+            </Badge>
           </div>
 
           <Card className="glass-card border-primary/30">
             <CardHeader>
-              <CardTitle className="text-primary">Description</CardTitle>
+              <CardTitle className="text-primary flex items-center gap-3">
+                <FileText className="w-6 h-6" />
+                Overview
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">{proposal.description}</p>
@@ -69,8 +68,8 @@ export default function PreProposalDetailPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="glass-card border-primary/30">
               <CardHeader>
-                <CardTitle className="text-primary flex items-center gap-2">
-                  <Target className="w-5 h-5" />
+                <CardTitle className="text-primary flex items-center gap-3">
+                  <Target className="w-6 h-6" />
                   Objective
                 </CardTitle>
               </CardHeader>
@@ -81,9 +80,9 @@ export default function PreProposalDetailPage() {
 
             <Card className="glass-card border-primary/30">
               <CardHeader>
-                <CardTitle className="text-primary flex items-center gap-2">
-                  <Zap className="w-5 h-5" />
-                  Impact
+                <CardTitle className="text-primary flex items-center gap-3">
+                  <Zap className="w-6 h-6" />
+                  Expected Impact
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -92,29 +91,26 @@ export default function PreProposalDetailPage() {
             </Card>
           </div>
 
-          <Card className="glass-card border-primary/30">
-            <CardHeader>
-              <CardTitle className="text-primary flex items-center gap-2">
-                <Users className="w-5 h-5" />
-                Full Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {proposal.fullDetails.map((section, idx) => (
-                <div key={idx} className="space-y-2">
-                  <h4 className="text-primary font-semibold">{section.heading}</h4>
-                  <p className="text-muted-foreground leading-relaxed">{section.content}</p>
-                </div>
+          {proposal.fullDetails && proposal.fullDetails.length > 0 && (
+            <div className="space-y-4">
+              {proposal.fullDetails.map((detail, i) => (
+                <Card key={i} className="glass-card border-primary/30">
+                  <CardHeader>
+                    <CardTitle className="text-primary text-lg">{detail.heading}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground leading-relaxed">{detail.content}</p>
+                  </CardContent>
+                </Card>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          )}
 
           <Card className="glass-card border-amber-900/30 bg-amber-900/10">
             <CardContent className="p-6">
               <p className="text-sm text-amber-300 leading-relaxed">
-                <strong>Educational Notice:</strong> This pre-proposal is for informational and educational purposes only. 
-                No voting, submission, or governance execution is available. This content helps the community understand 
-                potential future governance topics.
+                <strong>Educational Purpose:</strong> This pre-proposal is for learning and discussion only.
+                No governance actions, voting, or execution are available at this stage.
               </p>
             </CardContent>
           </Card>

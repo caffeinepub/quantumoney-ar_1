@@ -1,85 +1,74 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-24T21:59:44.397Z",
+  "generatedAt": "2026-02-25T22:22:40.119Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 4,
-    "implemented": 3,
+    "total": 5,
+    "implemented": 4,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Remove the Map page entirely: delete or empty frontend/src/pages/MapMode.tsx, remove its route from App.tsx, and remove any navigation link pointing to the map from Header.tsx and SectionNavigator.tsx.",
+        "summary": "Update the Footer component (frontend/src/components/Footer.tsx) to display only: the copyright line '© 2026 Quantumoney. Todos os direitos reservados.' and 'By HTgamers', plus four social share icon buttons for WhatsApp, X (Twitter), Telegram, and Instagram. Remove any and all references, links, or mentions of Caffeine from the footer. Do not change footer height, padding, or overall layout.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/MapMode.tsx",
-          "frontend/src/App.tsx",
-          "frontend/src/components/Header.tsx",
-          "frontend/src/components/SectionNavigator.tsx"
+          "frontend/src/components/Footer.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/MapMode.tsx",
-          "frontend/src/App.tsx",
-          "frontend/src/components/Header.tsx",
-          "frontend/src/components/SectionNavigator.tsx"
+          "frontend/src/components/Footer.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Apply a consistent yellow border (using the existing QMY yellow brand color, e.g. border-yellow-400 or the custom gold color from tailwind.config.js) to all card/panel/window containers across every page. This includes glass-card panels, profile panels, wallet cards, DAO cards, bank dashboard tiles, presale cards, tokenomics sections, and any other bordered containers throughout the entire application.",
+        "summary": "Scan the entire frontend codebase and remove every occurrence of Caffeine branding, links, or references from all pages, components, and layout files — not just the footer.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/index.css",
-          "frontend/src/components/profile/ProfileGlassPanel.tsx",
-          "frontend/src/pages/WalletPage.tsx",
-          "frontend/src/pages/BancoCentral.tsx",
-          "frontend/src/pages/DAOPage.tsx",
-          "frontend/src/pages/DAOProposalDetailPage.tsx",
-          "frontend/src/pages/DAOCreateProposalPage.tsx",
-          "frontend/src/pages/PresalePage.tsx",
-          "frontend/src/pages/ProfilePage.tsx",
-          "frontend/src/pages/SwapPage.tsx",
-          "frontend/src/pages/PublicChatPage.tsx",
-          "frontend/src/components/wallet/VestingBreakdown.tsx",
-          "frontend/src/components/wallet/QMYTransactionHistory.tsx",
-          "frontend/src/components/wallet/SendQMYSimulatedCard.tsx",
-          "frontend/src/components/presale/PresaleLotsExplorer.tsx",
-          "frontend/src/components/presale/PresaleUnlockVisualization.tsx",
-          "frontend/src/components/profile/ARCoinBalance.tsx",
-          "frontend/src/components/profile/ARMonsterCollection.tsx",
-          "frontend/src/components/profile/ARPlayerStats.tsx",
-          "frontend/src/pages/ARMode.tsx",
-          "frontend/src/pages/DocsPage.tsx",
-          "frontend/src/pages/GoldPaper.tsx",
-          "frontend/src/pages/PreProposalsPage.tsx",
-          "frontend/src/pages/PreProposalDetailPage.tsx"
+          "frontend/src/pages/HomePage.tsx",
+          "frontend/src/pages/LandingPage.tsx",
+          "frontend/src/pages/AboutPage.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/components/Layout.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/index.css"
+          "frontend/src/components/Header.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Update the Header navigation (Header.tsx) to include links to all active pages in the application, replacing or removing the Map link and ensuring all other sections (Home, QMY Token, Wallet, AR Profile, Bank, DAO, Chat, Docs, Presale, About, Legal, Contact, etc.) are accessible. Also update SectionNavigator.tsx to reflect the same complete and accurate page list.",
+        "summary": "Merge the Profile page (frontend/src/pages/Perfil.tsx or ProfilePage.tsx) and the Wallet page (frontend/src/pages/WalletPage.tsx) into a single unified Profile page. The page must display: authenticated user info (principal, nickname, XP/level, energy), QMY and ICP balances, vesting breakdown, transaction history, and the simulated send card — all within one page. Use the existing glass panel style with yellow borders and yellow text. Do not create a separate wallet page or route; wallet content is embedded directly in the profile. Preserve existing authentication/registration guards.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/Header.tsx",
-          "frontend/src/components/SectionNavigator.tsx"
+          "frontend/src/pages/Perfil.tsx",
+          "frontend/src/pages/WalletPage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Header.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/Header.tsx",
-          "frontend/src/components/SectionNavigator.tsx"
+          "frontend/src/pages/Perfil.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Header.tsx"
         ]
       },
       {
         "id": "REQ-4",
-        "summary": "Remove all references to 'Caffeine' from the Footer component (Footer.tsx), including any branding text, links, or powered-by mentions. The footer should only display Quantumoney branding, navigation links, and legal information.",
+        "summary": "Restore and complete the Central Bank page (frontend/src/pages/BancoCentral.tsx) so it publicly displays all of the following data synced from the Carteira A canisters: total QMY coin supply, circulating coins, locked/vesting coins, XP totals, bonus distributions, monster counts, and recent transactions. Use the existing canister IDs already configured in the project (from project_state.json / Carteira A). Data must be fetched via the same hooks and canister actors already used elsewhere in the app (e.g., useLuxuryBank, useQMYLedger). The page must be publicly visible without login. Maintain the existing yellow-on-dark glass panel visual style.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/BancoCentral.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/BancoCentral.tsx"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Ensure all Leaflet OpenStreetMap map pages (frontend/src/pages/MapPage.tsx and any AR map components) continue to display coin and monster marker positions in sync with the Carteira A canisters, using the same canister actor and hooks already in place. Do not alter map layout, styling, or configuration.",
         "status": "missing",
         "plannedFiles": [
-          "frontend/src/components/Footer.tsx"
+          "frontend/src/pages/MapPage.tsx"
         ],
         "matchedFiles": []
       }
@@ -91,10 +80,12 @@
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/src/App.tsx",
+    "frontend/src/components/Footer.tsx",
     "frontend/src/components/Header.tsx",
     "frontend/src/components/SectionNavigator.tsx",
-    "frontend/src/index.css",
-    "frontend/src/pages/MapMode.tsx",
+    "frontend/src/pages/BancoCentral.tsx",
+    "frontend/src/pages/Perfil.tsx",
+    "frontend/src/pages/SwapPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

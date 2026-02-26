@@ -1,148 +1,114 @@
-const config = {
+/** @type {import('tailwindcss').Config} */
+export default {
   darkMode: ['class'],
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: [
+    './index.html',
+    './src/**/*.{js,ts,jsx,tsx}',
+  ],
   theme: {
     extend: {
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
-        },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
-        },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
-        },
-        success: {
-          DEFAULT: 'hsl(var(--success))',
-          foreground: 'hsl(var(--success-foreground))',
-        },
-        warning: {
-          DEFAULT: 'hsl(var(--warning))',
-          foreground: 'hsl(var(--warning-foreground))',
-        },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
-        },
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
+        background: 'oklch(var(--background) / <alpha-value>)',
+        foreground: 'oklch(var(--foreground) / <alpha-value>)',
+        card: {
+          DEFAULT: 'oklch(var(--card) / <alpha-value>)',
+          foreground: 'oklch(var(--card-foreground) / <alpha-value>)',
         },
         popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+          DEFAULT: 'oklch(var(--popover) / <alpha-value>)',
+          foreground: 'oklch(var(--popover-foreground) / <alpha-value>)',
         },
-        card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
+        primary: {
+          DEFAULT: 'oklch(var(--primary) / <alpha-value>)',
+          foreground: 'oklch(var(--primary-foreground) / <alpha-value>)',
         },
-        // Extended luxury palette
-        'gold': {
-          400: '#f4d03f',
-          500: '#d4af37',
-          600: '#b8941f',
-          700: '#9c7a19',
+        secondary: {
+          DEFAULT: 'oklch(var(--secondary) / <alpha-value>)',
+          foreground: 'oklch(var(--secondary-foreground) / <alpha-value>)',
         },
-        'amber': {
-          400: '#fbbf24',
-          500: '#f59e0b',
-          600: '#d97706',
-          700: '#b45309',
-          900: '#78350f',
+        muted: {
+          DEFAULT: 'oklch(var(--muted) / <alpha-value>)',
+          foreground: 'oklch(var(--muted-foreground) / <alpha-value>)',
         },
-        'quantum-violet': {
-          400: '#a78bfa',
-          500: '#8b7dd8',
-          600: '#7c6fc7',
+        accent: {
+          DEFAULT: 'oklch(var(--accent) / <alpha-value>)',
+          foreground: 'oklch(var(--accent-foreground) / <alpha-value>)',
         },
-        'electric-blue': {
-          400: '#38bdf8',
-          500: '#00bfff',
-          600: '#0ea5e9',
+        destructive: {
+          DEFAULT: 'oklch(var(--destructive) / <alpha-value>)',
+          foreground: 'oklch(var(--destructive-foreground) / <alpha-value>)',
+        },
+        border: 'oklch(var(--border) / <alpha-value>)',
+        input: 'oklch(var(--input) / <alpha-value>)',
+        ring: 'oklch(var(--ring) / <alpha-value>)',
+        chart: {
+          '1': 'oklch(var(--chart-1) / <alpha-value>)',
+          '2': 'oklch(var(--chart-2) / <alpha-value>)',
+          '3': 'oklch(var(--chart-3) / <alpha-value>)',
+          '4': 'oklch(var(--chart-4) / <alpha-value>)',
+          '5': 'oklch(var(--chart-5) / <alpha-value>)',
+        },
+        sidebar: {
+          DEFAULT: 'oklch(var(--sidebar) / <alpha-value>)',
+          foreground: 'oklch(var(--sidebar-foreground) / <alpha-value>)',
+          primary: 'oklch(var(--sidebar-primary) / <alpha-value>)',
+          'primary-foreground': 'oklch(var(--sidebar-primary-foreground) / <alpha-value>)',
+          accent: 'oklch(var(--sidebar-accent) / <alpha-value>)',
+          'accent-foreground': 'oklch(var(--sidebar-accent-foreground) / <alpha-value>)',
+          border: 'oklch(var(--sidebar-border) / <alpha-value>)',
+          ring: 'oklch(var(--sidebar-ring) / <alpha-value>)',
+        },
+        // QMY brand colors
+        qmy: {
+          yellow: '#FACC15',
+          gold: '#D4A017',
+          'dark-gold': '#B8860B',
         },
       },
       fontFamily: {
-        serif: ['Playfair Display', 'Georgia', 'serif'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-      },
-      fontSize: {
-        'xs': ['0.75rem', { lineHeight: '1rem', letterSpacing: '0.01em' }],
-        'sm': ['0.875rem', { lineHeight: '1.25rem', letterSpacing: '0.01em' }],
-        'base': ['1rem', { lineHeight: '1.5rem', letterSpacing: '0' }],
-        'lg': ['1.125rem', { lineHeight: '1.75rem', letterSpacing: '-0.01em' }],
-        'xl': ['1.25rem', { lineHeight: '1.75rem', letterSpacing: '-0.01em' }],
-        '2xl': ['1.5rem', { lineHeight: '2rem', letterSpacing: '-0.02em' }],
-        '3xl': ['1.875rem', { lineHeight: '2.25rem', letterSpacing: '-0.02em' }],
-        '4xl': ['2.25rem', { lineHeight: '2.5rem', letterSpacing: '-0.03em' }],
-        '5xl': ['3rem', { lineHeight: '1', letterSpacing: '-0.03em' }],
-        '6xl': ['3.75rem', { lineHeight: '1', letterSpacing: '-0.04em' }],
-        '7xl': ['4.5rem', { lineHeight: '1', letterSpacing: '-0.04em' }],
-        '8xl': ['6rem', { lineHeight: '1', letterSpacing: '-0.05em' }],
+        cinzel: ['Cinzel', 'serif'],
+        rajdhani: ['Rajdhani', 'sans-serif'],
+        sans: ['Rajdhani', 'sans-serif'],
       },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
-        xl: 'calc(var(--radius) + 4px)',
-        '2xl': 'calc(var(--radius) + 8px)',
       },
       boxShadow: {
-        'gold': '0 4px 24px rgba(217, 165, 32, 0.3), 0 0 48px rgba(217, 165, 32, 0.15)',
-        'gold-lg': '0 8px 32px rgba(217, 165, 32, 0.4), 0 0 64px rgba(217, 165, 32, 0.2)',
-        'gold-subtle': '0 2px 16px rgba(217, 165, 32, 0.2), 0 0 32px rgba(217, 165, 32, 0.1)',
-      },
-      animation: {
-        'fade-in': 'fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-        'depth-emerge': 'depth-emerge 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-        'shimmer': 'shimmer 3s ease-in-out infinite',
+        'qmy-glow': '0 0 20px oklch(0.85 0.18 85 / 0.4)',
+        'qmy-glow-sm': '0 0 10px oklch(0.85 0.18 85 / 0.3)',
+        'qmy-glow-lg': '0 0 40px oklch(0.85 0.18 85 / 0.5)',
       },
       keyframes: {
-        'fade-in': {
-          from: {
-            opacity: '0',
-            transform: 'translateY(16px)',
-          },
-          to: {
-            opacity: '1',
-            transform: 'translateY(0)',
-          },
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
         },
-        'depth-emerge': {
-          from: {
-            opacity: '0',
-            transform: 'scale(0.95) translateZ(-50px)',
-          },
-          to: {
-            opacity: '1',
-            transform: 'scale(1) translateZ(0)',
-          },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
         },
-        'shimmer': {
-          '0%': {
-            backgroundPosition: '-200% center',
-          },
-          '100%': {
-            backgroundPosition: '200% center',
-          },
+        'pulse-glow': {
+          '0%, 100%': { boxShadow: '0 0 10px oklch(0.85 0.18 85 / 0.3)' },
+          '50%': { boxShadow: '0 0 25px oklch(0.85 0.18 85 / 0.7)' },
+        },
+        'float': {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-8px)' },
         },
       },
-      spacing: {
-        '18': '4.5rem',
-        '88': '22rem',
-        '128': '32rem',
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+        'float': 'float 3s ease-in-out infinite',
       },
     },
   },
-  plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
+  plugins: [
+    require('tailwindcss-animate'),
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/container-queries'),
+  ],
 };
-
-export default config;

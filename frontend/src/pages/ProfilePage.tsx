@@ -10,8 +10,38 @@ import ARPlayerStats from '@/components/profile/ARPlayerStats';
 import ARCoinBalance from '@/components/profile/ARCoinBalance';
 import ARMonsterCollection from '@/components/profile/ARMonsterCollection';
 import { Button } from '@/components/ui/button';
+import type { PlayerProfile } from '@/backend';
 
 const QuantumUniverseScene = lazy(() => import('@/components/quantum/QuantumUniverseScene'));
+
+// Adapt PlayerProfile (bigint fields) to the shape expected by child components
+function toPlayerStatsShape(profile: PlayerProfile | null | undefined) {
+  if (!profile) return undefined;
+  return {
+    xp: Number(profile.xp),
+    level: Number(profile.level),
+  };
+}
+
+function toCoinBalanceShape(profile: PlayerProfile | null | undefined) {
+  if (!profile) return undefined;
+  return {
+    availableCoins: Number(profile.availableTokens),
+    lockedCoins: Number(profile.plantedTokens),
+    bonusCoins: Number(profile.bonusTokens),
+  };
+}
+
+function toMonsterCollectionShape(profile: PlayerProfile | null | undefined) {
+  if (!profile) return undefined;
+  return {
+    capturedMonsters: profile.capturedMonsters.map((cm) => ({
+      name: cm.monster.name,
+      captureTime: Number(cm.captureTime),
+      energyBoost: Number(cm.monster.energyBoost),
+    })),
+  };
+}
 
 export default function ProfilePage() {
   const { identity, login, loginStatus } = useInternetIdentity();
@@ -135,17 +165,17 @@ export default function ProfilePage() {
             </BodyText>
           </div>
 
-          {/* Technical Validation Panel - Temporary */}
+          {/* Technical Validation Panel */}
           <TechnicalValidationPanel />
 
           {/* Player Stats - XP and Level */}
-          <ARPlayerStats data={arData} />
+          <ARPlayerStats data={toPlayerStatsShape(arData)} />
 
           {/* Coin Balance - Available, Locked, Bonus */}
-          <ARCoinBalance data={arData} />
+          <ARCoinBalance data={toCoinBalanceShape(arData)} />
 
           {/* Monster Collection */}
-          <ARMonsterCollection data={arData} />
+          <ARMonsterCollection data={toMonsterCollectionShape(arData)} />
         </div>
       </Container>
     </PageShell>
