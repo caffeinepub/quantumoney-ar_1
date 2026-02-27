@@ -1,27 +1,28 @@
-import { Outlet } from '@tanstack/react-router';
-import { Suspense, lazy } from 'react';
+import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import CookieConsentBanner from './CookieConsentBanner';
+import SpaceBackground from './space/SpaceBackground';
 
-const QuantumUniverseScene = lazy(() => import('./quantum/QuantumUniverseScene'));
+interface LayoutProps {
+  children: React.ReactNode;
+}
 
-export default function Layout() {
+export default function Layout({ children }: LayoutProps) {
   return (
-    <div className="relative min-h-[100dvh] flex flex-col bg-background text-foreground overflow-x-hidden">
-      <Suspense fallback={null}>
-        <QuantumUniverseScene />
-      </Suspense>
-      
-      <Header />
-      
-      <main className="relative z-10 flex-1">
-        <Outlet />
-      </main>
-      
-      <Footer />
-      
-      <CookieConsentBanner />
+    <div className="relative min-h-screen flex flex-col">
+      {/* Persistent space background */}
+      <SpaceBackground />
+
+      {/* Content layer */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-1">
+          {children}
+        </main>
+        <Footer />
+        <CookieConsentBanner />
+      </div>
     </div>
   );
 }

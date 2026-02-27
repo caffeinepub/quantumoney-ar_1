@@ -99,17 +99,13 @@ export interface CoordinatedPoint {
     longitude: number;
     address: string;
 }
-export interface LineItem {
-    priceId: string;
-    comment?: string;
-    quantity: bigint;
-}
 export interface _CaffeineStorageRefillInformation {
     proposed_top_up_amount?: bigint;
 }
 export interface PlayerProfile {
     xp: bigint;
     nickname: string;
+    photoUrl?: ExternalBlob;
     level: bigint;
     capturedMonsters: Array<CapturedMonster>;
     availableTokens: bigint;
@@ -118,9 +114,10 @@ export interface PlayerProfile {
     registered: boolean;
     energy: bigint;
 }
-export interface CapturedMonster {
-    monster: Monster;
-    captureTime: bigint;
+export interface PlantedCoin {
+    plantTime: bigint;
+    owner: Principal;
+    location: CoordinatedPoint;
 }
 export interface _CaffeineStorageCreateCertificateResult {
     method: string;
@@ -145,10 +142,26 @@ export interface PaymentSuccessResponse {
         amount: bigint;
     };
 }
+export interface CapturedMonster {
+    monster: Monster;
+    captureTime: bigint;
+}
+export interface ARSpotClaim {
+    claimTime: bigint;
+    claimedBy: Principal;
+    spotId: string;
+    qtmAmount: bigint;
+}
+export type UserId = bigint;
 export interface QMYPurchaseRequest {
     tokensRequested: bigint;
     timestamp: bigint;
     buyer: Principal;
+}
+export interface DailyLimits {
+    rescuesToday: bigint;
+    plantsToday: bigint;
+    lastResetTime: bigint;
 }
 export interface PaymentCancelResponse {
     message: string;
@@ -169,10 +182,6 @@ export interface _CaffeineStorageRefillResult {
     success?: boolean;
     topped_up_amount?: bigint;
 }
-export interface CreatePaymentResponse {
-    checkoutUrl: string;
-    sessionId: string;
-}
 export enum UserRole {
     admin = "admin",
     user = "user",
@@ -182,9 +191,6 @@ export enum Variant_coin_monster {
     coin = "coin",
     monster = "monster"
 }
-export enum Variant_pending {
-    pending = "pending"
-}
 export interface backendInterface {
     _caffeineStorageBlobIsLive(hash: Uint8Array): Promise<boolean>;
     _caffeineStorageBlobsToDelete(): Promise<Array<Uint8Array>>;
@@ -192,120 +198,30 @@ export interface backendInterface {
     _caffeineStorageCreateCertificate(blobHash: string): Promise<_CaffeineStorageCreateCertificateResult>;
     _caffeineStorageRefillCashier(refillInformation: _CaffeineStorageRefillInformation | null): Promise<_CaffeineStorageRefillResult>;
     _caffeineStorageUpdateGatewayPrincipals(): Promise<void>;
-    addMapMarker(marker: MapMarker): Promise<void>;
-    adminGetPlayerCount(): Promise<bigint>;
-    adminResetPlayer(user: Principal): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    captureMonster(monster: Monster): Promise<void>;
-    checkout(items: Array<LineItem>): Promise<CreatePaymentResponse>;
-    claimARSpot(spotId: string, qtmAmount: bigint): Promise<void>;
-    clearAllMessages(): Promise<void>;
-    getARSpotDistribution(spotId: string): Promise<ARSpotDistribution | null>;
-    getAllMapMarkers(): Promise<Array<MapMarker>>;
-    getAllPlayerProfiles(): Promise<Array<[Principal, PlayerProfile]>>;
+    getARSpotClaims(): Promise<Array<ARSpotClaim>>;
+    getARSpotDistributions(): Promise<Array<ARSpotDistribution>>;
     getCallerUserProfile(): Promise<PlayerProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
-    getCapturedMonsters(user: Principal): Promise<Array<CapturedMonster>>;
-    getCoinMarkers(): Promise<Array<MapMarker>>;
-    getMessages(limit: bigint, offset: bigint): Promise<Array<ChatMessage>>;
-    getMonsterMarkers(): Promise<Array<MapMarker>>;
-    getNearbyMarkers(lat: number, lon: number, radiusMeters: number): Promise<Array<MapMarker>>;
-    getPlayerState(): Promise<PlayerProfile | null>;
-    getTotalMessagesCount(): Promise<bigint>;
-    getUserProfile(user: Principal): Promise<PlayerProfile | null>;
-    hasClaimedARSpot(spotId: string, user: Principal): Promise<boolean>;
+    getChatMessages(): Promise<Array<ChatMessage>>;
+    getMapMarkers(): Promise<Array<MapMarker>>;
+    getPlantedCoins(): Promise<Array<PlantedCoin>>;
+    getPlayerByAddress(addr: Principal): Promise<PlayerProfile | null>;
+    getPlayerDailyLimits(): Promise<DailyLimits>;
+    getQMYPurchaseRequest(): Promise<QMYPurchaseRequest | null>;
+    getUserIdForCaller(): Promise<UserId>;
+    getUserProfile(userId: UserId): Promise<PlayerProfile | null>;
     initializeAccessControl(): Promise<void>;
-    initializeMapMarkers(seedMarkers: Array<MapMarker>): Promise<void>;
-    initializeMerkleStorePrices(): Promise<void>;
     isCallerAdmin(): Promise<boolean>;
     paymentCancel(sessionId: string): Promise<PaymentCancelResponse>;
     paymentSuccess(sessionId: string, accountId: string, caffeineCustomerId: string): Promise<PaymentSuccessResponse>;
-    plantCoin(location: CoordinatedPoint): Promise<void>;
-    qmy_accounts(): Promise<Array<{
-        usd_balance: number;
-        balance_as_of_time: bigint;
-        pending_balance: bigint;
-        account: Principal;
-        confirmed_balance: bigint;
-    }>>;
-    qmy_cancel_owner_pending_native_trades_buyer(_buyer: Principal): Promise<{
-        trade_id: string;
-        remaining_tokens: bigint;
-    }>;
-    qmy_cancel_owner_pending_native_trades_buyerbywallet(_buyer: Principal): Promise<{
-        trade_id: string;
-        remaining_tokens: bigint;
-    }>;
-    qmy_cancel_owner_pending_native_trades_seller(_seller: Principal): Promise<{
-        trade_id: string;
-        remaining_tokens: bigint;
-    }>;
-    qmy_cancel_pending_split(_trade_id: string): Promise<{
-        remaining_tokens: bigint;
-    }>;
-    qmy_cancel_purchase_request(): Promise<{
-        tokens_requested: bigint;
-        timestamp: bigint;
-    }>;
-    qmy_createOwnedSplitNativeTrade(_tokens: bigint, _price: number): Promise<{
-        id: string;
-        status: Variant_pending;
-        seller: Principal;
-        tokens: bigint;
-        timestamp: bigint;
-        buyer: Principal;
-        price: number;
-    }>;
-    qmy_getActiveNativeTrades(_account: Principal): Promise<Array<Principal>>;
-    qmy_getAvailableNativeTrades(_account: Principal): Promise<Array<Principal>>;
-    qmy_getCreatedNativeTradeHistory(_account: Principal): Promise<Array<Principal>>;
-    qmy_getNativeTradeHistory(_account: Principal): Promise<Array<Principal>>;
-    qmy_get_pending_requests_by_buyer(buyer: Principal): Promise<Array<QMYPurchaseRequest>>;
-    qmy_get_pending_requests_by_caller(): Promise<Array<QMYPurchaseRequest>>;
-    qmy_get_purchase_request(buyer: Principal): Promise<QMYPurchaseRequest | null>;
-    qmy_purchaseOwnedNFTOwnedSplitNativeTrade(_token: bigint, _wallet: Principal): Promise<{
-        remaining_tokens: bigint;
-        tokens_purchased: bigint;
-    }>;
-    qmy_purchase_identify(_tokens: bigint, _wallet: Principal): Promise<{
-        tokens_purchased: bigint;
-    }>;
-    qmy_purchase_split(_trade_id: string, _tokens: bigint): Promise<{
-        _remaining_tokens: bigint;
-        tokens_purchased: bigint;
-    }>;
-    qmy_tokens(): Promise<Array<{
-        usd_price: number;
-        name: string;
-        available_supply: bigint;
-        symbol: string;
-    }>>;
-    qmy_update_purchase_request(tokens_requested: bigint): Promise<{
-        tokens_requested: bigint;
-        timestamp: bigint;
-    }>;
-    qmy_view_purchase_request(): Promise<QMYPurchaseRequest | null>;
-    qmymylo_distribute_mylo(_total_tokens: bigint, _token_price_cents: number, _distributor_fee_cents: number): Promise<{
-        distributor_fee: number;
-        tokens_distributed: bigint;
-        total_cost_cents: number;
-        tokens_remaining: bigint;
-    }>;
-    qmymylo_distribute_qmy(_total_tokens: bigint, _token_price_cents: number, _distributor_fee_cents: number): Promise<{
-        distributor_fee: number;
-        tokens_distributed: bigint;
-        total_cost_cents: number;
-        tokens_remaining: bigint;
-    }>;
-    registerPlayer(nickname: string): Promise<void>;
-    removeMapMarker(markerId: string): Promise<void>;
-    rescueSingleCoin(coinId: string, playerLocation: CoordinatedPoint): Promise<void>;
-    restoreEnergy(): Promise<void>;
     saveCallerUserProfile(profile: PlayerProfile): Promise<void>;
-    sendMessage(authorName: string, content: string): Promise<void>;
-    updateXP(xpChange: bigint): Promise<void>;
+    sendChatMessage(content: string): Promise<void>;
+    submitQMYPurchaseRequest(request: QMYPurchaseRequest): Promise<void>;
+    updatePlayerDailyLimits(plantsToday: bigint, rescuesToday: bigint): Promise<void>;
+    updateProfile(nickname: string, photoUrl: ExternalBlob | null): Promise<void>;
 }
-import type { ARSpotDistribution as _ARSpotDistribution, LineItem as _LineItem, MapMarker as _MapMarker, PlayerProfile as _PlayerProfile, QMYPurchaseRequest as _QMYPurchaseRequest, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
+import type { CapturedMonster as _CapturedMonster, ExternalBlob as _ExternalBlob, MapMarker as _MapMarker, PlayerProfile as _PlayerProfile, QMYPurchaseRequest as _QMYPurchaseRequest, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _caffeineStorageBlobIsLive(arg0: Uint8Array): Promise<boolean> {
@@ -392,157 +308,45 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async addMapMarker(arg0: MapMarker): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.addMapMarker(to_candid_MapMarker_n8(this._uploadFile, this._downloadFile, arg0));
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.addMapMarker(to_candid_MapMarker_n8(this._uploadFile, this._downloadFile, arg0));
-            return result;
-        }
-    }
-    async adminGetPlayerCount(): Promise<bigint> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.adminGetPlayerCount();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.adminGetPlayerCount();
-            return result;
-        }
-    }
-    async adminResetPlayer(arg0: Principal): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.adminResetPlayer(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.adminResetPlayer(arg0);
-            return result;
-        }
-    }
     async assignCallerUserRole(arg0: Principal, arg1: UserRole): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n11(this._uploadFile, this._downloadFile, arg1));
+                const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n8(this._uploadFile, this._downloadFile, arg1));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n11(this._uploadFile, this._downloadFile, arg1));
+            const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n8(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
-    async captureMonster(arg0: Monster): Promise<void> {
+    async getARSpotClaims(): Promise<Array<ARSpotClaim>> {
         if (this.processError) {
             try {
-                const result = await this.actor.captureMonster(arg0);
+                const result = await this.actor.getARSpotClaims();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.captureMonster(arg0);
+            const result = await this.actor.getARSpotClaims();
             return result;
         }
     }
-    async checkout(arg0: Array<LineItem>): Promise<CreatePaymentResponse> {
+    async getARSpotDistributions(): Promise<Array<ARSpotDistribution>> {
         if (this.processError) {
             try {
-                const result = await this.actor.checkout(to_candid_vec_n13(this._uploadFile, this._downloadFile, arg0));
+                const result = await this.actor.getARSpotDistributions();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.checkout(to_candid_vec_n13(this._uploadFile, this._downloadFile, arg0));
-            return result;
-        }
-    }
-    async claimARSpot(arg0: string, arg1: bigint): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.claimARSpot(arg0, arg1);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.claimARSpot(arg0, arg1);
-            return result;
-        }
-    }
-    async clearAllMessages(): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.clearAllMessages();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.clearAllMessages();
-            return result;
-        }
-    }
-    async getARSpotDistribution(arg0: string): Promise<ARSpotDistribution | null> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getARSpotDistribution(arg0);
-                return from_candid_opt_n16(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getARSpotDistribution(arg0);
-            return from_candid_opt_n16(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async getAllMapMarkers(): Promise<Array<MapMarker>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getAllMapMarkers();
-                return from_candid_vec_n17(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getAllMapMarkers();
-            return from_candid_vec_n17(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async getAllPlayerProfiles(): Promise<Array<[Principal, PlayerProfile]>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getAllPlayerProfiles();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getAllPlayerProfiles();
+            const result = await this.actor.getARSpotDistributions();
             return result;
         }
     }
@@ -550,154 +354,140 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserProfile();
-                return from_candid_opt_n21(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserProfile();
-            return from_candid_opt_n21(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
         }
     }
     async getCallerUserRole(): Promise<UserRole> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserRole();
-                return from_candid_UserRole_n22(this._uploadFile, this._downloadFile, result);
+                return from_candid_UserRole_n15(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserRole();
-            return from_candid_UserRole_n22(this._uploadFile, this._downloadFile, result);
+            return from_candid_UserRole_n15(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getCapturedMonsters(arg0: Principal): Promise<Array<CapturedMonster>> {
+    async getChatMessages(): Promise<Array<ChatMessage>> {
         if (this.processError) {
             try {
-                const result = await this.actor.getCapturedMonsters(arg0);
+                const result = await this.actor.getChatMessages();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getCapturedMonsters(arg0);
+            const result = await this.actor.getChatMessages();
             return result;
         }
     }
-    async getCoinMarkers(): Promise<Array<MapMarker>> {
+    async getMapMarkers(): Promise<Array<MapMarker>> {
         if (this.processError) {
             try {
-                const result = await this.actor.getCoinMarkers();
+                const result = await this.actor.getMapMarkers();
                 return from_candid_vec_n17(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getCoinMarkers();
+            const result = await this.actor.getMapMarkers();
             return from_candid_vec_n17(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getMessages(arg0: bigint, arg1: bigint): Promise<Array<ChatMessage>> {
+    async getPlantedCoins(): Promise<Array<PlantedCoin>> {
         if (this.processError) {
             try {
-                const result = await this.actor.getMessages(arg0, arg1);
+                const result = await this.actor.getPlantedCoins();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getMessages(arg0, arg1);
+            const result = await this.actor.getPlantedCoins();
             return result;
         }
     }
-    async getMonsterMarkers(): Promise<Array<MapMarker>> {
+    async getPlayerByAddress(arg0: Principal): Promise<PlayerProfile | null> {
         if (this.processError) {
             try {
-                const result = await this.actor.getMonsterMarkers();
-                return from_candid_vec_n17(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.getPlayerByAddress(arg0);
+                return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getMonsterMarkers();
-            return from_candid_vec_n17(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.getPlayerByAddress(arg0);
+            return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getNearbyMarkers(arg0: number, arg1: number, arg2: number): Promise<Array<MapMarker>> {
+    async getPlayerDailyLimits(): Promise<DailyLimits> {
         if (this.processError) {
             try {
-                const result = await this.actor.getNearbyMarkers(arg0, arg1, arg2);
-                return from_candid_vec_n17(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.getPlayerDailyLimits();
+                return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getNearbyMarkers(arg0, arg1, arg2);
-            return from_candid_vec_n17(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.getPlayerDailyLimits();
+            return result;
         }
     }
-    async getPlayerState(): Promise<PlayerProfile | null> {
+    async getQMYPurchaseRequest(): Promise<QMYPurchaseRequest | null> {
         if (this.processError) {
             try {
-                const result = await this.actor.getPlayerState();
+                const result = await this.actor.getQMYPurchaseRequest();
                 return from_candid_opt_n21(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getPlayerState();
+            const result = await this.actor.getQMYPurchaseRequest();
             return from_candid_opt_n21(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getTotalMessagesCount(): Promise<bigint> {
+    async getUserIdForCaller(): Promise<UserId> {
         if (this.processError) {
             try {
-                const result = await this.actor.getTotalMessagesCount();
+                const result = await this.actor.getUserIdForCaller();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getTotalMessagesCount();
+            const result = await this.actor.getUserIdForCaller();
             return result;
         }
     }
-    async getUserProfile(arg0: Principal): Promise<PlayerProfile | null> {
+    async getUserProfile(arg0: UserId): Promise<PlayerProfile | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getUserProfile(arg0);
-                return from_candid_opt_n21(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getUserProfile(arg0);
-            return from_candid_opt_n21(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async hasClaimedARSpot(arg0: string, arg1: Principal): Promise<boolean> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.hasClaimedARSpot(arg0, arg1);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.hasClaimedARSpot(arg0, arg1);
-            return result;
+            return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
         }
     }
     async initializeAccessControl(): Promise<void> {
@@ -711,34 +501,6 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.initializeAccessControl();
-            return result;
-        }
-    }
-    async initializeMapMarkers(arg0: Array<MapMarker>): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.initializeMapMarkers(to_candid_vec_n24(this._uploadFile, this._downloadFile, arg0));
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.initializeMapMarkers(to_candid_vec_n24(this._uploadFile, this._downloadFile, arg0));
-            return result;
-        }
-    }
-    async initializeMerkleStorePrices(): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.initializeMerkleStorePrices();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.initializeMerkleStorePrices();
             return result;
         }
     }
@@ -784,497 +546,99 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async plantCoin(arg0: CoordinatedPoint): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.plantCoin(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.plantCoin(arg0);
-            return result;
-        }
-    }
-    async qmy_accounts(): Promise<Array<{
-        usd_balance: number;
-        balance_as_of_time: bigint;
-        pending_balance: bigint;
-        account: Principal;
-        confirmed_balance: bigint;
-    }>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_accounts();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_accounts();
-            return result;
-        }
-    }
-    async qmy_cancel_owner_pending_native_trades_buyer(arg0: Principal): Promise<{
-        trade_id: string;
-        remaining_tokens: bigint;
-    }> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_cancel_owner_pending_native_trades_buyer(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_cancel_owner_pending_native_trades_buyer(arg0);
-            return result;
-        }
-    }
-    async qmy_cancel_owner_pending_native_trades_buyerbywallet(arg0: Principal): Promise<{
-        trade_id: string;
-        remaining_tokens: bigint;
-    }> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_cancel_owner_pending_native_trades_buyerbywallet(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_cancel_owner_pending_native_trades_buyerbywallet(arg0);
-            return result;
-        }
-    }
-    async qmy_cancel_owner_pending_native_trades_seller(arg0: Principal): Promise<{
-        trade_id: string;
-        remaining_tokens: bigint;
-    }> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_cancel_owner_pending_native_trades_seller(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_cancel_owner_pending_native_trades_seller(arg0);
-            return result;
-        }
-    }
-    async qmy_cancel_pending_split(arg0: string): Promise<{
-        remaining_tokens: bigint;
-    }> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_cancel_pending_split(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_cancel_pending_split(arg0);
-            return result;
-        }
-    }
-    async qmy_cancel_purchase_request(): Promise<{
-        tokens_requested: bigint;
-        timestamp: bigint;
-    }> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_cancel_purchase_request();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_cancel_purchase_request();
-            return result;
-        }
-    }
-    async qmy_createOwnedSplitNativeTrade(arg0: bigint, arg1: number): Promise<{
-        id: string;
-        status: Variant_pending;
-        seller: Principal;
-        tokens: bigint;
-        timestamp: bigint;
-        buyer: Principal;
-        price: number;
-    }> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_createOwnedSplitNativeTrade(arg0, arg1);
-                return from_candid_record_n25(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_createOwnedSplitNativeTrade(arg0, arg1);
-            return from_candid_record_n25(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async qmy_getActiveNativeTrades(arg0: Principal): Promise<Array<Principal>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_getActiveNativeTrades(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_getActiveNativeTrades(arg0);
-            return result;
-        }
-    }
-    async qmy_getAvailableNativeTrades(arg0: Principal): Promise<Array<Principal>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_getAvailableNativeTrades(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_getAvailableNativeTrades(arg0);
-            return result;
-        }
-    }
-    async qmy_getCreatedNativeTradeHistory(arg0: Principal): Promise<Array<Principal>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_getCreatedNativeTradeHistory(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_getCreatedNativeTradeHistory(arg0);
-            return result;
-        }
-    }
-    async qmy_getNativeTradeHistory(arg0: Principal): Promise<Array<Principal>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_getNativeTradeHistory(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_getNativeTradeHistory(arg0);
-            return result;
-        }
-    }
-    async qmy_get_pending_requests_by_buyer(arg0: Principal): Promise<Array<QMYPurchaseRequest>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_get_pending_requests_by_buyer(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_get_pending_requests_by_buyer(arg0);
-            return result;
-        }
-    }
-    async qmy_get_pending_requests_by_caller(): Promise<Array<QMYPurchaseRequest>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_get_pending_requests_by_caller();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_get_pending_requests_by_caller();
-            return result;
-        }
-    }
-    async qmy_get_purchase_request(arg0: Principal): Promise<QMYPurchaseRequest | null> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_get_purchase_request(arg0);
-                return from_candid_opt_n27(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_get_purchase_request(arg0);
-            return from_candid_opt_n27(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async qmy_purchaseOwnedNFTOwnedSplitNativeTrade(arg0: bigint, arg1: Principal): Promise<{
-        remaining_tokens: bigint;
-        tokens_purchased: bigint;
-    }> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_purchaseOwnedNFTOwnedSplitNativeTrade(arg0, arg1);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_purchaseOwnedNFTOwnedSplitNativeTrade(arg0, arg1);
-            return result;
-        }
-    }
-    async qmy_purchase_identify(arg0: bigint, arg1: Principal): Promise<{
-        tokens_purchased: bigint;
-    }> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_purchase_identify(arg0, arg1);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_purchase_identify(arg0, arg1);
-            return result;
-        }
-    }
-    async qmy_purchase_split(arg0: string, arg1: bigint): Promise<{
-        _remaining_tokens: bigint;
-        tokens_purchased: bigint;
-    }> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_purchase_split(arg0, arg1);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_purchase_split(arg0, arg1);
-            return result;
-        }
-    }
-    async qmy_tokens(): Promise<Array<{
-        usd_price: number;
-        name: string;
-        available_supply: bigint;
-        symbol: string;
-    }>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_tokens();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_tokens();
-            return result;
-        }
-    }
-    async qmy_update_purchase_request(arg0: bigint): Promise<{
-        tokens_requested: bigint;
-        timestamp: bigint;
-    }> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_update_purchase_request(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_update_purchase_request(arg0);
-            return result;
-        }
-    }
-    async qmy_view_purchase_request(): Promise<QMYPurchaseRequest | null> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmy_view_purchase_request();
-                return from_candid_opt_n27(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmy_view_purchase_request();
-            return from_candid_opt_n27(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async qmymylo_distribute_mylo(arg0: bigint, arg1: number, arg2: number): Promise<{
-        distributor_fee: number;
-        tokens_distributed: bigint;
-        total_cost_cents: number;
-        tokens_remaining: bigint;
-    }> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmymylo_distribute_mylo(arg0, arg1, arg2);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmymylo_distribute_mylo(arg0, arg1, arg2);
-            return result;
-        }
-    }
-    async qmymylo_distribute_qmy(arg0: bigint, arg1: number, arg2: number): Promise<{
-        distributor_fee: number;
-        tokens_distributed: bigint;
-        total_cost_cents: number;
-        tokens_remaining: bigint;
-    }> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.qmymylo_distribute_qmy(arg0, arg1, arg2);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.qmymylo_distribute_qmy(arg0, arg1, arg2);
-            return result;
-        }
-    }
-    async registerPlayer(arg0: string): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.registerPlayer(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.registerPlayer(arg0);
-            return result;
-        }
-    }
-    async removeMapMarker(arg0: string): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.removeMapMarker(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.removeMapMarker(arg0);
-            return result;
-        }
-    }
-    async rescueSingleCoin(arg0: string, arg1: CoordinatedPoint): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.rescueSingleCoin(arg0, arg1);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.rescueSingleCoin(arg0, arg1);
-            return result;
-        }
-    }
-    async restoreEnergy(): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.restoreEnergy();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.restoreEnergy();
-            return result;
-        }
-    }
     async saveCallerUserProfile(arg0: PlayerProfile): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.saveCallerUserProfile(arg0);
+                const result = await this.actor.saveCallerUserProfile(await to_candid_PlayerProfile_n22(this._uploadFile, this._downloadFile, arg0));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.saveCallerUserProfile(arg0);
+            const result = await this.actor.saveCallerUserProfile(await to_candid_PlayerProfile_n22(this._uploadFile, this._downloadFile, arg0));
             return result;
         }
     }
-    async sendMessage(arg0: string, arg1: string): Promise<void> {
+    async sendChatMessage(arg0: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.sendMessage(arg0, arg1);
+                const result = await this.actor.sendChatMessage(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.sendMessage(arg0, arg1);
+            const result = await this.actor.sendChatMessage(arg0);
             return result;
         }
     }
-    async updateXP(arg0: bigint): Promise<void> {
+    async submitQMYPurchaseRequest(arg0: QMYPurchaseRequest): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateXP(arg0);
+                const result = await this.actor.submitQMYPurchaseRequest(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateXP(arg0);
+            const result = await this.actor.submitQMYPurchaseRequest(arg0);
             return result;
         }
     }
+    async updatePlayerDailyLimits(arg0: bigint, arg1: bigint): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updatePlayerDailyLimits(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updatePlayerDailyLimits(arg0, arg1);
+            return result;
+        }
+    }
+    async updateProfile(arg0: string, arg1: ExternalBlob | null): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateProfile(arg0, await to_candid_opt_n25(this._uploadFile, this._downloadFile, arg1));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateProfile(arg0, await to_candid_opt_n25(this._uploadFile, this._downloadFile, arg1));
+            return result;
+        }
+    }
+}
+async function from_candid_ExternalBlob_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ExternalBlob): Promise<ExternalBlob> {
+    return await _downloadFile(value);
 }
 function from_candid_MapMarker_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _MapMarker): MapMarker {
     return from_candid_record_n19(_uploadFile, _downloadFile, value);
 }
-function from_candid_UserRole_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
-    return from_candid_variant_n23(_uploadFile, _downloadFile, value);
+async function from_candid_PlayerProfile_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _PlayerProfile): Promise<PlayerProfile> {
+    return await from_candid_record_n12(_uploadFile, _downloadFile, value);
+}
+function from_candid_UserRole_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
+    return from_candid_variant_n16(_uploadFile, _downloadFile, value);
 }
 function from_candid__CaffeineStorageRefillResult_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: __CaffeineStorageRefillResult): _CaffeineStorageRefillResult {
     return from_candid_record_n5(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_ARSpotDistribution]): ARSpotDistribution | null {
-    return value.length === 0 ? null : value[0];
+async function from_candid_opt_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PlayerProfile]): Promise<PlayerProfile | null> {
+    return value.length === 0 ? null : await from_candid_PlayerProfile_n11(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PlayerProfile]): PlayerProfile | null {
-    return value.length === 0 ? null : value[0];
+async function from_candid_opt_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_ExternalBlob]): Promise<ExternalBlob | null> {
+    return value.length === 0 ? null : await from_candid_ExternalBlob_n14(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_QMYPurchaseRequest]): QMYPurchaseRequest | null {
+function from_candid_opt_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_QMYPurchaseRequest]): QMYPurchaseRequest | null {
     return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [boolean]): boolean | null {
@@ -1282,6 +646,42 @@ function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Ar
 }
 function from_candid_opt_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [bigint]): bigint | null {
     return value.length === 0 ? null : value[0];
+}
+async function from_candid_record_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    xp: bigint;
+    nickname: string;
+    photoUrl: [] | [_ExternalBlob];
+    level: bigint;
+    capturedMonsters: Array<_CapturedMonster>;
+    availableTokens: bigint;
+    plantedTokens: bigint;
+    bonusTokens: bigint;
+    registered: boolean;
+    energy: bigint;
+}): Promise<{
+    xp: bigint;
+    nickname: string;
+    photoUrl?: ExternalBlob;
+    level: bigint;
+    capturedMonsters: Array<CapturedMonster>;
+    availableTokens: bigint;
+    plantedTokens: bigint;
+    bonusTokens: bigint;
+    registered: boolean;
+    energy: bigint;
+}> {
+    return {
+        xp: value.xp,
+        nickname: value.nickname,
+        photoUrl: record_opt_to_undefined(await from_candid_opt_n13(_uploadFile, _downloadFile, value.photoUrl)),
+        level: value.level,
+        capturedMonsters: value.capturedMonsters,
+        availableTokens: value.availableTokens,
+        plantedTokens: value.plantedTokens,
+        bonusTokens: value.bonusTokens,
+        registered: value.registered,
+        energy: value.energy
+    };
 }
 function from_candid_record_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     id: string;
@@ -1308,35 +708,6 @@ function from_candid_record_n19(_uploadFile: (file: ExternalBlob) => Promise<Uin
         markerType: from_candid_variant_n20(_uploadFile, _downloadFile, value.markerType)
     };
 }
-function from_candid_record_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    id: string;
-    status: {
-        pending: null;
-    };
-    seller: Principal;
-    tokens: bigint;
-    timestamp: bigint;
-    buyer: Principal;
-    price: number;
-}): {
-    id: string;
-    status: Variant_pending;
-    seller: Principal;
-    tokens: bigint;
-    timestamp: bigint;
-    buyer: Principal;
-    price: number;
-} {
-    return {
-        id: value.id,
-        status: from_candid_variant_n26(_uploadFile, _downloadFile, value.status),
-        seller: value.seller,
-        tokens: value.tokens,
-        timestamp: value.timestamp,
-        buyer: value.buyer,
-        price: value.price
-    };
-}
 function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     success: [] | [boolean];
     topped_up_amount: [] | [bigint];
@@ -1349,14 +720,7 @@ function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint
         topped_up_amount: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.topped_up_amount))
     };
 }
-function from_candid_variant_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    coin: null;
-} | {
-    monster: null;
-}): Variant_coin_monster {
-    return "coin" in value ? Variant_coin_monster.coin : "monster" in value ? Variant_coin_monster.monster : value;
-}
-function from_candid_variant_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     admin: null;
 } | {
     user: null;
@@ -1365,22 +729,24 @@ function from_candid_variant_n23(_uploadFile: (file: ExternalBlob) => Promise<Ui
 }): UserRole {
     return "admin" in value ? UserRole.admin : "user" in value ? UserRole.user : "guest" in value ? UserRole.guest : value;
 }
-function from_candid_variant_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    pending: null;
-}): Variant_pending {
-    return "pending" in value ? Variant_pending.pending : value;
+function from_candid_variant_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    coin: null;
+} | {
+    monster: null;
+}): Variant_coin_monster {
+    return "coin" in value ? Variant_coin_monster.coin : "monster" in value ? Variant_coin_monster.monster : value;
 }
 function from_candid_vec_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_MapMarker>): Array<MapMarker> {
     return value.map((x)=>from_candid_MapMarker_n18(_uploadFile, _downloadFile, x));
 }
-function to_candid_LineItem_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: LineItem): _LineItem {
-    return to_candid_record_n15(_uploadFile, _downloadFile, value);
+async function to_candid_ExternalBlob_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ExternalBlob): Promise<_ExternalBlob> {
+    return await _uploadFile(value);
 }
-function to_candid_MapMarker_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: MapMarker): _MapMarker {
-    return to_candid_record_n9(_uploadFile, _downloadFile, value);
+async function to_candid_PlayerProfile_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: PlayerProfile): Promise<_PlayerProfile> {
+    return await to_candid_record_n23(_uploadFile, _downloadFile, value);
 }
-function to_candid_UserRole_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
-    return to_candid_variant_n12(_uploadFile, _downloadFile, value);
+function to_candid_UserRole_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
+    return to_candid_variant_n9(_uploadFile, _downloadFile, value);
 }
 function to_candid__CaffeineStorageRefillInformation_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _CaffeineStorageRefillInformation): __CaffeineStorageRefillInformation {
     return to_candid_record_n3(_uploadFile, _downloadFile, value);
@@ -1388,19 +754,43 @@ function to_candid__CaffeineStorageRefillInformation_n2(_uploadFile: (file: Exte
 function to_candid_opt_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _CaffeineStorageRefillInformation | null): [] | [__CaffeineStorageRefillInformation] {
     return value === null ? candid_none() : candid_some(to_candid__CaffeineStorageRefillInformation_n2(_uploadFile, _downloadFile, value));
 }
-function to_candid_record_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    priceId: string;
-    comment?: string;
-    quantity: bigint;
-}): {
-    priceId: string;
-    comment: [] | [string];
-    quantity: bigint;
-} {
+async function to_candid_opt_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ExternalBlob | null): Promise<[] | [_ExternalBlob]> {
+    return value === null ? candid_none() : candid_some(await to_candid_ExternalBlob_n24(_uploadFile, _downloadFile, value));
+}
+async function to_candid_record_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    xp: bigint;
+    nickname: string;
+    photoUrl?: ExternalBlob;
+    level: bigint;
+    capturedMonsters: Array<CapturedMonster>;
+    availableTokens: bigint;
+    plantedTokens: bigint;
+    bonusTokens: bigint;
+    registered: boolean;
+    energy: bigint;
+}): Promise<{
+    xp: bigint;
+    nickname: string;
+    photoUrl: [] | [_ExternalBlob];
+    level: bigint;
+    capturedMonsters: Array<_CapturedMonster>;
+    availableTokens: bigint;
+    plantedTokens: bigint;
+    bonusTokens: bigint;
+    registered: boolean;
+    energy: bigint;
+}> {
     return {
-        priceId: value.priceId,
-        comment: value.comment ? candid_some(value.comment) : candid_none(),
-        quantity: value.quantity
+        xp: value.xp,
+        nickname: value.nickname,
+        photoUrl: value.photoUrl ? candid_some(await to_candid_ExternalBlob_n24(_uploadFile, _downloadFile, value.photoUrl)) : candid_none(),
+        level: value.level,
+        capturedMonsters: value.capturedMonsters,
+        availableTokens: value.availableTokens,
+        plantedTokens: value.plantedTokens,
+        bonusTokens: value.bonusTokens,
+        registered: value.registered,
+        energy: value.energy
     };
 }
 function to_candid_record_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
@@ -1412,43 +802,7 @@ function to_candid_record_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8A
         proposed_top_up_amount: value.proposed_top_up_amount ? candid_some(value.proposed_top_up_amount) : candid_none()
     };
 }
-function to_candid_record_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    id: string;
-    latitude: number;
-    description: string;
-    longitude: number;
-    markerType: Variant_coin_monster;
-}): {
-    id: string;
-    latitude: number;
-    description: string;
-    longitude: number;
-    markerType: {
-        coin: null;
-    } | {
-        monster: null;
-    };
-} {
-    return {
-        id: value.id,
-        latitude: value.latitude,
-        description: value.description,
-        longitude: value.longitude,
-        markerType: to_candid_variant_n10(_uploadFile, _downloadFile, value.markerType)
-    };
-}
-function to_candid_variant_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Variant_coin_monster): {
-    coin: null;
-} | {
-    monster: null;
-} {
-    return value == Variant_coin_monster.coin ? {
-        coin: null
-    } : value == Variant_coin_monster.monster ? {
-        monster: null
-    } : value;
-}
-function to_candid_variant_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
+function to_candid_variant_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
     admin: null;
 } | {
     user: null;
@@ -1462,12 +816,6 @@ function to_candid_variant_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint
     } : value == UserRole.guest ? {
         guest: null
     } : value;
-}
-function to_candid_vec_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<LineItem>): Array<_LineItem> {
-    return value.map((x)=>to_candid_LineItem_n14(_uploadFile, _downloadFile, x));
-}
-function to_candid_vec_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<MapMarker>): Array<_MapMarker> {
-    return value.map((x)=>to_candid_MapMarker_n8(_uploadFile, _downloadFile, x));
 }
 export interface CreateActorOptions {
     agent?: Agent;

@@ -7,6 +7,13 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
+export class ExternalBlob {
+    getBytes(): Promise<Uint8Array<ArrayBuffer>>;
+    getDirectURL(): string;
+    static fromURL(url: string): ExternalBlob;
+    static fromBytes(blob: Uint8Array<ArrayBuffer>): ExternalBlob;
+    withUploadProgress(onProgress: (percentage: number) => void): ExternalBlob;
+}
 export interface ARSpotDistribution {
     totalDistributed: bigint;
     claimCount: bigint;
@@ -17,14 +24,10 @@ export interface CoordinatedPoint {
     longitude: number;
     address: string;
 }
-export interface LineItem {
-    priceId: string;
-    comment?: string;
-    quantity: bigint;
-}
 export interface PlayerProfile {
     xp: bigint;
     nickname: string;
+    photoUrl?: ExternalBlob;
     level: bigint;
     capturedMonsters: Array<CapturedMonster>;
     availableTokens: bigint;
@@ -33,9 +36,10 @@ export interface PlayerProfile {
     registered: boolean;
     energy: bigint;
 }
-export interface CapturedMonster {
-    monster: Monster;
-    captureTime: bigint;
+export interface PlantedCoin {
+    plantTime: bigint;
+    owner: Principal;
+    location: CoordinatedPoint;
 }
 export interface MapMarker {
     id: string;
@@ -56,10 +60,26 @@ export interface PaymentSuccessResponse {
         amount: bigint;
     };
 }
+export interface CapturedMonster {
+    monster: Monster;
+    captureTime: bigint;
+}
+export interface ARSpotClaim {
+    claimTime: bigint;
+    claimedBy: Principal;
+    spotId: string;
+    qtmAmount: bigint;
+}
+export type UserId = bigint;
 export interface QMYPurchaseRequest {
     tokensRequested: bigint;
     timestamp: bigint;
     buyer: Principal;
+}
+export interface DailyLimits {
+    rescuesToday: bigint;
+    plantsToday: bigint;
+    lastResetTime: bigint;
 }
 export interface PaymentCancelResponse {
     message: string;
@@ -76,10 +96,6 @@ export interface ChatMessage {
     sender: Principal;
     timestamp: bigint;
 }
-export interface CreatePaymentResponse {
-    checkoutUrl: string;
-    sessionId: string;
-}
 export enum UserRole {
     admin = "admin",
     user = "user",
@@ -89,120 +105,27 @@ export enum Variant_coin_monster {
     coin = "coin",
     monster = "monster"
 }
-export enum Variant_pending {
-    pending = "pending"
-}
 export interface backendInterface {
-    addMapMarker(marker: MapMarker): Promise<void>;
-    adminGetPlayerCount(): Promise<bigint>;
-    adminResetPlayer(user: Principal): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    captureMonster(monster: Monster): Promise<void>;
-    checkout(items: Array<LineItem>): Promise<CreatePaymentResponse>;
-    claimARSpot(spotId: string, qtmAmount: bigint): Promise<void>;
-    clearAllMessages(): Promise<void>;
-    getARSpotDistribution(spotId: string): Promise<ARSpotDistribution | null>;
-    getAllMapMarkers(): Promise<Array<MapMarker>>;
-    getAllPlayerProfiles(): Promise<Array<[Principal, PlayerProfile]>>;
+    getARSpotClaims(): Promise<Array<ARSpotClaim>>;
+    getARSpotDistributions(): Promise<Array<ARSpotDistribution>>;
     getCallerUserProfile(): Promise<PlayerProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
-    getCapturedMonsters(user: Principal): Promise<Array<CapturedMonster>>;
-    getCoinMarkers(): Promise<Array<MapMarker>>;
-    getMessages(limit: bigint, offset: bigint): Promise<Array<ChatMessage>>;
-    getMonsterMarkers(): Promise<Array<MapMarker>>;
-    getNearbyMarkers(lat: number, lon: number, radiusMeters: number): Promise<Array<MapMarker>>;
-    getPlayerState(): Promise<PlayerProfile | null>;
-    getTotalMessagesCount(): Promise<bigint>;
-    getUserProfile(user: Principal): Promise<PlayerProfile | null>;
-    hasClaimedARSpot(spotId: string, user: Principal): Promise<boolean>;
+    getChatMessages(): Promise<Array<ChatMessage>>;
+    getMapMarkers(): Promise<Array<MapMarker>>;
+    getPlantedCoins(): Promise<Array<PlantedCoin>>;
+    getPlayerByAddress(addr: Principal): Promise<PlayerProfile | null>;
+    getPlayerDailyLimits(): Promise<DailyLimits>;
+    getQMYPurchaseRequest(): Promise<QMYPurchaseRequest | null>;
+    getUserIdForCaller(): Promise<UserId>;
+    getUserProfile(userId: UserId): Promise<PlayerProfile | null>;
     initializeAccessControl(): Promise<void>;
-    initializeMapMarkers(seedMarkers: Array<MapMarker>): Promise<void>;
-    initializeMerkleStorePrices(): Promise<void>;
     isCallerAdmin(): Promise<boolean>;
     paymentCancel(sessionId: string): Promise<PaymentCancelResponse>;
     paymentSuccess(sessionId: string, accountId: string, caffeineCustomerId: string): Promise<PaymentSuccessResponse>;
-    plantCoin(location: CoordinatedPoint): Promise<void>;
-    qmy_accounts(): Promise<Array<{
-        usd_balance: number;
-        balance_as_of_time: bigint;
-        pending_balance: bigint;
-        account: Principal;
-        confirmed_balance: bigint;
-    }>>;
-    qmy_cancel_owner_pending_native_trades_buyer(_buyer: Principal): Promise<{
-        trade_id: string;
-        remaining_tokens: bigint;
-    }>;
-    qmy_cancel_owner_pending_native_trades_buyerbywallet(_buyer: Principal): Promise<{
-        trade_id: string;
-        remaining_tokens: bigint;
-    }>;
-    qmy_cancel_owner_pending_native_trades_seller(_seller: Principal): Promise<{
-        trade_id: string;
-        remaining_tokens: bigint;
-    }>;
-    qmy_cancel_pending_split(_trade_id: string): Promise<{
-        remaining_tokens: bigint;
-    }>;
-    qmy_cancel_purchase_request(): Promise<{
-        tokens_requested: bigint;
-        timestamp: bigint;
-    }>;
-    qmy_createOwnedSplitNativeTrade(_tokens: bigint, _price: number): Promise<{
-        id: string;
-        status: Variant_pending;
-        seller: Principal;
-        tokens: bigint;
-        timestamp: bigint;
-        buyer: Principal;
-        price: number;
-    }>;
-    qmy_getActiveNativeTrades(_account: Principal): Promise<Array<Principal>>;
-    qmy_getAvailableNativeTrades(_account: Principal): Promise<Array<Principal>>;
-    qmy_getCreatedNativeTradeHistory(_account: Principal): Promise<Array<Principal>>;
-    qmy_getNativeTradeHistory(_account: Principal): Promise<Array<Principal>>;
-    qmy_get_pending_requests_by_buyer(buyer: Principal): Promise<Array<QMYPurchaseRequest>>;
-    qmy_get_pending_requests_by_caller(): Promise<Array<QMYPurchaseRequest>>;
-    qmy_get_purchase_request(buyer: Principal): Promise<QMYPurchaseRequest | null>;
-    qmy_purchaseOwnedNFTOwnedSplitNativeTrade(_token: bigint, _wallet: Principal): Promise<{
-        remaining_tokens: bigint;
-        tokens_purchased: bigint;
-    }>;
-    qmy_purchase_identify(_tokens: bigint, _wallet: Principal): Promise<{
-        tokens_purchased: bigint;
-    }>;
-    qmy_purchase_split(_trade_id: string, _tokens: bigint): Promise<{
-        _remaining_tokens: bigint;
-        tokens_purchased: bigint;
-    }>;
-    qmy_tokens(): Promise<Array<{
-        usd_price: number;
-        name: string;
-        available_supply: bigint;
-        symbol: string;
-    }>>;
-    qmy_update_purchase_request(tokens_requested: bigint): Promise<{
-        tokens_requested: bigint;
-        timestamp: bigint;
-    }>;
-    qmy_view_purchase_request(): Promise<QMYPurchaseRequest | null>;
-    qmymylo_distribute_mylo(_total_tokens: bigint, _token_price_cents: number, _distributor_fee_cents: number): Promise<{
-        distributor_fee: number;
-        tokens_distributed: bigint;
-        total_cost_cents: number;
-        tokens_remaining: bigint;
-    }>;
-    qmymylo_distribute_qmy(_total_tokens: bigint, _token_price_cents: number, _distributor_fee_cents: number): Promise<{
-        distributor_fee: number;
-        tokens_distributed: bigint;
-        total_cost_cents: number;
-        tokens_remaining: bigint;
-    }>;
-    registerPlayer(nickname: string): Promise<void>;
-    removeMapMarker(markerId: string): Promise<void>;
-    rescueSingleCoin(coinId: string, playerLocation: CoordinatedPoint): Promise<void>;
-    restoreEnergy(): Promise<void>;
     saveCallerUserProfile(profile: PlayerProfile): Promise<void>;
-    sendMessage(authorName: string, content: string): Promise<void>;
-    updateXP(xpChange: bigint): Promise<void>;
+    sendChatMessage(content: string): Promise<void>;
+    submitQMYPurchaseRequest(request: QMYPurchaseRequest): Promise<void>;
+    updatePlayerDailyLimits(plantsToday: bigint, rescuesToday: bigint): Promise<void>;
+    updateProfile(nickname: string, photoUrl: ExternalBlob | null): Promise<void>;
 }

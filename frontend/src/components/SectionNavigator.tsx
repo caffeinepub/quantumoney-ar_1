@@ -24,7 +24,7 @@ export default function SectionNavigator({ isOpen, onClose }: SectionNavigatorPr
     { path: '/pre-proposals', icon: FileText, label: 'Pre-Proposals', available: true },
     { path: '/gold-paper', icon: BookOpen, label: 'Gold Paper', available: true },
     { path: '/docs', icon: FileText, label: 'Documentation', available: true },
-  ] as const;
+  ] satisfies Array<{ path: string; icon: React.ElementType; label: string; available: boolean }>;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm animate-fade-in">
@@ -45,12 +45,12 @@ export default function SectionNavigator({ isOpen, onClose }: SectionNavigatorPr
           {sections.map((section) => {
             const Icon = section.icon;
             return (
-              <Link
+              <a
                 key={section.path}
-                to={section.path}
-                onClick={onClose}
-                className={`glass-card border-primary/30 p-6 rounded-xl transition-all hover:border-primary/60 ${
-                  !section.available ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''
+                href={section.path}
+                onClick={(e) => { e.preventDefault(); if (section.available) { window.location.href = section.path; onClose(); } }}
+                className={`glass-card border-primary/30 p-6 rounded-xl transition-all hover:border-primary/60 block ${
+                  !section.available ? 'opacity-50 cursor-not-allowed pointer-events-none' : 'cursor-pointer'
                 }`}
               >
                 <div className="flex items-center gap-4 mb-3">
@@ -67,7 +67,7 @@ export default function SectionNavigator({ isOpen, onClose }: SectionNavigatorPr
                 >
                   {section.available ? 'Available' : 'Coming Soon'}
                 </Badge>
-              </Link>
+              </a>
             );
           })}
         </div>

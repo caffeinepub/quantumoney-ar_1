@@ -1,145 +1,144 @@
-import { useState, useEffect } from 'react';
-import { Download, ArrowRight, Globe } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/contexts/LanguageContext';
+import React, { useEffect, useState } from 'react';
+import SpaceBackground from '../components/space/SpaceBackground';
+
+type CoinType = 'icp' | 'qmy';
+
+interface FloatingCoin {
+  id: number;
+  type: CoinType;
+}
 
 export default function HomePage() {
-  const [isTextVisible, setIsTextVisible] = useState(false);
-  const { language, setLanguage } = useLanguage();
+  const [coins, setCoins] = useState<FloatingCoin[]>([]);
+  const [coinCounter, setCoinCounter] = useState(0);
 
   useEffect(() => {
-    const showText = () => {
-      setIsTextVisible(true);
-      setTimeout(() => {
-        setIsTextVisible(false);
-      }, 3000);
-    };
-
-    showText();
     const interval = setInterval(() => {
-      showText();
-    }, 4000);
+      setCoinCounter(prev => {
+        const newId = prev + 1;
+        const coinType: CoinType = newId % 2 === 0 ? 'icp' : 'qmy';
+        setCoins(current => [...current, { id: newId, type: coinType }]);
+        // Remove coin after animation completes (3.5s)
+        setTimeout(() => {
+          setCoins(current => current.filter(c => c.id !== newId));
+        }, 3500);
+        return newId;
+      });
+    }, 5000);
+
+    // Trigger first coin immediately
+    const firstId = 1;
+    setCoins([{ id: firstId, type: 'icp' }]);
+    setCoinCounter(firstId);
+    setTimeout(() => {
+      setCoins(current => current.filter(c => c.id !== firstId));
+    }, 3500);
 
     return () => clearInterval(interval);
   }, []);
 
-  const handleInstallClick = () => {
-    window.location.href = 'https://quantumoneyar.app';
-  };
-
-  const toggleLanguage = () => {
-    setLanguage(language === 'pt' ? 'en' : 'pt');
-  };
-
-  const animatedText = {
-    pt: 'Quantumoney: em desenvolvimento ativo para promover prosperidade coletiva e inovação blockchain🌐🌐🌐',
-    en: 'Quantumoney: in development to promote collective prosperity and blockchain innovation🌐🌐🌐',
-  };
-
-  const ctaText = language === 'pt' ? 'Instalar Aplicativo' : 'Install App';
-
   return (
-    <section className="relative h-screen overflow-hidden">
-      {/* Animated Galaxy Background */}
-      <div className="absolute inset-0">
-        <img
-          src="/assets/generated/world-class-hero-quantum-galaxy.dim_1920x1080.png"
-          alt="Quantum Galaxy"
-          className="w-full h-full object-cover opacity-70"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/40 to-background" />
+    <div className="relative min-h-screen w-full overflow-hidden flex flex-col">
+      {/* Animated space background */}
+      <SpaceBackground />
 
-        {/* Quantum Nebula Effect */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px]">
-          <div className="absolute inset-0 bg-gradient-radial from-primary/20 via-secondary/10 to-transparent rounded-full blur-3xl animate-pulse" />
-          <div className="absolute inset-0 bg-gradient-radial from-accent/15 via-primary/5 to-transparent rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }} />
-        </div>
-
-        {/* Animated Stars */}
-        <div className="absolute inset-0">
-          {[...Array(80)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                opacity: Math.random() * 0.7 + 0.3,
-              }}
+      {/* Floating coins layer */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+        {coins.map(coin => (
+          <div
+            key={coin.id}
+            className="absolute coin-grow-fade"
+            style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
+          >
+            <img
+              src={
+                coin.type === 'icp'
+                  ? '/assets/generated/icp-coin-gold.dim_128x128.png'
+                  : '/assets/generated/qmy-coin-gold.dim_128x128.png'
+              }
+              alt={coin.type === 'icp' ? 'ICP Coin' : 'QMY Coin'}
+              className="w-32 h-32 drop-shadow-[0_0_20px_rgba(255,215,0,0.8)]"
             />
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
 
-      {/* Language Toggle Button - Top Right Corner */}
-      <div className="absolute top-28 right-6 z-20 animate-fade-in">
-        <Button
-          onClick={toggleLanguage}
-          variant="outline"
-          size="lg"
-          className="group glass-card border-primary/40 hover:bg-primary/10 hover:border-primary/60 text-primary transition-all duration-300 px-6 py-3 rounded-full shadow-gold-subtle hover:shadow-gold"
-        >
-          <Globe className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />
-          <span className="font-bold text-lg">{language === 'pt' ? 'EN' : 'PT'}</span>
-        </Button>
-      </div>
-
-      {/* Content Overlay */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 text-center space-y-10">
-        {/* Logo with Gold Glow */}
-        <div className="relative animate-fade-in">
-          <div className="absolute inset-0 bg-primary/30 blur-3xl rounded-full" />
+      {/* Main content */}
+      <div className="relative z-20 flex flex-col items-center justify-center min-h-screen px-4 text-center">
+        {/* Logo */}
+        <div className="mb-6">
           <img
-            src="/assets/generated/qmy-luxury-pro-logo-transparent.dim_200x200.png"
-            alt="QMY Luxury Pro"
-            className="relative w-40 h-40 md:w-56 md:h-56 object-contain drop-shadow-[0_0_40px_rgba(217,165,32,0.9)]"
+            src="/assets/generated/quantumoney-logo-transparent.dim_200x200.png"
+            alt="Quantumoney"
+            className="w-24 h-24 mx-auto drop-shadow-[0_0_15px_rgba(255,215,0,0.6)]"
           />
         </div>
 
-        {/* Branding */}
-        <div className="space-y-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-primary drop-shadow-[0_0_30px_rgba(217,165,32,0.7)]">
-            Quantumoney
-          </h1>
-          <p className="text-xl md:text-2xl lg:text-3xl text-foreground/80 font-light max-w-4xl mx-auto">
-            {language === 'pt' ? 'Documentação Institucional' : 'Institutional Documentation'}
-          </p>
+        {/* Welcome message */}
+        <h1 className="text-4xl md:text-6xl font-bold text-yellow-400 mb-4 font-cinzel tracking-wide drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]">
+          Bem-vindo ao mundo Quantumoney
+        </h1>
+        <p className="text-yellow-300/80 text-lg md:text-xl mb-10 max-w-2xl font-rajdhani">
+          A plataforma descentralizada de tokens QMY no Internet Computer Protocol
+        </p>
+
+        {/* CTA Button */}
+        <a
+          href="https://quantumoneyar.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-transparent border-2 border-yellow-400 text-yellow-400 font-bold text-lg rounded-none hover:bg-yellow-400/10 transition-all duration-300 font-rajdhani tracking-widest uppercase shadow-[0_0_20px_rgba(255,215,0,0.3)] hover:shadow-[0_0_30px_rgba(255,215,0,0.5)]"
+        >
+          <span>Entrar no QuantumoneyAR</span>
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+
+        {/* Features grid */}
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl w-full">
+          {[
+            {
+              icon: '🪙',
+              title: 'Token QMY',
+              desc: 'Token nativo do ecossistema Quantumoney no ICP',
+            },
+            {
+              icon: '🎮',
+              title: 'AR Gaming',
+              desc: 'Joga em realidade aumentada e ganha QMY',
+            },
+            {
+              icon: '🏛️',
+              title: 'DAO Governance',
+              desc: 'Participa nas decisões do ecossistema',
+            },
+          ].map(feature => (
+            <div
+              key={feature.title}
+              className="glass-card p-6 text-center"
+            >
+              <div className="text-4xl mb-3">{feature.icon}</div>
+              <h3 className="text-yellow-400 font-bold text-lg mb-2 font-cinzel">{feature.title}</h3>
+              <p className="text-yellow-300/70 text-sm font-rajdhani">{feature.desc}</p>
+            </div>
+          ))}
         </div>
 
-        {/* Animated Text - Appears every 4 seconds, visible for 3 seconds, bilingual */}
-        <div className="h-32 flex items-center justify-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
-          <p
-            className={`text-xl md:text-2xl lg:text-3xl font-serif text-primary/90 transition-opacity duration-700 max-w-5xl px-4 ${
-              isTextVisible ? 'opacity-100' : 'opacity-0'
-            }`}
-          >
-            {animatedText[language]}
-          </p>
-        </div>
-
-        {/* Install Button */}
-        <div className="animate-fade-in" style={{ animationDelay: '0.6s' }}>
-          <Button
-            onClick={handleInstallClick}
-            size="lg"
-            className="group px-12 py-8 text-xl md:text-2xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-full transition-all duration-500 hover:scale-110 shadow-gold hover:shadow-gold-lg"
-          >
-            <span className="flex items-center gap-4">
-              <Download className="w-7 h-7" />
-              {ctaText}
-              <ArrowRight className="w-7 h-7 group-hover:translate-x-2 transition-transform" />
-            </span>
-          </Button>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 animate-bounce">
-          <div className="w-8 h-12 border-2 border-primary rounded-full flex items-start justify-center p-2">
-            <div className="w-1.5 h-4 bg-primary rounded-full animate-pulse" />
-          </div>
+        {/* Stats */}
+        <div className="mt-10 flex flex-wrap justify-center gap-8">
+          {[
+            { label: 'Supply Total', value: '1,000,000,000 QMY' },
+            { label: 'Rede', value: 'Internet Computer' },
+            { label: 'Padrão', value: 'ICRC-1' },
+          ].map(stat => (
+            <div key={stat.label} className="text-center">
+              <div className="text-yellow-400 font-bold text-xl font-cinzel">{stat.value}</div>
+              <div className="text-yellow-300/60 text-xs font-rajdhani uppercase tracking-wider">{stat.label}</div>
+            </div>
+          ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

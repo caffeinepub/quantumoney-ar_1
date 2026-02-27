@@ -1,6 +1,8 @@
 import { Actor, HttpAgent } from '@dfinity/agent';
-import { Principal } from '@icp-sdk/core/principal';
-import { idlFactory as icrcIdlFactory } from './icrc.idl';
+import { idlFactory } from './icrc.idl';
+
+// Carteira A — QMY Logic/Ledger canister
+const QMY_LEDGER_CANISTER_ID = 'ckmsk-taaaa-aaaah-atfca-cai';
 
 export interface ICRCLedgerMetadata {
   name: string;
@@ -14,24 +16,27 @@ export interface ICRCBalance {
   symbol: string;
 }
 
-/**
- * ICRC-1 Ledger Client for read-only queries
- */
 export class ICRCLedgerClient {
   private actor: any;
-  private canisterId: string;
 
-  constructor(canisterId: string, agent: HttpAgent) {
-    this.canisterId = canisterId;
-    this.actor = Actor.createActor(icrcIdlFactory, {
-      agent,
-      canisterId,
-    });
+  constructor(agent: HttpAgent, canisterId: string = QMY_LEDGER_CANISTER_ID) {
+    this.actor = Actor.createActor(idlFactory, { agent, canisterId });
   }
 
-  /**
-   * Get token metadata (name, symbol, decimals)
-   */
+  async getBalance(principalId: string): Promise<bigint> {
+    try {
+      const { Principal } = await import('@dfinity/principal');
+      const principal = Principal.fromText(principalId);
+      const result = await this.actor.icrc1_balance_of({
+        owner: principal,
+        subaccount: [],
+      });
+      return result as bigint;
+    } catch {
+      return 0n;
+    }
+  }
+
   async getMetadata(): Promise<ICRCLedgerMetadata> {
     try {
       const [name, symbol, decimals] = await Promise.all([
@@ -39,71 +44,30 @@ export class ICRCLedgerClient {
         this.actor.icrc1_symbol(),
         this.actor.icrc1_decimals(),
       ]);
-
       return {
-        name: name || 'Unknown',
-        symbol: symbol || 'UNKNOWN',
+        name: name || 'QMY',
+        symbol: symbol || 'QMY',
         decimals: Number(decimals) || 8,
       };
-    } catch (error) {
-      console.error('Failed to fetch ICRC metadata:', error);
-      throw new Error('Unable to fetch token metadata');
+    } catch {
+      return { name: 'QMY', symbol: 'QMY', decimals: 8 };
     }
   }
 
-  /**
-   * Get balance for a specific account (principal)
-   */
-  async getBalance(owner: Principal): Promise<bigint> {
-    try {
-      const account = {
-        owner,
-        subaccount: [],
-      };
-      const balance = await this.actor.icrc1_balance_of(account);
-      return balance;
-    } catch (error) {
-      console.error('Failed to fetch ICRC balance:', error);
-      throw new Error('Unable to fetch balance');
-    }
-  }
-
-  /**
-   * Get balance with metadata in one call
-   */
-  async getBalanceWithMetadata(owner: Principal): Promise<ICRCBalance> {
-    try {
-      const [balance, metadata] = await Promise.all([
-        this.getBalance(owner),
-        this.getMetadata(),
-      ]);
-
-      return {
-        balance,
-        decimals: metadata.decimals,
-        symbol: metadata.symbol,
-      };
-    } catch (error) {
-      console.error('Failed to fetch balance with metadata:', error);
-      throw error;
-    }
+  async getBalanceWithMetadata(principalId: string): Promise<ICRCBalance> {
+    const [balance, metadata] = await Promise.all([
+      this.getBalance(principalId),
+      this.getMetadata(),
+    ]);
+    return { balance, decimals: metadata.decimals, symbol: metadata.symbol };
   }
 }
 
-/**
- * Format balance from raw units to human-readable format
- */
-export function formatBalance(balance: bigint, decimals: number): string {
-  const divisor = BigInt(10 ** decimals);
-  const integerPart = balance / divisor;
-  const fractionalPart = balance % divisor;
-  
-  const fractionalStr = fractionalPart.toString().padStart(decimals, '0');
-  const trimmedFractional = fractionalStr.replace(/0+$/, '');
-  
-  if (trimmedFractional === '') {
-    return integerPart.toString();
-  }
-  
-  return `${integerPart}.${trimmedFractional}`;
+export function formatBalance(balance: bigint, decimals = 8): string {
+  const divisor = Math.pow(10, decimals);
+  return (Number(balance) / divisor).toFixed(decimals);
+}
+
+export function formatICRC1(amount: bigint, decimals = 8): string {
+  return formatBalance(amount, decimals);
 }

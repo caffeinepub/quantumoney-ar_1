@@ -1,46 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
-import { useInternetIdentity } from './useInternetIdentity';
+import { ICPLedgerClient } from '../lib/icp/ledgerClient';
 import { HttpAgent } from '@dfinity/agent';
-import { ICPLedgerClient, formatICPBalance } from '../lib/icp/ledgerClient';
 
-/**
- * Hook to fetch real ICP balance from on-chain ledger
- */
-export function useICPLedger() {
-  const { identity, isInitializing } = useInternetIdentity();
-
-  return useQuery({
-    queryKey: ['icpBalance', identity?.getPrincipal().toString()],
+export function useICPLedger(principalId?: string) {
+  return useQuery<bigint>({
+    queryKey: ['icpBalance', principalId ?? ''],
     queryFn: async () => {
-      if (!identity) {
-        throw new Error('Not authenticated');
+      if (!principalId || principalId === '2vxsx-fae') return 0n;
+      try {
+        const agent = await HttpAgent.create({ host: 'https://ic0.app' });
+        const client = new ICPLedgerClient(agent);
+        return await client.getBalance(principalId);
+      } catch {
+        return 0n;
       }
-
-      const principal = identity.getPrincipal();
-      
-      // Create agent with the authenticated identity
-      const agent = new HttpAgent({
-        identity,
-        host: 'https://ic0.app',
-      });
-
-      // In development, fetch root key
-      if (process.env.NODE_ENV !== 'production') {
-        await agent.fetchRootKey().catch(err => {
-          console.warn('Unable to fetch root key:', err);
-        });
-      }
-
-      const client = new ICPLedgerClient(agent);
-      const balance = await client.getBalance(principal);
-
-      return {
-        balance,
-        formatted: formatICPBalance(balance),
-      };
     },
-    enabled: !!identity && !isInitializing,
-    staleTime: 10000, // 10 seconds
-    retry: 2,
+    enabled: !!principalId && principalId !== '2vxsx-fae',
+    staleTime: 30_000,
+    retry: 1,
   });
 }

@@ -19,36 +19,27 @@ export const _CaffeineStorageRefillResult = IDL.Record({
   'success' : IDL.Opt(IDL.Bool),
   'topped_up_amount' : IDL.Opt(IDL.Nat),
 });
-export const MapMarker = IDL.Record({
-  'id' : IDL.Text,
-  'latitude' : IDL.Float64,
-  'description' : IDL.Text,
-  'longitude' : IDL.Float64,
-  'markerType' : IDL.Variant({ 'coin' : IDL.Null, 'monster' : IDL.Null }),
-});
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
-export const Monster = IDL.Record({
-  'name' : IDL.Text,
-  'energyBoost' : IDL.Nat,
-  'spawnFrequency' : IDL.Nat,
-});
-export const LineItem = IDL.Record({
-  'priceId' : IDL.Text,
-  'comment' : IDL.Opt(IDL.Text),
-  'quantity' : IDL.Nat,
-});
-export const CreatePaymentResponse = IDL.Record({
-  'checkoutUrl' : IDL.Text,
-  'sessionId' : IDL.Text,
+export const ARSpotClaim = IDL.Record({
+  'claimTime' : IDL.Int,
+  'claimedBy' : IDL.Principal,
+  'spotId' : IDL.Text,
+  'qtmAmount' : IDL.Nat,
 });
 export const ARSpotDistribution = IDL.Record({
   'totalDistributed' : IDL.Nat,
   'claimCount' : IDL.Nat,
   'spotId' : IDL.Text,
+});
+export const ExternalBlob = IDL.Vec(IDL.Nat8);
+export const Monster = IDL.Record({
+  'name' : IDL.Text,
+  'energyBoost' : IDL.Nat,
+  'spawnFrequency' : IDL.Nat,
 });
 export const CapturedMonster = IDL.Record({
   'monster' : Monster,
@@ -57,6 +48,7 @@ export const CapturedMonster = IDL.Record({
 export const PlayerProfile = IDL.Record({
   'xp' : IDL.Nat,
   'nickname' : IDL.Text,
+  'photoUrl' : IDL.Opt(ExternalBlob),
   'level' : IDL.Nat,
   'capturedMonsters' : IDL.Vec(CapturedMonster),
   'availableTokens' : IDL.Nat,
@@ -71,6 +63,34 @@ export const ChatMessage = IDL.Record({
   'sender' : IDL.Principal,
   'timestamp' : IDL.Int,
 });
+export const MapMarker = IDL.Record({
+  'id' : IDL.Text,
+  'latitude' : IDL.Float64,
+  'description' : IDL.Text,
+  'longitude' : IDL.Float64,
+  'markerType' : IDL.Variant({ 'coin' : IDL.Null, 'monster' : IDL.Null }),
+});
+export const CoordinatedPoint = IDL.Record({
+  'latitude' : IDL.Float64,
+  'longitude' : IDL.Float64,
+  'address' : IDL.Text,
+});
+export const PlantedCoin = IDL.Record({
+  'plantTime' : IDL.Int,
+  'owner' : IDL.Principal,
+  'location' : CoordinatedPoint,
+});
+export const DailyLimits = IDL.Record({
+  'rescuesToday' : IDL.Nat,
+  'plantsToday' : IDL.Nat,
+  'lastResetTime' : IDL.Int,
+});
+export const QMYPurchaseRequest = IDL.Record({
+  'tokensRequested' : IDL.Nat,
+  'timestamp' : IDL.Int,
+  'buyer' : IDL.Principal,
+});
+export const UserId = IDL.Nat;
 export const PaymentCancelResponse = IDL.Record({
   'message' : IDL.Text,
   'sessionId' : IDL.Text,
@@ -83,16 +103,6 @@ export const PaymentSuccessResponse = IDL.Record({
     'currency' : IDL.Text,
     'amount' : IDL.Nat,
   }),
-});
-export const CoordinatedPoint = IDL.Record({
-  'latitude' : IDL.Float64,
-  'longitude' : IDL.Float64,
-  'address' : IDL.Text,
-});
-export const QMYPurchaseRequest = IDL.Record({
-  'tokensRequested' : IDL.Nat,
-  'timestamp' : IDL.Int,
-  'buyer' : IDL.Principal,
 });
 
 export const idlService = IDL.Service({
@@ -122,59 +132,32 @@ export const idlService = IDL.Service({
       [],
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
-  'addMapMarker' : IDL.Func([MapMarker], [], []),
-  'adminGetPlayerCount' : IDL.Func([], [IDL.Nat], ['query']),
-  'adminResetPlayer' : IDL.Func([IDL.Principal], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'captureMonster' : IDL.Func([Monster], [], []),
-  'checkout' : IDL.Func([IDL.Vec(LineItem)], [CreatePaymentResponse], []),
-  'claimARSpot' : IDL.Func([IDL.Text, IDL.Nat], [], []),
-  'clearAllMessages' : IDL.Func([], [], []),
-  'getARSpotDistribution' : IDL.Func(
-      [IDL.Text],
-      [IDL.Opt(ARSpotDistribution)],
-      ['query'],
-    ),
-  'getAllMapMarkers' : IDL.Func([], [IDL.Vec(MapMarker)], ['query']),
-  'getAllPlayerProfiles' : IDL.Func(
+  'getARSpotClaims' : IDL.Func([], [IDL.Vec(ARSpotClaim)], ['query']),
+  'getARSpotDistributions' : IDL.Func(
       [],
-      [IDL.Vec(IDL.Tuple(IDL.Principal, PlayerProfile))],
+      [IDL.Vec(ARSpotDistribution)],
       ['query'],
     ),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(PlayerProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-  'getCapturedMonsters' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Vec(CapturedMonster)],
-      ['query'],
-    ),
-  'getCoinMarkers' : IDL.Func([], [IDL.Vec(MapMarker)], ['query']),
-  'getMessages' : IDL.Func(
-      [IDL.Nat, IDL.Nat],
-      [IDL.Vec(ChatMessage)],
-      ['query'],
-    ),
-  'getMonsterMarkers' : IDL.Func([], [IDL.Vec(MapMarker)], ['query']),
-  'getNearbyMarkers' : IDL.Func(
-      [IDL.Float64, IDL.Float64, IDL.Float64],
-      [IDL.Vec(MapMarker)],
-      ['query'],
-    ),
-  'getPlayerState' : IDL.Func([], [IDL.Opt(PlayerProfile)], ['query']),
-  'getTotalMessagesCount' : IDL.Func([], [IDL.Nat], ['query']),
-  'getUserProfile' : IDL.Func(
+  'getChatMessages' : IDL.Func([], [IDL.Vec(ChatMessage)], ['query']),
+  'getMapMarkers' : IDL.Func([], [IDL.Vec(MapMarker)], ['query']),
+  'getPlantedCoins' : IDL.Func([], [IDL.Vec(PlantedCoin)], ['query']),
+  'getPlayerByAddress' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(PlayerProfile)],
       ['query'],
     ),
-  'hasClaimedARSpot' : IDL.Func(
-      [IDL.Text, IDL.Principal],
-      [IDL.Bool],
+  'getPlayerDailyLimits' : IDL.Func([], [DailyLimits], ['query']),
+  'getQMYPurchaseRequest' : IDL.Func(
+      [],
+      [IDL.Opt(QMYPurchaseRequest)],
       ['query'],
     ),
+  'getUserIdForCaller' : IDL.Func([], [UserId], ['query']),
+  'getUserProfile' : IDL.Func([UserId], [IDL.Opt(PlayerProfile)], ['query']),
   'initializeAccessControl' : IDL.Func([], [], []),
-  'initializeMapMarkers' : IDL.Func([IDL.Vec(MapMarker)], [], []),
-  'initializeMerkleStorePrices' : IDL.Func([], [], []),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'paymentCancel' : IDL.Func([IDL.Text], [PaymentCancelResponse], []),
   'paymentSuccess' : IDL.Func(
@@ -182,177 +165,11 @@ export const idlService = IDL.Service({
       [PaymentSuccessResponse],
       [],
     ),
-  'plantCoin' : IDL.Func([CoordinatedPoint], [], []),
-  'qmy_accounts' : IDL.Func(
-      [],
-      [
-        IDL.Vec(
-          IDL.Record({
-            'usd_balance' : IDL.Float64,
-            'balance_as_of_time' : IDL.Int,
-            'pending_balance' : IDL.Nat,
-            'account' : IDL.Principal,
-            'confirmed_balance' : IDL.Nat,
-          })
-        ),
-      ],
-      ['query'],
-    ),
-  'qmy_cancel_owner_pending_native_trades_buyer' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Record({ 'trade_id' : IDL.Text, 'remaining_tokens' : IDL.Nat })],
-      [],
-    ),
-  'qmy_cancel_owner_pending_native_trades_buyerbywallet' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Record({ 'trade_id' : IDL.Text, 'remaining_tokens' : IDL.Nat })],
-      [],
-    ),
-  'qmy_cancel_owner_pending_native_trades_seller' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Record({ 'trade_id' : IDL.Text, 'remaining_tokens' : IDL.Nat })],
-      [],
-    ),
-  'qmy_cancel_pending_split' : IDL.Func(
-      [IDL.Text],
-      [IDL.Record({ 'remaining_tokens' : IDL.Nat })],
-      [],
-    ),
-  'qmy_cancel_purchase_request' : IDL.Func(
-      [],
-      [IDL.Record({ 'tokens_requested' : IDL.Nat, 'timestamp' : IDL.Int })],
-      [],
-    ),
-  'qmy_createOwnedSplitNativeTrade' : IDL.Func(
-      [IDL.Nat, IDL.Float64],
-      [
-        IDL.Record({
-          'id' : IDL.Text,
-          'status' : IDL.Variant({ 'pending' : IDL.Null }),
-          'seller' : IDL.Principal,
-          'tokens' : IDL.Nat,
-          'timestamp' : IDL.Int,
-          'buyer' : IDL.Principal,
-          'price' : IDL.Float64,
-        }),
-      ],
-      [],
-    ),
-  'qmy_getActiveNativeTrades' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Vec(IDL.Principal)],
-      ['query'],
-    ),
-  'qmy_getAvailableNativeTrades' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Vec(IDL.Principal)],
-      ['query'],
-    ),
-  'qmy_getCreatedNativeTradeHistory' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Vec(IDL.Principal)],
-      ['query'],
-    ),
-  'qmy_getNativeTradeHistory' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Vec(IDL.Principal)],
-      ['query'],
-    ),
-  'qmy_get_pending_requests_by_buyer' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Vec(QMYPurchaseRequest)],
-      ['query'],
-    ),
-  'qmy_get_pending_requests_by_caller' : IDL.Func(
-      [],
-      [IDL.Vec(QMYPurchaseRequest)],
-      ['query'],
-    ),
-  'qmy_get_purchase_request' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Opt(QMYPurchaseRequest)],
-      ['query'],
-    ),
-  'qmy_purchaseOwnedNFTOwnedSplitNativeTrade' : IDL.Func(
-      [IDL.Nat, IDL.Principal],
-      [
-        IDL.Record({
-          'remaining_tokens' : IDL.Nat,
-          'tokens_purchased' : IDL.Nat,
-        }),
-      ],
-      [],
-    ),
-  'qmy_purchase_identify' : IDL.Func(
-      [IDL.Nat, IDL.Principal],
-      [IDL.Record({ 'tokens_purchased' : IDL.Nat })],
-      [],
-    ),
-  'qmy_purchase_split' : IDL.Func(
-      [IDL.Text, IDL.Nat],
-      [
-        IDL.Record({
-          '_remaining_tokens' : IDL.Nat,
-          'tokens_purchased' : IDL.Nat,
-        }),
-      ],
-      [],
-    ),
-  'qmy_tokens' : IDL.Func(
-      [],
-      [
-        IDL.Vec(
-          IDL.Record({
-            'usd_price' : IDL.Float64,
-            'name' : IDL.Text,
-            'available_supply' : IDL.Nat,
-            'symbol' : IDL.Text,
-          })
-        ),
-      ],
-      ['query'],
-    ),
-  'qmy_update_purchase_request' : IDL.Func(
-      [IDL.Nat],
-      [IDL.Record({ 'tokens_requested' : IDL.Nat, 'timestamp' : IDL.Int })],
-      [],
-    ),
-  'qmy_view_purchase_request' : IDL.Func(
-      [],
-      [IDL.Opt(QMYPurchaseRequest)],
-      ['query'],
-    ),
-  'qmymylo_distribute_mylo' : IDL.Func(
-      [IDL.Nat, IDL.Float64, IDL.Float64],
-      [
-        IDL.Record({
-          'distributor_fee' : IDL.Float64,
-          'tokens_distributed' : IDL.Nat,
-          'total_cost_cents' : IDL.Float64,
-          'tokens_remaining' : IDL.Nat,
-        }),
-      ],
-      [],
-    ),
-  'qmymylo_distribute_qmy' : IDL.Func(
-      [IDL.Nat, IDL.Float64, IDL.Float64],
-      [
-        IDL.Record({
-          'distributor_fee' : IDL.Float64,
-          'tokens_distributed' : IDL.Nat,
-          'total_cost_cents' : IDL.Float64,
-          'tokens_remaining' : IDL.Nat,
-        }),
-      ],
-      [],
-    ),
-  'registerPlayer' : IDL.Func([IDL.Text], [], []),
-  'removeMapMarker' : IDL.Func([IDL.Text], [], []),
-  'rescueSingleCoin' : IDL.Func([IDL.Text, CoordinatedPoint], [], []),
-  'restoreEnergy' : IDL.Func([], [], []),
   'saveCallerUserProfile' : IDL.Func([PlayerProfile], [], []),
-  'sendMessage' : IDL.Func([IDL.Text, IDL.Text], [], []),
-  'updateXP' : IDL.Func([IDL.Int], [], []),
+  'sendChatMessage' : IDL.Func([IDL.Text], [], []),
+  'submitQMYPurchaseRequest' : IDL.Func([QMYPurchaseRequest], [], []),
+  'updatePlayerDailyLimits' : IDL.Func([IDL.Nat, IDL.Nat], [], []),
+  'updateProfile' : IDL.Func([IDL.Text, IDL.Opt(ExternalBlob)], [], []),
 });
 
 export const idlInitArgs = [];
@@ -369,36 +186,27 @@ export const idlFactory = ({ IDL }) => {
     'success' : IDL.Opt(IDL.Bool),
     'topped_up_amount' : IDL.Opt(IDL.Nat),
   });
-  const MapMarker = IDL.Record({
-    'id' : IDL.Text,
-    'latitude' : IDL.Float64,
-    'description' : IDL.Text,
-    'longitude' : IDL.Float64,
-    'markerType' : IDL.Variant({ 'coin' : IDL.Null, 'monster' : IDL.Null }),
-  });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
-  const Monster = IDL.Record({
-    'name' : IDL.Text,
-    'energyBoost' : IDL.Nat,
-    'spawnFrequency' : IDL.Nat,
-  });
-  const LineItem = IDL.Record({
-    'priceId' : IDL.Text,
-    'comment' : IDL.Opt(IDL.Text),
-    'quantity' : IDL.Nat,
-  });
-  const CreatePaymentResponse = IDL.Record({
-    'checkoutUrl' : IDL.Text,
-    'sessionId' : IDL.Text,
+  const ARSpotClaim = IDL.Record({
+    'claimTime' : IDL.Int,
+    'claimedBy' : IDL.Principal,
+    'spotId' : IDL.Text,
+    'qtmAmount' : IDL.Nat,
   });
   const ARSpotDistribution = IDL.Record({
     'totalDistributed' : IDL.Nat,
     'claimCount' : IDL.Nat,
     'spotId' : IDL.Text,
+  });
+  const ExternalBlob = IDL.Vec(IDL.Nat8);
+  const Monster = IDL.Record({
+    'name' : IDL.Text,
+    'energyBoost' : IDL.Nat,
+    'spawnFrequency' : IDL.Nat,
   });
   const CapturedMonster = IDL.Record({
     'monster' : Monster,
@@ -407,6 +215,7 @@ export const idlFactory = ({ IDL }) => {
   const PlayerProfile = IDL.Record({
     'xp' : IDL.Nat,
     'nickname' : IDL.Text,
+    'photoUrl' : IDL.Opt(ExternalBlob),
     'level' : IDL.Nat,
     'capturedMonsters' : IDL.Vec(CapturedMonster),
     'availableTokens' : IDL.Nat,
@@ -421,6 +230,34 @@ export const idlFactory = ({ IDL }) => {
     'sender' : IDL.Principal,
     'timestamp' : IDL.Int,
   });
+  const MapMarker = IDL.Record({
+    'id' : IDL.Text,
+    'latitude' : IDL.Float64,
+    'description' : IDL.Text,
+    'longitude' : IDL.Float64,
+    'markerType' : IDL.Variant({ 'coin' : IDL.Null, 'monster' : IDL.Null }),
+  });
+  const CoordinatedPoint = IDL.Record({
+    'latitude' : IDL.Float64,
+    'longitude' : IDL.Float64,
+    'address' : IDL.Text,
+  });
+  const PlantedCoin = IDL.Record({
+    'plantTime' : IDL.Int,
+    'owner' : IDL.Principal,
+    'location' : CoordinatedPoint,
+  });
+  const DailyLimits = IDL.Record({
+    'rescuesToday' : IDL.Nat,
+    'plantsToday' : IDL.Nat,
+    'lastResetTime' : IDL.Int,
+  });
+  const QMYPurchaseRequest = IDL.Record({
+    'tokensRequested' : IDL.Nat,
+    'timestamp' : IDL.Int,
+    'buyer' : IDL.Principal,
+  });
+  const UserId = IDL.Nat;
   const PaymentCancelResponse = IDL.Record({
     'message' : IDL.Text,
     'sessionId' : IDL.Text,
@@ -433,16 +270,6 @@ export const idlFactory = ({ IDL }) => {
       'currency' : IDL.Text,
       'amount' : IDL.Nat,
     }),
-  });
-  const CoordinatedPoint = IDL.Record({
-    'latitude' : IDL.Float64,
-    'longitude' : IDL.Float64,
-    'address' : IDL.Text,
-  });
-  const QMYPurchaseRequest = IDL.Record({
-    'tokensRequested' : IDL.Nat,
-    'timestamp' : IDL.Int,
-    'buyer' : IDL.Principal,
   });
   
   return IDL.Service({
@@ -472,59 +299,32 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
-    'addMapMarker' : IDL.Func([MapMarker], [], []),
-    'adminGetPlayerCount' : IDL.Func([], [IDL.Nat], ['query']),
-    'adminResetPlayer' : IDL.Func([IDL.Principal], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'captureMonster' : IDL.Func([Monster], [], []),
-    'checkout' : IDL.Func([IDL.Vec(LineItem)], [CreatePaymentResponse], []),
-    'claimARSpot' : IDL.Func([IDL.Text, IDL.Nat], [], []),
-    'clearAllMessages' : IDL.Func([], [], []),
-    'getARSpotDistribution' : IDL.Func(
-        [IDL.Text],
-        [IDL.Opt(ARSpotDistribution)],
-        ['query'],
-      ),
-    'getAllMapMarkers' : IDL.Func([], [IDL.Vec(MapMarker)], ['query']),
-    'getAllPlayerProfiles' : IDL.Func(
+    'getARSpotClaims' : IDL.Func([], [IDL.Vec(ARSpotClaim)], ['query']),
+    'getARSpotDistributions' : IDL.Func(
         [],
-        [IDL.Vec(IDL.Tuple(IDL.Principal, PlayerProfile))],
+        [IDL.Vec(ARSpotDistribution)],
         ['query'],
       ),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(PlayerProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-    'getCapturedMonsters' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Vec(CapturedMonster)],
-        ['query'],
-      ),
-    'getCoinMarkers' : IDL.Func([], [IDL.Vec(MapMarker)], ['query']),
-    'getMessages' : IDL.Func(
-        [IDL.Nat, IDL.Nat],
-        [IDL.Vec(ChatMessage)],
-        ['query'],
-      ),
-    'getMonsterMarkers' : IDL.Func([], [IDL.Vec(MapMarker)], ['query']),
-    'getNearbyMarkers' : IDL.Func(
-        [IDL.Float64, IDL.Float64, IDL.Float64],
-        [IDL.Vec(MapMarker)],
-        ['query'],
-      ),
-    'getPlayerState' : IDL.Func([], [IDL.Opt(PlayerProfile)], ['query']),
-    'getTotalMessagesCount' : IDL.Func([], [IDL.Nat], ['query']),
-    'getUserProfile' : IDL.Func(
+    'getChatMessages' : IDL.Func([], [IDL.Vec(ChatMessage)], ['query']),
+    'getMapMarkers' : IDL.Func([], [IDL.Vec(MapMarker)], ['query']),
+    'getPlantedCoins' : IDL.Func([], [IDL.Vec(PlantedCoin)], ['query']),
+    'getPlayerByAddress' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(PlayerProfile)],
         ['query'],
       ),
-    'hasClaimedARSpot' : IDL.Func(
-        [IDL.Text, IDL.Principal],
-        [IDL.Bool],
+    'getPlayerDailyLimits' : IDL.Func([], [DailyLimits], ['query']),
+    'getQMYPurchaseRequest' : IDL.Func(
+        [],
+        [IDL.Opt(QMYPurchaseRequest)],
         ['query'],
       ),
+    'getUserIdForCaller' : IDL.Func([], [UserId], ['query']),
+    'getUserProfile' : IDL.Func([UserId], [IDL.Opt(PlayerProfile)], ['query']),
     'initializeAccessControl' : IDL.Func([], [], []),
-    'initializeMapMarkers' : IDL.Func([IDL.Vec(MapMarker)], [], []),
-    'initializeMerkleStorePrices' : IDL.Func([], [], []),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'paymentCancel' : IDL.Func([IDL.Text], [PaymentCancelResponse], []),
     'paymentSuccess' : IDL.Func(
@@ -532,177 +332,11 @@ export const idlFactory = ({ IDL }) => {
         [PaymentSuccessResponse],
         [],
       ),
-    'plantCoin' : IDL.Func([CoordinatedPoint], [], []),
-    'qmy_accounts' : IDL.Func(
-        [],
-        [
-          IDL.Vec(
-            IDL.Record({
-              'usd_balance' : IDL.Float64,
-              'balance_as_of_time' : IDL.Int,
-              'pending_balance' : IDL.Nat,
-              'account' : IDL.Principal,
-              'confirmed_balance' : IDL.Nat,
-            })
-          ),
-        ],
-        ['query'],
-      ),
-    'qmy_cancel_owner_pending_native_trades_buyer' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Record({ 'trade_id' : IDL.Text, 'remaining_tokens' : IDL.Nat })],
-        [],
-      ),
-    'qmy_cancel_owner_pending_native_trades_buyerbywallet' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Record({ 'trade_id' : IDL.Text, 'remaining_tokens' : IDL.Nat })],
-        [],
-      ),
-    'qmy_cancel_owner_pending_native_trades_seller' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Record({ 'trade_id' : IDL.Text, 'remaining_tokens' : IDL.Nat })],
-        [],
-      ),
-    'qmy_cancel_pending_split' : IDL.Func(
-        [IDL.Text],
-        [IDL.Record({ 'remaining_tokens' : IDL.Nat })],
-        [],
-      ),
-    'qmy_cancel_purchase_request' : IDL.Func(
-        [],
-        [IDL.Record({ 'tokens_requested' : IDL.Nat, 'timestamp' : IDL.Int })],
-        [],
-      ),
-    'qmy_createOwnedSplitNativeTrade' : IDL.Func(
-        [IDL.Nat, IDL.Float64],
-        [
-          IDL.Record({
-            'id' : IDL.Text,
-            'status' : IDL.Variant({ 'pending' : IDL.Null }),
-            'seller' : IDL.Principal,
-            'tokens' : IDL.Nat,
-            'timestamp' : IDL.Int,
-            'buyer' : IDL.Principal,
-            'price' : IDL.Float64,
-          }),
-        ],
-        [],
-      ),
-    'qmy_getActiveNativeTrades' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Vec(IDL.Principal)],
-        ['query'],
-      ),
-    'qmy_getAvailableNativeTrades' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Vec(IDL.Principal)],
-        ['query'],
-      ),
-    'qmy_getCreatedNativeTradeHistory' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Vec(IDL.Principal)],
-        ['query'],
-      ),
-    'qmy_getNativeTradeHistory' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Vec(IDL.Principal)],
-        ['query'],
-      ),
-    'qmy_get_pending_requests_by_buyer' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Vec(QMYPurchaseRequest)],
-        ['query'],
-      ),
-    'qmy_get_pending_requests_by_caller' : IDL.Func(
-        [],
-        [IDL.Vec(QMYPurchaseRequest)],
-        ['query'],
-      ),
-    'qmy_get_purchase_request' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Opt(QMYPurchaseRequest)],
-        ['query'],
-      ),
-    'qmy_purchaseOwnedNFTOwnedSplitNativeTrade' : IDL.Func(
-        [IDL.Nat, IDL.Principal],
-        [
-          IDL.Record({
-            'remaining_tokens' : IDL.Nat,
-            'tokens_purchased' : IDL.Nat,
-          }),
-        ],
-        [],
-      ),
-    'qmy_purchase_identify' : IDL.Func(
-        [IDL.Nat, IDL.Principal],
-        [IDL.Record({ 'tokens_purchased' : IDL.Nat })],
-        [],
-      ),
-    'qmy_purchase_split' : IDL.Func(
-        [IDL.Text, IDL.Nat],
-        [
-          IDL.Record({
-            '_remaining_tokens' : IDL.Nat,
-            'tokens_purchased' : IDL.Nat,
-          }),
-        ],
-        [],
-      ),
-    'qmy_tokens' : IDL.Func(
-        [],
-        [
-          IDL.Vec(
-            IDL.Record({
-              'usd_price' : IDL.Float64,
-              'name' : IDL.Text,
-              'available_supply' : IDL.Nat,
-              'symbol' : IDL.Text,
-            })
-          ),
-        ],
-        ['query'],
-      ),
-    'qmy_update_purchase_request' : IDL.Func(
-        [IDL.Nat],
-        [IDL.Record({ 'tokens_requested' : IDL.Nat, 'timestamp' : IDL.Int })],
-        [],
-      ),
-    'qmy_view_purchase_request' : IDL.Func(
-        [],
-        [IDL.Opt(QMYPurchaseRequest)],
-        ['query'],
-      ),
-    'qmymylo_distribute_mylo' : IDL.Func(
-        [IDL.Nat, IDL.Float64, IDL.Float64],
-        [
-          IDL.Record({
-            'distributor_fee' : IDL.Float64,
-            'tokens_distributed' : IDL.Nat,
-            'total_cost_cents' : IDL.Float64,
-            'tokens_remaining' : IDL.Nat,
-          }),
-        ],
-        [],
-      ),
-    'qmymylo_distribute_qmy' : IDL.Func(
-        [IDL.Nat, IDL.Float64, IDL.Float64],
-        [
-          IDL.Record({
-            'distributor_fee' : IDL.Float64,
-            'tokens_distributed' : IDL.Nat,
-            'total_cost_cents' : IDL.Float64,
-            'tokens_remaining' : IDL.Nat,
-          }),
-        ],
-        [],
-      ),
-    'registerPlayer' : IDL.Func([IDL.Text], [], []),
-    'removeMapMarker' : IDL.Func([IDL.Text], [], []),
-    'rescueSingleCoin' : IDL.Func([IDL.Text, CoordinatedPoint], [], []),
-    'restoreEnergy' : IDL.Func([], [], []),
     'saveCallerUserProfile' : IDL.Func([PlayerProfile], [], []),
-    'sendMessage' : IDL.Func([IDL.Text, IDL.Text], [], []),
-    'updateXP' : IDL.Func([IDL.Int], [], []),
+    'sendChatMessage' : IDL.Func([IDL.Text], [], []),
+    'submitQMYPurchaseRequest' : IDL.Func([QMYPurchaseRequest], [], []),
+    'updatePlayerDailyLimits' : IDL.Func([IDL.Nat, IDL.Nat], [], []),
+    'updateProfile' : IDL.Func([IDL.Text, IDL.Opt(ExternalBlob)], [], []),
   });
 };
 

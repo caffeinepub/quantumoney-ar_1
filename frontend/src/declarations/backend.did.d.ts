@@ -10,6 +10,12 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface ARSpotClaim {
+  'claimTime' : bigint,
+  'claimedBy' : Principal,
+  'spotId' : string,
+  'qtmAmount' : bigint,
+}
 export interface ARSpotDistribution {
   'totalDistributed' : bigint,
   'claimCount' : bigint,
@@ -27,15 +33,12 @@ export interface CoordinatedPoint {
   'longitude' : number,
   'address' : string,
 }
-export interface CreatePaymentResponse {
-  'checkoutUrl' : string,
-  'sessionId' : string,
+export interface DailyLimits {
+  'rescuesToday' : bigint,
+  'plantsToday' : bigint,
+  'lastResetTime' : bigint,
 }
-export interface LineItem {
-  'priceId' : string,
-  'comment' : [] | [string],
-  'quantity' : bigint,
-}
+export type ExternalBlob = Uint8Array;
 export interface MapMarker {
   'id' : string,
   'latitude' : number,
@@ -62,9 +65,15 @@ export interface PaymentSuccessResponse {
     'amount' : bigint,
   },
 }
+export interface PlantedCoin {
+  'plantTime' : bigint,
+  'owner' : Principal,
+  'location' : CoordinatedPoint,
+}
 export interface PlayerProfile {
   'xp' : bigint,
   'nickname' : string,
+  'photoUrl' : [] | [ExternalBlob],
   'level' : bigint,
   'capturedMonsters' : Array<CapturedMonster>,
   'availableTokens' : bigint,
@@ -78,6 +87,7 @@ export interface QMYPurchaseRequest {
   'timestamp' : bigint,
   'buyer' : Principal,
 }
+export type UserId = bigint;
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
@@ -108,154 +118,31 @@ export interface _SERVICE {
     _CaffeineStorageRefillResult
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
-  'addMapMarker' : ActorMethod<[MapMarker], undefined>,
-  'adminGetPlayerCount' : ActorMethod<[], bigint>,
-  'adminResetPlayer' : ActorMethod<[Principal], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'captureMonster' : ActorMethod<[Monster], undefined>,
-  'checkout' : ActorMethod<[Array<LineItem>], CreatePaymentResponse>,
-  'claimARSpot' : ActorMethod<[string, bigint], undefined>,
-  'clearAllMessages' : ActorMethod<[], undefined>,
-  'getARSpotDistribution' : ActorMethod<[string], [] | [ARSpotDistribution]>,
-  'getAllMapMarkers' : ActorMethod<[], Array<MapMarker>>,
-  'getAllPlayerProfiles' : ActorMethod<[], Array<[Principal, PlayerProfile]>>,
+  'getARSpotClaims' : ActorMethod<[], Array<ARSpotClaim>>,
+  'getARSpotDistributions' : ActorMethod<[], Array<ARSpotDistribution>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [PlayerProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
-  'getCapturedMonsters' : ActorMethod<[Principal], Array<CapturedMonster>>,
-  'getCoinMarkers' : ActorMethod<[], Array<MapMarker>>,
-  'getMessages' : ActorMethod<[bigint, bigint], Array<ChatMessage>>,
-  'getMonsterMarkers' : ActorMethod<[], Array<MapMarker>>,
-  'getNearbyMarkers' : ActorMethod<[number, number, number], Array<MapMarker>>,
-  'getPlayerState' : ActorMethod<[], [] | [PlayerProfile]>,
-  'getTotalMessagesCount' : ActorMethod<[], bigint>,
-  'getUserProfile' : ActorMethod<[Principal], [] | [PlayerProfile]>,
-  'hasClaimedARSpot' : ActorMethod<[string, Principal], boolean>,
+  'getChatMessages' : ActorMethod<[], Array<ChatMessage>>,
+  'getMapMarkers' : ActorMethod<[], Array<MapMarker>>,
+  'getPlantedCoins' : ActorMethod<[], Array<PlantedCoin>>,
+  'getPlayerByAddress' : ActorMethod<[Principal], [] | [PlayerProfile]>,
+  'getPlayerDailyLimits' : ActorMethod<[], DailyLimits>,
+  'getQMYPurchaseRequest' : ActorMethod<[], [] | [QMYPurchaseRequest]>,
+  'getUserIdForCaller' : ActorMethod<[], UserId>,
+  'getUserProfile' : ActorMethod<[UserId], [] | [PlayerProfile]>,
   'initializeAccessControl' : ActorMethod<[], undefined>,
-  'initializeMapMarkers' : ActorMethod<[Array<MapMarker>], undefined>,
-  'initializeMerkleStorePrices' : ActorMethod<[], undefined>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'paymentCancel' : ActorMethod<[string], PaymentCancelResponse>,
   'paymentSuccess' : ActorMethod<
     [string, string, string],
     PaymentSuccessResponse
   >,
-  'plantCoin' : ActorMethod<[CoordinatedPoint], undefined>,
-  'qmy_accounts' : ActorMethod<
-    [],
-    Array<
-      {
-        'usd_balance' : number,
-        'balance_as_of_time' : bigint,
-        'pending_balance' : bigint,
-        'account' : Principal,
-        'confirmed_balance' : bigint,
-      }
-    >
-  >,
-  'qmy_cancel_owner_pending_native_trades_buyer' : ActorMethod<
-    [Principal],
-    { 'trade_id' : string, 'remaining_tokens' : bigint }
-  >,
-  'qmy_cancel_owner_pending_native_trades_buyerbywallet' : ActorMethod<
-    [Principal],
-    { 'trade_id' : string, 'remaining_tokens' : bigint }
-  >,
-  'qmy_cancel_owner_pending_native_trades_seller' : ActorMethod<
-    [Principal],
-    { 'trade_id' : string, 'remaining_tokens' : bigint }
-  >,
-  'qmy_cancel_pending_split' : ActorMethod<
-    [string],
-    { 'remaining_tokens' : bigint }
-  >,
-  'qmy_cancel_purchase_request' : ActorMethod<
-    [],
-    { 'tokens_requested' : bigint, 'timestamp' : bigint }
-  >,
-  'qmy_createOwnedSplitNativeTrade' : ActorMethod<
-    [bigint, number],
-    {
-      'id' : string,
-      'status' : { 'pending' : null },
-      'seller' : Principal,
-      'tokens' : bigint,
-      'timestamp' : bigint,
-      'buyer' : Principal,
-      'price' : number,
-    }
-  >,
-  'qmy_getActiveNativeTrades' : ActorMethod<[Principal], Array<Principal>>,
-  'qmy_getAvailableNativeTrades' : ActorMethod<[Principal], Array<Principal>>,
-  'qmy_getCreatedNativeTradeHistory' : ActorMethod<
-    [Principal],
-    Array<Principal>
-  >,
-  'qmy_getNativeTradeHistory' : ActorMethod<[Principal], Array<Principal>>,
-  'qmy_get_pending_requests_by_buyer' : ActorMethod<
-    [Principal],
-    Array<QMYPurchaseRequest>
-  >,
-  'qmy_get_pending_requests_by_caller' : ActorMethod<
-    [],
-    Array<QMYPurchaseRequest>
-  >,
-  'qmy_get_purchase_request' : ActorMethod<
-    [Principal],
-    [] | [QMYPurchaseRequest]
-  >,
-  'qmy_purchaseOwnedNFTOwnedSplitNativeTrade' : ActorMethod<
-    [bigint, Principal],
-    { 'remaining_tokens' : bigint, 'tokens_purchased' : bigint }
-  >,
-  'qmy_purchase_identify' : ActorMethod<
-    [bigint, Principal],
-    { 'tokens_purchased' : bigint }
-  >,
-  'qmy_purchase_split' : ActorMethod<
-    [string, bigint],
-    { '_remaining_tokens' : bigint, 'tokens_purchased' : bigint }
-  >,
-  'qmy_tokens' : ActorMethod<
-    [],
-    Array<
-      {
-        'usd_price' : number,
-        'name' : string,
-        'available_supply' : bigint,
-        'symbol' : string,
-      }
-    >
-  >,
-  'qmy_update_purchase_request' : ActorMethod<
-    [bigint],
-    { 'tokens_requested' : bigint, 'timestamp' : bigint }
-  >,
-  'qmy_view_purchase_request' : ActorMethod<[], [] | [QMYPurchaseRequest]>,
-  'qmymylo_distribute_mylo' : ActorMethod<
-    [bigint, number, number],
-    {
-      'distributor_fee' : number,
-      'tokens_distributed' : bigint,
-      'total_cost_cents' : number,
-      'tokens_remaining' : bigint,
-    }
-  >,
-  'qmymylo_distribute_qmy' : ActorMethod<
-    [bigint, number, number],
-    {
-      'distributor_fee' : number,
-      'tokens_distributed' : bigint,
-      'total_cost_cents' : number,
-      'tokens_remaining' : bigint,
-    }
-  >,
-  'registerPlayer' : ActorMethod<[string], undefined>,
-  'removeMapMarker' : ActorMethod<[string], undefined>,
-  'rescueSingleCoin' : ActorMethod<[string, CoordinatedPoint], undefined>,
-  'restoreEnergy' : ActorMethod<[], undefined>,
   'saveCallerUserProfile' : ActorMethod<[PlayerProfile], undefined>,
-  'sendMessage' : ActorMethod<[string, string], undefined>,
-  'updateXP' : ActorMethod<[bigint], undefined>,
+  'sendChatMessage' : ActorMethod<[string], undefined>,
+  'submitQMYPurchaseRequest' : ActorMethod<[QMYPurchaseRequest], undefined>,
+  'updatePlayerDailyLimits' : ActorMethod<[bigint, bigint], undefined>,
+  'updateProfile' : ActorMethod<[string, [] | [ExternalBlob]], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

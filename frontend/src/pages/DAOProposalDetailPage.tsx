@@ -1,223 +1,179 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, ThumbsUp, ThumbsDown, Minus, Vote } from 'lucide-react';
-import PageShell from '@/components/PageShell';
-import Container from '@/components/Container';
-import { PageTitle } from '@/components/Typography';
-import { useInternetIdentity } from '@/hooks/useInternetIdentity';
-import { useGetProposal, useVoteOnProposal, useRevokeVote } from '@/hooks/useDao';
-import { toast } from 'sonner';
+import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useGetProposal, useVoteOnProposal, useRevokeVote } from '../hooks/useDao';
+import { ArrowLeft, ThumbsUp, ThumbsDown, Minus, AlertCircle } from 'lucide-react';
 
 export default function DAOProposalDetailPage() {
   const navigate = useNavigate();
   const { proposalId } = useParams({ from: '/dao/$proposalId' });
   const { identity } = useInternetIdentity();
+  const isAuthenticated = !!identity;
+
   const { data: proposal, isLoading } = useGetProposal(proposalId);
   const voteOnProposal = useVoteOnProposal();
   const revokeVote = useRevokeVote();
+  const [isVoting, setIsVoting] = useState(false);
 
-  const isAuthenticated = !!identity;
-
-  const handleBack = () => {
-    navigate({ to: '/dao' });
-  };
-
-  const handleVote = async (voteType: 'yes' | 'no' | 'abstain') => {
-    if (!isAuthenticated) {
-      toast.error('Please log in to vote');
-      return;
-    }
+  const handleVote = async (vote: 'yes' | 'no' | 'abstain') => {
+    if (!isAuthenticated) return;
+    setIsVoting(true);
     try {
-      await voteOnProposal.mutateAsync({ proposalId, vote: voteType });
-      toast.success(`Vote cast: ${voteType.toUpperCase()}`);
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'Failed to cast vote';
-      toast.error(msg);
+      await voteOnProposal.mutateAsync({ proposalId, vote });
+    } catch (err) {
+      console.error('Vote error:', err);
+    } finally {
+      setIsVoting(false);
     }
   };
 
   const handleRevokeVote = async () => {
-    if (!isAuthenticated) {
-      toast.error('Please log in to revoke vote');
-      return;
-    }
+    if (!isAuthenticated) return;
+    setIsVoting(true);
     try {
       await revokeVote.mutateAsync(proposalId);
-      toast.success('Vote revoked successfully');
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'Failed to revoke vote';
-      toast.error(msg);
+    } catch (err) {
+      console.error('Revoke vote error:', err);
+    } finally {
+      setIsVoting(false);
     }
   };
 
   if (isLoading) {
     return (
-      <PageShell>
-        <Container>
-          <div className="py-12 text-center">
-            <p className="text-muted-foreground">Loading proposal...</p>
-          </div>
-        </Container>
-      </PageShell>
+      <div className="min-h-screen pt-20 flex items-center justify-center">
+        <div className="text-yellow-400/50 font-rajdhani">A carregar proposta...</div>
+      </div>
     );
   }
 
   if (!proposal) {
     return (
-      <PageShell>
-        <Container>
-          <div className="py-12 space-y-8">
-            <PageTitle>Proposal Not Found</PageTitle>
-            <Button onClick={handleBack} variant="outline" className="border-primary/30">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to DAO
-            </Button>
-          </div>
-        </Container>
-      </PageShell>
+      <div className="min-h-screen pt-20 pb-10 px-4 flex items-center justify-center">
+        <div className="glass-card p-10 text-center max-w-md w-full">
+          <AlertCircle className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-yellow-400 font-cinzel mb-3">Proposta não encontrada</h2>
+          <button
+            onClick={() => navigate({ to: '/dao' })}
+            className="px-6 py-2 border border-yellow-400 text-yellow-400 font-rajdhani hover:bg-yellow-400/10 transition-all"
+          >
+            Voltar ao DAO
+          </button>
+        </div>
+      </div>
     );
   }
 
-  const yesVotes = proposal.yesVotes || 0;
-  const noVotes = proposal.noVotes || 0;
-  const abstainVotes = proposal.abstainVotes || 0;
-  const totalVotes = yesVotes + noVotes + abstainVotes;
+  const totalVotes = (proposal.yesVotes ?? 0) + (proposal.noVotes ?? 0) + (proposal.abstainVotes ?? 0);
+  const yesPercent = totalVotes > 0 ? Math.round(((proposal.yesVotes ?? 0) / totalVotes) * 100) : 0;
+  const noPercent = totalVotes > 0 ? Math.round(((proposal.noVotes ?? 0) / totalVotes) * 100) : 0;
 
   return (
-    <PageShell>
-      <Container>
-        <div className="py-12 space-y-8">
-          <div className="flex items-center gap-4">
-            <Button onClick={handleBack} variant="ghost" size="icon" className="text-primary">
-              <ArrowLeft className="w-6 h-6" />
-            </Button>
-            <PageTitle>Proposal Details</PageTitle>
+    <div className="min-h-screen pt-20 pb-10 px-4">
+      <div className="max-w-3xl mx-auto">
+        <button
+          onClick={() => navigate({ to: '/dao' })}
+          className="flex items-center gap-2 text-yellow-400/60 hover:text-yellow-400 transition-colors mb-6 font-rajdhani text-sm"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Voltar ao DAO
+        </button>
+
+        {/* Proposal */}
+        <div className="glass-card p-6 mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <span className={`text-xs font-rajdhani uppercase tracking-wider px-2 py-0.5 border ${
+              proposal.status === 'active' ? 'border-yellow-400/50 text-yellow-400' :
+              proposal.status === 'passed' ? 'border-green-400/50 text-green-400' :
+              'border-red-400/50 text-red-400'
+            }`}>
+              {proposal.status}
+            </span>
           </div>
-
-          <Card className="glass-card border-primary/30">
-            <CardHeader>
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <CardTitle className="text-primary text-2xl mb-3">{proposal.title}</CardTitle>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span>By: {proposal.authorName || 'Anonymous'}</span>
-                    <span>•</span>
-                    <span>{new Date(Number(proposal.createdAt) / 1_000_000).toLocaleDateString()}</span>
-                  </div>
-                </div>
-                <Badge variant="outline" className="border-green-500/40 text-green-500">
-                  {proposal.status}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <h3 className="text-primary font-semibold mb-2">Description</h3>
-                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{proposal.description}</p>
-              </div>
-
-              {proposal.userVote && (
-                <Card className="glass-card border-amber-900/30 bg-amber-900/10">
-                  <CardContent className="p-4">
-                    <p className="text-amber-300 text-sm">
-                      <strong>Your vote:</strong> {proposal.userVote.toUpperCase()}
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="glass-card border-primary/30">
-            <CardHeader>
-              <CardTitle className="text-primary flex items-center gap-3">
-                <Vote className="w-6 h-6" />
-                Voting Results
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center p-4 rounded-lg bg-green-500/10 border border-green-500/30">
-                  <p className="text-green-400 text-3xl font-bold mb-1">{yesVotes}</p>
-                  <p className="text-green-400/80 text-sm">Yes</p>
-                </div>
-                <div className="text-center p-4 rounded-lg bg-red-500/10 border border-red-500/30">
-                  <p className="text-red-400 text-3xl font-bold mb-1">{noVotes}</p>
-                  <p className="text-red-400/80 text-sm">No</p>
-                </div>
-                <div className="text-center p-4 rounded-lg bg-gray-500/10 border border-gray-500/30">
-                  <p className="text-gray-400 text-3xl font-bold mb-1">{abstainVotes}</p>
-                  <p className="text-gray-400/80 text-sm">Abstain</p>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <p className="text-muted-foreground text-sm">
-                  Total Votes: <span className="text-primary font-semibold">{totalVotes}</span>
-                </p>
-              </div>
-
-              {isAuthenticated && (
-                <div className="flex flex-wrap gap-3 justify-center pt-4">
-                  <Button
-                    onClick={() => handleVote('yes')}
-                    disabled={voteOnProposal.isPending}
-                    className="bg-green-600 hover:bg-green-700 text-white"
-                  >
-                    <ThumbsUp className="w-4 h-4 mr-2" />
-                    Vote Yes
-                  </Button>
-                  <Button
-                    onClick={() => handleVote('no')}
-                    disabled={voteOnProposal.isPending}
-                    className="bg-red-600 hover:bg-red-700 text-white"
-                  >
-                    <ThumbsDown className="w-4 h-4 mr-2" />
-                    Vote No
-                  </Button>
-                  <Button
-                    onClick={() => handleVote('abstain')}
-                    disabled={voteOnProposal.isPending}
-                    variant="outline"
-                    className="border-gray-500/40 text-gray-400"
-                  >
-                    <Minus className="w-4 h-4 mr-2" />
-                    Abstain
-                  </Button>
-                  {proposal.userVote && (
-                    <Button
-                      onClick={handleRevokeVote}
-                      disabled={revokeVote.isPending}
-                      variant="outline"
-                      className="border-primary/30"
-                    >
-                      Revoke Vote
-                    </Button>
-                  )}
-                </div>
-              )}
-
-              {!isAuthenticated && (
-                <p className="text-center text-muted-foreground text-sm pt-4">
-                  Please log in to vote on this proposal
-                </p>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="glass-card border-amber-900/30 bg-amber-900/10">
-            <CardContent className="p-6">
-              <p className="text-sm text-amber-300 leading-relaxed">
-                <strong>Note:</strong> Voting is simulated/internal. Results are persisted in the canister but do not
-                execute real on-chain governance actions. You can change or revoke your vote at any time.
-              </p>
-            </CardContent>
-          </Card>
+          <h1 className="text-2xl font-bold text-yellow-400 font-cinzel mb-4">{proposal.title}</h1>
+          <p className="text-yellow-300/70 font-rajdhani leading-relaxed">{proposal.description}</p>
+          {proposal.createdAt && (
+            <p className="text-yellow-300/40 text-xs font-rajdhani mt-4">
+              Criada em {new Date(Number(proposal.createdAt) / 1_000_000).toLocaleDateString('pt-PT')}
+            </p>
+          )}
         </div>
-      </Container>
-    </PageShell>
+
+        {/* Vote counts */}
+        <div className="glass-card p-6 mb-6">
+          <h3 className="text-yellow-400 font-bold font-cinzel mb-4">Resultados da Votação</h3>
+          <div className="grid grid-cols-3 gap-4 mb-4">
+            <div className="text-center border border-green-400/30 p-3 bg-black/20">
+              <div className="text-green-400 font-bold text-2xl font-cinzel">{proposal.yesVotes ?? 0}</div>
+              <div className="text-green-400/60 text-xs font-rajdhani uppercase">A Favor</div>
+            </div>
+            <div className="text-center border border-red-400/30 p-3 bg-black/20">
+              <div className="text-red-400 font-bold text-2xl font-cinzel">{proposal.noVotes ?? 0}</div>
+              <div className="text-red-400/60 text-xs font-rajdhani uppercase">Contra</div>
+            </div>
+            <div className="text-center border border-yellow-400/30 p-3 bg-black/20">
+              <div className="text-yellow-400 font-bold text-2xl font-cinzel">{proposal.abstainVotes ?? 0}</div>
+              <div className="text-yellow-400/60 text-xs font-rajdhani uppercase">Abstenção</div>
+            </div>
+          </div>
+          {totalVotes > 0 && (
+            <div className="w-full h-2 bg-black/40 border border-yellow-400/20 flex overflow-hidden">
+              <div className="h-full bg-green-400" style={{ width: `${yesPercent}%` }} />
+              <div className="h-full bg-red-400" style={{ width: `${noPercent}%` }} />
+              <div className="h-full bg-yellow-400/40" style={{ width: `${100 - yesPercent - noPercent}%` }} />
+            </div>
+          )}
+        </div>
+
+        {/* Voting */}
+        {isAuthenticated && proposal.status === 'active' && (
+          <div className="glass-card p-6">
+            <h3 className="text-yellow-400 font-bold font-cinzel mb-4">O Teu Voto</h3>
+            <div className="flex gap-3 flex-wrap">
+              <button
+                onClick={() => handleVote('yes')}
+                disabled={isVoting}
+                className="flex items-center gap-2 px-5 py-2 border border-green-400/50 text-green-400 font-rajdhani font-bold hover:bg-green-400/10 transition-all disabled:opacity-50 text-sm uppercase tracking-wider"
+              >
+                <ThumbsUp className="w-4 h-4" />
+                A Favor
+              </button>
+              <button
+                onClick={() => handleVote('no')}
+                disabled={isVoting}
+                className="flex items-center gap-2 px-5 py-2 border border-red-400/50 text-red-400 font-rajdhani font-bold hover:bg-red-400/10 transition-all disabled:opacity-50 text-sm uppercase tracking-wider"
+              >
+                <ThumbsDown className="w-4 h-4" />
+                Contra
+              </button>
+              <button
+                onClick={() => handleVote('abstain')}
+                disabled={isVoting}
+                className="flex items-center gap-2 px-5 py-2 border border-yellow-400/30 text-yellow-400/60 font-rajdhani font-bold hover:bg-yellow-400/5 transition-all disabled:opacity-50 text-sm uppercase tracking-wider"
+              >
+                <Minus className="w-4 h-4" />
+                Abstenção
+              </button>
+              <button
+                onClick={handleRevokeVote}
+                disabled={isVoting}
+                className="px-5 py-2 border border-yellow-400/20 text-yellow-400/40 font-rajdhani text-sm hover:border-yellow-400/40 transition-all disabled:opacity-50"
+              >
+                Revogar Voto
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!isAuthenticated && (
+          <div className="glass-card p-4 border-yellow-400/20">
+            <p className="text-yellow-300/60 text-sm font-rajdhani flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-yellow-400" />
+              Faz login para votar nesta proposta.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

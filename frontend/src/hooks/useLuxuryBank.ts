@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useActor } from './useActor';
+import type { PlayerProfile } from '../backend';
 
 export interface LuxuryBankData {
   overview: {
@@ -25,6 +26,10 @@ export interface LuxuryBankData {
     avgTransactionSize: number;
     totalTransfers: number;
   };
+  totalPlayers: number;
+  totalXP: number;
+  totalAvailable: number;
+  totalLocked: number;
 }
 
 export function useLuxuryBankData() {
@@ -35,14 +40,31 @@ export function useLuxuryBankData() {
     queryFn: async () => {
       if (!actor) throw new Error('Actor not available');
 
-      // Fetch data from canister
-      const tokens = await actor.qmy_tokens();
-      const accounts = await actor.qmy_accounts();
+      // Fetch all player profiles to aggregate stats
+      let profiles: PlayerProfile[] = [];
+      try {
+        // getCallerUserProfile returns the caller's profile; we aggregate what we can
+        // Since there's no getAllProfiles endpoint, we use what's available
+        const callerProfile = await actor.getCallerUserProfile();
+        if (callerProfile) profiles = [callerProfile];
+      } catch {
+        profiles = [];
+      }
 
-      // Derive luxury dashboard data
-      const totalSupply = 600000000;
-      const circulating = 150000000;
-      const locked = 450000000;
+      // Aggregate from profiles
+      let totalXP = 0;
+      let totalAvailable = 0;
+      let totalLocked = 0;
+
+      for (const p of profiles) {
+        totalXP += Number(p.xp);
+        totalAvailable += Number(p.availableTokens);
+        totalLocked += Number(p.plantedTokens) + Number(p.bonusTokens);
+      }
+
+      const totalSupply = 1_000_000_000;
+      const circulating = totalAvailable;
+      const locked = totalLocked;
       const burned = 0;
 
       // Generate time series (last 12 months)
@@ -50,7 +72,7 @@ export function useLuxuryBankData() {
         const date = new Date();
         date.setMonth(date.getMonth() - (11 - i));
         return {
-          date: date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+          date: date.toLocaleDateString('pt-PT', { month: 'short', year: 'numeric' }),
           circulating: circulating * (0.7 + (i / 11) * 0.3),
           locked: locked * (1.3 - (i / 11) * 0.3),
         };
@@ -58,19 +80,18 @@ export function useLuxuryBankData() {
 
       // Category breakdown
       const categoryBreakdown = [
-        { category: 'Founders & Team', amount: 120000000, percentage: 20, notes: '24-month vesting' },
-        { category: 'Pre-sale', amount: 90000000, percentage: 15, notes: '12-month vesting' },
-        { category: 'Early Players', amount: 60000000, percentage: 10, notes: 'Unlocked' },
-        { category: 'AR Distribution', amount: 240000000, percentage: 40, notes: 'Gradual release' },
-        { category: 'Treasury & DAO', amount: 90000000, percentage: 15, notes: 'Governance controlled' },
+        { category: 'Founders & Team', amount: 200_000_000, percentage: 20, notes: '24-month vesting' },
+        { category: 'Pré-venda', amount: 150_000_000, percentage: 15, notes: '12-month vesting' },
+        { category: 'Early Players', amount: 100_000_000, percentage: 10, notes: 'Desbloqueado' },
+        { category: 'Distribuição AR', amount: 400_000_000, percentage: 40, notes: 'Lançamento gradual' },
+        { category: 'Tesouraria & DAO', amount: 150_000_000, percentage: 15, notes: 'Governança' },
       ];
 
-      // Metrics
       const metrics = {
-        activeWallets: accounts.length || 12450,
-        dailyTransactions: 3280,
-        avgTransactionSize: 1250,
-        totalTransfers: 156780,
+        activeWallets: profiles.length,
+        dailyTransactions: 0,
+        avgTransactionSize: 0,
+        totalTransfers: 0,
       };
 
       return {
@@ -78,6 +99,10 @@ export function useLuxuryBankData() {
         timeSeries,
         categoryBreakdown,
         metrics,
+        totalPlayers: profiles.length,
+        totalXP,
+        totalAvailable,
+        totalLocked,
       };
     },
     enabled: !!actor && !actorFetching,

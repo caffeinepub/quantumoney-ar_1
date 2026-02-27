@@ -1,59 +1,63 @@
-import { useState } from 'react';
-import { Link } from '@tanstack/react-router';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useQueryClient } from '@tanstack/react-query';
+import { Menu, X, ChevronDown, LogIn, LogOut, User } from 'lucide-react';
 
-const navItems = [
-  { label: 'Início', path: '/' },
-  { label: 'Perfil', path: '/profile' },
-  { label: 'Mapa', path: '/map' },
-  { label: 'Banco Central', path: '/central-bank' },
+interface NavItem {
+  label: string;
+  href?: string;
+  children?: { label: string; href: string }[];
+}
+
+const navItems: NavItem[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Banco Central', href: '/banco-central' },
   {
     label: 'Token',
     children: [
-      { label: 'QMY Token', path: '/qmy-token' },
-      { label: 'Pré-venda', path: '/presale' },
-      { label: 'Swap', path: '/swap' },
-      { label: 'Vesting & Deflação', path: '/vesting-deflation' },
+      { label: 'QMY Token', href: '/qmy' },
+      { label: 'Tokenomics', href: '/tokenomics' },
+      { label: 'Vesting & Deflação', href: '/vesting' },
+      { label: 'Presale', href: '/presale' },
+      { label: 'Swap', href: '/swap' },
     ],
   },
   {
     label: 'DAO',
     children: [
-      { label: 'Propostas', path: '/dao' },
-      { label: 'Nova Proposta', path: '/dao/new' },
-      { label: 'Pré-proposta', path: '/pre-proposals' },
+      { label: 'Propostas', href: '/dao' },
+      { label: 'Pré-Propostas', href: '/pre-proposals' },
     ],
   },
   {
     label: 'Docs',
     children: [
-      { label: 'Documentação', path: '/docs' },
-      { label: 'Gold Paper', path: '/gold-paper' },
-      { label: 'Técnico', path: '/technical' },
+      { label: 'Documentação', href: '/docs' },
+      { label: 'Gold Paper', href: '/gold-paper' },
+      { label: 'Roadmap', href: '/roadmap' },
+      { label: 'Técnico', href: '/technical' },
     ],
   },
   {
     label: 'Mais',
     children: [
-      { label: 'Chat', path: '/chat' },
-      { label: 'Contacto', path: '/contact' },
-      { label: 'Legal', path: '/legal' },
-      { label: 'Termos', path: '/terms' },
-      { label: 'Privacidade', path: '/privacy' },
+      { label: 'Mapa', href: '/map' },
+      { label: 'Chat', href: '/chat' },
+      { label: 'Sobre', href: '/about' },
+      { label: 'Contacto', href: '/contact' },
+      { label: 'Legal', href: '/legal' },
     ],
   },
 ];
 
 export default function Header() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { identity, login, clear, loginStatus } = useInternetIdentity();
   const queryClient = useQueryClient();
-
+  const navigate = useNavigate();
   const isAuthenticated = !!identity;
-  const isLoggingIn = loginStatus === 'logging-in';
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const handleAuth = async () => {
     if (isAuthenticated) {
@@ -62,8 +66,7 @@ export default function Header() {
     } else {
       try {
         await login();
-      } catch (error: unknown) {
-        const err = error as Error;
+      } catch (err: any) {
         if (err?.message === 'User is already authenticated') {
           await clear();
           setTimeout(() => login(), 300);
@@ -72,142 +75,151 @@ export default function Header() {
     }
   };
 
-  const handleDropdown = (label: string) => {
-    setOpenDropdown(openDropdown === label ? null : label);
-  };
-
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-yellow-400/30">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-yellow-500/20 bg-black/80 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <img
             src="/assets/generated/quantumoney-logo-transparent.dim_200x200.png"
             alt="Quantumoney"
-            className="h-8 w-8 object-contain"
+            className="w-8 h-8"
           />
-          <span className="text-yellow-400 font-bold text-lg tracking-wider hidden sm:block">
+          <span className="text-yellow-400 font-cinzel font-bold text-lg tracking-wider hidden sm:block">
             QUANTUMONEY
           </span>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-0.5">
-          {navItems.map((item) =>
-            item.children ? (
-              <div key={item.label} className="relative">
-                <button
-                  onClick={() => handleDropdown(item.label)}
-                  onBlur={() => setTimeout(() => setOpenDropdown(null), 150)}
-                  className="flex items-center gap-1 px-3 py-2 text-yellow-400/80 hover:text-yellow-400 text-sm transition-colors rounded-lg hover:bg-yellow-400/10"
+        {/* Desktop nav */}
+        <nav className="hidden lg:flex items-center gap-1">
+          {navItems.map(item => (
+            <div
+              key={item.label}
+              className="relative"
+              onMouseEnter={() => item.children && setOpenDropdown(item.label)}
+              onMouseLeave={() => setOpenDropdown(null)}
+            >
+              {item.href ? (
+                <Link
+                  to={item.href}
+                  className="px-3 py-2 text-yellow-400/80 hover:text-yellow-400 text-sm font-rajdhani font-semibold uppercase tracking-wider transition-colors"
                 >
                   {item.label}
-                  <ChevronDown
-                    size={12}
-                    className={`transition-transform ${openDropdown === item.label ? 'rotate-180' : ''}`}
-                  />
+                </Link>
+              ) : (
+                <button className="flex items-center gap-1 px-3 py-2 text-yellow-400/80 hover:text-yellow-400 text-sm font-rajdhani font-semibold uppercase tracking-wider transition-colors">
+                  {item.label}
+                  <ChevronDown className="w-3 h-3" />
                 </button>
-                {openDropdown === item.label && (
-                  <div className="absolute top-full left-0 mt-1 bg-black/95 border border-yellow-400/30 rounded-xl shadow-xl min-w-[160px] py-1 z-50">
-                    {item.children.map((child) => (
-                      <Link
-                        key={child.path}
-                        to={child.path}
-                        className="block px-4 py-2 text-yellow-400/80 hover:text-yellow-400 hover:bg-yellow-400/10 text-sm transition-colors"
-                        onClick={() => setOpenDropdown(null)}
-                      >
-                        {child.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <Link
-                key={item.path}
-                to={item.path!}
-                className="px-3 py-2 text-yellow-400/80 hover:text-yellow-400 text-sm transition-colors rounded-lg hover:bg-yellow-400/10"
-              >
-                {item.label}
-              </Link>
-            )
-          )}
+              )}
+
+              {item.children && openDropdown === item.label && (
+                <div className="absolute top-full left-0 mt-0 w-48 bg-black/95 border border-yellow-500/30 backdrop-blur-md z-50">
+                  {item.children.map(child => (
+                    <Link
+                      key={child.href}
+                      to={child.href}
+                      className="block px-4 py-2 text-yellow-400/70 hover:text-yellow-400 hover:bg-yellow-400/5 text-sm font-rajdhani transition-colors"
+                      onClick={() => setOpenDropdown(null)}
+                    >
+                      {child.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
         </nav>
 
-        {/* Auth Button */}
+        {/* Right side */}
         <div className="flex items-center gap-2">
+          {/* Profile link */}
+          {isAuthenticated && (
+            <Link
+              to="/perfil"
+              className="hidden sm:flex items-center gap-1 px-3 py-1.5 border border-yellow-400/40 text-yellow-400/80 hover:text-yellow-400 hover:border-yellow-400/70 text-xs font-rajdhani font-semibold uppercase tracking-wider transition-all"
+            >
+              <User className="w-3 h-3" />
+              Perfil
+            </Link>
+          )}
+
+          {/* Auth button */}
           <button
             onClick={handleAuth}
-            disabled={isLoggingIn}
-            className="hidden sm:block px-4 py-1.5 text-sm font-medium border border-yellow-400/40 text-yellow-400 rounded-md hover:bg-yellow-400/10 transition-colors disabled:opacity-50"
+            disabled={loginStatus === 'logging-in'}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-rajdhani font-bold uppercase tracking-wider transition-all border ${
+              isAuthenticated
+                ? 'border-yellow-400/30 text-yellow-400/60 hover:border-yellow-400/60 hover:text-yellow-400'
+                : 'border-yellow-400 text-yellow-400 hover:bg-yellow-400/10'
+            } disabled:opacity-50`}
           >
-            {isLoggingIn ? 'A entrar...' : isAuthenticated ? 'Sair' : 'Entrar'}
+            {isAuthenticated ? (
+              <>
+                <LogOut className="w-3 h-3" />
+                <span className="hidden sm:inline">Sair</span>
+              </>
+            ) : (
+              <>
+                <LogIn className="w-3 h-3" />
+                <span className="hidden sm:inline">
+                  {loginStatus === 'logging-in' ? 'A entrar...' : 'Login'}
+                </span>
+              </>
+            )}
           </button>
 
           {/* Mobile menu toggle */}
           <button
-            className="lg:hidden p-2 text-yellow-400/70 hover:text-yellow-400"
             onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
+            className="lg:hidden text-yellow-400 p-1"
           >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Nav */}
+      {/* Mobile menu */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-yellow-400/20 bg-black/95 backdrop-blur-md max-h-[80vh] overflow-y-auto">
-          <nav className="flex flex-col py-2">
-            {navItems.map((item) =>
-              item.children ? (
-                <div key={item.label}>
-                  <button
-                    onClick={() => handleDropdown(item.label)}
-                    className="w-full flex items-center justify-between px-4 py-3 text-yellow-400/80 hover:text-yellow-400 text-sm border-b border-yellow-400/10"
-                  >
-                    {item.label}
-                    <ChevronDown
-                      size={12}
-                      className={`transition-transform ${openDropdown === item.label ? 'rotate-180' : ''}`}
-                    />
-                  </button>
-                  {openDropdown === item.label && (
-                    <div className="bg-black/60">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.path}
-                          to={child.path}
-                          className="block px-8 py-2.5 text-yellow-400/70 hover:text-yellow-400 text-sm border-b border-yellow-400/5"
-                          onClick={() => setMobileOpen(false)}
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : (
+        <div className="lg:hidden bg-black/95 border-t border-yellow-500/20 max-h-[80vh] overflow-y-auto">
+          {navItems.map(item => (
+            <div key={item.label}>
+              {item.href ? (
                 <Link
-                  key={item.path}
-                  to={item.path!}
-                  className="block px-4 py-3 text-yellow-400/80 hover:text-yellow-400 text-sm border-b border-yellow-400/10"
+                  to={item.href}
+                  className="block px-4 py-3 text-yellow-400/80 hover:text-yellow-400 text-sm font-rajdhani font-semibold uppercase tracking-wider border-b border-yellow-500/10"
                   onClick={() => setMobileOpen(false)}
                 >
                   {item.label}
                 </Link>
-              )
-            )}
-            <div className="px-4 py-3 border-t border-yellow-400/10 mt-1">
-              <button
-                onClick={() => { handleAuth(); setMobileOpen(false); }}
-                disabled={isLoggingIn}
-                className="w-full px-4 py-2 text-sm font-medium border border-yellow-400/40 text-yellow-400 rounded-md hover:bg-yellow-400/10 transition-colors disabled:opacity-50"
-              >
-                {isLoggingIn ? 'A entrar...' : isAuthenticated ? 'Sair' : 'Entrar'}
-              </button>
+              ) : (
+                <>
+                  <div className="px-4 py-2 text-yellow-400/50 text-xs font-rajdhani uppercase tracking-widest border-b border-yellow-500/10 bg-yellow-400/5">
+                    {item.label}
+                  </div>
+                  {item.children?.map(child => (
+                    <Link
+                      key={child.href}
+                      to={child.href}
+                      className="block px-6 py-2.5 text-yellow-400/70 hover:text-yellow-400 text-sm font-rajdhani border-b border-yellow-500/5"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      {child.label}
+                    </Link>
+                  ))}
+                </>
+              )}
             </div>
-          </nav>
+          ))}
+          {isAuthenticated && (
+            <Link
+              to="/perfil"
+              className="block px-4 py-3 text-yellow-400 font-rajdhani font-bold uppercase tracking-wider border-b border-yellow-500/10"
+              onClick={() => setMobileOpen(false)}
+            >
+              Perfil
+            </Link>
+          )}
         </div>
       )}
     </header>

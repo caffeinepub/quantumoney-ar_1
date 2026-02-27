@@ -1,109 +1,279 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from 'next-themes';
-import { RouterProvider, createRouter, createRoute, createRootRoute } from '@tanstack/react-router';
+import React, { Suspense, lazy } from 'react';
+import {
+  createRouter,
+  createRoute,
+  createRootRoute,
+  RouterProvider,
+  Outlet,
+  redirect,
+} from '@tanstack/react-router';
 import Layout from './components/Layout';
-import HomePage from './pages/HomePage';
-import BancoCentral from './pages/BancoCentral';
-import Perfil from './pages/Perfil';
-import MapPage from './pages/MapPage';
-import ARMode from './pages/ARMode';
-import DocsPage from './pages/DocsPage';
-import GoldPaper from './pages/GoldPaper';
-import TokenomicsPage from './pages/TokenomicsPage';
-import RoadmapPage from './pages/RoadmapPage';
-import LegalPage from './pages/LegalPage';
-import ContactPage from './pages/ContactPage';
-import TechnicalPage from './pages/TechnicalPage';
-import GameSystemsPage from './pages/GameSystemsPage';
-import ARDistributionPage from './pages/ARDistributionPage';
-import VestingDeflationPage from './pages/VestingDeflationPage';
-import TreasuryMonetaryPolicyPage from './pages/TreasuryMonetaryPolicyPage';
-import DAOPage from './pages/DAOPage';
-import SwapPage from './pages/SwapPage';
-import PublicChatPage from './pages/PublicChatPage';
-import TermsOfServicePage from './pages/TermsOfServicePage';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import QMYTokenPage from './pages/QMYTokenPage';
-import ProfilePage from './pages/ProfilePage';
-import DAOCreateProposalPage from './pages/DAOCreateProposalPage';
-import DAOProposalDetailPage from './pages/DAOProposalDetailPage';
-import PreProposalsPage from './pages/PreProposalsPage';
-import PreProposalDetailPage from './pages/PreProposalDetailPage';
-import PresalePage from './pages/PresalePage';
-import { LanguageProvider } from './contexts/LanguageContext';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 2,
-      staleTime: 30_000,
-    },
-  },
-});
+// Lazy-loaded pages
+const HomePage = lazy(() => import('./pages/HomePage'));
+const Perfil = lazy(() => import('./pages/Perfil'));
+const BancoCentral = lazy(() => import('./pages/BancoCentral'));
+const DAOPage = lazy(() => import('./pages/DAOPage'));
+const DAOCreateProposalPage = lazy(() => import('./pages/DAOCreateProposalPage'));
+const DAOProposalDetailPage = lazy(() => import('./pages/DAOProposalDetailPage'));
+const PublicChatPage = lazy(() => import('./pages/PublicChatPage'));
+const MapPage = lazy(() => import('./pages/MapPage'));
+const SwapPage = lazy(() => import('./pages/SwapPage'));
+const DocsPage = lazy(() => import('./pages/DocsPage'));
+const GoldPaper = lazy(() => import('./pages/GoldPaper'));
+const TokenomicsPage = lazy(() => import('./pages/TokenomicsPage'));
+const RoadmapPage = lazy(() => import('./pages/RoadmapPage'));
+const LegalPage = lazy(() => import('./pages/LegalPage'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const TechnicalPage = lazy(() => import('./pages/TechnicalPage'));
+const PresalePage = lazy(() => import('./pages/PresalePage'));
+const PreProposalsPage = lazy(() => import('./pages/PreProposalsPage'));
+const PreProposalDetailPage = lazy(() => import('./pages/PreProposalDetailPage'));
+const QMYTokenPage = lazy(() => import('./pages/QMYTokenPage'));
+const VestingDeflationPage = lazy(() => import('./pages/VestingDeflationPage'));
+const TermsOfServicePage = lazy(() => import('./pages/TermsOfServicePage'));
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
+const GameSystemsPage = lazy(() => import('./pages/GameSystemsPage'));
+const ARDistributionPage = lazy(() => import('./pages/ARDistributionPage'));
+const TreasuryMonetaryPolicyPage = lazy(() => import('./pages/TreasuryMonetaryPolicyPage'));
 
-// Layout uses <Outlet /> internally — use it directly as root component
+const PageFallback = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="text-yellow-400/50 font-rajdhani text-sm animate-pulse">A carregar...</div>
+  </div>
+);
+
+const withSuspense = (Component: React.ComponentType) => () => (
+  <Suspense fallback={<PageFallback />}>
+    <Component />
+  </Suspense>
+);
+
+// Root route with Layout
 const rootRoute = createRootRoute({
-  component: Layout,
+  component: () => (
+    <Layout>
+      <Outlet />
+    </Layout>
+  ),
 });
 
-const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', component: HomePage });
-const bancoCentralRoute = createRoute({ getParentRoute: () => rootRoute, path: '/central-bank', component: BancoCentral });
-const perfilRoute = createRoute({ getParentRoute: () => rootRoute, path: '/profile', component: Perfil });
-const mapRoute = createRoute({ getParentRoute: () => rootRoute, path: '/map', component: MapPage });
-const arModeRoute = createRoute({ getParentRoute: () => rootRoute, path: '/ar', component: ARMode });
-const docsRoute = createRoute({ getParentRoute: () => rootRoute, path: '/docs', component: DocsPage });
-const goldPaperRoute = createRoute({ getParentRoute: () => rootRoute, path: '/gold-paper', component: GoldPaper });
-const tokenomicsRoute = createRoute({ getParentRoute: () => rootRoute, path: '/tokenomics', component: TokenomicsPage });
-const roadmapRoute = createRoute({ getParentRoute: () => rootRoute, path: '/roadmap', component: RoadmapPage });
-const legalRoute = createRoute({ getParentRoute: () => rootRoute, path: '/legal', component: LegalPage });
-const contactRoute = createRoute({ getParentRoute: () => rootRoute, path: '/contact', component: ContactPage });
-const technicalRoute = createRoute({ getParentRoute: () => rootRoute, path: '/technical', component: TechnicalPage });
-const gameSystemsRoute = createRoute({ getParentRoute: () => rootRoute, path: '/game-systems', component: GameSystemsPage });
-const arDistributionRoute = createRoute({ getParentRoute: () => rootRoute, path: '/ar-distribution', component: ARDistributionPage });
-const vestingDeflationRoute = createRoute({ getParentRoute: () => rootRoute, path: '/vesting-deflation', component: VestingDeflationPage });
-const treasuryRoute = createRoute({ getParentRoute: () => rootRoute, path: '/treasury', component: TreasuryMonetaryPolicyPage });
-const daoPageRoute = createRoute({ getParentRoute: () => rootRoute, path: '/dao', component: DAOPage });
-const daoNewRoute = createRoute({ getParentRoute: () => rootRoute, path: '/dao/new', component: DAOCreateProposalPage });
-const daoDetailRoute = createRoute({ getParentRoute: () => rootRoute, path: '/dao/$proposalId', component: DAOProposalDetailPage });
-const preProposalsRoute = createRoute({ getParentRoute: () => rootRoute, path: '/pre-proposals', component: PreProposalsPage });
-const preProposalDetailRoute = createRoute({ getParentRoute: () => rootRoute, path: '/pre-proposals/$proposalId', component: PreProposalDetailPage });
-const swapRoute = createRoute({ getParentRoute: () => rootRoute, path: '/swap', component: SwapPage });
-const chatRoute = createRoute({ getParentRoute: () => rootRoute, path: '/chat', component: PublicChatPage });
-const termsRoute = createRoute({ getParentRoute: () => rootRoute, path: '/terms', component: TermsOfServicePage });
-const privacyRoute = createRoute({ getParentRoute: () => rootRoute, path: '/privacy', component: PrivacyPolicyPage });
-const qmyTokenRoute = createRoute({ getParentRoute: () => rootRoute, path: '/qmy-token', component: QMYTokenPage });
-const profilePageRoute = createRoute({ getParentRoute: () => rootRoute, path: '/profile-ar', component: ProfilePage });
-const presaleRoute = createRoute({ getParentRoute: () => rootRoute, path: '/presale', component: PresalePage });
+// Routes
+const indexRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/',
+  component: withSuspense(HomePage),
+});
+
+const perfilRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/perfil',
+  component: withSuspense(Perfil),
+});
+
+// Legacy /profile redirect
+const profileRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/profile',
+  component: withSuspense(Perfil),
+});
+
+const bancoCentralRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/banco-central',
+  component: withSuspense(BancoCentral),
+});
+
+// Legacy /central-bank redirect
+const centralBankRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/central-bank',
+  component: withSuspense(BancoCentral),
+});
+
+const daoRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/dao',
+  component: withSuspense(DAOPage),
+});
+
+const daoCreateRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/dao/create',
+  component: withSuspense(DAOCreateProposalPage),
+});
+
+// Legacy /dao/new
+const daoNewRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/dao/new',
+  component: withSuspense(DAOCreateProposalPage),
+});
+
+const daoProposalRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/dao/$proposalId',
+  component: withSuspense(DAOProposalDetailPage),
+});
+
+const chatRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/chat',
+  component: withSuspense(PublicChatPage),
+});
+
+const mapRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/map',
+  component: withSuspense(MapPage),
+});
+
+const swapRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/swap',
+  component: withSuspense(SwapPage),
+});
+
+const docsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/docs',
+  component: withSuspense(DocsPage),
+});
+
+const goldPaperRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/gold-paper',
+  component: withSuspense(GoldPaper),
+});
+
+const tokenomicsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/tokenomics',
+  component: withSuspense(TokenomicsPage),
+});
+
+const roadmapRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/roadmap',
+  component: withSuspense(RoadmapPage),
+});
+
+const legalRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/legal',
+  component: withSuspense(LegalPage),
+});
+
+const aboutRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/about',
+  component: withSuspense(AboutPage),
+});
+
+const contactRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/contact',
+  component: withSuspense(ContactPage),
+});
+
+const technicalRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/technical',
+  component: withSuspense(TechnicalPage),
+});
+
+const presaleRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/presale',
+  component: withSuspense(PresalePage),
+});
+
+const preProposalsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/pre-proposals',
+  component: withSuspense(PreProposalsPage),
+});
+
+const preProposalDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/pre-proposals/$proposalId',
+  component: withSuspense(PreProposalDetailPage),
+});
+
+const qmyTokenRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/qmy',
+  component: withSuspense(QMYTokenPage),
+});
+
+const vestingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/vesting',
+  component: withSuspense(VestingDeflationPage),
+});
+
+const termsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/terms',
+  component: withSuspense(TermsOfServicePage),
+});
+
+const privacyRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/privacy',
+  component: withSuspense(PrivacyPolicyPage),
+});
+
+const gameSystemsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/game-systems',
+  component: withSuspense(GameSystemsPage),
+});
+
+const arDistributionRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/ar-distribution',
+  component: withSuspense(ARDistributionPage),
+});
+
+const treasuryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/treasury',
+  component: withSuspense(TreasuryMonetaryPolicyPage),
+});
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
-  bancoCentralRoute,
   perfilRoute,
+  profileRoute,
+  bancoCentralRoute,
+  centralBankRoute,
+  daoRoute,
+  daoCreateRoute,
+  daoNewRoute,
+  daoProposalRoute,
+  chatRoute,
   mapRoute,
-  arModeRoute,
+  swapRoute,
   docsRoute,
   goldPaperRoute,
   tokenomicsRoute,
   roadmapRoute,
   legalRoute,
+  aboutRoute,
   contactRoute,
   technicalRoute,
-  gameSystemsRoute,
-  arDistributionRoute,
-  vestingDeflationRoute,
-  treasuryRoute,
-  daoPageRoute,
-  daoNewRoute,
-  daoDetailRoute,
+  presaleRoute,
   preProposalsRoute,
   preProposalDetailRoute,
-  swapRoute,
-  chatRoute,
+  qmyTokenRoute,
+  vestingRoute,
   termsRoute,
   privacyRoute,
-  qmyTokenRoute,
-  profilePageRoute,
-  presaleRoute,
+  gameSystemsRoute,
+  arDistributionRoute,
+  treasuryRoute,
 ]);
 
 const router = createRouter({ routeTree });
@@ -115,13 +285,5 @@ declare module '@tanstack/react-router' {
 }
 
 export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-        <LanguageProvider>
-          <RouterProvider router={router} />
-        </LanguageProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
-  );
+  return <RouterProvider router={router} />;
 }

@@ -1,4 +1,3 @@
-import { Suspense, lazy } from 'react';
 import PageShell from '@/components/PageShell';
 import Container from '@/components/Container';
 import { PageTitle, BodyText } from '@/components/Typography';
@@ -12,9 +11,6 @@ import ARMonsterCollection from '@/components/profile/ARMonsterCollection';
 import { Button } from '@/components/ui/button';
 import type { PlayerProfile } from '@/backend';
 
-const QuantumUniverseScene = lazy(() => import('@/components/quantum/QuantumUniverseScene'));
-
-// Adapt PlayerProfile (bigint fields) to the shape expected by child components
 function toPlayerStatsShape(profile: PlayerProfile | null | undefined) {
   if (!profile) return undefined;
   return {
@@ -49,15 +45,9 @@ export default function ProfilePage() {
 
   const isAuthenticated = !!identity;
 
-  // Not authenticated
   if (!isAuthenticated) {
     return (
       <PageShell>
-        <div className="fixed inset-0 -z-10">
-          <Suspense fallback={null}>
-            <QuantumUniverseScene />
-          </Suspense>
-        </div>
         <Container>
           <div className="py-16 space-y-8">
             <div className="text-center space-y-4">
@@ -68,7 +58,6 @@ export default function ProfilePage() {
                 Conecte-se para ver seu perfil sincronizado com QuantumoneyAR.app
               </BodyText>
             </div>
-
             <div className="bg-transparent backdrop-blur-md border border-yellow-400 rounded-lg p-16 text-center space-y-6">
               <User className="w-24 h-24 text-yellow-400/50 mx-auto" />
               <p className="text-yellow-400 text-lg">Autenticação necessária</p>
@@ -78,13 +67,8 @@ export default function ProfilePage() {
                 className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold"
               >
                 {loginStatus === 'logging-in' ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Conectando...
-                  </>
-                ) : (
-                  'Conectar'
-                )}
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Conectando...</>
+                ) : 'Conectar'}
               </Button>
             </div>
           </div>
@@ -93,54 +77,26 @@ export default function ProfilePage() {
     );
   }
 
-  // Loading state
   if (arLoading) {
     return (
       <PageShell>
-        <div className="fixed inset-0 -z-10">
-          <Suspense fallback={null}>
-            <QuantumUniverseScene />
-          </Suspense>
-        </div>
         <Container>
-          <div className="py-16 space-y-8">
-            <div className="text-center space-y-4">
-              <PageTitle icon={<User className="w-12 h-12 text-yellow-400" />} className="justify-center">
-                <span className="text-yellow-400">Perfil AR</span>
-              </PageTitle>
-            </div>
-
-            <div className="bg-transparent backdrop-blur-md border border-yellow-400 rounded-lg p-16 text-center space-y-6">
-              <Loader2 className="w-24 h-24 text-yellow-400/50 mx-auto animate-spin" />
-              <p className="text-yellow-400 text-lg">Carregando dados do jogo...</p>
-            </div>
+          <div className="py-16 text-center">
+            <Loader2 className="w-16 h-16 text-yellow-400/50 mx-auto animate-spin mb-4" />
+            <p className="text-yellow-400">Carregando dados do jogo...</p>
           </div>
         </Container>
       </PageShell>
     );
   }
 
-  // Error state
   if (arError) {
     return (
       <PageShell>
-        <div className="fixed inset-0 -z-10">
-          <Suspense fallback={null}>
-            <QuantumUniverseScene />
-          </Suspense>
-        </div>
         <Container>
-          <div className="py-16 space-y-8">
-            <div className="text-center space-y-4">
-              <PageTitle icon={<User className="w-12 h-12 text-yellow-400" />} className="justify-center">
-                <span className="text-yellow-400">Perfil AR</span>
-              </PageTitle>
-            </div>
-
-            <div className="bg-transparent backdrop-blur-md border border-yellow-400 rounded-lg p-16 text-center space-y-6">
-              <p className="text-yellow-400 text-lg">Erro ao carregar dados do jogo</p>
-              <p className="text-yellow-400/70 text-sm">{arError.message}</p>
-            </div>
+          <div className="py-16 text-center">
+            <p className="text-yellow-400 text-lg">Erro ao carregar dados do jogo</p>
+            <p className="text-yellow-400/70 text-sm mt-2">{arError.message}</p>
           </div>
         </Container>
       </PageShell>
@@ -149,11 +105,6 @@ export default function ProfilePage() {
 
   return (
     <PageShell>
-      <div className="fixed inset-0 -z-10">
-        <Suspense fallback={null}>
-          <QuantumUniverseScene />
-        </Suspense>
-      </div>
       <Container>
         <div className="py-16 space-y-8">
           <div className="text-center space-y-4">
@@ -164,17 +115,9 @@ export default function ProfilePage() {
               Dados sincronizados em tempo real com o jogo QuantumoneyAR.app
             </BodyText>
           </div>
-
-          {/* Technical Validation Panel */}
           <TechnicalValidationPanel />
-
-          {/* Player Stats - XP and Level */}
           <ARPlayerStats data={toPlayerStatsShape(arData)} />
-
-          {/* Coin Balance - Available, Locked, Bonus */}
           <ARCoinBalance data={toCoinBalanceShape(arData)} />
-
-          {/* Monster Collection */}
           <ARMonsterCollection data={toMonsterCollectionShape(arData)} />
         </div>
       </Container>

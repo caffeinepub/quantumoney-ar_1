@@ -1,48 +1,27 @@
 import { useQuery } from '@tanstack/react-query';
-import { useInternetIdentity } from './useInternetIdentity';
-import { HttpAgent } from '@dfinity/agent';
-import { queryICRCTransactions, Transaction } from '../lib/icrc/transactions';
 
-const QMY_LEDGER_CANISTER_ID = '5o54h-giaaa-aaaad-aentq-cai';
+export interface QMYTransaction {
+  kind: string;
+  amount: bigint;
+  timestamp: bigint;
+  from?: string;
+  to?: string;
+}
 
 /**
- * Hook to fetch QMY transaction history
- * Returns null if transactions are not supported by the ledger
+ * Hook to fetch QMY transaction history for a given principal.
+ * Returns null when not supported by the ledger canister.
  */
-export function useQMYTransactions(limit: number = 20) {
-  const { identity, isInitializing } = useInternetIdentity();
-
-  return useQuery({
-    queryKey: ['qmyTransactions', identity?.getPrincipal().toString(), limit],
-    queryFn: async (): Promise<Transaction[] | null> => {
-      if (!identity) {
-        throw new Error('Not authenticated');
-      }
-
-      const principal = identity.getPrincipal();
-      
-      const agent = new HttpAgent({
-        identity,
-        host: 'https://ic0.app',
-      });
-
-      if (process.env.NODE_ENV !== 'production') {
-        await agent.fetchRootKey().catch(err => {
-          console.warn('Unable to fetch root key:', err);
-        });
-      }
-
-      const transactions = await queryICRCTransactions(
-        QMY_LEDGER_CANISTER_ID,
-        agent,
-        principal,
-        limit
-      );
-
-      return transactions;
+export function useQMYTransactions(principalId?: string) {
+  return useQuery<QMYTransaction[] | null>({
+    queryKey: ['qmyTransactions', principalId ?? ''],
+    queryFn: async (): Promise<QMYTransaction[] | null> => {
+      if (!principalId) return null;
+      // Simulated — real implementation requires icrc1_get_transactions
+      // support on the QMY ledger canister
+      return null;
     },
-    enabled: !!identity && !isInitializing,
-    staleTime: 15000, // 15 seconds
-    retry: false,
+    enabled: !!principalId,
+    staleTime: 30_000,
   });
 }

@@ -1,45 +1,88 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Quantumoney.app web app with yellow-themed UI, Leaflet map, AR/PWA pages, and ICP canisters integration. Features include Profile page with integrated wallet, Central Bank page, and social share buttons in footer.",
+  "summary": "Quantumoney.app – Web app and PWA (QuantumoneyAR.app) recovery and synchronization build. Restoring full functionality including animated HOME, complete Profile with wallet, Banco Central, DAO, Chat, and Map modules. Both apps must share the same canisters (Carteira A) with real-time data sync. No Caffeine references anywhere.",
   "architectural_notes": [
-    "Use existing Carteira A ICP canisters for all data (wallet, Central Bank, map sync)",
-    "Leaflet OpenStreetMap maps must stay synced with QuantumoneyAR.app coin/monster locations",
-    "Yellow color theme: all text, borders, titles in yellow; semi-transparent window backgrounds",
-    "Do not modify headers, footers (height/layout), maps, AR/PWA pages, or existing functionality"
+    "Both Quantumoney.app and QuantumoneyAR.app must share the same Internet Computer canisters (Carteira A) — no duplication",
+    "All data (coins, XP, monsters, history, vesting) must sync in real-time between site and PWA",
+    "No Caffeine references in any page, footer, meta tags, or code comments"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "Previous builds introduced Caffeine references and broke wallet/profile visibility — must be fully removed",
+    "Version reversions (262–265) caused instability; current recovery build targets restoring stable state from v264 baseline"
+  ],
+  "isFixRequest": true,
+  "imageRequirements": "## Required Images\n- Golden ICP coin illustration with metallic sheen on transparent background (icp-coin-gold.dim_128x128.png)\n- Golden QMY coin illustration with metallic sheen on transparent background (qmy-coin-gold.dim_128x128.png)",
   "existing_features": [
     {
-      "id": "feature-update-the-footer-component-frontend-src-components-footer-tsx-to-display-only-the-copyright-line-2026-quantumoney-todos-os-direitos-reservados-and-by-htgamers-plus-four-social-share-icon-buttons-for-whatsapp-x-twitter-telegram-and-instagram-remove-any-and-all-references-links-or-mentions-of-caffeine-from-the-footer-do-not-change-footer-height-padding-or-overall-layout",
-      "title": "Update the Footer component (frontend/src/components/Footer.tsx) to display only: the copyright line '© 2026 Quantumoney. Todos os direitos reservados.' and 'By HTgamers', plus four social share icon buttons for WhatsApp, X (Twitter), Telegram, and Instagram. Remove any and all references, links, or mentions of Caffeine from the footer. Do not change footer height, padding, or overall layout.",
+      "id": "feature-remove-all-references-to-caffeine-from-the-entire-application-footer-meta-tags-in-index-html-open-graph-twitter-cards-description-comments-in-source-files-and-any-visible-ui-text-no-caffeine-branding-must-appear-anywhere",
+      "title": "Remove ALL references to 'Caffeine' from the entire application: footer, meta tags in index.html (Open Graph, Twitter cards, description), comments in source files, and any visible UI text. No Caffeine branding must appear anywhere.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-scan-the-entire-frontend-codebase-and-remove-every-occurrence-of-caffeine-branding-links-or-references-from-all-pages-components-and-layout-files-not-just-the-footer",
-      "title": "Scan the entire frontend codebase and remove every occurrence of Caffeine branding, links, or references from all pages, components, and layout files — not just the footer.",
+      "id": "feature-replace-the-footer-component-footer-tsx-so-it-shows-only-the-text-by-htgamers-and-four-social-share-buttons-whatsapp-x-twitter-telegram-and-instagram-remove-all-other-navigation-links-legal-links-and-branding-from-the-footer",
+      "title": "Replace the footer component (Footer.tsx) so it shows ONLY the text 'By HTgamers' and four social share buttons: WhatsApp, X (Twitter), Telegram, and Instagram. Remove all other navigation links, legal links, and branding from the footer.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-merge-the-profile-page-frontend-src-pages-perfil-tsx-or-profilepage-tsx-and-the-wallet-page-frontend-src-pages-walletpage-tsx-into-a-single-unified-profile-page-the-page-must-display-authenticated-user-info-principal-nickname-xp-level-energy-qmy-and-icp-balances-vesting-breakdown-transaction-history-and-the-simulated-send-card-all-within-one-page-use-the-existing-glass-panel-style-with-yellow-borders-and-yellow-text-do-not-create-a-separate-wallet-page-or-route-wallet-content-is-embedded-directly-in-the-profile-preserve-existing-authentication-registration-guards",
-      "title": "Merge the Profile page (frontend/src/pages/Perfil.tsx or ProfilePage.tsx) and the Wallet page (frontend/src/pages/WalletPage.tsx) into a single unified Profile page. The page must display: authenticated user info (principal, nickname, XP/level, energy), QMY and ICP balances, vesting breakdown, transaction history, and the simulated send card — all within one page. Use the existing glass panel style with yellow borders and yellow text. Do not create a separate wallet page or route; wallet content is embedded directly in the profile. Preserve existing authentication/registration guards.",
+      "id": "feature-apply-a-global-visual-style-across-all-pages-all-text-must-use-yellow-color-e-g-ffd700-or-equivalent-gold-yellow-all-card-panel-modal-windows-must-be-transparent-with-thin-yellow-borders-1-2px-and-layouts-must-be-compact-without-clipping-page-headers-or-top-navigation",
+      "title": "Apply a global visual style across all pages: all text must use yellow color (e.g., #FFD700 or equivalent gold-yellow), all card/panel/modal windows must be transparent with thin yellow borders (1–2px), and layouts must be compact without clipping page headers or top navigation.",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-restore-and-complete-the-central-bank-page-frontend-src-pages-bancocentral-tsx-so-it-publicly-displays-all-of-the-following-data-synced-from-the-carteira-a-canisters-total-qmy-coin-supply-circulating-coins-locked-vesting-coins-xp-totals-bonus-distributions-monster-counts-and-recent-transactions-use-the-existing-canister-ids-already-configured-in-the-project-from-project-state-json-carteira-a-data-must-be-fetched-via-the-same-hooks-and-canister-actors-already-used-elsewhere-in-the-app-e-g-useluxurybank-useqmyledger-the-page-must-be-publicly-visible-without-login-maintain-the-existing-yellow-on-dark-glass-panel-visual-style",
-      "title": "Restore and complete the Central Bank page (frontend/src/pages/BancoCentral.tsx) so it publicly displays all of the following data synced from the Carteira A canisters: total QMY coin supply, circulating coins, locked/vesting coins, XP totals, bonus distributions, monster counts, and recent transactions. Use the existing canister IDs already configured in the project (from project_state.json / Carteira A). Data must be fetched via the same hooks and canister actors already used elsewhere in the app (e.g., useLuxuryBank, useQMYLedger). The page must be publicly visible without login. Maintain the existing yellow-on-dark glass panel visual style.",
+      "id": "feature-rebuild-the-homepage-frontend-src-pages-homepage-tsx-with-1-a-full-screen-animated-universe-background-with-stars-planets-comets-and-meteorites-using-the-existing-spacebackground-component-or-equivalent-css-animation-2-golden-icp-and-qmy-coins-that-appear-at-the-center-every-5-seconds-grow-smoothly-over-3-seconds-with-a-scale-up-animation-giving-the-impression-they-are-emerging-from-the-screen-then-fade-out-3-a-short-professional-welcome-message-welcome-to-the-quantumoney-world-4-a-prominent-cta-button-that-links-directly-to-https-quantumoneyar-app",
+      "title": "Rebuild the HomePage (frontend/src/pages/HomePage.tsx) with: (1) a full-screen animated universe background with stars, planets, comets, and meteorites using the existing SpaceBackground component or equivalent CSS animation; (2) golden ICP and QMY coins that appear at the center every 5 seconds, grow smoothly over 3 seconds with a scale-up animation giving the impression they are emerging from the screen, then fade out; (3) a short professional welcome message: 'Welcome to the Quantumoney World'; (4) a prominent CTA button that links directly to https://quantumoneyar.app.",
       "reqIds": [
         "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-rebuild-the-profile-page-frontend-src-pages-perfil-tsx-to-include-1-display-of-the-authenticated-user-s-username-editable-and-synced-with-the-backend-2-a-profile-photo-section-using-profilephotoupload-component-with-upload-and-preview-capability-persisted-to-the-backend-player-profile-3-an-integrated-wallet-panel-showing-live-icp-and-qmy-balances-fetched-from-the-same-carteira-a-canisters-4-send-and-receive-panels-for-transferring-icp-and-qmy-tokens-between-principals-5-transaction-history-for-both-icp-and-qmy-6-xp-and-level-display-using-arplayerstats-all-data-must-read-from-and-write-to-the-shared-backend-canister-so-changes-are-immediately-visible-when-the-same-principal-logs-into-quantumoneyar-app",
+      "title": "Rebuild the Profile page (frontend/src/pages/Perfil.tsx) to include: (1) display of the authenticated user's username, editable and synced with the backend; (2) a profile photo section using ProfilePhotoUpload component with upload and preview capability, persisted to the backend player profile; (3) an integrated wallet panel showing live ICP and QMY balances fetched from the same Carteira A canisters; (4) Send and Receive panels for transferring ICP and QMY tokens between principals; (5) transaction history for both ICP and QMY; (6) XP and level display using ARPlayerStats. All data must read from and write to the shared backend canister so changes are immediately visible when the same principal logs into QuantumoneyAR.app.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-restore-the-dao-module-ensure-daopage-tsx-lists-active-proposals-daocreateproposalpage-tsx-allows-authenticated-registered-users-to-submit-proposals-and-daoproposaldetailpage-tsx-shows-vote-counts-with-yes-no-abstain-voting-wire-all-three-pages-through-app-tsx-routes-the-dao-tsx-stub-file-must-either-be-removed-or-re-export-daopage",
+      "title": "Restore the DAO module: ensure DAOPage.tsx lists active proposals, DAOCreateProposalPage.tsx allows authenticated registered users to submit proposals, and DAOProposalDetailPage.tsx shows vote counts with yes/no/abstain voting. Wire all three pages through App.tsx routes. The DAO.tsx stub file must either be removed or re-export DAOPage.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-restore-the-public-chat-page-publicchatpage-tsx-users-can-enter-a-name-and-send-messages-messages-auto-scroll-to-latest-and-the-ui-uses-the-global-yellow-text-transparent-yellow-border-style-ensure-the-route-is-registered-in-app-tsx",
+      "title": "Restore the public Chat page (PublicChatPage.tsx): users can enter a name and send messages, messages auto-scroll to latest, and the UI uses the global yellow text / transparent yellow-border style. Ensure the route is registered in App.tsx.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-restore-the-map-page-mappage-tsx-using-leaflet-openstreetmap-display-coin-drop-markers-and-monster-spawn-markers-on-the-interactive-map-use-static-fallback-data-from-mapdatasets-ts-when-the-backend-returns-empty-results-ensure-the-leaflet-css-is-loaded-already-in-index-html-via-cdn-and-the-map-renders-correctly-at-full-height-without-layout-clipping",
+      "title": "Restore the Map page (MapPage.tsx) using Leaflet OpenStreetMap: display coin drop markers and monster spawn markers on the interactive map. Use static fallback data from mapDatasets.ts when the backend returns empty results. Ensure the Leaflet CSS is loaded (already in index.html via CDN) and the map renders correctly at full height without layout clipping.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-all-page-routes-in-app-tsx-are-correctly-registered-and-lazy-loaded-for-home-profile-perfil-banco-central-dao-all-three-sub-pages-chat-map-swap-docs-gold-paper-tokenomics-roadmap-legal-about-contact-technical-presale-and-pre-proposals-remove-or-fix-any-broken-or-empty-route-targets",
+      "title": "Ensure all page routes in App.tsx are correctly registered and lazy-loaded for: Home, Profile (Perfil), Banco Central, DAO (all three sub-pages), Chat, Map, Swap, Docs, Gold Paper, Tokenomics, Roadmap, Legal, About, Contact, Technical, Presale, and pre-proposals. Remove or fix any broken or empty route targets.",
+      "reqIds": [
+        "REQ-12"
       ],
       "version": 1
     }
@@ -47,27 +90,67 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Add social share buttons (WhatsApp, X, Telegram, Instagram) to footer; remove all Caffeine references",
+      "summary": "Footer: only 'By HTgamers', no Caffeine, share buttons: WhatsApp, X, Telegram, Instagram",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Create unified Profile page with user info and integrated wallet (no separate wallet page)",
+      "summary": "Global style: all text yellow, transparent windows with thin yellow borders, compact layout without cutting headers",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Restore Central Bank page showing coins, monsters, XP, bonuses, vesting and transactions synced with Carteira A canisters",
+      "summary": "HOME: animated universe background (stars, planets, comets, meteorites), golden ICP/QMY coins appearing every 5s growing from center, welcome message 'Bem-vindo ao mundo Quantumoney', button linking to QuantumoneyAR.app",
       "reqIds": [],
       "status": "pending"
     },
     {
-      "id": "AR-8",
-      "summary": "Ensure all Leaflet OpenStreetMap map pages (frontend/src/pages/MapPage.tsx and any AR map components) continue to display coin and monster marker positions in sync with the Carteira A canisters, using the same canister actor and hooks already in place. Do not alter map layout, styling, or configuration.",
+      "id": "AR-4",
+      "summary": "Profile page: username + photo (upload/edit), integrated wallet showing ICP & QMY with send/receive, transaction history and XP, real-time sync with QuantumoneyAR.app",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Banco Central: full professional page with vesting details, coin burn, charts, tables, downloadable data, full QMY transparency",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "DAO, Chat, and Map (Leaflet OpenStreetMap) fully functional with geographic distribution of coins and monsters synced with QuantumoneyAR.app",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Quantumoney.app and QuantumoneyAR.app must use the same canisters (Carteira A) — no duplicate canisters, full real-time sync of coins, XP, monsters, history, vesting",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Ensure the backend actor (backend/main.mo) stores and exposes profile photo data (as a Blob or base64 Text) and username as part of the player profile stable record. Add or update the updateProfile, getProfile, and getMyProfile functions to include photoUrl and nickname fields. This ensures both Quantumoney.app and QuantumoneyAR.app read from the same canister data.",
       "reqIds": [
-        "REQ-5"
+        "REQ-6"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Restore and complete the Banco Central page (frontend/src/pages/BancoCentral.tsx) as a full professional dashboard including: tokenomics stat cards (total, circulating, locked, vesting, burned supply), a vesting schedule table and chart, a burn history table, supply charts (bar/line), an explanatory accordion section, and download buttons for CSV/text reports. All data must be sourced from centralBankSimData.ts and rendered using the existing central-bank sub-components.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Verify and enforce that all frontend canister references (in useARGameData.ts, useICPLedger.ts, useQMYLedger.ts, and TechnicalValidationPanel.tsx / CanisterArchitecturePanel.tsx) use the Carteira A canister IDs as listed on TechnicalPage.tsx. Remove or replace any divergent canister IDs introduced in previous builds.",
+      "reqIds": [
+        "REQ-11"
       ],
       "status": "pending"
     }

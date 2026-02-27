@@ -1,150 +1,131 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { AlertCircle, ArrowLeft, Plus } from 'lucide-react';
-import PageShell from '@/components/PageShell';
-import Container from '@/components/Container';
-import { PageTitle } from '@/components/Typography';
-import { useInternetIdentity } from '@/hooks/useInternetIdentity';
-import { useGetCallerUserProfile } from '@/hooks/useQueries';
-import { useCreateProposal } from '@/hooks/useDao';
-import { toast } from 'sonner';
+import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useGetCallerUserProfile } from '../hooks/useQueries';
+import { useCreateProposal } from '../hooks/useDao';
+import { ArrowLeft, AlertCircle } from 'lucide-react';
 
 export default function DAOCreateProposalPage() {
   const navigate = useNavigate();
   const { identity } = useInternetIdentity();
-  const { data: userProfile, isLoading: profileLoading } = useGetCallerUserProfile();
+  const isAuthenticated = !!identity;
+  const { data: profile } = useGetCallerUserProfile();
+  const isRegistered = profile?.registered ?? false;
   const createProposal = useCreateProposal();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  const isAuthenticated = !!identity;
-  const isRegistered = userProfile?.registered ?? false;
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!title.trim() || !description.trim()) {
-      toast.error('Please fill in all fields');
-      return;
-    }
-
-    try {
-      await createProposal.mutateAsync({ title: title.trim(), description: description.trim() });
-      toast.success('Proposal created successfully!');
-      navigate({ to: '/dao' });
-    } catch (error: any) {
-      console.error('Failed to create proposal:', error);
-      toast.error(error.message || 'Failed to create proposal');
-    }
-  };
-
-  const handleBack = () => {
-    navigate({ to: '/dao' });
-  };
-
-  if (!isAuthenticated || (!isRegistered && !profileLoading)) {
+  if (!isAuthenticated) {
     return (
-      <PageShell>
-        <Container>
-          <div className="py-12 space-y-8">
-            <PageTitle>Create Proposal</PageTitle>
-            <Card className="glass-card border-amber-900/30 bg-amber-900/10">
-              <CardContent className="p-6 flex items-start gap-4">
-                <AlertCircle className="w-6 h-6 text-amber-400 flex-shrink-0 mt-1" />
-                <div>
-                  <h3 className="text-amber-400 font-bold text-lg mb-2">Authentication Required</h3>
-                  <p className="text-amber-300 text-sm leading-relaxed">
-                    Please log in with Internet Identity and complete your profile registration to create proposals.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-            <Button onClick={handleBack} variant="outline" className="border-primary/30">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to DAO
-            </Button>
-          </div>
-        </Container>
-      </PageShell>
+      <div className="min-h-screen pt-20 pb-10 px-4 flex items-center justify-center">
+        <div className="glass-card p-10 text-center max-w-md w-full">
+          <AlertCircle className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-yellow-400 font-cinzel mb-3">Login Necessário</h2>
+          <p className="text-yellow-300/60 font-rajdhani text-sm mb-6">
+            Precisas de estar autenticado para criar propostas.
+          </p>
+          <button
+            onClick={() => navigate({ to: '/dao' })}
+            className="px-6 py-2 border border-yellow-400 text-yellow-400 font-rajdhani hover:bg-yellow-400/10 transition-all"
+          >
+            Voltar ao DAO
+          </button>
+        </div>
+      </div>
     );
   }
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim() || !description.trim()) {
+      setError('Preenche todos os campos.');
+      return;
+    }
+    setIsSubmitting(true);
+    setError('');
+    try {
+      await createProposal.mutateAsync({ title: title.trim(), description: description.trim() });
+      navigate({ to: '/dao' });
+    } catch (err: any) {
+      setError(err?.message ?? 'Erro ao criar proposta.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <PageShell>
-      <Container>
-        <div className="py-12 space-y-8">
-          <div className="flex items-center gap-4">
-            <Button onClick={handleBack} variant="ghost" size="icon" className="text-primary">
-              <ArrowLeft className="w-6 h-6" />
-            </Button>
-            <PageTitle>Create New Proposal</PageTitle>
+    <div className="min-h-screen pt-20 pb-10 px-4">
+      <div className="max-w-2xl mx-auto">
+        <button
+          onClick={() => navigate({ to: '/dao' })}
+          className="flex items-center gap-2 text-yellow-400/60 hover:text-yellow-400 transition-colors mb-6 font-rajdhani text-sm"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Voltar ao DAO
+        </button>
+
+        <h1 className="text-3xl font-bold text-yellow-400 font-cinzel tracking-wide mb-2">Nova Proposta</h1>
+        <p className="text-yellow-300/60 text-sm font-rajdhani mb-8">
+          Cria uma proposta para a comunidade votar.
+        </p>
+
+        <div className="glass-card p-6">
+          <div className="bg-yellow-400/5 border border-yellow-400/20 p-3 mb-6">
+            <p className="text-yellow-300/60 text-xs font-rajdhani">
+              ℹ️ As propostas são simuladas internamente. A integração com o canister de governança está em desenvolvimento.
+            </p>
           </div>
 
-          <Card className="glass-card border-primary/30">
-            <CardHeader>
-              <CardTitle className="text-primary">Proposal Details</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="title" className="text-primary">Title</Label>
-                  <Input
-                    id="title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Enter proposal title"
-                    className="border-primary/30"
-                    maxLength={200}
-                  />
-                  <p className="text-xs text-muted-foreground">{title.length}/200 characters</p>
-                </div>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-yellow-300/60 text-xs font-rajdhani uppercase tracking-wider mb-2">
+                Título *
+              </label>
+              <input
+                type="text"
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+                maxLength={100}
+                placeholder="Título da proposta..."
+                className="w-full bg-transparent border border-yellow-400/50 text-yellow-400 px-3 py-2 text-sm font-rajdhani focus:outline-none focus:border-yellow-400"
+              />
+              <div className="text-right text-yellow-300/30 text-xs mt-1 font-rajdhani">{title.length}/100</div>
+            </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="description" className="text-primary">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Describe your proposal in detail"
-                    className="border-primary/30 min-h-[200px]"
-                    maxLength={2000}
-                  />
-                  <p className="text-xs text-muted-foreground">{description.length}/2000 characters</p>
-                </div>
+            <div>
+              <label className="block text-yellow-300/60 text-xs font-rajdhani uppercase tracking-wider mb-2">
+                Descrição *
+              </label>
+              <textarea
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                maxLength={1000}
+                rows={6}
+                placeholder="Descreve a tua proposta em detalhe..."
+                className="w-full bg-transparent border border-yellow-400/50 text-yellow-400 px-3 py-2 text-sm font-rajdhani focus:outline-none focus:border-yellow-400 resize-none"
+              />
+              <div className="text-right text-yellow-300/30 text-xs mt-1 font-rajdhani">{description.length}/1000</div>
+            </div>
 
-                <div className="flex gap-4">
-                  <Button
-                    type="submit"
-                    disabled={createProposal.isPending || !title.trim() || !description.trim()}
-                    className="bg-primary hover:bg-primary/90 text-black font-semibold"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    {createProposal.isPending ? 'Creating...' : 'Create Proposal'}
-                  </Button>
-                  <Button type="button" onClick={handleBack} variant="outline" className="border-primary/30">
-                    Cancel
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+            {error && (
+              <div className="border border-red-400/50 bg-red-400/5 p-3">
+                <p className="text-red-400 text-sm font-rajdhani">{error}</p>
+              </div>
+            )}
 
-          <Card className="glass-card border-amber-900/30 bg-amber-900/10">
-            <CardContent className="p-6">
-              <p className="text-sm text-amber-300 leading-relaxed">
-                <strong>Note:</strong> This proposal will be stored in the canister and visible to all users. 
-                Voting is simulated/internal and does not execute real on-chain governance actions.
-              </p>
-            </CardContent>
-          </Card>
+            <button
+              type="submit"
+              disabled={isSubmitting || !title.trim() || !description.trim()}
+              className="w-full py-3 border-2 border-yellow-400 text-yellow-400 font-rajdhani font-bold uppercase tracking-wider hover:bg-yellow-400/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? 'A submeter...' : 'Submeter Proposta'}
+            </button>
+          </form>
         </div>
-      </Container>
-    </PageShell>
+      </div>
+    </div>
   );
 }

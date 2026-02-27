@@ -9,7 +9,7 @@ export function useMapMarkers() {
     queryKey: ['mapMarkers'],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.getAllMapMarkers();
+      return actor.getMapMarkers();
     },
     enabled: !!actor && !actorFetching,
     staleTime: 60_000,

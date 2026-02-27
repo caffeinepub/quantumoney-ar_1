@@ -1,43 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
-import { useInternetIdentity } from './useInternetIdentity';
+import { ICRCLedgerClient } from '../lib/icrc/ledgerClient';
 import { HttpAgent } from '@dfinity/agent';
-import { ICRCLedgerClient, formatBalance } from '../lib/icrc/ledgerClient';
 
-// Carteira A — QMY Ledger / Token Standard
-const QMY_LEDGER_CANISTER_ID = '5o54h-giaaa-aaaad-aentq-cai';
-
-export function useQMYLedger() {
-  const { identity, isInitializing } = useInternetIdentity();
-
-  return useQuery({
-    queryKey: ['qmyLedger', identity?.getPrincipal().toString()],
+export function useQMYLedger(principalId?: string) {
+  return useQuery<bigint>({
+    queryKey: ['qmyBalance', principalId ?? ''],
     queryFn: async () => {
-      if (!identity) return null;
-
-      const agent = new HttpAgent({
-        identity,
-        host: 'https://ic0.app',
-      });
-
-      if (process.env.NODE_ENV !== 'production') {
-        await agent.fetchRootKey().catch(() => {
-          // ignore in dev
-        });
+      if (!principalId || principalId === '2vxsx-fae') return 0n;
+      try {
+        const agent = await HttpAgent.create({ host: 'https://ic0.app' });
+        const client = new ICRCLedgerClient(agent);
+        return await client.getBalance(principalId);
+      } catch {
+        return 0n;
       }
-
-      const client = new ICRCLedgerClient(QMY_LEDGER_CANISTER_ID, agent);
-      const balanceData = await client.getBalanceWithMetadata(identity.getPrincipal());
-
-      return {
-        balance: balanceData.balance,
-        decimals: balanceData.decimals,
-        symbol: balanceData.symbol,
-        formatted: formatBalance(balanceData.balance, balanceData.decimals),
-      };
     },
-    enabled: !!identity && !isInitializing,
+    enabled: !!principalId && principalId !== '2vxsx-fae',
     staleTime: 30_000,
-    refetchInterval: 60_000,
-    retry: 2,
+    retry: 1,
   });
 }

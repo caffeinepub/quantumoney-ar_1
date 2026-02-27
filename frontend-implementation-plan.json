@@ -1,125 +1,315 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Footer Share Buttons, Unified Profile+Wallet Page, and Restored Central Bank Page",
+  "title": "Quantumoney.app – Full Recovery, Sync & Feature Restoration Frontend Build",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Update Footer component to display copyright, 'By HTgamers', and four social share icon buttons (WhatsApp, X, Telegram, Instagram). Remove all Caffeine references from the footer while preserving layout and height.",
+      "summary": "Remove all 'Caffeine' branding references from frontend files",
       "acceptanceCriteria": [
-        "Footer shows exactly '© 2026 Quantumoney. Todos os direitos reservados.' and 'By HTgamers'",
-        "Four share buttons are present: WhatsApp, X, Telegram, Instagram",
-        "Each share button opens the respective platform share URL with the app's URL pre-filled",
-        "No Caffeine branding, links, or text appears anywhere in the footer",
-        "Footer height and layout are unchanged"
+        "Grep across all frontend files returns zero matches for 'Caffeine' or 'caffeine'",
+        "index.html meta tags reference only Quantumoney branding",
+        "No footer, header, or page body contains any Caffeine text or link"
       ],
       "file_operations": [
         {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Remove all Caffeine references from meta tags (Open Graph og:title, og:description, Twitter card twitter:title, twitter:description, and standard meta description). Replace with Quantumoney-specific branding. Verify no comments or hidden text contain 'Caffeine'."
+        },
+        {
           "path": "frontend/src/components/Footer.tsx",
           "operation": "modify",
-          "description": "Replace existing footer content with only the copyright line '© 2026 Quantumoney. Todos os direitos reservados.', 'By HTgamers', and four social share icon buttons (WhatsApp, X, Telegram, Instagram). Remove all Caffeine-related links, text, and branding. Each share button should open the respective platform's share URL with the current app URL pre-filled. Maintain existing footer height, padding, and glassmorphism styling with yellow borders."
+          "description": "Remove all Caffeine text, links, and branding from the footer component. Verify the footer is ready for REQ-2 replacement."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Remove all Caffeine branding, links, and references from the entire frontend codebase including all pages, components, and layout files.",
+      "summary": "Replace footer to show only 'By HTgamers' text and four social share buttons",
       "acceptanceCriteria": [
-        "No page, component, or layout file contains any visible Caffeine text, link, logo, or badge",
-        "No Caffeine-related href or external URL remains in the rendered HTML"
+        "Footer displays exactly 'By HTgamers' text",
+        "Four share icon buttons are present: WhatsApp, X, Telegram, Instagram",
+        "No other links, text, or branding appear in the footer",
+        "Share buttons open correct share URLs for each platform"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/HomePage.tsx",
+          "path": "frontend/src/components/Footer.tsx",
           "operation": "modify",
-          "description": "Scan and remove any Caffeine references, links, or branding if present."
-        },
-        {
-          "path": "frontend/src/pages/LandingPage.tsx",
-          "operation": "modify",
-          "description": "Scan and remove any Caffeine references, links, or branding if present."
-        },
-        {
-          "path": "frontend/src/pages/AboutPage.tsx",
-          "operation": "modify",
-          "description": "Scan and remove any Caffeine references, links, or branding if present."
-        },
-        {
-          "path": "frontend/src/components/Header.tsx",
-          "operation": "modify",
-          "description": "Scan and remove any Caffeine references, links, or branding if present."
-        },
-        {
-          "path": "frontend/src/components/Layout.tsx",
-          "operation": "modify",
-          "description": "Scan and remove any Caffeine references, links, or branding if present."
+          "description": "Completely rebuild the footer component to render: (1) centered 'By HTgamers' text in yellow; (2) a row of four social share icon buttons (WhatsApp, X/Twitter, Telegram, Instagram) that open share URLs for the current page; (3) remove all navigation links, legal links, and other footer content. Use react-icons (FaWhatsapp, FaXTwitter, FaTelegram, FaInstagram) or Lucide icons. Share URLs should use platform-specific formats (e.g., whatsapp://send?text=, twitter.com/intent/tweet?url=, t.me/share/url?url=, instagram.com share is not directly supported so link to the Instagram profile or omit if no profile exists). Apply yellow text and transparent yellow-border global styling."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Merge Profile and Wallet pages into a single unified Profile page displaying user info, QMY/ICP balances, vesting breakdown, transaction history, and simulated send card with yellow borders and yellow text styling.",
+      "summary": "Apply global yellow text and transparent yellow-bordered card styling",
       "acceptanceCriteria": [
-        "Navigating to /profile (or equivalent route) shows user info and wallet content on the same page",
-        "QMY balance, ICP balance, vesting breakdown, transaction history, and simulated send card are all visible on the Profile page",
-        "No standalone wallet route (/wallet) exists or is linked in navigation",
-        "Yellow borders and yellow text styling are applied consistently",
-        "Unauthenticated users see a login prompt"
+        "Primary text color is yellow/gold across all pages",
+        "All cards, panels, and modals have transparent backgrounds with visible thin yellow borders",
+        "No page header or top navigation is clipped or hidden on any viewport size",
+        "Layout is compact with appropriate spacing, no excessive whitespace"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/Perfil.tsx",
+          "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Merge wallet content from WalletPage.tsx into this unified Profile page. Include all wallet UI elements: QMY balance display using useQMYLedger hook, ICP balance display using useICPLedger hook, VestingBreakdown component, QMYTransactionHistory component, and SendQMYSimulatedCard component. Preserve existing ProfileGlassPanel styling with yellow borders and yellow text. Maintain authentication guards and registration flow. Arrange content in a logical vertical layout with appropriate spacing."
+          "description": "Add or update global CSS custom properties and base styles to set primary text color to yellow/gold (#FFD700 or equivalent OKLCH value). Ensure body, headings, and paragraph text inherit this color by default. Add utility classes or update existing theme tokens for yellow borders (1–2px solid yellow). Verify no layout shifts clip page headers or top navigation. Reduce excessive padding/margin globally if needed for compact layouts."
         },
         {
-          "path": "frontend/src/pages/WalletPage.tsx",
+          "path": "frontend/tailwind.config.js",
           "operation": "modify",
-          "description": "Mark this file as deprecated or convert it to redirect to /profile route, since all wallet functionality is now embedded in the unified Profile page. Remove this page from active use but keep the file for reference during the transition."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Remove or comment out the standalone /wallet route registration. Ensure navigation links point to /profile for both profile and wallet access. Update any breadcrumb or navigation logic to reflect the unified Profile page."
-        },
-        {
-          "path": "frontend/src/components/Header.tsx",
-          "operation": "modify",
-          "description": "Update navigation links to remove any standalone 'Wallet' or 'Carteira' link if present. Ensure 'Profile' or 'Perfil' navigation item remains and points to /profile route."
+          "description": "Update Tailwind theme to set yellow/gold as the primary text color and add border utilities for thin yellow borders. Extend theme colors to include a 'qmy-yellow' or 'gold' token mapped to #FFD700. Ensure all card, panel, and modal components can reference these values. Verify responsive spacing scales support compact layouts."
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Restore and complete the Central Bank page to publicly display all QMY supply data, XP totals, bonus distributions, monster counts, and recent transactions synced from Carteira A canisters using existing hooks and canister IDs.",
+      "summary": "Rebuild HomePage with animated universe background, growing golden coins, welcome message, and CTA to quantumoneyar.app",
       "acceptanceCriteria": [
-        "Central Bank page is accessible without authentication",
-        "Page displays: coin supply breakdown, circulating vs. locked tokens, vesting info, XP totals, bonus distributions, monster counts, and recent transactions",
-        "All data is fetched from the Carteira A canister IDs already configured in the project",
-        "Yellow text and yellow-bordered glass panels are used consistently",
-        "No layout or color changes are introduced to other pages"
+        "Full-screen animated background shows stars, at least one planet, comets, and meteorites",
+        "A golden coin (ICP or QMY alternating) appears at the center every 5 seconds",
+        "Each coin scales from small to large over approximately 3 seconds then fades",
+        "Welcome message 'Welcome to the Quantumoney World' is displayed prominently",
+        "CTA button navigates to https://quantumoneyar.app when clicked"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/BancoCentral.tsx",
+          "path": "frontend/src/pages/HomePage.tsx",
           "operation": "modify",
-          "description": "Expand this page to display comprehensive public data from Carteira A canisters. Use the existing useLuxuryBank hook to fetch total supply, circulating coins, locked/vesting coins. Add calls to useARGameData or useQueries hooks to fetch XP totals, bonus distributions, and monster counts aggregated across all players. Display recent transaction summaries using the existing QMY transaction hooks. Organize data into yellow-bordered ProfileGlassPanel components or similar styled cards. Ensure the page is publicly accessible without authentication checks. Maintain the existing yellow-on-dark glassmorphism visual style from the current dashboard."
+          "description": "Completely rebuild the HomePage component: (1) Use the SpaceBackground component (frontend/src/components/space/SpaceBackground.tsx) as a full-screen background layer with stars, planets, comets, and meteorites via CSS animations; (2) Add a coin animation layer that displays the generated golden ICP coin image (frontend/public/assets/generated/icp-coin-gold.dim_128x128.png) or QMY coin image (frontend/public/assets/generated/qmy-coin-gold.dim_128x128.png) at the center every 5 seconds, alternating between the two; (3) Animate each coin with a CSS scale transform from 0.1 to 1.5 over 3 seconds, then fade opacity to 0; (4) Display the text 'Welcome to the Quantumoney World' in large yellow font prominently in the center or upper third of the screen; (5) Add a prominent CTA button (e.g., 'Enter QuantumoneyAR') that navigates to https://quantumoneyar.app when clicked. Use keyframe animations defined in index.css or inline styles. Ensure no canvas or Three.js is used to avoid memory issues."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add CSS keyframe animations for the coin grow-and-fade effect (scale from 0.1 to 1.5 over 3s, then fade opacity from 1 to 0). Ensure animations are performant and do not block the main thread. Optionally add or refine keyframes for comets, meteorites, and planet rotation if needed for the SpaceBackground component."
         }
       ]
     },
     {
       "id": "REQ-5",
-      "summary": "Ensure all Leaflet OpenStreetMap map pages display coin and monster marker positions synced with Carteira A canisters using existing hooks and actors without altering map layout or styling.",
+      "summary": "Rebuild Profile page with username, profile photo upload, integrated wallet, send/receive panels, transaction history, and XP/level",
       "acceptanceCriteria": [
-        "Map page renders coin and monster markers using data from the Carteira A canisters",
-        "No new canister IDs are introduced; existing configured IDs are used",
-        "Map layout, zoom, tile layer, and styling are unchanged"
+        "Profile page shows the authenticated principal's username from the backend",
+        "Username can be edited and saved; the update is stored in the backend actor",
+        "Profile photo can be uploaded, previewed, and saved to the player profile in the backend",
+        "ICP and QMY balances are displayed using the Carteira A ledger canisters",
+        "Send panel allows transfer of ICP or QMY to another principal",
+        "Receive panel shows the user's principal/account ID with copy functionality",
+        "Transaction history section displays past token movements",
+        "XP and current level are displayed from the player profile",
+        "Any profile change (username, photo) persisted to the backend canister is readable by the same principal on QuantumoneyAR.app"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Perfil.tsx",
+          "operation": "modify",
+          "description": "Completely rebuild the Perfil (Profile) page to include: (1) Display and edit the authenticated user's nickname from PlayerProfile using the saveCallerUserProfile hook; (2) Integrate the ProfilePhotoUpload component (frontend/src/components/profile/ProfilePhotoUpload.tsx) to allow upload, preview, and save of profile photo using the blob-storage component (ExternalBlob.fromBytes) and updateProfile backend method; (3) Display live ICP and QMY balances using useICPLedger and useQMYLedger hooks querying the Carteira A ledger canisters; (4) Integrate SendReceivePanels component (frontend/src/components/profile/SendReceivePanels.tsx) for ICP and QMY token transfers between principals; (5) Add a transaction history section using QMYTransactionHistory component (frontend/src/components/wallet/QMYTransactionHistory.tsx) for both ICP and QMY; (6) Display XP and level using the ARPlayerStats component (frontend/src/components/profile/ARPlayerStats.tsx) which reads from the player profile; (7) Ensure all data reads from and writes to the backend actor so changes are visible on QuantumoneyAR.app. Use the authorization component's getCallerUserProfile and saveCallerUserProfile hooks. Verify the component's usage instructions for the blob-storage and authorization components before implementing. Apply yellow text and transparent yellow-bordered card styling."
+        },
+        {
+          "path": "frontend/src/components/profile/ProfilePhotoUpload.tsx",
+          "operation": "modify",
+          "description": "Ensure the ProfilePhotoUpload component uses the blob-storage component (ExternalBlob.fromBytes) to convert the selected image file to an ExternalBlob, then calls the backend updateProfile method with the photoUrl. Add upload progress tracking using withUploadProgress. Display preview using ExternalBlob.getDirectURL(). Verify the component's usage instructions for the blob-storage component before implementing."
+        },
+        {
+          "path": "frontend/src/components/profile/SendReceivePanels.tsx",
+          "operation": "modify",
+          "description": "Verify SendReceivePanels component supports both ICP and QMY token transfers. For send, validate the destination principal format and call the appropriate ledger transfer method (ICP or QMY). For receive, display the user's principal ID or account ID with a copy-to-clipboard button. Add confirmation dialogs for send operations. Ensure the component uses the Carteira A ledger canister IDs from the backend interface or TechnicalPage.tsx."
+        },
+        {
+          "path": "frontend/src/components/wallet/QMYTransactionHistory.tsx",
+          "operation": "modify",
+          "description": "Verify QMYTransactionHistory component displays transaction history for both ICP and QMY. If useQMYTransactions returns null (stub), show an 'unavailable' message. For ICP, use a similar hook or integrate with useICPLedger to fetch transaction history if available. Display transaction kind icons (transfer, mint, burn) and transaction details (amount, timestamp, counterparty). Apply yellow text and transparent yellow-bordered card styling."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Restore and complete Banco Central page with tokenomics, vesting, burn history, supply charts, accordion, and download buttons",
+      "acceptanceCriteria": [
+        "Banco Central page renders tokenomics stat cards with real computed values",
+        "Vesting table shows month-by-month unlock schedule",
+        "VestingChart SVG renders locked vs unlocked data over time",
+        "BurnHistoryTable lists all burn events with date, amount, and reason",
+        "SupplyChartsSection renders bar+line chart for supply history",
+        "ExplanatorySection accordion is present with QMY explanatory content",
+        "DownloadButtons allow export of tokenomics CSV, vesting CSV, burn CSV, and text document",
+        "Page uses yellow text and transparent yellow-bordered panels"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/BancoCentral.tsx",
+          "operation": "modify",
+          "description": "Verify the BancoCentral page is complete and fully functional. Ensure it renders: (1) TokenomicsSection component with stat cards for total, circulating, locked, vesting, burned supply computed from centralBankSimData; (2) VestingTable and VestingChart components showing month-by-month unlock schedule; (3) BurnHistoryTable component listing all burn events; (4) SupplyChartsSection component rendering bar+line chart for supply history; (5) ExplanatorySection accordion with QMY explanatory content; (6) DownloadButtons component for CSV/text exports. If any sub-component is missing or incomplete, rebuild it using data from frontend/src/lib/qmy/centralBankSimData.ts. Apply yellow text and transparent yellow-bordered panel styling to all cards and sections."
+        },
+        {
+          "path": "frontend/src/components/central-bank/TokenomicsSection.tsx",
+          "operation": "modify",
+          "description": "Verify TokenomicsSection renders stat cards for total, circulating, locked, vesting, and burned supply. Use getCentralBankData() to fetch computed values. Display a segmented supply distribution bar. Apply yellow text and transparent yellow-bordered card styling."
+        },
+        {
+          "path": "frontend/src/components/central-bank/VestingTable.tsx",
+          "operation": "modify",
+          "description": "Verify VestingTable displays a month-by-month vesting calendar with columns: unlock date, amount unlocked, amount locked, cumulative unlocked, cumulative locked, and percentage unlocked. Use data from getCentralBankData().vestingSchedule. Apply yellow text and transparent yellow-bordered table styling."
+        },
+        {
+          "path": "frontend/src/components/central-bank/VestingChart.tsx",
+          "operation": "modify",
+          "description": "Verify VestingChart renders a pure SVG line/area chart showing unlocked vs. locked token data over time using data from getCentralBankData().vestingSchedule. Use no external charting libraries. Apply yellow color scheme for lines and areas."
+        },
+        {
+          "path": "frontend/src/components/central-bank/BurnHistoryTable.tsx",
+          "operation": "modify",
+          "description": "Verify BurnHistoryTable displays all burn events with columns: date, amount, reason, and percentage removed. Use data from getCentralBankData().burnHistory. Show a summary row for total tokens burned. Apply yellow text and transparent yellow-bordered table styling."
+        },
+        {
+          "path": "frontend/src/components/central-bank/SupplyChartsSection.tsx",
+          "operation": "modify",
+          "description": "Verify SupplyChartsSection renders a pure SVG bar+line chart comparing total, locked, and circulating supply over time using data from getCentralBankData().supplyHistory. Use no external charting libraries. Apply yellow color scheme for bars and lines."
+        },
+        {
+          "path": "frontend/src/components/central-bank/ExplanatorySection.tsx",
+          "operation": "modify",
+          "description": "Verify ExplanatorySection renders an accordion with sections explaining QMY token nature, economic model, XP system, and lock/unlock mechanics. Use Shadcn UI Accordion components. Apply yellow text and transparent yellow-bordered accordion styling."
+        },
+        {
+          "path": "frontend/src/components/central-bank/DownloadButtons.tsx",
+          "operation": "modify",
+          "description": "Verify DownloadButtons provides buttons to download: tokenomics CSV, vesting schedule CSV, burn history CSV, and a QMY explanatory text document. Generate CSV/text content from getCentralBankData() and trigger browser download. Apply yellow button styling."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Restore DAO module with proposal list, create proposal, and proposal detail pages wired through App.tsx",
+      "acceptanceCriteria": [
+        "Navigating to /dao shows the active proposals list",
+        "Authenticated registered users can click 'Create Proposal' and submit a new one",
+        "Clicking a proposal navigates to its detail page with vote buttons",
+        "Unauthenticated users see a login prompt, not an error"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/DAOPage.tsx",
+          "operation": "modify",
+          "description": "Verify DAOPage lists active proposals fetched from useDao hook's getProposals. Display each proposal as a card showing title, description, vote counts, and a link to the detail page. Show a 'Create Proposal' button for authenticated registered users that navigates to /dao/create. Show an authentication/registration warning for unauthenticated or unregistered users. Apply yellow text and transparent yellow-bordered card styling."
+        },
+        {
+          "path": "frontend/src/pages/DAOCreateProposalPage.tsx",
+          "operation": "modify",
+          "description": "Verify DAOCreateProposalPage allows authenticated registered users to submit a new proposal with title and description fields. Use useDao hook's createProposal mutation. Redirect to /dao on success. Show authentication/registration prompts for unauthenticated or unregistered users. Apply yellow text and transparent yellow-bordered form styling."
+        },
+        {
+          "path": "frontend/src/pages/DAOProposalDetailPage.tsx",
+          "operation": "modify",
+          "description": "Verify DAOProposalDetailPage fetches a single proposal by ID from the route params using useDao hook's getProposal. Display vote counts (yes/no/abstain) and allow authenticated users to cast or revoke votes using voteOnProposal and revokeVote mutations. Show authentication prompts for unauthenticated users. Apply yellow text and transparent yellow-bordered panel styling."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Verify all DAO routes are registered: /dao (DAOPage), /dao/create (DAOCreateProposalPage), /dao/proposal/:id (DAOProposalDetailPage). Ensure routes are lazy-loaded and resolve to non-empty components. If DAO.tsx stub file exists and conflicts, remove or replace it with a re-export of DAOPage."
+        },
+        {
+          "path": "frontend/src/pages/DAO.tsx",
+          "operation": "delete",
+          "description": "Delete the empty DAO.tsx stub file to avoid route conflicts. The main DAO listing page is DAOPage.tsx."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Restore public Chat page with name entry, message sending, auto-scroll, and global yellow styling",
+      "acceptanceCriteria": [
+        "Chat page is accessible via its route",
+        "User can type a name and message and submit",
+        "Messages appear in the chat list and auto-scroll to the bottom",
+        "UI matches yellow-text / transparent-border global style"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/PublicChatPage.tsx",
+          "operation": "modify",
+          "description": "Verify PublicChatPage renders a session-only in-memory chat UI using the usePublicChat hook. Display a name input field, a message textarea, and a submit button. Render messages in a scrollable list with auto-scroll to the latest message. Show toast notifications on send success/error. Apply yellow text and transparent yellow-bordered panel styling. Ensure the route /chat is registered in App.tsx."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Verify the /chat route is registered and lazy-loads PublicChatPage.tsx. Ensure the route resolves to a non-empty component."
+        }
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "summary": "Restore Map page with Leaflet OpenStreetMap, coin/monster markers, and static fallback data",
+      "acceptanceCriteria": [
+        "Map page renders a full Leaflet OpenStreetMap",
+        "Coin drop markers and monster spawn markers are visible on the map",
+        "Map falls back to static mapDatasets.ts data if backend returns empty arrays",
+        "Map does not clip under the header or navigation bar",
+        "Markers use distinct icons for coins vs monsters"
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/MapPage.tsx",
           "operation": "modify",
-          "description": "Verify that the map page uses the useMapMarkers hook to fetch live coin and monster marker data from the Carteira A canisters. Ensure markers are rendered correctly on the Leaflet map instance. Confirm that no hardcoded static markers override canister data unless the canister returns empty results (in which case fallback is acceptable). Do not modify map configuration, tile layers, zoom settings, or styling. Confirm map is synced with the same canister IDs already used elsewhere in the app."
+          "description": "Verify MapPage renders a full Leaflet OpenStreetMap using react-leaflet (or vanilla Leaflet if react-leaflet is not installed). Fetch coin and monster markers from the backend using useMapMarkers hook. If the backend returns empty arrays, fall back to static data from frontend/src/lib/map/mapDatasets.ts (coinDropLocations, monsterSpawnLocations). Render markers with distinct icons for coins (use generated/coin-pin.dim_40x40.png or qmy-coin-pin.dim_40x40.png) and monsters (use generated/monster-pin.dim_40x40.png). Ensure the Leaflet CSS is loaded (already in index.html via CDN). Set map container height to full viewport minus header height to avoid clipping. Apply yellow text for map labels and popups."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Verify the /map route is registered and lazy-loads MapPage.tsx. Ensure the route resolves to a non-empty component."
+        }
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "summary": "Verify all frontend canister references use Carteira A canister IDs from TechnicalPage.tsx",
+      "acceptanceCriteria": [
+        "All hooks and components reference the same set of Carteira A canister IDs",
+        "TechnicalPage.tsx, CanisterArchitecturePanel.tsx, and TechnicalValidationPanel.tsx show identical canister IDs",
+        "No hardcoded test or alternate canister IDs exist in the codebase"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useARGameData.ts",
+          "operation": "modify",
+          "description": "Verify the canister ID used in useARGameData matches the Logic/Backend canister ID from TechnicalPage.tsx. Replace any divergent canister ID with the correct Carteira A canister ID."
+        },
+        {
+          "path": "frontend/src/hooks/useICPLedger.ts",
+          "operation": "modify",
+          "description": "Verify the ICP ledger canister ID used in useICPLedger matches the ICP Ledger canister ID from TechnicalPage.tsx. Replace any divergent canister ID with the correct Carteira A canister ID."
+        },
+        {
+          "path": "frontend/src/hooks/useQMYLedger.ts",
+          "operation": "modify",
+          "description": "Verify the QMY ICRC ledger canister ID used in useQMYLedger matches the QMY ICRC Ledger canister ID from TechnicalPage.tsx. Replace any divergent canister ID with the correct Carteira A canister ID."
+        },
+        {
+          "path": "frontend/src/components/profile/TechnicalValidationPanel.tsx",
+          "operation": "modify",
+          "description": "Verify the canister IDs displayed in TechnicalValidationPanel match those listed on TechnicalPage.tsx. Update the hardcoded canister ID list if any IDs diverge."
+        },
+        {
+          "path": "frontend/src/components/profile/CanisterArchitecturePanel.tsx",
+          "operation": "modify",
+          "description": "Verify the canister IDs displayed in CanisterArchitecturePanel match those listed on TechnicalPage.tsx. Update the hardcoded canister ID list if any IDs diverge."
+        }
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "summary": "Verify all page routes in App.tsx are correctly registered and lazy-loaded with no broken targets",
+      "acceptanceCriteria": [
+        "All listed routes resolve to non-empty page components",
+        "No route navigates to an empty or stub file",
+        "Browser console shows no lazy-load chunk errors on route navigation"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Audit all routes in App.tsx and verify each route resolves to a non-empty page component. Required routes: / (Home), /perfil (Profile), /banco-central (Banco Central), /dao (DAO listing), /dao/create (Create Proposal), /dao/proposal/:id (Proposal Detail), /chat (Public Chat), /map (Map), /swap (Swap), /docs (Docs), /gold-paper (Gold Paper), /tokenomics (Tokenomics), /roadmap (Roadmap), /legal (Legal), /about (About), /contact (Contact), /technical (Technical), /presale (Presale), /pre-proposals (Pre-Proposals), /pre-proposals/:id (Pre-Proposal Detail). For each route, verify the imported component is non-empty. If any route points to an empty or stub file (e.g., DAO.tsx, Colecao.tsx, Distribuicao.tsx, ARMode.tsx, MapMode.tsx, Presale.tsx, PreVendaQTM.tsx, QTMRules.tsx, QueimaDeflacao.tsx, SwapQTMICP.tsx, Tutorial.tsx, VestingQTM.tsx), either remove the route or replace it with a placeholder/coming-soon page. Ensure all routes are lazy-loaded using React.lazy() and wrapped in Suspense with a fallback."
         }
       ]
     }
