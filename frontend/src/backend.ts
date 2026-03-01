@@ -152,7 +152,6 @@ export interface ARSpotClaim {
     spotId: string;
     qtmAmount: bigint;
 }
-export type UserId = bigint;
 export interface QMYPurchaseRequest {
     tokensRequested: bigint;
     timestamp: bigint;
@@ -209,8 +208,7 @@ export interface backendInterface {
     getPlayerByAddress(addr: Principal): Promise<PlayerProfile | null>;
     getPlayerDailyLimits(): Promise<DailyLimits>;
     getQMYPurchaseRequest(): Promise<QMYPurchaseRequest | null>;
-    getUserIdForCaller(): Promise<UserId>;
-    getUserProfile(userId: UserId): Promise<PlayerProfile | null>;
+    getUserProfile(user: Principal): Promise<PlayerProfile | null>;
     initializeAccessControl(): Promise<void>;
     isCallerAdmin(): Promise<boolean>;
     paymentCancel(sessionId: string): Promise<PaymentCancelResponse>;
@@ -462,21 +460,7 @@ export class Backend implements backendInterface {
             return from_candid_opt_n21(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getUserIdForCaller(): Promise<UserId> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getUserIdForCaller();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getUserIdForCaller();
-            return result;
-        }
-    }
-    async getUserProfile(arg0: UserId): Promise<PlayerProfile | null> {
+    async getUserProfile(arg0: Principal): Promise<PlayerProfile | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getUserProfile(arg0);

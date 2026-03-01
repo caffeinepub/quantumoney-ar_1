@@ -31,7 +31,7 @@ export default function DAOProposalDetailPage() {
     if (!isAuthenticated) return;
     setIsVoting(true);
     try {
-      await revokeVote.mutateAsync(proposalId);
+      await revokeVote.mutateAsync({ proposalId });
     } catch (err) {
       console.error('Revoke vote error:', err);
     } finally {
@@ -68,6 +68,13 @@ export default function DAOProposalDetailPage() {
   const yesPercent = totalVotes > 0 ? Math.round(((proposal.yesVotes ?? 0) / totalVotes) * 100) : 0;
   const noPercent = totalVotes > 0 ? Math.round(((proposal.noVotes ?? 0) / totalVotes) * 100) : 0;
 
+  const statusClass =
+    proposal.status === 'active'
+      ? 'border-yellow-400/50 text-yellow-400'
+      : proposal.status === 'passed'
+      ? 'border-green-400/50 text-green-400'
+      : 'border-red-400/50 text-red-400';
+
   return (
     <div className="min-h-screen pt-20 pb-10 px-4">
       <div className="max-w-3xl mx-auto">
@@ -82,11 +89,7 @@ export default function DAOProposalDetailPage() {
         {/* Proposal */}
         <div className="glass-card p-6 mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <span className={`text-xs font-rajdhani uppercase tracking-wider px-2 py-0.5 border ${
-              proposal.status === 'active' ? 'border-yellow-400/50 text-yellow-400' :
-              proposal.status === 'passed' ? 'border-green-400/50 text-green-400' :
-              'border-red-400/50 text-red-400'
-            }`}>
+            <span className={`text-xs font-rajdhani uppercase tracking-wider px-2 py-0.5 border ${statusClass}`}>
               {proposal.status}
             </span>
           </div>
@@ -132,7 +135,7 @@ export default function DAOProposalDetailPage() {
             <div className="flex gap-3 flex-wrap">
               <button
                 onClick={() => handleVote('yes')}
-                disabled={isVoting}
+                disabled={isVoting || !!proposal.userVote}
                 className="flex items-center gap-2 px-5 py-2 border border-green-400/50 text-green-400 font-rajdhani font-bold hover:bg-green-400/10 transition-all disabled:opacity-50 text-sm uppercase tracking-wider"
               >
                 <ThumbsUp className="w-4 h-4" />
@@ -140,7 +143,7 @@ export default function DAOProposalDetailPage() {
               </button>
               <button
                 onClick={() => handleVote('no')}
-                disabled={isVoting}
+                disabled={isVoting || !!proposal.userVote}
                 className="flex items-center gap-2 px-5 py-2 border border-red-400/50 text-red-400 font-rajdhani font-bold hover:bg-red-400/10 transition-all disabled:opacity-50 text-sm uppercase tracking-wider"
               >
                 <ThumbsDown className="w-4 h-4" />
@@ -148,20 +151,27 @@ export default function DAOProposalDetailPage() {
               </button>
               <button
                 onClick={() => handleVote('abstain')}
-                disabled={isVoting}
+                disabled={isVoting || !!proposal.userVote}
                 className="flex items-center gap-2 px-5 py-2 border border-yellow-400/30 text-yellow-400/60 font-rajdhani font-bold hover:bg-yellow-400/5 transition-all disabled:opacity-50 text-sm uppercase tracking-wider"
               >
                 <Minus className="w-4 h-4" />
                 Abstenção
               </button>
-              <button
-                onClick={handleRevokeVote}
-                disabled={isVoting}
-                className="px-5 py-2 border border-yellow-400/20 text-yellow-400/40 font-rajdhani text-sm hover:border-yellow-400/40 transition-all disabled:opacity-50"
-              >
-                Revogar Voto
-              </button>
+              {proposal.userVote && (
+                <button
+                  onClick={handleRevokeVote}
+                  disabled={isVoting}
+                  className="px-5 py-2 border border-yellow-400/20 text-yellow-400/40 font-rajdhani text-sm hover:border-yellow-400/40 transition-all disabled:opacity-50"
+                >
+                  Revogar Voto
+                </button>
+              )}
             </div>
+            {proposal.userVote && (
+              <p className="text-yellow-300/50 text-xs font-rajdhani mt-3">
+                O teu voto: <span className="text-yellow-400">{proposal.userVote}</span>
+              </p>
+            )}
           </div>
         )}
 

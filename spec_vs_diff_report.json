@@ -1,85 +1,93 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-27T18:03:17.233Z",
-  "summary": "The diff implements most of the required features across frontend and backend. Key areas are well-covered: Caffeine removal, Footer replacement, global yellow styles, HomePage rebuild, Profile page, backend profile fields, DAO pages, Chat page, Map page, and App.tsx routes. However, several specific acceptance criteria are only partially met or have gaps, and the welcome message text diverges from the spec. REQ-11 (canister ID enforcement) lacks direct evidence in the diff.",
+  "generatedAt": "2026-03-01T00:56:40.973Z",
+  "summary": "The diff implements most of the requested requirements with good coverage. Key areas like Footer cleanup, index.html Caffeine removal, HomePage animation, Profile page upgrades, Central Bank page, Map sync, AR page camera/buttons, canister ID auditing, and design token consistency are all addressed. However, several backend requirements (REQ-5, REQ-6, REQ-12) show only partial or unclear implementation, and some frontend AC items have gaps.",
   "missing_requirements": [
     {
-      "id": "REQ-4",
-      "requirement": "Welcome message must read exactly 'Welcome to the Quantumoney World'",
-      "reason": "HomePage.tsx shows the welcome message as 'Bem-vindo ao mundo Quantumoney' (Portuguese), not the English 'Welcome to the Quantumoney World' specified in the requirement.",
+      "id": "REQ-5",
+      "requirement": "Upgrade backend to store/retrieve all player data keyed by internal UserID (stable auto-incremented integer) with Principal to UserID mapping.",
+      "reason": "The backend/main.mo diff shows userProfiles still keyed by Principal (Map.empty<Principal, PlayerProfile>()) with no evidence of a UserID type, auto-increment counter, or Principal to UserID mapping table.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "requirement": "On new user registration, automatically award welcome bonus of 1000 QMY (100 unlocked + 900 locked, monthly vesting 100/month) and 100 XP, stored on user record, awarded only once per UserID.",
+      "reason": "The backend/main.mo diff does not show welcome bonus logic, vesting schedule records, or qmy_locked fields in the PlayerProfile type. The ProfileSetupModal.tsx summary mentions welcome bonus but this is frontend simulation, not backend enforcement as required.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "requirement": "Generate backend/migration.mo to safely migrate Principal-keyed records to UserID-keyed records, idempotently, preserving all data.",
+      "reason": "No migration.mo file appears in the added or modified files list. The file was not created.",
+      "evidence": []
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "Animated golden ICP and QMY coin 3D models using React Three Fiber / FloatingQMYCoins style.",
+      "reason": "The implementation uses simple img tags with a CSS animation class coin-burst rather than React Three Fiber 3D models. The requirement explicitly calls for React Three Fiber / FloatingQMYCoins style 3D models.",
       "evidence": [
         "frontend/src/pages/HomePage.tsx"
       ]
     },
     {
-      "id": "REQ-6",
-      "requirement": "photoUrl field must be Text (base64) in PlayerProfile stable record",
-      "reason": "migration.mo and backend/main.mo use photoUrl as ?Storage.ExternalBlob rather than a Text/base64 field as specified in the requirement.",
+      "id": "REQ-4",
+      "requirement": "Remove any separate navigation to a standalone Wallet page — all wallet functionality must be embedded within the Profile page tabs.",
+      "reason": "WalletPage.tsx still exists as a modified file and contains full wallet UI rather than being removed or replaced with a redirect. The file still renders balances and transactions independently rather than deferring entirely to the Profile page.",
       "evidence": [
-        "backend/migration.mo",
-        "backend/main.mo"
+        "frontend/src/pages/WalletPage.tsx"
       ]
     },
     {
-      "id": "REQ-11",
-      "requirement": "Verify and enforce that all frontend canister references in useARGameData.ts, useICPLedger.ts, useQMYLedger.ts, TechnicalValidationPanel.tsx, and CanisterArchitecturePanel.tsx use the Carteira A canister IDs",
-      "reason": "None of the files useARGameData.ts, useICPLedger.ts, useQMYLedger.ts, TechnicalValidationPanel.tsx, or CanisterArchitecturePanel.tsx appear in the diff as modified or added. There is no evidence that canister IDs were verified or enforced.",
-      "evidence": []
+      "id": "REQ-7",
+      "requirement": "Geographic coin/monster distribution visualization using GoldPaperUniverseVisualization component must be present on the Central Bank page.",
+      "reason": "The BancoCentral.tsx diff does not show an import or usage of GoldPaperUniverseVisualization. The page uses inline SVG charts and static tables but no geographic visualization component.",
+      "evidence": [
+        "frontend/src/pages/BancoCentral.tsx"
+      ]
     },
     {
-      "id": "REQ-5",
-      "requirement": "Transaction history section displays past token movements for both ICP and QMY",
-      "reason": "Perfil.tsx references useQMYTransactions for QMY history but there is no evidence of ICP transaction history being fetched or displayed — only the QMY transactions hook is used.",
+      "id": "REQ-9",
+      "requirement": "Captured monsters and coin lock state are persisted to the Carteira A backend canisters using UserID-keyed state.",
+      "reason": "Since REQ-5 backend UserID keying is not implemented, the AR page persistence cannot be truly UserID-keyed. The AR page uses saveCallerUserProfile which maps to Principal-keyed storage, not the Carteira A logic canister.",
       "evidence": [
-        "frontend/src/pages/Perfil.tsx"
+        "frontend/src/pages/ARGamePage.tsx",
+        "backend/main.mo"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Legacy route aliases /profile redirecting to /perfil, /central-bank redirecting to /banco-central, and /dao/new redirecting to /dao/create",
-      "reason": "The build request does not mention any legacy route aliases or redirects. These were added in App.tsx without being requested.",
+      "description": "WalletPage.tsx continues to render full wallet UI (balances, vesting, transactions) as a standalone page while also linking to Profile.",
+      "reason": "REQ-4 required removing separate wallet page navigation and embedding all wallet functionality in the Profile page tabs. Instead WalletPage was kept with full content plus a referral link to Profile.",
       "evidence": [
-        "frontend/src/App.tsx"
-      ]
-    },
-    {
-      "description": "Extra pages beyond the required list registered in App.tsx: TermsOfServicePage, PrivacyPolicyPage, GameSystemsPage, ARDistributionPage, TreasuryMonetaryPolicyPage",
-      "reason": "REQ-12 lists specific pages to register. These additional pages are not mentioned in the requirements.",
-      "evidence": [
-        "frontend/src/App.tsx"
-      ]
-    },
-    {
-      "description": "Stripe payment integration imported and included in backend/main.mo",
-      "reason": "The build request makes no mention of Stripe payment integration. The backend imports Stripe and StripeMixin modules which were not requested.",
-      "evidence": [
-        "backend/main.mo"
+        "frontend/src/pages/WalletPage.tsx"
       ]
     }
   ],
   "confidence": 0.72,
   "changed_files": [
     "backend/main.mo",
-    "backend/migration.mo",
     "frontend-file-summaries.txt",
     "frontend/index.html",
-    "frontend/src/App.tsx",
     "frontend/src/components/Footer.tsx",
-    "frontend/src/components/Header.tsx",
-    "frontend/src/components/Layout.tsx",
-    "frontend/src/components/space/SpaceBackground.tsx",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/index.css",
-    "frontend/src/pages/DAOCreateProposalPage.tsx",
-    "frontend/src/pages/DAOPage.tsx",
-    "frontend/src/pages/DAOProposalDetailPage.tsx",
+    "frontend/src/components/profile/CanisterArchitecturePanel.tsx",
+    "frontend/src/components/profile/TechnicalValidationPanel.tsx",
+    "frontend/src/hooks/useICPLedger.ts",
+    "frontend/src/hooks/useQMYLedger.ts",
+    "frontend/src/lib/icp/ledgerClient.ts",
+    "frontend/src/lib/icrc/ledgerClient.ts",
+    "frontend/src/pages/ARGamePage.tsx",
+    "frontend/src/pages/BancoCentral.tsx",
     "frontend/src/pages/HomePage.tsx",
     "frontend/src/pages/MapPage.tsx",
     "frontend/src/pages/Perfil.tsx",
-    "frontend/src/pages/PublicChatPage.tsx",
-    "frontend/tailwind.config.js",
+    "frontend/src/pages/TechnicalPage.tsx",
+    "frontend/src/pages/WalletPage.tsx",
     "project_state.json"
   ]
 }

@@ -28,6 +28,14 @@
     --radius: 0px;
     --success: oklch(0.65 0.18 145);
     --warning: oklch(0.82 0.18 85);
+
+    /* Luxury tokens */
+    --luxury-black: oklch(0.06 0.005 260);
+    --luxury-deep-black: oklch(0.09 0.008 260);
+    --luxury-gold: oklch(0.82 0.18 85);
+    --luxury-gold-bright: oklch(0.90 0.20 85);
+    --luxury-champagne: oklch(0.88 0.10 85);
+    --luxury-gold-dim: oklch(0.65 0.14 85);
   }
 
   * {
@@ -68,6 +76,7 @@
 }
 
 @layer components {
+  /* ── Standard glass card ── */
   .glass-card {
     background: oklch(0.10 0.01 260 / 0.5);
     border: 1px solid oklch(0.82 0.18 85 / 0.3);
@@ -79,6 +88,139 @@
     border-color: oklch(0.82 0.18 85 / 0.5);
   }
 
+  /* ── Luxury glass card ── */
+  .luxury-glass-card {
+    background: oklch(0.09 0.01 260 / 0.55);
+    border: 1px solid oklch(0.82 0.18 85 / 0.28);
+    border-bottom: 2px solid oklch(0.82 0.18 85 / 0.5);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .luxury-glass-card:hover {
+    border-color: oklch(0.82 0.18 85 / 0.55);
+    border-bottom-color: oklch(0.90 0.20 85 / 0.8);
+    box-shadow:
+      0 0 20px oklch(0.82 0.18 85 / 0.12),
+      0 8px 32px oklch(0.04 0.01 260 / 0.6);
+    transform: translateY(-2px);
+  }
+
+  /* ── Luxury CTA button ── */
+  .luxury-cta-btn {
+    color: oklch(0.06 0.005 260);
+    background: linear-gradient(
+      135deg,
+      oklch(0.88 0.20 85) 0%,
+      oklch(0.78 0.18 85) 40%,
+      oklch(0.85 0.22 85) 70%,
+      oklch(0.75 0.16 85) 100%
+    );
+    border: 1px solid oklch(0.90 0.22 85 / 0.8);
+    box-shadow:
+      0 0 18px oklch(0.82 0.18 85 / 0.45),
+      0 0 40px oklch(0.82 0.18 85 / 0.20),
+      inset 0 1px 0 oklch(0.95 0.15 85 / 0.5);
+    transition: box-shadow 0.3s ease, transform 0.2s ease, filter 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .luxury-cta-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 30%,
+      oklch(0.98 0.05 85 / 0.35) 50%,
+      transparent 70%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  .luxury-cta-btn:hover::before {
+    transform: translateX(100%);
+  }
+
+  .luxury-cta-btn:hover {
+    box-shadow:
+      0 0 28px oklch(0.82 0.18 85 / 0.65),
+      0 0 60px oklch(0.82 0.18 85 / 0.30),
+      inset 0 1px 0 oklch(0.95 0.15 85 / 0.6);
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+  }
+
+  .luxury-cta-btn:active {
+    transform: translateY(0);
+  }
+
+  /* ── Luxury title glow ── */
+  .luxury-title-glow {
+    text-shadow:
+      0 0 20px oklch(0.82 0.18 85 / 0.5),
+      0 0 50px oklch(0.82 0.18 85 / 0.25),
+      0 2px 4px oklch(0.04 0.01 260 / 0.8);
+  }
+
+  /* ── Gold shimmer text animation ── */
+  .luxury-gold-shimmer {
+    background: linear-gradient(
+      90deg,
+      oklch(0.82 0.18 85) 0%,
+      oklch(0.95 0.22 85) 30%,
+      oklch(0.75 0.16 85) 50%,
+      oklch(0.92 0.20 85) 70%,
+      oklch(0.82 0.18 85) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gold-shimmer 4s linear infinite;
+    display: inline-block;
+  }
+
+  /* ── Luxury horizontal divider ── */
+  .luxury-divider {
+    width: 100%;
+    max-width: 480px;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      oklch(0.82 0.18 85 / 0.15) 15%,
+      oklch(0.82 0.18 85 / 0.6) 50%,
+      oklch(0.82 0.18 85 / 0.15) 85%,
+      transparent 100%
+    );
+    margin: 0 auto;
+  }
+
+  /* ── Luxury stat item ── */
+  .luxury-stat {
+    position: relative;
+    padding: 0 1.5rem;
+  }
+
+  .luxury-stat::after {
+    content: '◆';
+    position: absolute;
+    right: -0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: oklch(0.82 0.18 85 / 0.25);
+    font-size: 0.5rem;
+  }
+
+  .luxury-stat:last-child::after {
+    display: none;
+  }
+
+  /* ── Font utilities ── */
   .font-cinzel {
     font-family: 'Cinzel', serif;
   }
@@ -86,6 +228,15 @@
   .font-rajdhani {
     font-family: 'Rajdhani', sans-serif;
   }
+}
+
+/* ============================================================
+   KEYFRAME ANIMATIONS
+   ============================================================ */
+
+@keyframes gold-shimmer {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
 }
 
 /* ============================================================
@@ -188,7 +339,7 @@
   animation: qmy-coin-float 3s ease-in-out infinite;
 }
 
-/* Coin grow-fade animation for HomePage */
+/* Coin grow-fade animation (kept for compatibility) */
 @keyframes coin-grow-fade {
   0% {
     transform: translate(-50%, -50%) scale(0.1);
