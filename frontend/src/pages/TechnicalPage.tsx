@@ -1,84 +1,41 @@
 import PageShell from '../components/PageShell';
 import Container from '../components/Container';
 import { PageTitle, SectionTitle, BodyText } from '../components/Typography';
-import StatusBadge from '../components/StatusBadge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Server, Shield, Layers, AlertTriangle } from 'lucide-react';
 
-const CANISTER_IDS = {
-  frontend: 'crjop-jyaaa-aaaah-atfaq-cai',
-  goldPaper: 'whu4t-kiaaa-aaaah-qsc5q-cai',
-  governance: 'nemlr-6aaaa-aaaan-q32la-cai',
-  logic: 'ckmsk-taaaa-aaaah-atfca-cai',
-  ledgerQMY: '5o54h-giaaa-aaaad-aentq-cai',
-};
-
-const canisters = [
+// Carteira A — Official Quantumoney Canister IDs
+const CARTEIRA_A_CANISTERS = [
   {
+    id: 'crjop-jyaaa-aaaah-atfaq-cai',
     name: 'Frontend / Website',
-    id: CANISTER_IDS.frontend,
-    desc: 'Interface principal do Quantumoney.app. Serve o frontend React e gere perfis de jogadores.',
-    icon: '🌐',
-    status: 'active',
+    description: 'Interface principal do Quantumoney.app — canister de frontend',
+    type: 'Frontend',
   },
   {
+    id: 'whu4t-kiaaa-aaaah-qsc5q-cai',
     name: 'Gold Paper & Docs',
-    id: CANISTER_IDS.goldPaper,
-    desc: 'Armazena o Gold Paper e documentação técnica do ecossistema QMY.',
-    icon: '📜',
-    status: 'active',
+    description: 'Documentação oficial e Gold Paper do projeto QMY',
+    type: 'Docs',
   },
   {
+    id: 'nemlr-6aaaa-aaaan-q32la-cai',
     name: 'Governance / Treasury',
-    id: CANISTER_IDS.governance,
-    desc: 'Governança DAO e gestão da tesouraria do ecossistema Quantumoney.',
-    icon: '🏛️',
-    status: 'planned',
+    description: 'Governança DAO e gestão da tesouraria (conceptual)',
+    type: 'Governance',
   },
   {
-    name: 'Logic (futuro)',
-    id: CANISTER_IDS.logic,
-    desc: 'Lógica de jogo avançada e regras do ecossistema (conceptual/futuro).',
-    icon: '⚙️',
-    status: 'planned',
+    id: 'ckmsk-taaaa-aaaah-atfca-cai',
+    name: 'Logic (Backend)',
+    description: 'Lógica principal do jogo AR, perfis de jogadores e distribuição de moedas',
+    type: 'Logic',
   },
   {
-    name: 'Ledger QMY',
-    id: CANISTER_IDS.ledgerQMY,
-    desc: 'Token QMY standard ICRC-1. Gere saldos, transferências e histórico de transações.',
-    icon: '💰',
-    status: 'active',
-  },
-];
-
-const architecture = [
-  {
-    title: 'Internet Computer Protocol',
-    desc: 'Toda a infraestrutura Quantumoney corre no ICP — blockchain de alta performance com finalidade em segundos.',
-    icon: '🔗',
-  },
-  {
-    title: 'Motoko Backend',
-    desc: 'Lógica de negócio implementada em Motoko, a linguagem nativa do ICP, com segurança de tipos e upgrades seguros.',
-    icon: '🦋',
-  },
-  {
-    title: 'React Frontend',
-    desc: 'Interface construída em React + TypeScript com Tailwind CSS, servida diretamente do canister ICP.',
-    icon: '⚛️',
-  },
-  {
-    title: 'Internet Identity',
-    desc: 'Autenticação descentralizada sem passwords. O teu Principal ID é a tua identidade única no ecossistema.',
-    icon: '🔐',
-  },
-  {
-    title: 'ICRC-1 Token Standard',
-    desc: 'O token QMY segue o standard ICRC-1 do ICP, garantindo interoperabilidade com DEXs e carteiras.',
-    icon: '🪙',
-  },
-  {
-    title: 'PWA & AR',
-    desc: 'QuantumoneyAR.app é uma Progressive Web App com acesso nativo à câmara e GPS para experiências AR.',
-    icon: '📱',
+    id: '5o54h-giaaa-aaaad-aentq-cai',
+    name: 'QMY Ledger / Token Standard',
+    description: 'Ledger ICRC-1 do token QMY — standard de token no Internet Computer',
+    type: 'Ledger',
   },
 ];
 
@@ -86,98 +43,123 @@ export default function TechnicalPage() {
   return (
     <PageShell>
       <Container size="lg">
-        <div className="py-8">
-          <div className="flex items-center gap-3 mb-2">
-            <PageTitle>Arquitetura Técnica</PageTitle>
-            <StatusBadge status="draft" />
+        <div className="py-12 space-y-10">
+          <div className="text-center space-y-3">
+            <Badge variant="outline" className="border-yellow-500/40 text-yellow-400/70 text-xs">
+              Arquitetura Técnica
+            </Badge>
+            <PageTitle>Infraestrutura Técnica</PageTitle>
+            <BodyText className="text-primary/60 max-w-2xl mx-auto">
+              O Quantumoney opera exclusivamente no Internet Computer Protocol (ICP),
+              utilizando os canisters oficiais da Carteira A.
+            </BodyText>
           </div>
-          <BodyText className="text-qmy-gold/60 mb-8">
-            Visão geral da infraestrutura técnica do ecossistema Quantumoney no Internet Computer Protocol.
-          </BodyText>
 
           {/* Disclaimer */}
-          <div className="luxury-glass-card p-4 border-yellow-500/40 mb-8">
-            <p className="text-yellow-400/80 text-xs font-rajdhani">
-              ⚠️ Conteúdo conceptual. Alguns canisters estão em fase de planeamento. Não constitui oferta de tokens ou serviços financeiros.
-            </p>
-          </div>
-
-          {/* Canister IDs */}
-          <SectionTitle className="mb-4">Canisters Carteira A</SectionTitle>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-            {canisters.map(c => (
-              <div key={c.id} className="luxury-glass-card p-5">
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">{c.icon}</span>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-cinzel text-qmy-gold font-bold text-sm">{c.name}</span>
-                      <span className={`text-xs px-2 py-0.5 border font-rajdhani ${
-                        c.status === 'active'
-                          ? 'border-green-500/50 text-green-400'
-                          : 'border-yellow-500/50 text-yellow-400'
-                      }`}>
-                        {c.status === 'active' ? 'Ativo' : 'Planeado'}
-                      </span>
-                    </div>
-                    <p className="text-qmy-gold/60 text-xs font-rajdhani mb-2">{c.desc}</p>
-                    <div className="flex items-center gap-2">
-                      <code className="text-qmy-gold/70 font-mono text-xs break-all">{c.id}</code>
-                      <a
-                        href={`https://${c.id}.icp0.io`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-qmy-gold/40 hover:text-qmy-gold text-xs flex-shrink-0"
-                      >
-                        🔗
-                      </a>
-                    </div>
-                  </div>
+          <Card className="bg-transparent border border-yellow-500/30 backdrop-blur-md">
+            <CardContent className="pt-4">
+              <div className="flex gap-3">
+                <AlertTriangle size={16} className="text-yellow-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-primary/80 text-sm font-medium mb-1">Aviso Importante</p>
+                  <p className="text-primary/60 text-xs">
+                    Esta página descreve a arquitetura técnica conceptual do projeto.
+                    Os canisters de Governance/Treasury são conceptuais e completamente separados
+                    da lógica do jogo AR. Nenhum token real foi emitido.
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
+            </CardContent>
+          </Card>
 
-          {/* Architecture overview */}
-          <SectionTitle className="mb-4">Stack Tecnológico</SectionTitle>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
-            {architecture.map(item => (
-              <div key={item.title} className="luxury-glass-card p-5">
-                <div className="text-2xl mb-2">{item.icon}</div>
-                <h3 className="font-cinzel text-qmy-gold font-bold text-sm mb-2">{item.title}</h3>
-                <p className="text-qmy-gold/60 text-xs font-rajdhani">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Sync note */}
-          <div className="luxury-glass-card p-6">
-            <h3 className="font-cinzel text-qmy-gold font-bold text-lg mb-3">🔄 Sincronização Quantumoney ↔ QuantumoneyAR</h3>
-            <p className="text-qmy-gold/70 font-rajdhani text-sm mb-3">
-              O Quantumoney.app e o QuantumoneyAR.app partilham os mesmos canisters da Carteira A.
-              O teu Principal ID é o identificador único que garante sincronização real entre as duas plataformas.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="border border-qmy-gold/20 p-4">
-                <div className="text-qmy-gold font-cinzel font-bold text-sm mb-2">Quantumoney.app</div>
-                <ul className="text-qmy-gold/60 text-xs font-rajdhani space-y-1">
-                  <li>• Perfil e carteira</li>
-                  <li>• Banco Central QMY</li>
-                  <li>• Governança DAO</li>
-                  <li>• Documentação</li>
-                </ul>
-              </div>
-              <div className="border border-purple-500/30 p-4">
-                <div className="text-purple-400 font-cinzel font-bold text-sm mb-2">QuantumoneyAR.app</div>
-                <ul className="text-qmy-gold/60 text-xs font-rajdhani space-y-1">
-                  <li>• Câmara AR</li>
-                  <li>• Captura de moedas</li>
-                  <li>• Captura de monstros</li>
-                  <li>• Mapa GPS</li>
-                </ul>
-              </div>
+          {/* Carteira A Canisters */}
+          <section className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Server size={18} className="text-primary" />
+              <SectionTitle>Canisters da Carteira A</SectionTitle>
             </div>
-          </div>
+            <BodyText className="text-primary/60 text-sm">
+              Todos os cinco canisters abaixo pertencem à Carteira A oficial do Quantumoney.
+              O site Quantumoney.app e a aplicação QuantumoneyAR.app sincronizam diretamente com estes canisters.
+            </BodyText>
+            <div className="grid gap-3">
+              {CARTEIRA_A_CANISTERS.map((canister) => (
+                <Card key={canister.id} className="bg-transparent border border-primary/20 backdrop-blur-md">
+                  <CardContent className="pt-4 pb-4">
+                    <div className="flex items-start justify-between gap-4 flex-wrap">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <span className="text-primary font-semibold text-sm">{canister.name}</span>
+                          <Badge variant="outline" className="text-xs border-primary/30 text-primary/60 px-1.5 py-0">
+                            {canister.type}
+                          </Badge>
+                        </div>
+                        <p className="text-primary/60 text-xs mb-2">{canister.description}</p>
+                        <code className="text-primary/50 text-xs font-mono bg-black/20 px-2 py-1 rounded border border-primary/10 break-all">
+                          {canister.id}
+                        </code>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+
+          {/* Architecture Overview */}
+          <section className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Layers size={18} className="text-primary" />
+              <SectionTitle>Visão Geral da Arquitetura</SectionTitle>
+            </div>
+            <div className="grid md:grid-cols-2 gap-4">
+              <Card className="bg-transparent border border-primary/20 backdrop-blur-md">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-primary text-sm flex items-center gap-2">
+                    <Shield size={14} />
+                    Internet Computer Protocol
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-1 text-primary/60 text-xs">
+                    <li>• Blockchain descentralizado de alta performance</li>
+                    <li>• Smart contracts em Motoko (canisters)</li>
+                    <li>• Autenticação via Internet Identity</li>
+                    <li>• Dados on-chain permanentes e imutáveis</li>
+                    <li>• Sem taxas de gas para utilizadores</li>
+                  </ul>
+                </CardContent>
+              </Card>
+              <Card className="bg-transparent border border-primary/20 backdrop-blur-md">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-primary text-sm flex items-center gap-2">
+                    <Server size={14} />
+                    Sincronização Unificada
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-1 text-primary/60 text-xs">
+                    <li>• Quantumoney.app — site institucional</li>
+                    <li>• QuantumoneyAR.app — aplicação de jogo AR</li>
+                    <li>• Perfil único via Internet Identity</li>
+                    <li>• Dados partilhados via Carteira A</li>
+                    <li>• Sincronização automática em tempo real</li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+          </section>
+
+          {/* Institutional Expansion Note */}
+          <Card className="bg-transparent border border-primary/10 backdrop-blur-md">
+            <CardContent className="pt-4">
+              <p className="text-primary/40 text-xs text-center">
+                Os canisters de Governance e Treasury são conceptuais nesta fase.
+                A lógica operacional do jogo AR é gerida pelo canister Logic (ckmsk-taaaa-aaaah-atfca-cai).
+                Nenhuma funcionalidade de governança está ativa no momento.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </Container>
     </PageShell>

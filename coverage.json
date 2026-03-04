@@ -1,167 +1,61 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-03-01T00:56:40.978Z",
+  "generatedAt": "2026-03-03T10:47:48.316Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 12,
-    "implemented": 8,
+    "total": 3,
+    "implemented": 0,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Update the Footer component (frontend/src/components/Footer.tsx) to show only: '© 2026 Quantumoney. All rights reserved.' and 'By HTgamers'. Add share buttons for WhatsApp, X (Twitter), Telegram, and Instagram. Remove all references to Caffeine, caffeine.ai, or any external branding. Keep the footer visually minimal, low-profile, with yellow text and thin yellow borders consistent with the existing design system.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/Footer.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/Footer.tsx"
-        ]
-      },
-      {
-        "id": "REQ-10",
-        "summary": "Ensure all frontend modules that interact with the backend reference the correct Carteira A canister IDs: Frontend/Website: crjop-jyaaa-aaaah-atfaq-cai, Gold Paper & Docs: whu4t-kiaaa-aaaah-qsc5q-cai, Governance/Treasury: nemlr-6aaaa-aaaan-q32la-cai, Logic: ckmsk-taaaa-aaaah-atfca-cai, Ledger QMY: 5o54h-giaaa-aaaad-aentq-cai. Audit CanisterArchitecturePanel.tsx, TechnicalValidationPanel.tsx, TechnicalPage.tsx, and any hook/client files to confirm these IDs are correct and consistent everywhere.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/profile/CanisterArchitecturePanel.tsx",
-          "frontend/src/components/profile/TechnicalValidationPanel.tsx",
-          "frontend/src/pages/TechnicalPage.tsx",
-          "frontend/src/lib/icrc/ledgerClient.ts",
-          "frontend/src/lib/icp/ledgerClient.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/profile/CanisterArchitecturePanel.tsx",
-          "frontend/src/components/profile/TechnicalValidationPanel.tsx",
-          "frontend/src/pages/TechnicalPage.tsx",
-          "frontend/src/lib/icrc/ledgerClient.ts",
-          "frontend/src/lib/icp/ledgerClient.ts"
-        ]
-      },
-      {
-        "id": "REQ-11",
-        "summary": "Maintain the overall layout design: all text and borders in yellow, transparent window panels with thin yellow borders, footer more visible (increase footer padding/font size slightly) without altering the header or top navigation. Ensure these design tokens are consistently applied to any new or updated components.",
+        "summary": "Restructure the global provider hierarchy so that a single LanguageProvider wraps the entire application. The required nesting order must be: AuthProvider (InternetIdentityProvider) → LanguageProvider → Router → App. Remove any duplicate or partial LanguageProvider instances found elsewhere in the component tree. Every route — including Legal, Contact, Tokenomics, Privacy Policy, Terms of Service, and all other pages — must be inside this single LanguageProvider. No route or page component may call useLanguage outside of this provider scope.",
         "status": "missing",
         "plannedFiles": [
-          "frontend/src/index.css",
-          "frontend/tailwind.config.js"
+          "frontend/src/main.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Layout.tsx",
+          "frontend/src/contexts/LanguageContext.tsx"
         ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-12",
-        "summary": "Generate a migration file (backend/migration.mo) to safely migrate existing backend state from Principal-keyed records to UserID-keyed records, preserving all existing profile, coin, monster, and transaction data.",
-        "status": "unknown",
-        "plannedFiles": [],
         "matchedFiles": []
       },
       {
         "id": "REQ-2",
-        "summary": "Also remove any reference to Caffeine from frontend/index.html meta tags, Open Graph tags, Twitter card tags, and any other HTML or code comments across the project.",
-        "status": "implemented",
+        "summary": "Audit and enforce that all canister actor calls throughout the frontend use the hardcoded production canister IDs for Logic, Ledger, and Governance canisters. Remove any environment-switching logic that could route requests to local, dev, or mock canisters. Both quantumoney.app and quantumoneyar.app must always connect to the same production ICP mainnet canisters.",
+        "status": "missing",
         "plannedFiles": [
-          "frontend/index.html"
+          "frontend/src/hooks/useActor.ts",
+          "frontend/src/lib/icp/ledgerClient.ts",
+          "frontend/src/lib/icrc/ledgerClient.ts",
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/hooks/useARGameData.ts",
+          "frontend/src/hooks/useLuxuryBank.ts"
         ],
-        "matchedFiles": [
-          "frontend/index.html"
-        ]
+        "matchedFiles": []
       },
       {
         "id": "REQ-3",
-        "summary": "Rebuild the HOME page (frontend/src/pages/HomePage.tsx) with a full animated realistic universe background featuring stars, planets, comets, and meteorites using the existing SpaceBackground component and extending it if needed. Add animated golden ICP and QMY coin 3D models (using React Three Fiber / FloatingQMYCoins style) that appear every 5 seconds, each growing from the center of the screen outward over 3 seconds to simulate an 'exit the screen' effect. Add a small welcome message: 'Welcome to the Quantumoney World'. Add a prominent CTA button labeled 'Install AR App' that links directly to https://QuantumoneyAR.app.",
-        "status": "implemented",
+        "summary": "Remove any automatic profile creation logic from the frontend. If a user's Principal does not have an existing profile in the backend, the application must display a clear error or 'Profile not found' state instead of silently creating a new profile. The UserID used throughout the app must be derived solely from the authenticated Internet Identity Principal — no synthetic IDs or fallback IDs should be generated.",
+        "status": "missing",
         "plannedFiles": [
-          "frontend/src/pages/HomePage.tsx"
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/pages/Perfil.tsx",
+          "frontend/src/pages/ProfilePage.tsx",
+          "frontend/src/components/profile/useProfileModuleState.ts",
+          "frontend/src/hooks/useARGameData.ts",
+          "frontend/src/hooks/useInternetIdentity.ts"
         ],
-        "matchedFiles": [
-          "frontend/src/pages/HomePage.tsx"
-        ]
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Upgrade the Profile page (frontend/src/pages/Perfil.tsx) to be a single unified profile synced between Quantumoney.app and QuantumoneyAR.app. The page must include: (1) Player name editable field with save; (2) Profile photo with upload, preview, and save (using ProfilePhotoUpload component); (3) Integrated wallet section showing Login ID (internal UserID), ICP balance, QMY balance, with Send and Receive token panels (using SendReceivePanels); (4) Full transaction history (QMYTransactionHistory); (5) Vesting breakdown (VestingBreakdown, WelcomeBonusCard); (6) Game stats and XP progress (ARPlayerStats). Remove any separate navigation to a standalone Wallet page — all wallet functionality must be embedded within the Profile page tabs. Do not delete existing tab panels; complete any that are currently empty or placeholder.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/Perfil.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/Perfil.tsx"
-        ]
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Upgrade the backend (backend/main.mo) to store and retrieve all player data (profile, wallet, coins, monsters, XP, transactions, vesting) keyed by an internal unique UserID (a stable auto-incremented integer) rather than by Principal alone. Maintain a Principal-to-UserID mapping so that the same user logging in from Quantumoney.app or QuantumoneyAR.app always resolves to the same UserID and thus the same profile and wallet state.",
-        "status": "unknown",
-        "plannedFiles": [],
         "matchedFiles": []
-      },
-      {
-        "id": "REQ-6",
-        "summary": "On new user registration in the backend (backend/main.mo), automatically award a welcome bonus of 1000 QMY (100 unlocked immediately + 900 locked under a monthly vesting schedule releasing 100/month) and 100 XP. Store bonus state on the user's profile record.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-7",
-        "summary": "Rebuild the Central Bank page (frontend/src/pages/BancoCentral.tsx) as a professional, complete dashboard. It must display: (1) All QMY coins and monsters distributed geographically (reuse or extend GoldPaperUniverseVisualization); (2) Vesting schedule (VestingTable, VestingChart); (3) Token burns and deflation history (BurnHistoryTable); (4) Bonuses and unlock mechanics; (5) Supply charts (SupplyChartsSection); (6) Detailed tokenomics stats (TokenomicsSection); (7) Explanatory accordion texts (ExplanatorySection); (8) Download buttons for tokenomics CSV, vesting schedule CSV, burn history CSV, and QMY document (DownloadButtons). All data must be sourced from the Carteira A canisters (Ledger QMY: 5o54h-giaaa-aaaad-aentq-cai; Governance: nemlr-6aaaa-aaaan-q32la-cai) where available, falling back to simulated data for unavailable on-chain queries.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/BancoCentral.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/BancoCentral.tsx"
-        ]
-      },
-      {
-        "id": "REQ-8",
-        "summary": "Update the Map page (frontend/src/pages/MapPage.tsx) to use the same Carteira A backend canisters as the AR page, ensuring coins and monsters are fetched from and displayed using identical coordinates across both Quantumoney.app and QuantumoneyAR.app. The Leaflet OpenStreetMap must show all coins and monsters from the shared backend state (keyed by UserID). Do not alter the existing map layout beyond what is necessary for this synchronization.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/MapPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/MapPage.tsx"
-        ]
-      },
-      {
-        "id": "REQ-9",
-        "summary": "Update the AR page (frontend/src/pages/ARGamePage.tsx) to: (1) Request camera permission immediately when the /ar route is opened; (2) Add AR action buttons for locking/unlocking QMY coins and for capturing monsters; (3) Use the Carteira A backend canisters (same UserID-keyed state) so captured monsters and locked/unlocked coins are persisted and synced. Minimize layout changes — only add the camera permission prompt and new AR action buttons.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/ARGamePage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/ARGamePage.tsx"
-        ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
-    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/index.html",
-    "frontend/public/assets/generated/icp-coin-gold.dim_256x256.png",
-    "frontend/public/assets/generated/qmy-coin-gold.dim_256x256.png",
-    "frontend/src/components/Footer.tsx",
-    "frontend/src/components/profile/CanisterArchitecturePanel.tsx",
-    "frontend/src/components/profile/TechnicalValidationPanel.tsx",
-    "frontend/src/hooks/useICPLedger.ts",
-    "frontend/src/hooks/useQMYLedger.ts",
-    "frontend/src/lib/icp/ledgerClient.ts",
-    "frontend/src/lib/icrc/ledgerClient.ts",
-    "frontend/src/pages/ARGamePage.tsx",
-    "frontend/src/pages/BancoCentral.tsx",
-    "frontend/src/pages/HomePage.tsx",
-    "frontend/src/pages/MapPage.tsx",
-    "frontend/src/pages/Perfil.tsx",
-    "frontend/src/pages/TechnicalPage.tsx",
-    "frontend/src/pages/WalletPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

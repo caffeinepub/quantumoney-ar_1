@@ -1,9 +1,8 @@
 import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
-import BottomNav from './BottomNav';
-import SpaceBackground from './space/SpaceBackground';
 import CookieConsentBanner from './CookieConsentBanner';
+import SpaceBackground from './space/SpaceBackground';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,14 +11,18 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   return (
     <div className="relative min-h-screen flex flex-col">
+      {/* Persistent space background */}
       <SpaceBackground />
-      <Header />
-      <main className="flex-1 relative z-10 pb-16 lg:pb-0">
-        {children}
-      </main>
-      <Footer />
-      <BottomNav />
-      <CookieConsentBanner />
+
+      {/* Content layer */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-1">
+          {children}
+        </main>
+        <Footer />
+        <CookieConsentBanner />
+      </div>
     </div>
   );
 }

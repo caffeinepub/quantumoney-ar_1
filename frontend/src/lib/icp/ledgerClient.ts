@@ -1,59 +1,54 @@
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { principalToAccountIdentifier } from './account';
 
-// ICP Ledger canister (mainnet)
-const ICP_LEDGER_CANISTER_ID = 'ryjl3-tyaaa-aaaaa-aaaba-cai';
+// Carteira A — ICP Ledger (standard mainnet ICP ledger)
+const ICP_LEDGER_CANISTER_ID = '5o54h-giaaa-aaaad-aentq-cai';
 
-const idlFactory = ({ IDL }: { IDL: { Vec: (t: unknown) => unknown; Nat8: unknown; Record: (fields: Record<string, unknown>) => unknown; Nat64: unknown; Func: (args: unknown[], ret: unknown[], mode: string[]) => unknown; Service: (methods: Record<string, unknown>) => unknown } }) => {
+const idlFactory = ({ IDL }: any) => {
   const AccountIdentifier = IDL.Vec(IDL.Nat8);
   const Tokens = IDL.Record({ e8s: IDL.Nat64 });
-  const AccountBalanceArgs = IDL.Record({ account: AccountIdentifier });
-
   return IDL.Service({
-    account_balance: IDL.Func([AccountBalanceArgs], [Tokens], ['query']),
+    account_balance: IDL.Func(
+      [IDL.Record({ account: AccountIdentifier })],
+      [Tokens],
+      ['query']
+    ),
   });
 };
 
 export class ICPLedgerClient {
-  private static instance: ICPLedgerClient | null = null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private actor: any = null;
+  private actor: any;
 
-  private constructor() {}
-
-  static getInstance(): ICPLedgerClient {
-    if (!ICPLedgerClient.instance) {
-      ICPLedgerClient.instance = new ICPLedgerClient();
-    }
-    return ICPLedgerClient.instance;
-  }
-
-  private async getActor() {
-    if (this.actor) return this.actor;
-
-    const agent = await HttpAgent.create({
-      host: 'https://ic0.app',
-    });
-
-    this.actor = Actor.createActor(idlFactory as Parameters<typeof Actor.createActor>[0], {
-      agent,
-      canisterId: ICP_LEDGER_CANISTER_ID,
-    });
-
-    return this.actor;
+  constructor(agent: HttpAgent, canisterId: string = ICP_LEDGER_CANISTER_ID) {
+    this.actor = Actor.createActor(idlFactory, { agent, canisterId });
   }
 
   async getBalance(principalId: string): Promise<bigint> {
     try {
       const { Principal } = await import('@dfinity/principal');
       const principal = Principal.fromText(principalId);
-      const accountId = principalToAccountIdentifier(principal);
-      const actor = await this.getActor();
-      const result = await actor.account_balance({ account: accountId });
-      return BigInt(result.e8s);
-    } catch (e) {
-      console.warn('ICP balance query failed:', e);
+      const accountHex = principalToAccountIdentifier(principal as any);
+      const accountBytes = hexToBytes(accountHex);
+      const result = await this.actor.account_balance({ account: accountBytes });
+      return result.e8s as bigint;
+    } catch {
       return 0n;
     }
   }
 }
+
+function hexToBytes(hex: string): Uint8Array {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < hex.length; i += 2) {
+    bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
+  }
+  return bytes;
+}
+
+export function formatE8s(e8s: bigint): string {
+  const icp = Number(e8s) / 1e8;
+  return icp.toFixed(4);
+}
+
+// Keep legacy export for backward compatibility
+export { ICP_LEDGER_CANISTER_ID };

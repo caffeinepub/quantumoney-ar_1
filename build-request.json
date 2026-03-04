@@ -1,270 +1,88 @@
 {
   "kind": "build_request",
-  "title": "Unify Quantumoney.app with QuantumoneyAR.app — full sync, professional footer, animated HOME, unified profile, Central Bank, and AR/Map sync",
+  "title": "Fix LanguageProvider Scope and Profile Synchronization Between Domains",
   "projectName": "Quantumoney",
   "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the Footer component (frontend/src/components/Footer.tsx) to show only: '© 2026 Quantumoney. All rights reserved.' and 'By HTgamers'. Add share buttons for WhatsApp, X (Twitter), Telegram, and Instagram. Remove all references to Caffeine, caffeine.ai, or any external branding. Keep the footer visually minimal, low-profile, with yellow text and thin yellow borders consistent with the existing design system.",
+      "text": "Restructure the global provider hierarchy so that a single LanguageProvider wraps the entire application. The required nesting order must be: AuthProvider (InternetIdentityProvider) → LanguageProvider → Router → App. Remove any duplicate or partial LanguageProvider instances found elsewhere in the component tree. Every route — including Legal, Contact, Tokenomics, Privacy Policy, Terms of Service, and all other pages — must be inside this single LanguageProvider. No route or page component may call useLanguage outside of this provider scope.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-latest"
         ],
         "quotes": [
-          "Manter o rodapé baixo e limpo.",
-          "Nenhuma referência a Caffeine ou outro branding externo."
+          "Envolver TODAS as rotas dentro de LanguageProvider.",
+          "Apenas um LanguageProvider global.",
+          "Eliminar múltiplos providers duplicados.",
+          "AuthProvider → LanguageProvider → Router → App"
         ]
       },
       "acceptanceCriteria": [
-        "Footer displays '© 2026 Quantumoney. All rights reserved.' and 'By HTgamers' only.",
-        "Share buttons for WhatsApp, X, Telegram, and Instagram are visible and link to correct share URLs.",
-        "No mention of Caffeine or caffeine.ai anywhere in the footer.",
-        "Footer maintains yellow text/border theme without altering the header or top navigation."
+        "Navigating to /legal, /contact, /tokenomics and all other routes produces no 'useLanguage must be used within a LanguageProvider' error in the browser console.",
+        "There is exactly one LanguageProvider instance in the entire component tree.",
+        "The LanguageProvider is a descendant of AuthProvider/InternetIdentityProvider and an ancestor of the Router and all route components.",
+        "Language switching works correctly on every page of the application."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Also remove any reference to Caffeine from frontend/index.html meta tags, Open Graph tags, Twitter card tags, and any other HTML or code comments across the project.",
+      "text": "Audit and enforce that all canister actor calls throughout the frontend use the hardcoded production canister IDs for Logic, Ledger, and Governance canisters. Remove any environment-switching logic that could route requests to local, dev, or mock canisters. Both quantumoney.app and quantumoneyar.app must always connect to the same production ICP mainnet canisters.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-latest"
         ],
         "quotes": [
-          "Nenhuma referência a Caffeine em rodapés, meta tags ou código."
+          "Confirmar que ambos utilizam exatamente os mesmos canisters: Logic, Ledger, Governance",
+          "Confirmar que ambos estão em ambiente production e não dev/local",
+          "Confirmar que ambos usam o mesmo backend e não mock"
         ]
       },
       "acceptanceCriteria": [
-        "No 'caffeine' string appears in index.html meta, og, or twitter tags.",
-        "No 'caffeine' string appears in any frontend source file."
+        "All actor/canister references in the frontend use the same hardcoded production canister IDs — no conditional dev/local/mock canister selection exists.",
+        "No mock data or simulated backend is used for profile, balance, or game state retrieval.",
+        "The same canister IDs are used regardless of which domain (quantumoney.app or quantumoneyar.app) is serving the frontend."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Rebuild the HOME page (frontend/src/pages/HomePage.tsx) with a full animated realistic universe background featuring stars, planets, comets, and meteorites using the existing SpaceBackground component and extending it if needed. Add animated golden ICP and QMY coin 3D models (using React Three Fiber / FloatingQMYCoins style) that appear every 5 seconds, each growing from the center of the screen outward over 3 seconds to simulate an 'exit the screen' effect. Add a small welcome message: 'Welcome to the Quantumoney World'. Add a prominent CTA button labeled 'Install AR App' that links directly to https://QuantumoneyAR.app.",
+      "text": "Remove any automatic profile creation logic from the frontend. If a user's Principal does not have an existing profile in the backend, the application must display a clear error or 'Profile not found' state instead of silently creating a new profile. The UserID used throughout the app must be derived solely from the authenticated Internet Identity Principal — no synthetic IDs or fallback IDs should be generated.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-latest"
         ],
         "quotes": [
-          "Fundo animado: Universo realista com estrelas, planetas, cometas, meteoritos.",
-          "Coins ICP e QMY em forma de moeda dourada flutuando suavemente. Cada coin aparece a cada 5 segundos",
-          "Botão 'Instalar Aplicação AR' com link direto para QuantumoneyAR.app."
+          "Remover qualquer criação automática de perfil.",
+          "Se o perfil não existir no backend principal, mostrar erro em vez de criar novo.",
+          "Garantir que ambos usam o mesmo UserID interno derivado do Principal."
         ]
       },
       "acceptanceCriteria": [
-        "HOME page shows animated space background with stars, planets, comets, and meteorites.",
-        "A new golden coin (alternating ICP and QMY) animates from the center of the screen, growing outward, every 5 seconds, lasting 3 seconds each.",
-        "A welcome message 'Welcome to the Quantumoney World' is visible on the page.",
-        "An 'Install AR App' button is present and opens https://QuantumoneyAR.app in a new tab.",
-        "Existing hero sections and feature grid are preserved."
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Upgrade the Profile page (frontend/src/pages/Perfil.tsx) to be a single unified profile synced between Quantumoney.app and QuantumoneyAR.app. The page must include: (1) Player name editable field with save; (2) Profile photo with upload, preview, and save (using ProfilePhotoUpload component); (3) Integrated wallet section showing Login ID (internal UserID), ICP balance, QMY balance, with Send and Receive token panels (using SendReceivePanels); (4) Full transaction history (QMYTransactionHistory); (5) Vesting breakdown (VestingBreakdown, WelcomeBonusCard); (6) Game stats and XP progress (ARPlayerStats). Remove any separate navigation to a standalone Wallet page — all wallet functionality must be embedded within the Profile page tabs. Do not delete existing tab panels; complete any that are currently empty or placeholder.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "Perfil único sincronizado entre Quantumoney.app e QuantumoneyAR.app.",
-          "Nenhuma página separada para carteira – tudo incorporado no Perfil.",
-          "Não eliminar janelas existentes, mas preencher todas as que estão incompletas."
-        ]
-      },
-      "acceptanceCriteria": [
-        "Profile page shows player name with inline edit and save.",
-        "Profile photo upload component is functional with preview.",
-        "ICP and QMY balances are visible on the profile page.",
-        "Send and Receive token panels are embedded in the profile wallet tab.",
-        "Full transaction history is rendered within the profile page.",
-        "Vesting info and welcome bonus card are visible.",
-        "XP progress bar and level stats are shown.",
-        "No separate wallet page link is required for these features."
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Upgrade the backend (backend/main.mo) to store and retrieve all player data (profile, wallet, coins, monsters, XP, transactions, vesting) keyed by an internal unique UserID (a stable auto-incremented integer) rather than by Principal alone. Maintain a Principal-to-UserID mapping so that the same user logging in from Quantumoney.app or QuantumoneyAR.app always resolves to the same UserID and thus the same profile and wallet state.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "Todos os dados devem ser armazenados e lidos usando UserID interno único (não Principals) para garantir sincronização real entre site e PWA."
-        ]
-      },
-      "acceptanceCriteria": [
-        "Backend stores a Principal → UserID stable mapping.",
-        "All player profile, wallet, coin, and monster records are keyed by UserID.",
-        "Same Principal always resolves to the same UserID across requests.",
-        "Existing data is not lost on upgrade (migration.mo updated accordingly)."
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "On new user registration in the backend (backend/main.mo), automatically award a welcome bonus of 1000 QMY (100 unlocked immediately + 900 locked under a monthly vesting schedule releasing 100/month) and 100 XP. Store bonus state on the user's profile record.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "Entregar bônus de boas-vindas: 1000 QMY + 100 XP.",
-          "Distribuição automática de moedas bloqueadas/desbloqueadas e XP de acordo com regras do jogo."
-        ]
-      },
-      "acceptanceCriteria": [
-        "On first registration, user record has qmy_balance = 100 (unlocked), qmy_locked = 900, xp = 100.",
-        "Vesting schedule records 100 QMY unlocked per 30-day period.",
-        "Welcome bonus is only awarded once per UserID."
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "text": "Rebuild the Central Bank page (frontend/src/pages/BancoCentral.tsx) as a professional, complete dashboard. It must display: (1) All QMY coins and monsters distributed geographically (reuse or extend GoldPaperUniverseVisualization); (2) Vesting schedule (VestingTable, VestingChart); (3) Token burns and deflation history (BurnHistoryTable); (4) Bonuses and unlock mechanics; (5) Supply charts (SupplyChartsSection); (6) Detailed tokenomics stats (TokenomicsSection); (7) Explanatory accordion texts (ExplanatorySection); (8) Download buttons for tokenomics CSV, vesting schedule CSV, burn history CSV, and QMY document (DownloadButtons). All data must be sourced from the Carteira A canisters (Ledger QMY: 5o54h-giaaa-aaaad-aentq-cai; Governance: nemlr-6aaaa-aaaan-q32la-cai) where available, falling back to simulated data for unavailable on-chain queries.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "Restaurar e tornar profissional",
-          "Mostrar todas moedas e monstros distribuídos geograficamente.",
-          "Gráficos, tabelas e textos explicativos detalhados sobre QMY.",
-          "Todas informações disponíveis para download.",
-          "Sincronizado com canisters da Carteira A"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Central Bank page renders tokenomics stats, vesting table, burn history table, and supply charts.",
-        "Geographic coin/monster distribution visualization is present.",
-        "Download buttons for CSV and document exports are functional.",
-        "Explanatory accordion section is present and readable.",
-        "QMY Ledger canister ID 5o54h-giaaa-aaaad-aentq-cai is used for balance/supply queries."
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "text": "Update the Map page (frontend/src/pages/MapPage.tsx) to use the same Carteira A backend canisters as the AR page, ensuring coins and monsters are fetched from and displayed using identical coordinates across both Quantumoney.app and QuantumoneyAR.app. The Leaflet OpenStreetMap must show all coins and monsters from the shared backend state (keyed by UserID). Do not alter the existing map layout beyond what is necessary for this synchronization.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "Mapa Leaflet OpenStreetMap sincronizado, mostrando todas moedas e monstros nas mesmas coordenadas.",
-          "Não mexer nas páginas AR e MAPA além do necessário para sincronização."
-        ]
-      },
-      "acceptanceCriteria": [
-        "MapPage fetches coin and monster markers from the same backend actor used by the AR page.",
-        "Markers shown on the map match coordinates stored in the backend.",
-        "No visual layout changes to the map beyond data source update."
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "text": "Update the AR page (frontend/src/pages/ARGamePage.tsx) to: (1) Request camera permission immediately when the /ar route is opened; (2) Add AR action buttons for locking/unlocking QMY coins and for capturing monsters; (3) Use the Carteira A backend canisters (same UserID-keyed state) so captured monsters and locked/unlocked coins are persisted and synced. Minimize layout changes — only add the camera permission prompt and new AR action buttons.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "Câmara deve funcionar corretamente, com permissão solicitada ao abrir rota /ar.",
-          "Botões AR para: Bloquear/desbloquear moedas QMY, Captura de monstros"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Camera permission is requested when the user navigates to /ar.",
-        "AR buttons for 'Lock/Unlock QMY' and 'Capture Monster' are visible and functional.",
-        "Captured monsters and coin lock state are persisted to the backend.",
-        "AR page layout is otherwise unchanged."
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "text": "Ensure all frontend modules that interact with the backend reference the correct Carteira A canister IDs: Frontend/Website: crjop-jyaaa-aaaah-atfaq-cai, Gold Paper & Docs: whu4t-kiaaa-aaaah-qsc5q-cai, Governance/Treasury: nemlr-6aaaa-aaaan-q32la-cai, Logic: ckmsk-taaaa-aaaah-atfca-cai, Ledger QMY: 5o54h-giaaa-aaaad-aentq-cai. Audit CanisterArchitecturePanel.tsx, TechnicalValidationPanel.tsx, TechnicalPage.tsx, and any hook/client files to confirm these IDs are correct and consistent everywhere.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "Todos os módulos devem usar os canisters já existentes na Carteira A"
-        ]
-      },
-      "acceptanceCriteria": [
-        "All five Carteira A canister IDs appear correctly in CanisterArchitecturePanel, TechnicalValidationPanel, TechnicalPage, and relevant hook/client files.",
-        "No outdated or placeholder canister IDs remain in the codebase."
-      ]
-    },
-    {
-      "id": "REQ-11",
-      "text": "Maintain the overall layout design: all text and borders in yellow, transparent window panels with thin yellow borders, footer more visible (increase footer padding/font size slightly) without altering the header or top navigation. Ensure these design tokens are consistently applied to any new or updated components.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "Manter todas letras e bordas em amarelo.",
-          "Janelas transparentes com bordas finas amarelas.",
-          "Rodapés mais visíveis sem alterar cabeçalhos ou topo da página."
-        ]
-      },
-      "acceptanceCriteria": [
-        "All new and updated components use yellow text and thin yellow borders.",
-        "Transparent glass-panel style is maintained across profile, bank, and map pages.",
-        "Footer has slightly increased padding/visibility without changing header styling."
-      ]
-    },
-    {
-      "id": "REQ-12",
-      "text": "Generate a migration file (backend/migration.mo) to safely migrate existing backend state from Principal-keyed records to UserID-keyed records, preserving all existing profile, coin, monster, and transaction data.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "Manter todo o que está atualmente construído, apenas corrigir sincronização e completar funcionalidades faltantes."
-        ]
-      },
-      "acceptanceCriteria": [
-        "migration.mo transforms Principal-keyed state maps to UserID-keyed maps.",
-        "No existing player data is lost during upgrade.",
-        "Migration runs idempotently if applied more than once."
+        "If the authenticated Principal has no profile in the backend, the profile page shows a clear 'Profile not found' message rather than creating a new profile automatically.",
+        "No auto-registration or default profile initialization is triggered on login.",
+        "The UserID displayed and used internally is always the Internet Identity Principal — no alternate or generated ID is used.",
+        "XP, QMY balance, inventory, and game state shown in the profile are fetched from the production backend using the Principal as the key."
       ]
     }
   ],
   "constraints": [
-    "Do not alter the header or top navigation styling.",
-    "Do not delete or remove existing page tabs, panels, or UI windows — only complete or fix them.",
     "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui.",
-    "AR and Map pages must receive minimal layout changes — only those strictly required for data synchronization.",
-    "No Caffeine branding (caffeine.ai, 'Built with Caffeine', etc.) must appear anywhere in the frontend output.",
-    "All canister IDs must match the Carteira A specification exactly."
+    "Do not introduce any new provider types or context patterns — only restructure existing ones.",
+    "All canister IDs must remain as currently defined in production — do not change canister IDs.",
+    "Do not remove or alter existing page content or UI design."
   ],
   "nonGoals": [
-    "Building a separate QuantumoneyAR.app codebase — this request only updates Quantumoney.app.",
-    "Replacing Internet Identity with any other authentication provider.",
-    "Implementing real on-chain QMY token transfers (simulated send remains acceptable where on-chain is unavailable).",
-    "Changing the app's routing structure or adding new routes beyond what is required.",
-    "Modifying Roadmap, Legal, DAO proposal, or other non-targeted pages."
+    "Adding new pages or features.",
+    "Changing the visual design or theme.",
+    "Implementing real-time synchronization between domains.",
+    "Modifying backend Motoko logic.",
+    "Adding new canister integrations."
   ],
   "imageRequirements": {
-    "required": [
-      "Realistic golden ICP coin — circular coin face with ICP logo embossed, shiny gold metallic finish, subtle light reflection (icp-coin-gold.dim_256x256.png)",
-      "Realistic golden QMY coin — circular coin face with QMY text embossed, shiny gold metallic finish, subtle light reflection (qmy-coin-gold.dim_256x256.png)"
-    ],
+    "required": [],
     "edits": []
   }
 }

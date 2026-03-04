@@ -1,93 +1,37 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-03-01T00:56:40.973Z",
-  "summary": "The diff implements most of the requested requirements with good coverage. Key areas like Footer cleanup, index.html Caffeine removal, HomePage animation, Profile page upgrades, Central Bank page, Map sync, AR page camera/buttons, canister ID auditing, and design token consistency are all addressed. However, several backend requirements (REQ-5, REQ-6, REQ-12) show only partial or unclear implementation, and some frontend AC items have gaps.",
+  "generatedAt": "2026-03-03T10:47:48.310Z",
+  "summary": "The diff only modifies a single project_state.json file, which records the requirements as 'pending' feature requests. No actual frontend source code changes are implemented. All three requirements (REQ-1, REQ-2, REQ-3) remain unimplemented.",
   "missing_requirements": [
     {
-      "id": "REQ-5",
-      "requirement": "Upgrade backend to store/retrieve all player data keyed by internal UserID (stable auto-incremented integer) with Principal to UserID mapping.",
-      "reason": "The backend/main.mo diff shows userProfiles still keyed by Principal (Map.empty<Principal, PlayerProfile>()) with no evidence of a UserID type, auto-increment counter, or Principal to UserID mapping table.",
+      "id": "REQ-1",
+      "requirement": "Restructure the global provider hierarchy so that a single LanguageProvider wraps the entire application with the nesting order: AuthProvider → LanguageProvider → Router → App. Remove duplicate LanguageProvider instances.",
+      "reason": "No frontend source files were modified. The project_state.json only marks AR-3/REQ-1 as 'pending'. No changes to main.tsx, App.tsx, or any route/component files are present in the diff.",
       "evidence": [
-        "backend/main.mo"
+        "project_state.json"
       ]
     },
     {
-      "id": "REQ-6",
-      "requirement": "On new user registration, automatically award welcome bonus of 1000 QMY (100 unlocked + 900 locked, monthly vesting 100/month) and 100 XP, stored on user record, awarded only once per UserID.",
-      "reason": "The backend/main.mo diff does not show welcome bonus logic, vesting schedule records, or qmy_locked fields in the PlayerProfile type. The ProfileSetupModal.tsx summary mentions welcome bonus but this is frontend simulation, not backend enforcement as required.",
+      "id": "REQ-2",
+      "requirement": "Audit and enforce hardcoded production canister IDs for Logic, Ledger, and Governance canisters. Remove any environment-switching logic that could route requests to local, dev, or mock canisters.",
+      "reason": "No frontend source files were modified. The project_state.json only marks AR-4/REQ-2 as 'pending'. No changes to canister configuration, actor setup, or environment-switching logic are present in the diff.",
       "evidence": [
-        "backend/main.mo"
+        "project_state.json"
       ]
-    },
-    {
-      "id": "REQ-12",
-      "requirement": "Generate backend/migration.mo to safely migrate Principal-keyed records to UserID-keyed records, idempotently, preserving all data.",
-      "reason": "No migration.mo file appears in the added or modified files list. The file was not created.",
-      "evidence": []
     },
     {
       "id": "REQ-3",
-      "requirement": "Animated golden ICP and QMY coin 3D models using React Three Fiber / FloatingQMYCoins style.",
-      "reason": "The implementation uses simple img tags with a CSS animation class coin-burst rather than React Three Fiber 3D models. The requirement explicitly calls for React Three Fiber / FloatingQMYCoins style 3D models.",
+      "requirement": "Remove automatic profile creation logic from the frontend. Display a 'Profile not found' state if no backend profile exists for the Principal. UserID must be derived solely from the Internet Identity Principal.",
+      "reason": "No frontend source files were modified. The project_state.json only marks AR-5/REQ-3 as 'pending'. No changes to profile pages, login handlers, or UserID derivation logic are present in the diff.",
       "evidence": [
-        "frontend/src/pages/HomePage.tsx"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "requirement": "Remove any separate navigation to a standalone Wallet page — all wallet functionality must be embedded within the Profile page tabs.",
-      "reason": "WalletPage.tsx still exists as a modified file and contains full wallet UI rather than being removed or replaced with a redirect. The file still renders balances and transactions independently rather than deferring entirely to the Profile page.",
-      "evidence": [
-        "frontend/src/pages/WalletPage.tsx"
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "requirement": "Geographic coin/monster distribution visualization using GoldPaperUniverseVisualization component must be present on the Central Bank page.",
-      "reason": "The BancoCentral.tsx diff does not show an import or usage of GoldPaperUniverseVisualization. The page uses inline SVG charts and static tables but no geographic visualization component.",
-      "evidence": [
-        "frontend/src/pages/BancoCentral.tsx"
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "requirement": "Captured monsters and coin lock state are persisted to the Carteira A backend canisters using UserID-keyed state.",
-      "reason": "Since REQ-5 backend UserID keying is not implemented, the AR page persistence cannot be truly UserID-keyed. The AR page uses saveCallerUserProfile which maps to Principal-keyed storage, not the Carteira A logic canister.",
-      "evidence": [
-        "frontend/src/pages/ARGamePage.tsx",
-        "backend/main.mo"
+        "project_state.json"
       ]
     }
   ],
-  "hallucinated_features": [
-    {
-      "description": "WalletPage.tsx continues to render full wallet UI (balances, vesting, transactions) as a standalone page while also linking to Profile.",
-      "reason": "REQ-4 required removing separate wallet page navigation and embedding all wallet functionality in the Profile page tabs. Instead WalletPage was kept with full content plus a referral link to Profile.",
-      "evidence": [
-        "frontend/src/pages/WalletPage.tsx"
-      ]
-    }
-  ],
-  "confidence": 0.72,
+  "hallucinated_features": [],
+  "confidence": 0.98,
   "changed_files": [
-    "backend/main.mo",
-    "frontend-file-summaries.txt",
-    "frontend/index.html",
-    "frontend/src/components/Footer.tsx",
-    "frontend/src/components/profile/CanisterArchitecturePanel.tsx",
-    "frontend/src/components/profile/TechnicalValidationPanel.tsx",
-    "frontend/src/hooks/useICPLedger.ts",
-    "frontend/src/hooks/useQMYLedger.ts",
-    "frontend/src/lib/icp/ledgerClient.ts",
-    "frontend/src/lib/icrc/ledgerClient.ts",
-    "frontend/src/pages/ARGamePage.tsx",
-    "frontend/src/pages/BancoCentral.tsx",
-    "frontend/src/pages/HomePage.tsx",
-    "frontend/src/pages/MapPage.tsx",
-    "frontend/src/pages/Perfil.tsx",
-    "frontend/src/pages/TechnicalPage.tsx",
-    "frontend/src/pages/WalletPage.tsx",
     "project_state.json"
   ]
 }

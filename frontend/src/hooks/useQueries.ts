@@ -1,14 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { PlayerProfile, MapMarker, ChatMessage } from '../backend';
-
-// ── Profile ───────────────────────────────────────────────────────────────────
+import type { PlayerProfile } from '../backend';
 
 export function useGetCallerUserProfile() {
   const { actor, isFetching: actorFetching } = useActor();
 
   const query = useQuery<PlayerProfile | null>({
-    queryKey: ['currentUserProfile'],
+    queryKey: ['callerUserProfile'],
     queryFn: async () => {
       if (!actor) throw new Error('Actor not available');
       return actor.getCallerUserProfile();
@@ -31,10 +29,10 @@ export function useSaveCallerUserProfile() {
   return useMutation({
     mutationFn: async (profile: PlayerProfile) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.saveCallerUserProfile(profile);
+      await actor.saveCallerUserProfile(profile);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
+      queryClient.invalidateQueries({ queryKey: ['callerUserProfile'] });
     },
   });
 }
@@ -44,22 +42,33 @@ export function useUpdateProfile() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ nickname, photoUrl }: { nickname: string; photoUrl: import('../backend').ExternalBlob | null }) => {
+    mutationFn: async ({ nickname, photoUrl }: { nickname: string; photoUrl: any | null }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.updateProfile(nickname, photoUrl);
+      await actor.updateProfile(nickname, photoUrl);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
+      queryClient.invalidateQueries({ queryKey: ['callerUserProfile'] });
     },
   });
 }
 
-// ── Map Markers ───────────────────────────────────────────────────────────────
+export function useGetUserIdForCaller() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<bigint>({
+    queryKey: ['userIdForCaller'],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getUserIdForCaller();
+    },
+    enabled: !!actor && !actorFetching,
+  });
+}
 
 export function useGetMapMarkers() {
   const { actor, isFetching: actorFetching } = useActor();
 
-  return useQuery<MapMarker[]>({
+  return useQuery({
     queryKey: ['mapMarkers'],
     queryFn: async () => {
       if (!actor) return [];
@@ -69,12 +78,10 @@ export function useGetMapMarkers() {
   });
 }
 
-// ── Chat ──────────────────────────────────────────────────────────────────────
-
 export function useGetChatMessages() {
   const { actor, isFetching: actorFetching } = useActor();
 
-  return useQuery<ChatMessage[]>({
+  return useQuery({
     queryKey: ['chatMessages'],
     queryFn: async () => {
       if (!actor) return [];
@@ -92,53 +99,10 @@ export function useSendChatMessage() {
   return useMutation({
     mutationFn: async (content: string) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.sendChatMessage(content);
+      await actor.sendChatMessage(content);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['chatMessages'] });
     },
-  });
-}
-
-// ── AR Spots ──────────────────────────────────────────────────────────────────
-
-export function useGetARSpotClaims() {
-  const { actor, isFetching: actorFetching } = useActor();
-
-  return useQuery({
-    queryKey: ['arSpotClaims'],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.getARSpotClaims();
-    },
-    enabled: !!actor && !actorFetching,
-  });
-}
-
-export function useGetARSpotDistributions() {
-  const { actor, isFetching: actorFetching } = useActor();
-
-  return useQuery({
-    queryKey: ['arSpotDistributions'],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.getARSpotDistributions();
-    },
-    enabled: !!actor && !actorFetching,
-  });
-}
-
-// ── Planted Coins ─────────────────────────────────────────────────────────────
-
-export function useGetPlantedCoins() {
-  const { actor, isFetching: actorFetching } = useActor();
-
-  return useQuery({
-    queryKey: ['plantedCoins'],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.getPlantedCoins();
-    },
-    enabled: !!actor && !actorFetching,
   });
 }

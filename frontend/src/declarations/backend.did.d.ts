@@ -87,6 +87,7 @@ export interface QMYPurchaseRequest {
   'timestamp' : bigint,
   'buyer' : Principal,
 }
+export type UserId = bigint;
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
@@ -128,7 +129,8 @@ export interface _SERVICE {
   'getPlayerByAddress' : ActorMethod<[Principal], [] | [PlayerProfile]>,
   'getPlayerDailyLimits' : ActorMethod<[], DailyLimits>,
   'getQMYPurchaseRequest' : ActorMethod<[], [] | [QMYPurchaseRequest]>,
-  'getUserProfile' : ActorMethod<[Principal], [] | [PlayerProfile]>,
+  'getUserIdForCaller' : ActorMethod<[], UserId>,
+  'getUserProfile' : ActorMethod<[UserId], [] | [PlayerProfile]>,
   'initializeAccessControl' : ActorMethod<[], undefined>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'paymentCancel' : ActorMethod<[string], PaymentCancelResponse>,

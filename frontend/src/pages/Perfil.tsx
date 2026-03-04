@@ -1,565 +1,551 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useActor } from '../hooks/useActor';
 import { useQueryClient } from '@tanstack/react-query';
-import { useGetCallerUserProfile } from '../hooks/useQueries';
+import { useGetCallerUserProfile, useSaveCallerUserProfile } from '../hooks/useQueries';
 import { useICPLedger } from '../hooks/useICPLedger';
 import { useQMYLedger } from '../hooks/useQMYLedger';
 import { useQMYTransactions } from '../hooks/useQMYTransactions';
+import { useARGameData } from '../hooks/useARGameData';
 import { ExternalBlob } from '../backend';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import { Skeleton } from '@/components/ui/skeleton';
-import CanisterArchitecturePanel from '../components/profile/CanisterArchitecturePanel';
-import TechnicalValidationPanel from '../components/profile/TechnicalValidationPanel';
-import VestingBreakdown from '../components/wallet/VestingBreakdown';
+import { Copy, Upload, Send, Download, RefreshCw, LogIn, User, Wallet, History, Star, Camera } from 'lucide-react';
 
 function formatBalance(val: bigint | undefined | null, decimals = 8): string {
-  if (val === undefined || val === null) return '—';
-  const n = Number(val) / Math.pow(10, decimals);
-  return n.toLocaleString('pt-PT', { maximumFractionDigits: 4 });
+  if (val === undefined || val === null) return '0.00000000';
+  const num = Number(val) / Math.pow(10, decimals);
+  return num.toFixed(8);
 }
 
-function xpForLevel(level: number): number {
-  return level * 100;
+function formatQMY(val: bigint | undefined | null): string {
+  if (val === undefined || val === null) return '0.00';
+  const num = Number(val) / 1e8;
+  return num.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// Inline transaction history to avoid prop type mismatch
-function TransactionHistoryInline({ principalId }: { principalId?: string }) {
-  const { data: transactions, isLoading, error } = useQMYTransactions(principalId);
-
-  if (isLoading) {
-    return (
-      <div className="space-y-2">
-        {[1, 2, 3].map(i => (
-          <Skeleton key={i} className="h-12 w-full" />
-        ))}
-      </div>
-    );
-  }
-
-  if (error) {
-    return <p className="text-red-400 text-sm font-rajdhani">Erro ao carregar transações.</p>;
-  }
-
-  if (!transactions || transactions.length === 0) {
-    return (
-      <div className="text-center py-8">
-        <div className="text-4xl mb-3">📭</div>
-        <p className="text-qmy-gold/60 font-rajdhani">Nenhuma transação encontrada.</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-2">
-      {transactions.map((tx, i) => (
-        <div key={i} className="border border-qmy-gold/20 p-3 flex justify-between items-center">
-          <div>
-            <div className="text-qmy-gold font-rajdhani text-sm capitalize">{tx.kind}</div>
-            <div className="text-qmy-gold/50 text-xs font-mono">
-              {new Date(Number(tx.timestamp) / 1_000_000).toLocaleString('pt-PT')}
-            </div>
-          </div>
-          <div className="text-qmy-gold font-cinzel font-bold">
-            {(Number(tx.amount) / 1e8).toFixed(4)} QMY
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// Inline AR stats to avoid prop type mismatch
-function ARStatsInline({ profile }: { profile: ReturnType<typeof useGetCallerUserProfile>['data'] }) {
-  if (!profile) {
-    return (
-      <div className="luxury-glass-card p-6 text-center">
-        <p className="text-qmy-gold/60 font-rajdhani">Carregando estatísticas...</p>
-      </div>
-    );
-  }
-
-  const level = Number(profile.level);
-  const xp = Number(profile.xp);
-  const xpNeeded = level * 100;
-  const xpProgress = Math.min(100, (xp / xpNeeded) * 100);
-
-  return (
-    <div className="space-y-4">
-      <div className="luxury-glass-card p-6">
-        <h3 className="font-cinzel text-qmy-gold font-bold text-lg mb-4">🎮 Estatísticas AR</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          {[
-            { label: 'Nível', value: String(level), color: 'text-qmy-gold' },
-            { label: 'XP Total', value: String(xp), color: 'text-blue-400' },
-            { label: 'Energia', value: String(Number(profile.energy)), color: 'text-green-400' },
-            { label: 'Monstros', value: String(profile.capturedMonsters.length), color: 'text-purple-400' },
-          ].map(s => (
-            <div key={s.label} className="luxury-glass-card p-4 text-center">
-              <div className={`font-cinzel font-bold text-2xl ${s.color}`}>{s.value}</div>
-              <div className="text-qmy-gold/50 text-xs font-rajdhani">{s.label}</div>
-            </div>
-          ))}
-        </div>
-        <div>
-          <div className="flex justify-between text-xs text-qmy-gold/60 font-rajdhani mb-1">
-            <span>Progresso para Nível {level + 1}</span>
-            <span>{xp} / {xpNeeded} XP</span>
-          </div>
-          <Progress value={xpProgress} className="h-3 bg-black/40" />
-        </div>
-      </div>
-
-      <div className="luxury-glass-card p-6">
-        <h3 className="font-cinzel text-qmy-gold font-bold text-lg mb-4">💰 Saldo de Moedas</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            { label: 'Disponível', value: Number(profile.availableTokens), color: 'text-green-400', icon: '✅' },
-            { label: 'Plantado', value: Number(profile.plantedTokens), color: 'text-yellow-400', icon: '🌱' },
-            { label: 'Bónus', value: Number(profile.bonusTokens), color: 'text-purple-400', icon: '🎁' },
-          ].map(b => (
-            <div key={b.label} className="border border-qmy-gold/20 p-4 text-center">
-              <div className="text-2xl mb-1">{b.icon}</div>
-              <div className={`font-cinzel font-bold text-2xl ${b.color}`}>{b.value}</div>
-              <div className="text-qmy-gold/50 text-xs font-rajdhani">{b.label} QMY</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Inline monster collection
-function MonsterCollectionInline({ profile }: { profile: ReturnType<typeof useGetCallerUserProfile>['data'] }) {
-  if (!profile) {
-    return (
-      <div className="luxury-glass-card p-6 text-center">
-        <p className="text-qmy-gold/60 font-rajdhani">Carregando coleção...</p>
-      </div>
-    );
-  }
-
-  const monsters = profile.capturedMonsters;
-
-  return (
-    <div className="luxury-glass-card p-6">
-      <h3 className="font-cinzel text-qmy-gold font-bold text-lg mb-4">
-        🐉 Coleção de Monstros ({monsters.length})
-      </h3>
-      {monsters.length === 0 ? (
-        <div className="text-center py-8">
-          <div className="text-5xl mb-3">🥚</div>
-          <p className="text-qmy-gold/60 font-rajdhani">Ainda não capturaste nenhum monstro.</p>
-          <p className="text-qmy-gold/40 text-xs font-rajdhani mt-1">Usa o modo AR para capturar monstros!</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {monsters.map((cm, i) => (
-            <div key={i} className="border border-qmy-gold/20 p-4">
-              <div className="text-2xl mb-2">🐉</div>
-              <div className="text-qmy-gold font-cinzel font-bold text-sm">{cm.monster.name}</div>
-              <div className="text-qmy-gold/60 text-xs font-rajdhani mt-1">
-                Energia: +{Number(cm.monster.energyBoost)}
-              </div>
-              <div className="text-qmy-gold/40 text-xs font-rajdhani">
-                {new Date(Number(cm.captureTime) / 1_000_000).toLocaleDateString('pt-PT')}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+function shortenPrincipal(p: string): string {
+  if (!p) return '';
+  if (p.length <= 20) return p;
+  return p.slice(0, 10) + '...' + p.slice(-6);
 }
 
 export default function Perfil() {
-  const { identity } = useInternetIdentity();
-  const { actor } = useActor();
+  const { identity, login, loginStatus } = useInternetIdentity();
   const queryClient = useQueryClient();
-  const principalId = identity?.getPrincipal().toString() ?? null;
+  const isAuthenticated = !!identity;
+  const principalId = identity?.getPrincipal().toString() ?? '';
 
-  const { data: profile, isLoading: profileLoading } = useGetCallerUserProfile();
-  const { data: icpBalance, isLoading: icpLoading } = useICPLedger(principalId ?? undefined);
-  const { data: qmyBalance, isLoading: qmyLoading } = useQMYLedger(principalId ?? undefined);
+  const { data: profile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
+  const saveProfile = useSaveCallerUserProfile();
+  const { data: arData } = useARGameData();
 
-  const [activeTab, setActiveTab] = useState('profile');
+  const { data: icpBalance, isLoading: icpLoading, refetch: refetchICP } = useICPLedger(principalId || undefined);
+  const { data: qmyBalance, isLoading: qmyLoading, refetch: refetchQMY } = useQMYLedger(principalId || undefined);
+  const { data: transactions } = useQMYTransactions(principalId || undefined);
+
   const [nickname, setNickname] = useState('');
-  const [editingNick, setEditingNick] = useState(false);
-  const [savingNick, setSavingNick] = useState(false);
+  const [editingNickname, setEditingNickname] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [photoBlob, setPhotoBlob] = useState<ExternalBlob | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isSaving, setIsSaving] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState<'profile' | 'wallet' | 'history' | 'stats'>('profile');
   const [sendAmount, setSendAmount] = useState('');
   const [sendTo, setSendTo] = useState('');
-  const [sendMsg, setSendMsg] = useState('');
-  const [receiveMsg, setReceiveMsg] = useState('');
+  const [sendToken, setSendToken] = useState<'ICP' | 'QMY'>('QMY');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (profile?.nickname) setNickname(profile.nickname);
-    if (profile?.photoUrl) {
-      const url = profile.photoUrl.getDirectURL();
-      setPhotoPreview(url);
+    if (profile) {
+      setNickname(profile.nickname || '');
+      if (profile.photoUrl) {
+        setPhotoPreview(profile.photoUrl.getDirectURL());
+      }
     }
   }, [profile]);
 
-  if (!identity) {
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const dataUrl = ev.target?.result as string;
+      setPhotoPreview(dataUrl);
+      const arrayBuffer = await file.arrayBuffer();
+      const bytes = new Uint8Array(arrayBuffer);
+      const blob = ExternalBlob.fromBytes(bytes).withUploadProgress((pct) => setUploadProgress(pct));
+      setPhotoBlob(blob);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!profile) return;
+    setIsSaving(true);
+    try {
+      const updatedProfile = {
+        ...profile,
+        nickname,
+        photoUrl: photoBlob ?? profile.photoUrl,
+      };
+      await saveProfile.mutateAsync(updatedProfile);
+      setEditingNickname(false);
+      queryClient.invalidateQueries({ queryKey: ['callerUserProfile'] });
+    } catch (err) {
+      console.error('Save profile error:', err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCopyPrincipal = () => {
+    if (principalId) {
+      navigator.clipboard.writeText(principalId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleRefreshBalances = () => {
+    refetchICP();
+    refetchQMY();
+  };
+
+  if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="luxury-glass-card p-10 text-center max-w-md">
-          <div className="text-5xl mb-4">🔐</div>
-          <h2 className="font-cinzel text-qmy-gold text-2xl font-bold mb-3">Acesso Restrito</h2>
-          <p className="text-qmy-gold/70 font-rajdhani">Faz login para aceder ao teu perfil e carteira.</p>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="glass-card p-10 text-center max-w-md w-full">
+          <LogIn className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-yellow-400 font-cinzel mb-3">Acesso Restrito</h2>
+          <p className="text-yellow-300/70 mb-6 font-rajdhani">
+            Faz login para aceder ao teu perfil, carteira e histórico de transações.
+          </p>
+          <button
+            onClick={login}
+            disabled={loginStatus === 'logging-in'}
+            className="w-full py-3 border-2 border-yellow-400 text-yellow-400 font-bold hover:bg-yellow-400/10 transition-all font-rajdhani tracking-widest uppercase"
+          >
+            {loginStatus === 'logging-in' ? 'A entrar...' : 'Login com Internet Identity'}
+          </button>
         </div>
       </div>
     );
   }
 
-  const level = profile ? Number(profile.level) : 1;
-  const xp = profile ? Number(profile.xp) : 0;
-  const xpNeeded = xpForLevel(level);
-  const xpProgress = Math.min(100, (xp / xpNeeded) * 100);
-
-  async function handleSaveNickname() {
-    if (!actor || !nickname.trim()) return;
-    setSavingNick(true);
-    try {
-      await actor.updateProfile(nickname.trim(), profile?.photoUrl ?? null);
-      await queryClient.invalidateQueries({ queryKey: ['callerUserProfile'] });
-      setEditingNick(false);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setSavingNick(false);
-    }
-  }
-
-  async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file || !actor) return;
-    setUploadingPhoto(true);
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      const bytes = new Uint8Array(arrayBuffer);
-      const blob = ExternalBlob.fromBytes(bytes);
-      const previewUrl = URL.createObjectURL(file);
-      setPhotoPreview(previewUrl);
-      await actor.updateProfile(nickname || profile?.nickname || 'Player', blob);
-      await queryClient.invalidateQueries({ queryKey: ['callerUserProfile'] });
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setUploadingPhoto(false);
-    }
-  }
-
-  async function handleSend() {
-    setSendMsg('');
-    if (!sendAmount || !sendTo) {
-      setSendMsg('⚠️ Preenche o destinatário e o valor.');
-      return;
-    }
-    setSendMsg('⚠️ Transferências reais ainda não disponíveis nesta versão. Em breve!');
-  }
-
-  function handleReceive() {
-    if (principalId) {
-      navigator.clipboard.writeText(principalId).then(() => {
-        setReceiveMsg('✅ Principal ID copiado para a área de transferência!');
-        setTimeout(() => setReceiveMsg(''), 3000);
-      });
-    }
-  }
+  const tabs = [
+    { id: 'profile', label: 'Perfil', icon: User },
+    { id: 'wallet', label: 'Carteira', icon: Wallet },
+    { id: 'history', label: 'Histórico', icon: History },
+    { id: 'stats', label: 'Stats AR', icon: Star },
+  ] as const;
 
   return (
     <div className="min-h-screen pt-20 pb-10 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="luxury-glass-card p-6 mb-6 flex flex-col sm:flex-row items-center gap-6">
-          {/* Avatar */}
-          <div className="relative flex-shrink-0">
-            <div
-              className="w-24 h-24 rounded-full border-2 border-qmy-gold overflow-hidden bg-black/40 flex items-center justify-center cursor-pointer"
-              onClick={() => fileInputRef.current?.click()}
-              title="Clica para alterar foto"
-            >
-              {photoPreview ? (
-                <img src={photoPreview} alt="Avatar" className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-4xl">👤</span>
-              )}
-              {uploadingPhoto && (
-                <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-full">
-                  <div className="w-6 h-6 border-2 border-qmy-gold border-t-transparent rounded-full animate-spin" />
-                </div>
-              )}
-            </div>
-            <button
-              className="absolute bottom-0 right-0 bg-qmy-gold text-black rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold border-2 border-black"
-              onClick={() => fileInputRef.current?.click()}
-              title="Editar foto"
-            >
-              ✏️
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handlePhotoUpload}
-            />
-          </div>
-
-          {/* Name & Principal */}
-          <div className="flex-1 text-center sm:text-left">
-            {editingNick ? (
-              <div className="flex items-center gap-2 mb-1">
-                <input
-                  className="bg-black/40 border border-qmy-gold/50 text-qmy-gold px-3 py-1 font-cinzel text-lg rounded focus:outline-none focus:border-qmy-gold"
-                  value={nickname}
-                  onChange={e => setNickname(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleSaveNickname()}
-                  autoFocus
-                />
-                <button
-                  className="luxury-cta-btn px-3 py-1 text-sm"
-                  onClick={handleSaveNickname}
-                  disabled={savingNick}
-                >
-                  {savingNick ? '...' : '✓'}
-                </button>
-                <button
-                  className="border border-qmy-gold/40 text-qmy-gold/60 px-3 py-1 text-sm hover:border-qmy-gold/70"
-                  onClick={() => setEditingNick(false)}
-                >
-                  ✕
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 mb-1 justify-center sm:justify-start">
-                <h1 className="font-cinzel text-qmy-gold text-2xl font-bold">
-                  {profileLoading ? <Skeleton className="h-7 w-32" /> : (profile?.nickname || 'Jogador')}
-                </h1>
-                <button
-                  className="text-qmy-gold/50 hover:text-qmy-gold text-sm"
-                  onClick={() => setEditingNick(true)}
-                  title="Editar nome"
-                >
-                  ✏️
-                </button>
-              </div>
-            )}
-            <p className="text-qmy-gold/50 text-xs font-rajdhani break-all">
-              ID: {principalId ? `${principalId.slice(0, 20)}...` : '—'}
-            </p>
-            {/* XP Bar */}
-            <div className="mt-3">
-              <div className="flex justify-between text-xs text-qmy-gold/60 font-rajdhani mb-1">
-                <span>Nível {level}</span>
-                <span>{xp} / {xpNeeded} XP</span>
-              </div>
-              <Progress value={xpProgress} className="h-2 bg-black/40" />
-            </div>
-          </div>
-
-          {/* Quick balances */}
-          <div className="flex flex-col gap-2 min-w-[140px]">
-            <div className="luxury-glass-card px-4 py-2 text-center">
-              <div className="text-qmy-gold/50 text-xs font-rajdhani uppercase">ICP</div>
-              <div className="text-qmy-gold font-cinzel font-bold text-lg">
-                {icpLoading ? <Skeleton className="h-5 w-16 mx-auto" /> : formatBalance(icpBalance)}
-              </div>
-            </div>
-            <div className="luxury-glass-card px-4 py-2 text-center">
-              <div className="text-qmy-gold/50 text-xs font-rajdhani uppercase">QMY</div>
-              <div className="text-qmy-gold font-cinzel font-bold text-lg">
-                {qmyLoading ? <Skeleton className="h-5 w-16 mx-auto" /> : formatBalance(qmyBalance)}
-              </div>
-            </div>
-          </div>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-yellow-400 font-cinzel tracking-wide">O Meu Perfil</h1>
+          <p className="text-yellow-300/60 text-sm font-rajdhani mt-1">
+            Sincronizado com QuantumoneyAR.app
+          </p>
         </div>
 
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="w-full bg-black/40 border border-qmy-gold/30 mb-6 flex flex-wrap h-auto gap-1 p-1">
-            {[
-              { value: 'profile', label: '👤 Perfil' },
-              { value: 'wallet', label: '💰 Carteira' },
-              { value: 'history', label: '📋 Histórico' },
-              { value: 'stats', label: '🎮 Stats AR' },
-              { value: 'monsters', label: '🐉 Monstros' },
-              { value: 'technical', label: '⚙️ Técnico' },
-            ].map(tab => (
-              <TabsTrigger
-                key={tab.value}
-                value={tab.value}
-                className="text-qmy-gold/70 data-[state=active]:text-qmy-gold data-[state=active]:bg-qmy-gold/20 font-rajdhani text-xs sm:text-sm flex-1"
-              >
-                {tab.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+        <div className="flex border-b border-yellow-500/30 mb-6 overflow-x-auto">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-5 py-3 text-sm font-rajdhani font-semibold tracking-wider uppercase transition-all whitespace-nowrap ${
+                activeTab === tab.id
+                  ? 'text-yellow-400 border-b-2 border-yellow-400'
+                  : 'text-yellow-300/50 hover:text-yellow-300'
+              }`}
+            >
+              <tab.icon className="w-4 h-4" />
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          {/* PROFILE TAB */}
-          <TabsContent value="profile">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="luxury-glass-card p-6">
-                <h3 className="font-cinzel text-qmy-gold font-bold text-lg mb-4">Informações do Jogador</h3>
-                <div className="space-y-3">
-                  {[
-                    { label: 'Nome', value: profile?.nickname || '—' },
-                    { label: 'Nível', value: String(level) },
-                    { label: 'XP Total', value: String(xp) },
-                    { label: 'Energia', value: profile ? String(Number(profile.energy)) : '—' },
-                    { label: 'Moedas Disponíveis', value: profile ? `${Number(profile.availableTokens)} QMY` : '—' },
-                    { label: 'Moedas Plantadas', value: profile ? `${Number(profile.plantedTokens)} QMY` : '—' },
-                    { label: 'Bónus', value: profile ? `${Number(profile.bonusTokens)} QMY` : '—' },
-                  ].map((item, i, arr) => (
-                    <div
-                      key={item.label}
-                      className={`flex justify-between items-center ${i < arr.length - 1 ? 'border-b border-qmy-gold/20 pb-2' : ''}`}
-                    >
-                      <span className="text-qmy-gold/60 text-sm font-rajdhani">{item.label}</span>
-                      <span className="text-qmy-gold font-rajdhani">{item.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="luxury-glass-card p-6">
-                <h3 className="font-cinzel text-qmy-gold font-bold text-lg mb-4">🎁 Bónus de Boas-Vindas</h3>
-                <div className="bg-qmy-gold/10 border border-qmy-gold/30 p-4 rounded mb-4">
-                  <div className="text-qmy-gold font-cinzel font-bold text-2xl text-center mb-1">1.000 QMY</div>
-                  <div className="text-qmy-gold/70 text-sm text-center font-rajdhani">Bónus de registo</div>
-                </div>
-                <div className="space-y-2 text-sm font-rajdhani">
-                  {[
-                    { label: 'Desbloqueado imediatamente', value: '100 QMY', color: 'text-green-400' },
-                    { label: 'Em vesting (9 meses)', value: '900 QMY', color: 'text-yellow-400' },
-                    { label: 'XP de bónus', value: '+100 XP', color: 'text-blue-400' },
-                    { label: 'Desbloqueio mensal', value: '100 QMY / 30 dias', color: 'text-qmy-gold' },
-                  ].map((item, i, arr) => (
-                    <div
-                      key={item.label}
-                      className={`flex justify-between ${i === arr.length - 1 ? 'border-t border-qmy-gold/20 pt-2' : ''}`}
-                    >
-                      <span className="text-qmy-gold/60">{item.label}</span>
-                      <span className={`font-bold ${item.color}`}>{item.value}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-4 text-xs text-qmy-gold/40 font-rajdhani">
-                  * Bónus atribuído automaticamente no primeiro registo. Apenas uma vez por conta.
-                </div>
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* WALLET TAB */}
-          <TabsContent value="wallet">
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="luxury-glass-card p-6 text-center">
-                  <img src="/assets/generated/icp-coin-gold.dim_128x128.png" alt="ICP" className="w-12 h-12 mx-auto mb-2" />
-                  <div className="text-qmy-gold/60 text-xs font-rajdhani uppercase mb-1">Saldo ICP</div>
-                  <div className="text-qmy-gold font-cinzel font-bold text-3xl">
-                    {icpLoading ? <Skeleton className="h-8 w-24 mx-auto" /> : formatBalance(icpBalance)}
+        {/* Profile Tab */}
+        {activeTab === 'profile' && (
+          <div className="space-y-6">
+            {/* Photo + Name */}
+            <div className="glass-card p-6">
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                {/* Photo */}
+                <div className="relative">
+                  <div className="w-24 h-24 rounded-full border-2 border-yellow-400 overflow-hidden bg-black/40 flex items-center justify-center">
+                    {photoPreview ? (
+                      <img src={photoPreview} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="w-10 h-10 text-yellow-400/50" />
+                    )}
                   </div>
-                  <div className="text-qmy-gold/40 text-xs mt-1">Internet Computer Protocol</div>
-                </div>
-                <div className="luxury-glass-card p-6 text-center">
-                  <img src="/assets/generated/qmy-coin-gold.dim_128x128.png" alt="QMY" className="w-12 h-12 mx-auto mb-2" />
-                  <div className="text-qmy-gold/60 text-xs font-rajdhani uppercase mb-1">Saldo QMY</div>
-                  <div className="text-qmy-gold font-cinzel font-bold text-3xl">
-                    {qmyLoading ? <Skeleton className="h-8 w-24 mx-auto" /> : formatBalance(qmyBalance)}
-                  </div>
-                  <div className="text-qmy-gold/40 text-xs mt-1">Quantumoney Token</div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="luxury-glass-card p-6">
-                  <h3 className="font-cinzel text-qmy-gold font-bold text-lg mb-4">📤 Enviar QMY</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <label className="text-qmy-gold/60 text-xs font-rajdhani uppercase block mb-1">Destinatário (Principal ID)</label>
-                      <input
-                        className="w-full bg-black/40 border border-qmy-gold/30 text-qmy-gold px-3 py-2 text-sm font-rajdhani focus:outline-none focus:border-qmy-gold"
-                        placeholder="aaaaa-bbbbb-ccccc-..."
-                        value={sendTo}
-                        onChange={e => setSendTo(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <label className="text-qmy-gold/60 text-xs font-rajdhani uppercase block mb-1">Valor (QMY)</label>
-                      <input
-                        className="w-full bg-black/40 border border-qmy-gold/30 text-qmy-gold px-3 py-2 text-sm font-rajdhani focus:outline-none focus:border-qmy-gold"
-                        placeholder="0.00"
-                        type="number"
-                        min="0"
-                        value={sendAmount}
-                        onChange={e => setSendAmount(e.target.value)}
-                      />
-                    </div>
-                    <button className="luxury-cta-btn w-full py-2 text-sm" onClick={handleSend}>
-                      Enviar
-                    </button>
-                    {sendMsg && <p className="text-xs text-qmy-gold/70 font-rajdhani">{sendMsg}</p>}
-                  </div>
-                </div>
-
-                <div className="luxury-glass-card p-6">
-                  <h3 className="font-cinzel text-qmy-gold font-bold text-lg mb-4">📥 Receber QMY</h3>
-                  <p className="text-qmy-gold/60 text-sm font-rajdhani mb-3">
-                    Partilha o teu Principal ID para receber tokens QMY de outros jogadores.
-                  </p>
-                  <div className="bg-black/40 border border-qmy-gold/20 p-3 break-all text-qmy-gold/80 text-xs font-mono mb-3">
-                    {principalId || '—'}
-                  </div>
-                  <button className="luxury-cta-btn w-full py-2 text-sm" onClick={handleReceive}>
-                    📋 Copiar Principal ID
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute -bottom-1 -right-1 w-8 h-8 bg-yellow-400 text-black rounded-full flex items-center justify-center hover:bg-yellow-300 transition-colors"
+                  >
+                    <Camera className="w-4 h-4" />
                   </button>
-                  {receiveMsg && <p className="text-xs text-green-400 font-rajdhani mt-2">{receiveMsg}</p>}
-                  <div className="mt-4 text-xs text-qmy-gold/40 font-rajdhani">
-                    * Transferências reais disponíveis em breve via canister QMY Ledger.
-                  </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handlePhotoChange}
+                  />
+                  {uploadProgress > 0 && uploadProgress < 100 && (
+                    <div className="absolute -bottom-6 left-0 right-0 text-center text-xs text-yellow-400">
+                      {uploadProgress}%
+                    </div>
+                  )}
+                </div>
+
+                {/* Name */}
+                <div className="flex-1 w-full">
+                  <label className="block text-yellow-300/60 text-xs font-rajdhani uppercase tracking-wider mb-1">
+                    Nome de Utilizador
+                  </label>
+                  {editingNickname ? (
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={nickname}
+                        onChange={e => setNickname(e.target.value)}
+                        className="flex-1 bg-transparent border border-yellow-400/50 text-yellow-400 px-3 py-2 text-sm font-rajdhani focus:outline-none focus:border-yellow-400"
+                        placeholder="O teu nome..."
+                        maxLength={50}
+                      />
+                      <button
+                        onClick={handleSaveProfile}
+                        disabled={isSaving}
+                        className="px-4 py-2 border border-yellow-400 text-yellow-400 text-sm font-rajdhani hover:bg-yellow-400/10 transition-all disabled:opacity-50"
+                      >
+                        {isSaving ? '...' : 'Guardar'}
+                      </button>
+                      <button
+                        onClick={() => setEditingNickname(false)}
+                        className="px-3 py-2 border border-yellow-400/30 text-yellow-400/50 text-sm hover:border-yellow-400/60 transition-all"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <span className="text-yellow-400 text-xl font-cinzel">
+                        {nickname || 'Sem nome'}
+                      </span>
+                      <button
+                        onClick={() => setEditingNickname(true)}
+                        className="text-yellow-400/50 hover:text-yellow-400 text-xs border border-yellow-400/30 px-2 py-1 font-rajdhani hover:border-yellow-400/60 transition-all"
+                      >
+                        Editar
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
-
-              <VestingBreakdown
-                available={profile ? profile.availableTokens : undefined}
-                locked={profile ? profile.plantedTokens : undefined}
-              />
             </div>
-          </TabsContent>
 
-          {/* HISTORY TAB */}
-          <TabsContent value="history">
-            <div className="luxury-glass-card p-6">
-              <h3 className="font-cinzel text-qmy-gold font-bold text-lg mb-4">📋 Histórico de Transações</h3>
-              <TransactionHistoryInline principalId={principalId ?? undefined} />
+            {/* Principal ID */}
+            <div className="glass-card p-5">
+              <label className="block text-yellow-300/60 text-xs font-rajdhani uppercase tracking-wider mb-2">
+                Principal ID (Login ID)
+              </label>
+              <div className="flex items-center gap-3">
+                <code className="flex-1 text-yellow-400 text-xs font-mono break-all bg-black/20 px-3 py-2 border border-yellow-400/20">
+                  {principalId}
+                </code>
+                <button
+                  onClick={handleCopyPrincipal}
+                  className="flex items-center gap-1 px-3 py-2 border border-yellow-400/50 text-yellow-400 text-xs hover:bg-yellow-400/10 transition-all font-rajdhani"
+                >
+                  <Copy className="w-3 h-3" />
+                  {copied ? 'Copiado!' : 'Copiar'}
+                </button>
+              </div>
+              <p className="text-yellow-300/40 text-xs mt-2 font-rajdhani">
+                Este é o teu ID único — idêntico no site e na PWA QuantumoneyAR.app
+              </p>
             </div>
-          </TabsContent>
 
-          {/* AR STATS TAB */}
-          <TabsContent value="stats">
-            <ARStatsInline profile={profile} />
-          </TabsContent>
+            {/* XP & Level */}
+            {profile && (
+              <div className="glass-card p-5">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {[
+                    { label: 'XP Total', value: profile.xp?.toString() ?? '0' },
+                    { label: 'Nível', value: profile.level?.toString() ?? '1' },
+                    { label: 'Tokens Disponíveis', value: profile.availableTokens?.toString() ?? '0' },
+                    { label: 'Tokens Plantados', value: profile.plantedTokens?.toString() ?? '0' },
+                  ].map(item => (
+                    <div key={item.label} className="text-center">
+                      <div className="text-yellow-400 font-bold text-xl font-cinzel">{item.value}</div>
+                      <div className="text-yellow-300/50 text-xs font-rajdhani uppercase tracking-wider">{item.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
-          {/* MONSTERS TAB */}
-          <TabsContent value="monsters">
-            <MonsterCollectionInline profile={profile} />
-          </TabsContent>
-
-          {/* TECHNICAL TAB */}
-          <TabsContent value="technical">
-            <div className="space-y-6">
-              <TechnicalValidationPanel />
-              <CanisterArchitecturePanel />
+        {/* Wallet Tab */}
+        {activeTab === 'wallet' && (
+          <div className="space-y-6">
+            {/* Balances */}
+            <div className="glass-card p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-yellow-400 font-bold font-cinzel">Saldos da Carteira</h3>
+                <button
+                  onClick={handleRefreshBalances}
+                  className="text-yellow-400/60 hover:text-yellow-400 transition-colors"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="border border-yellow-400/30 p-4 bg-black/20">
+                  <div className="flex items-center gap-3 mb-2">
+                    <img src="/assets/generated/icp-coin-gold.dim_128x128.png" alt="ICP" className="w-8 h-8" />
+                    <span className="text-yellow-300/70 text-sm font-rajdhani uppercase tracking-wider">ICP</span>
+                  </div>
+                  <div className="text-yellow-400 text-2xl font-bold font-cinzel">
+                    {icpLoading ? '...' : formatBalance(icpBalance)}
+                  </div>
+                  <div className="text-yellow-300/40 text-xs font-rajdhani mt-1">Internet Computer Protocol</div>
+                </div>
+                <div className="border border-yellow-400/30 p-4 bg-black/20">
+                  <div className="flex items-center gap-3 mb-2">
+                    <img src="/assets/generated/qmy-coin-gold.dim_128x128.png" alt="QMY" className="w-8 h-8" />
+                    <span className="text-yellow-300/70 text-sm font-rajdhani uppercase tracking-wider">QMY</span>
+                  </div>
+                  <div className="text-yellow-400 text-2xl font-bold font-cinzel">
+                    {qmyLoading ? '...' : formatQMY(qmyBalance)}
+                  </div>
+                  <div className="text-yellow-300/40 text-xs font-rajdhani mt-1">Quantumoney Token</div>
+                </div>
+              </div>
             </div>
-          </TabsContent>
-        </Tabs>
+
+            {/* Receive */}
+            <div className="glass-card p-6">
+              <h3 className="text-yellow-400 font-bold font-cinzel mb-4 flex items-center gap-2">
+                <Download className="w-4 h-4" />
+                Receber Tokens
+              </h3>
+              <p className="text-yellow-300/60 text-sm font-rajdhani mb-3">
+                Partilha o teu Principal ID para receber ICP ou QMY:
+              </p>
+              <div className="flex items-center gap-3">
+                <code className="flex-1 text-yellow-400 text-xs font-mono break-all bg-black/20 px-3 py-2 border border-yellow-400/20">
+                  {principalId}
+                </code>
+                <button
+                  onClick={handleCopyPrincipal}
+                  className="flex items-center gap-1 px-3 py-2 border border-yellow-400/50 text-yellow-400 text-xs hover:bg-yellow-400/10 transition-all font-rajdhani whitespace-nowrap"
+                >
+                  <Copy className="w-3 h-3" />
+                  {copied ? 'Copiado!' : 'Copiar'}
+                </button>
+              </div>
+            </div>
+
+            {/* Send */}
+            <div className="glass-card p-6">
+              <h3 className="text-yellow-400 font-bold font-cinzel mb-4 flex items-center gap-2">
+                <Send className="w-4 h-4" />
+                Enviar Tokens
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-yellow-300/60 text-xs font-rajdhani uppercase tracking-wider mb-1">
+                    Token
+                  </label>
+                  <div className="flex gap-2">
+                    {(['ICP', 'QMY'] as const).map(t => (
+                      <button
+                        key={t}
+                        onClick={() => setSendToken(t)}
+                        className={`px-4 py-2 text-sm font-rajdhani font-bold border transition-all ${
+                          sendToken === t
+                            ? 'border-yellow-400 text-yellow-400 bg-yellow-400/10'
+                            : 'border-yellow-400/30 text-yellow-400/50 hover:border-yellow-400/60'
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-yellow-300/60 text-xs font-rajdhani uppercase tracking-wider mb-1">
+                    Destinatário (Principal ID)
+                  </label>
+                  <input
+                    type="text"
+                    value={sendTo}
+                    onChange={e => setSendTo(e.target.value)}
+                    placeholder="xxxxx-xxxxx-xxxxx-xxxxx-xxx"
+                    className="w-full bg-transparent border border-yellow-400/50 text-yellow-400 px-3 py-2 text-sm font-mono focus:outline-none focus:border-yellow-400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-yellow-300/60 text-xs font-rajdhani uppercase tracking-wider mb-1">
+                    Quantidade
+                  </label>
+                  <input
+                    type="number"
+                    value={sendAmount}
+                    onChange={e => setSendAmount(e.target.value)}
+                    placeholder="0.00"
+                    min="0"
+                    step="0.00000001"
+                    className="w-full bg-transparent border border-yellow-400/50 text-yellow-400 px-3 py-2 text-sm font-rajdhani focus:outline-none focus:border-yellow-400"
+                  />
+                </div>
+                <div className="bg-yellow-400/5 border border-yellow-400/20 p-3">
+                  <p className="text-yellow-300/60 text-xs font-rajdhani">
+                    ⚠️ As transferências são irreversíveis. Verifica sempre o endereço antes de enviar.
+                    As transferências reais requerem integração com o ledger ICP/QMY.
+                  </p>
+                </div>
+                <button
+                  disabled
+                  className="w-full py-3 border border-yellow-400/30 text-yellow-400/40 font-rajdhani font-bold uppercase tracking-wider cursor-not-allowed text-sm"
+                >
+                  Enviar {sendToken} (Em breve)
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* History Tab */}
+        {activeTab === 'history' && (
+          <div className="glass-card p-6">
+            <h3 className="text-yellow-400 font-bold font-cinzel mb-4 flex items-center gap-2">
+              <History className="w-4 h-4" />
+              Histórico de Transações
+            </h3>
+            {transactions === null ? (
+              <div className="text-center py-8">
+                <p className="text-yellow-300/50 font-rajdhani">
+                  Histórico de transações não disponível neste momento.
+                </p>
+                <p className="text-yellow-300/30 text-xs font-rajdhani mt-2">
+                  O ledger QMY não suporta consulta de histórico via ICRC-1 neste canister.
+                </p>
+              </div>
+            ) : transactions && transactions.length > 0 ? (
+              <div className="space-y-2">
+                {transactions.map((tx, i) => (
+                  <div key={i} className="flex items-center justify-between border border-yellow-400/20 p-3 bg-black/20">
+                    <div>
+                      <span className={`text-xs font-rajdhani font-bold uppercase px-2 py-0.5 border ${
+                        tx.kind === 'transfer' ? 'border-yellow-400/50 text-yellow-400' :
+                        tx.kind === 'mint' ? 'border-green-400/50 text-green-400' :
+                        'border-red-400/50 text-red-400'
+                      }`}>
+                        {tx.kind}
+                      </span>
+                      <p className="text-yellow-300/50 text-xs font-mono mt-1">
+                        {tx.from ? shortenPrincipal(tx.from) : '—'} → {tx.to ? shortenPrincipal(tx.to) : '—'}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-yellow-400 font-bold font-cinzel text-sm">
+                        {formatQMY(tx.amount)} QMY
+                      </div>
+                      <div className="text-yellow-300/40 text-xs font-rajdhani">
+                        {tx.timestamp ? new Date(Number(tx.timestamp) / 1_000_000).toLocaleDateString('pt-PT') : '—'}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-yellow-300/50 font-rajdhani">Sem transações registadas.</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Stats Tab */}
+        {activeTab === 'stats' && (
+          <div className="space-y-6">
+            <div className="glass-card p-6">
+              <h3 className="text-yellow-400 font-bold font-cinzel mb-4 flex items-center gap-2">
+                <Star className="w-4 h-4" />
+                Estatísticas AR
+              </h3>
+              {arData ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {[
+                      { label: 'XP', value: arData.xp?.toString() ?? '0' },
+                      { label: 'Nível', value: arData.level?.toString() ?? '1' },
+                      { label: 'Energia', value: arData.energy?.toString() ?? '100' },
+                      { label: 'Tokens Disponíveis', value: arData.availableTokens?.toString() ?? '0' },
+                      { label: 'Tokens Plantados', value: arData.plantedTokens?.toString() ?? '0' },
+                      { label: 'Monstros Capturados', value: arData.capturedMonsters?.length?.toString() ?? '0' },
+                    ].map(item => (
+                      <div key={item.label} className="border border-yellow-400/20 p-3 text-center bg-black/20">
+                        <div className="text-yellow-400 font-bold text-xl font-cinzel">{item.value}</div>
+                        <div className="text-yellow-300/50 text-xs font-rajdhani uppercase tracking-wider mt-1">{item.label}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Level progress */}
+                  <div>
+                    <div className="flex justify-between text-xs font-rajdhani text-yellow-300/60 mb-1">
+                      <span>Progresso para Nível {(Number(arData.level ?? 1) + 1)}</span>
+                      <span>{arData.xp?.toString() ?? '0'} XP</span>
+                    </div>
+                    <div className="w-full bg-black/40 border border-yellow-400/20 h-2">
+                      <div
+                        className="h-full bg-yellow-400"
+                        style={{ width: `${Math.min(100, (Number(arData.xp ?? 0) % 1000) / 10)}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Monsters */}
+                  {arData.capturedMonsters && arData.capturedMonsters.length > 0 && (
+                    <div>
+                      <h4 className="text-yellow-400 font-bold font-cinzel text-sm mb-3">Monstros Capturados</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                        {arData.capturedMonsters.map((cm, i) => (
+                          <div key={i} className="border border-yellow-400/20 p-2 bg-black/20 text-center">
+                            <div className="text-yellow-400 text-sm font-rajdhani font-bold">{cm.monster.name}</div>
+                            <div className="text-yellow-300/50 text-xs font-rajdhani">+{cm.monster.energyBoost?.toString()} energia</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-yellow-300/50 font-rajdhani">
+                    Dados AR não disponíveis. Joga no QuantumoneyAR.app para ver as tuas estatísticas aqui.
+                  </p>
+                  <a
+                    href="https://quantumoneyar.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block mt-4 px-6 py-2 border border-yellow-400 text-yellow-400 text-sm font-rajdhani hover:bg-yellow-400/10 transition-all"
+                  >
+                    Ir para QuantumoneyAR.app
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,183 +1,120 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Unify Quantumoney.app with QuantumoneyAR.app — full sync, professional footer, animated HOME, unified profile, Central Bank, and AR/Map sync",
+  "title": "Fix LanguageProvider Scope and Profile Synchronization Between Domains",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Update Footer component to show only Quantumoney copyright and HTgamers attribution with social share buttons, removing all Caffeine branding",
+      "summary": "Restructure the global provider hierarchy so that a single LanguageProvider wraps the entire application in the correct nesting order (AuthProvider → LanguageProvider → Router → App), ensuring all routes including Legal, Contact, Tokenomics, Privacy Policy, and Terms of Service are within scope and can access useLanguage without errors.",
       "acceptanceCriteria": [
-        "Footer displays '© 2026 Quantumoney. All rights reserved.' and 'By HTgamers' only.",
-        "Share buttons for WhatsApp, X, Telegram, and Instagram are visible and link to correct share URLs.",
-        "No mention of Caffeine or caffeine.ai anywhere in the footer.",
-        "Footer maintains yellow text/border theme without altering the header or top navigation."
+        "Navigating to /legal, /contact, /tokenomics and all other routes produces no 'useLanguage must be used within a LanguageProvider' error in the browser console.",
+        "There is exactly one LanguageProvider instance in the entire component tree.",
+        "The LanguageProvider is a descendant of AuthProvider/InternetIdentityProvider and an ancestor of the Router and all route components.",
+        "Language switching works correctly on every page of the application."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/Footer.tsx",
+          "path": "frontend/src/main.tsx",
           "operation": "modify",
-          "description": "Replace footer content to display only '© 2026 Quantumoney. All rights reserved.' and 'By HTgamers'. Add share buttons for WhatsApp (https://wa.me/?text=), X/Twitter (https://twitter.com/intent/tweet?url=), Telegram (https://t.me/share/url?url=), and Instagram (instagram://). Remove all references to Caffeine, caffeine.ai, or external branding. Increase footer padding slightly (e.g., py-6 instead of py-4) and ensure yellow text/border styling is consistent with the existing design system."
+          "description": "Restructure the provider hierarchy to nest LanguageProvider between InternetIdentityProvider and the RouterProvider. The required order must be: InternetIdentityProvider → LanguageProvider → RouterProvider. This ensures that all routes and components rendered by the router are descendants of LanguageProvider and can access the language context via useLanguage. Remove any conditional or partial LanguageProvider wrappers that may exist elsewhere. Verify that QueryClientProvider remains at the outermost level as currently implemented."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Audit the App component and router configuration to ensure no duplicate LanguageProvider instances are created within the router tree. Remove any LanguageProvider wrappers from within the router outlet or Layout component. Confirm that all lazy-loaded route components rely solely on the global LanguageProvider defined in main.tsx. Ensure the Layout component does not introduce an additional LanguageProvider wrapper."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Remove any LanguageProvider wrapper from the Layout component if present. The Layout should only compose SpaceBackground, Header, Footer, and CookieConsentBanner without introducing provider logic. Ensure that child components (Header, Footer, CookieConsentBanner) can safely call useLanguage because they are already descendants of the global LanguageProvider established in main.tsx."
+        },
+        {
+          "path": "frontend/src/contexts/LanguageContext.tsx",
+          "operation": "modify",
+          "description": "Review the LanguageContext implementation to ensure the provider correctly exposes language state and translation functions. Verify that useLanguage throws a descriptive error if called outside the provider scope. Confirm localStorage persistence logic is robust and does not cause hydration issues. Add inline comments documenting the expected provider hierarchy for future maintainers."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Remove all Caffeine references from index.html meta tags and any other frontend files",
+      "summary": "Audit and enforce that all canister actor calls throughout the frontend use the hardcoded production canister IDs for Logic, Ledger, and Governance canisters, removing any environment-switching logic that could route requests to local, dev, or mock canisters so that both quantumoney.app and quantumoneyar.app connect to the same production ICP mainnet canisters.",
       "acceptanceCriteria": [
-        "No 'caffeine' string appears in index.html meta, og, or twitter tags.",
-        "No 'caffeine' string appears in any frontend source file."
+        "All actor/canister references in the frontend use the same hardcoded production canister IDs — no conditional dev/local/mock canister selection exists.",
+        "No mock data or simulated backend is used for profile, balance, or game state retrieval.",
+        "The same canister IDs are used regardless of which domain (quantumoney.app or quantumoneyar.app) is serving the frontend."
       ],
       "file_operations": [
         {
-          "path": "frontend/index.html",
+          "path": "frontend/src/hooks/useActor.ts",
           "operation": "modify",
-          "description": "Search for and remove any occurrences of 'caffeine', 'caffeine.ai', or related strings in meta tags, Open Graph tags, Twitter card tags, and HTML comments. Ensure all metadata references only Quantumoney branding."
+          "description": "Audit the actor initialization logic to confirm that canister IDs are hardcoded to production mainnet values without any environment variable or conditional switching. Remove any references to process.env variables or configuration files that could introduce dev/local canister IDs. Ensure the actor creation always targets the production Logic canister ID. Add inline comments documenting the production canister ID and asserting no environment-based routing exists. Verify the actor invalidation logic correctly refreshes queries when identity changes."
+        },
+        {
+          "path": "frontend/src/lib/icp/ledgerClient.ts",
+          "operation": "modify",
+          "description": "Verify that the ICPLedgerClient class uses the hardcoded production ICP Ledger canister ID for all balance queries. Remove any conditional logic that might route requests to a local replica or dev canister. Confirm that the canister ID is a constant string literal matching the production mainnet ICP Ledger. Add a comment asserting the production canister ID is fixed and cannot be overridden."
+        },
+        {
+          "path": "frontend/src/lib/icrc/ledgerClient.ts",
+          "operation": "modify",
+          "description": "Verify that the ICRCLedgerClient class uses the hardcoded production QMY (ICRC) Ledger canister ID for all balance and metadata queries. Remove any conditional logic or environment-based configuration that could introduce mock or dev canisters. Ensure the canister ID is a constant string literal matching the production mainnet QMY Ledger. Add a comment documenting the production canister ID."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Audit all backend query hooks (profile fetching, map markers, chat messages) to ensure they use the actor from useActor without any mock data fallbacks or conditional backend selection. Remove any logic that simulates backend responses or returns hardcoded data instead of calling the production canister. Confirm that profile, map, and chat queries always invoke real canister methods via the production actor."
+        },
+        {
+          "path": "frontend/src/hooks/useARGameData.ts",
+          "operation": "modify",
+          "description": "Verify that the AR game player profile query uses the actor from useActor to call the production Logic canister without any mock or simulated data. Remove any conditional logic that could return fake profile data or bypass the canister call. Ensure the query always fetches from the production backend using the authenticated principal."
+        },
+        {
+          "path": "frontend/src/hooks/useLuxuryBank.ts",
+          "operation": "modify",
+          "description": "Confirm that the luxury bank dashboard data aggregation queries the production actor for real token supply, distribution, and player metrics. Remove any simulated data sources or fallback mock responses. Ensure all data displayed in the Central Bank dashboard comes from production canister calls."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Rebuild HOME page with full animated universe background, growing golden coin animations, welcome message, and Install AR App CTA",
+      "summary": "Remove any automatic profile creation logic from the frontend so that if a user's Principal does not have an existing profile in the backend, the application displays a clear error or 'Profile not found' state instead of silently creating a new profile, and ensure the UserID used throughout the app is derived solely from the authenticated Internet Identity Principal without synthetic or fallback IDs.",
       "acceptanceCriteria": [
-        "HOME page shows animated space background with stars, planets, comets, and meteorites.",
-        "A new golden coin (alternating ICP and QMY) animates from the center of the screen, growing outward, every 5 seconds, lasting 3 seconds each.",
-        "A welcome message 'Welcome to the Quantumoney World' is visible on the page.",
-        "An 'Install AR App' button is present and opens https://QuantumoneyAR.app in a new tab.",
-        "Existing hero sections and feature grid are preserved."
+        "If the authenticated Principal has no profile in the backend, the profile page shows a clear 'Profile not found' message rather than creating a new profile automatically.",
+        "No auto-registration or default profile initialization is triggered on login.",
+        "The UserID displayed and used internally is always the Internet Identity Principal — no alternate or generated ID is used.",
+        "XP, QMY balance, inventory, and game state shown in the profile are fetched from the production backend using the Principal as the key."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/HomePage.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Extend the existing SpaceBackground component usage to include more pronounced stars, planets, comets, and meteorites. Add a new animated coin component that renders a golden coin (alternating between ICP and QMY using the generated images frontend/public/assets/generated/icp-coin-gold.dim_256x256.png and frontend/public/assets/generated/qmy-coin-gold.dim_256x256.png) that grows from the center of the screen outward over 3 seconds, appearing every 5 seconds. Use CSS transforms (scale) and opacity for the grow-out animation. Add a welcome message 'Welcome to the Quantumoney World' prominently near the top of the hero section. Add a CTA button labeled 'Install AR App' that links to https://QuantumoneyAR.app with target='_blank' and rel='noopener noreferrer'. Preserve the existing hero content and feature grid. Ensure the animated coins do not interfere with click interactions on other UI elements."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Upgrade Profile page to unified profile with inline wallet, transactions, vesting, and game stats; remove separate wallet navigation",
-      "acceptanceCriteria": [
-        "Profile page shows player name with inline edit and save.",
-        "Profile photo upload component is functional with preview.",
-        "ICP and QMY balances are visible on the profile page.",
-        "Send and Receive token panels are embedded in the profile wallet tab.",
-        "Full transaction history is rendered within the profile page.",
-        "Vesting info and welcome bonus card are visible.",
-        "XP progress bar and level stats are shown.",
-        "No separate wallet page link is required for these features."
-      ],
-      "file_operations": [
+          "description": "Remove any automatic profile creation or initialization logic from the saveCallerUserProfile mutation or other profile-related hooks. Ensure that profile save operations only update existing profiles and do not create new ones when a profile is missing. Modify the getCallerUserProfile query to explicitly handle null responses and propagate them to the UI without triggering profile creation. Add error handling that distinguishes between 'profile not found' and other backend errors."
+        },
         {
           "path": "frontend/src/pages/Perfil.tsx",
           "operation": "modify",
-          "description": "Integrate all wallet functionality directly into the Profile page tabs. In the 'Wallet' tab, embed the SendReceivePanels component (already exists), QMYTransactionHistory component (already exists), VestingBreakdown component (already exists), and WelcomeBonusCard component (already exists). Ensure the profile tab includes editable player name with inline save, ProfilePhotoUpload component for photo upload/preview, ICP and QMY balance displays (fetched using useICPLedger and useQMYLedger hooks). In the 'Game Stats' tab, include ARPlayerStats component (already exists) showing XP progress bar and level. Remove any navigation links to a separate WalletPage. Ensure all empty or placeholder tabs are completed with relevant content. Maintain yellow text/border styling and glass-panel design."
-        }
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "summary": "Rebuild Central Bank page as professional dashboard with tokenomics stats, vesting, burns, supply charts, and download buttons",
-      "acceptanceCriteria": [
-        "Central Bank page renders tokenomics stats, vesting table, burn history table, and supply charts.",
-        "Geographic coin/monster distribution visualization is present.",
-        "Download buttons for CSV and document exports are functional.",
-        "Explanatory accordion section is present and readable.",
-        "QMY Ledger canister ID 5o54h-giaaa-aaaad-aentq-cai is used for balance/supply queries."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/BancoCentral.tsx",
-          "operation": "modify",
-          "description": "Enhance the Central Bank page to display: (1) TokenomicsSection component (already exists) showing total, circulating, locked, vesting, burned supply with percentages; (2) VestingTable and VestingChart components (already exist) for vesting schedule visualization; (3) BurnHistoryTable component (already exists) for deflation history; (4) SupplyChartsSection component (already exists) for time-series supply data; (5) GoldPaperUniverseVisualization component (already exists) for geographic coin/monster distribution; (6) ExplanatorySection component (already exists) for accordion-based transparency info; (7) DownloadButtons component (already exists) for CSV/document exports. Ensure data is fetched from the useLuxuryBankData hook and that the QMY Ledger canister ID 5o54h-giaaa-aaaad-aentq-cai is referenced for balance queries. Maintain professional glass-panel styling with yellow accents."
-        }
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "summary": "Update Map page to sync with Carteira A backend canisters showing coins and monsters at identical coordinates",
-      "acceptanceCriteria": [
-        "MapPage fetches coin and monster markers from the same backend actor used by the AR page.",
-        "Markers shown on the map match coordinates stored in the backend.",
-        "No visual layout changes to the map beyond data source update."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/MapPage.tsx",
-          "operation": "modify",
-          "description": "Ensure MapPage fetches markers using the useGetMapMarkers hook from frontend/src/hooks/useQueries.ts, which queries the backend actor for getMapMarkers(). Verify that the Leaflet map renders markers at the exact latitude/longitude coordinates returned by the backend. Ensure no layout or styling changes beyond confirming data synchronization. The backend actor already uses the Carteira A canister configuration from useActor hook."
-        }
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "summary": "Update AR page to request camera permission on load, add lock/unlock and capture action buttons, sync with backend",
-      "acceptanceCriteria": [
-        "Camera permission is requested when the user navigates to /ar.",
-        "AR buttons for 'Lock/Unlock QMY' and 'Capture Monster' are visible and functional.",
-        "Captured monsters and coin lock state are persisted to the backend.",
-        "AR page layout is otherwise unchanged."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/ARGamePage.tsx",
-          "operation": "modify",
-          "description": "Use the camera component's useCamera hook to request camera permission immediately when the AR page mounts (set autoStart: true in useCamera config). Add two new action buttons in the AR UI: 'Lock/Unlock QMY' and 'Capture Monster'. Wire these buttons to call backend methods (via useActor) to persist the lock state and captured monster data. Verify the component's usage instructions before implementing camera integration. Ensure the camera preview has explicit dimensions and is responsive. Minimize other layout changes."
-        }
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "summary": "Audit and ensure all frontend modules use correct Carteira A canister IDs consistently",
-      "acceptanceCriteria": [
-        "All five Carteira A canister IDs appear correctly in CanisterArchitecturePanel, TechnicalValidationPanel, TechnicalPage, and relevant hook/client files.",
-        "No outdated or placeholder canister IDs remain in the codebase."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/profile/CanisterArchitecturePanel.tsx",
-          "operation": "modify",
-          "description": "Verify and update the canister IDs displayed in CanisterArchitecturePanel to match the Carteira A specification: Frontend/Website: crjop-jyaaa-aaaah-atfaq-cai, Gold Paper & Docs: whu4t-kiaaa-aaaah-qsc5q-cai, Governance/Treasury: nemlr-6aaaa-aaaan-q32la-cai, Logic: ckmsk-taaaa-aaaah-atfca-cai, Ledger QMY: 5o54h-giaaa-aaaad-aentq-cai. Ensure no placeholder or outdated IDs remain."
+          "description": "Update the profile page UI to display a clear 'Profile not found' or 'No profile exists for this Principal' message when getCallerUserProfile returns null. Remove any automatic profile setup modal triggers or default profile initialization that might occur when a profile is missing. Ensure the page does not attempt to create a profile automatically on first visit. Display the authenticated Principal ID prominently when no profile exists, and provide instructions for the user (e.g., 'Contact support to register your profile')."
         },
         {
-          "path": "frontend/src/components/profile/TechnicalValidationPanel.tsx",
+          "path": "frontend/src/pages/ProfilePage.tsx",
           "operation": "modify",
-          "description": "Verify and update the canister IDs displayed in TechnicalValidationPanel to match the Carteira A specification: Frontend/Website: crjop-jyaaa-aaaah-atfaq-cai, Gold Paper & Docs: whu4t-kiaaa-aaaah-qsc5q-cai, Governance/Treasury: nemlr-6aaaa-aaaan-q32la-cai, Logic: ckmsk-taaaa-aaaah-atfca-cai, Ledger QMY: 5o54h-giaaa-aaaad-aentq-cai. Ensure no placeholder or outdated IDs remain."
+          "description": "Update the AR profile page to handle null profile responses by showing a 'Profile not found' error state instead of initializing a default profile. Remove any logic that creates placeholder or empty profiles when the backend returns null. Ensure XP, level, tokens, and captured monsters are only displayed when fetched from the production backend. Display the Principal ID in the error state to help users verify their identity."
         },
         {
-          "path": "frontend/src/pages/TechnicalPage.tsx",
+          "path": "frontend/src/components/profile/useProfileModuleState.ts",
           "operation": "modify",
-          "description": "Verify and update the canister IDs displayed in TechnicalPage to match the Carteira A specification: Frontend/Website: crjop-jyaaa-aaaah-atfaq-cai, Gold Paper & Docs: whu4t-kiaaa-aaaah-qsc5q-cai, Governance/Treasury: nemlr-6aaaa-aaaan-q32la-cai, Logic: ckmsk-taaaa-aaaah-atfca-cai, Ledger QMY: 5o54h-giaaa-aaaad-aentq-cai. Ensure no placeholder or outdated IDs remain."
+          "description": "Audit the profile module state derivation logic to ensure it does not trigger profile creation when isRegistered is false or userProfile is null. Remove any automatic registration or profile setup flows that might be invoked during state computation. Ensure the hook correctly distinguishes between 'not logged in', 'logged in but no profile', and 'logged in with profile' states without side effects."
         },
         {
-          "path": "frontend/src/lib/icrc/ledgerClient.ts",
+          "path": "frontend/src/hooks/useARGameData.ts",
           "operation": "modify",
-          "description": "Verify that the QMY Ledger canister ID in ICRCLedgerClient is set to 5o54h-giaaa-aaaad-aentq-cai. Update if necessary."
+          "description": "Ensure the AR game data hook returns null when the backend reports no profile for the authenticated Principal, and does not attempt to create a default or fallback profile. Remove any logic that initializes empty game state when the profile is missing. Add clear error handling that propagates 'profile not found' state to consuming components."
         },
         {
-          "path": "frontend/src/lib/icp/ledgerClient.ts",
+          "path": "frontend/src/hooks/useInternetIdentity.ts",
           "operation": "modify",
-          "description": "Verify that the ICP Ledger canister ID in ICPLedgerClient is correct. Update if necessary to ensure consistency."
-        }
-      ]
-    },
-    {
-      "id": "REQ-11",
-      "summary": "Maintain yellow text/border design system and slightly increase footer visibility without altering header",
-      "acceptanceCriteria": [
-        "All new and updated components use yellow text and thin yellow borders.",
-        "Transparent glass-panel style is maintained across profile, bank, and map pages.",
-        "Footer has slightly increased padding/visibility without changing header styling."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Verify that global CSS custom properties and component classes (e.g., .glass-card, .cta-button) consistently apply yellow text, thin yellow borders, and transparent glass-panel styles. Ensure footer-related classes have adequate padding (e.g., py-6) for increased visibility. Do not alter header or top navigation styling."
-        },
-        {
-          "path": "frontend/tailwind.config.js",
-          "operation": "modify",
-          "description": "Verify that Tailwind custom colors (QMY gold palette) are correctly defined and consistently applied across the project. Ensure no conflicting color or border-radius configurations exist."
+          "description": "Verify that the Internet Identity hook does not trigger any profile creation or initialization side effects on login. Ensure the Principal ID returned by identity.getPrincipal() is used as-is throughout the app without any transformation or fallback ID generation. Remove any logic that creates synthetic UserIDs or alternate identifiers. Confirm that logout clears all cached profile data and does not leave orphaned profile references."
         }
       ]
     }
