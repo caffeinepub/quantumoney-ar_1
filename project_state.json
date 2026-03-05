@@ -1,34 +1,112 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "App with a luxury-style home page featuring 3D QMY coins floating in a universe background, animated hero section that scrolls down to reveal the page title, and no Caffeine references in footers.",
+  "summary": "Quantumoney.app — location-based blockchain game on ICP. Full functional restoration in progress: clean dark/yellow UI, Internet Identity login, ICP/QMY wallet (Ledger: 5o54h-giaaa-aaaad-aentq-cai), Leaflet 2D map with coin capture within 50m, XP system, welcome bonus (+1000 QMY +100 XP on first login), 600M QMY geographic distribution. Advanced features (DAO, vesting, Central Bank, AR) temporarily disabled.",
   "architectural_notes": [
-    "3D coins must be rendered (e.g. CSS 3D or WebGL/Three.js), not image assets"
+    "ICP blockchain project; Internet Identity for auth",
+    "QMY Ledger canister: 5o54h-giaaa-aaaad-aentq-cai",
+    "Map: Leaflet + OpenStreetMap (2D only for now, no AR)",
+    "Logic canister manages coin distribution and game state",
+    "Priority order: login → profile/balance → map → coins → capture → XP → bonus → design"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "Project structurally broken: multiple features missing, not playable"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-replace-the-existing-floating-coin-image-animations-on-the-home-page-homepage-tsx-with-fully-3d-rendered-qmy-coins-using-react-three-fiber-three-js-each-coin-must-be-a-realistic-disc-coin-shape-with-qmy-embossed-or-inscribed-on-its-face-a-gold-metallic-material-with-specular-highlights-and-float-drift-smoothly-and-gently-across-the-space-background-with-subtle-rotation-remove-all-img-or-css-based-coin-image-elements-used-for-the-floating-coins",
-      "title": "Replace the existing floating coin image animations on the Home page (HomePage.tsx) with fully 3D rendered QMY coins using React Three Fiber / Three.js. Each coin must be a realistic disc/coin shape with 'QMY' embossed or inscribed on its face, a gold metallic material with specular highlights, and float/drift smoothly and gently across the space background with subtle rotation. Remove all <img> or CSS-based coin image elements used for the floating coins.",
+      "id": "feature-remove-all-animated-coin-visuals-3d-decorative-elements-including-floatingqmycoins-spacebackground-quantumuniversescene-and-any-three-js-react-three-fiber-components-and-unnecessary-visual-overlays-from-all-pages-the-ui-must-be-static-no-animations-until-the-system-is-fully-functional",
+      "title": "Remove all animated coin visuals, 3D decorative elements (including FloatingQMYCoins, SpaceBackground, QuantumUniverseScene, and any Three.js/React Three Fiber components), and unnecessary visual overlays from all pages. The UI must be static — no animations until the system is fully functional.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-redesign-the-home-page-homepage-tsx-to-have-a-luxury-aesthetic-apply-rich-gold-deep-black-and-champagne-color-palettes-elegant-serif-typography-cinzel-already-available-glass-morphism-or-dark-velvet-card-surfaces-subtle-gold-glow-effects-on-key-elements-and-refined-spacing-the-overall-feel-must-evoke-high-end-exclusivity-consistent-with-a-luxury-financial-token-brand",
-      "title": "Redesign the Home page (HomePage.tsx) to have a luxury aesthetic. Apply rich gold, deep black, and champagne color palettes, elegant serif typography (Cinzel already available), glass-morphism or dark velvet card surfaces, subtle gold glow effects on key elements, and refined spacing. The overall feel must evoke high-end exclusivity consistent with a luxury financial/token brand.",
+      "id": "feature-fix-all-page-titles-where-the-string-nav-appears-as-a-prefix-e-g-nav-map-nav-profile-replace-them-with-clean-human-readable-english-portuguese-titles",
+      "title": "Fix all page titles where the string 'nav.' appears as a prefix (e.g., 'nav.map', 'nav.profile') — replace them with clean, human-readable English/Portuguese titles.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-on-the-home-page-homepage-tsx-implement-a-scroll-down-behavior-on-initial-load-so-the-page-automatically-scrolls-downward-slightly-to-reveal-the-main-page-title-hero-heading-the-very-top-of-the-page-above-the-title-should-scroll-out-of-view-on-load-making-the-title-the-first-prominent-visible-element-while-still-allowing-the-user-to-scroll-back-up",
-      "title": "On the Home page (HomePage.tsx), implement a scroll-down behavior on initial load so the page automatically scrolls downward slightly to reveal the main page title/hero heading. The very top of the page (above the title) should scroll out of view on load, making the title the first prominent visible element, while still allowing the user to scroll back up.",
+      "id": "feature-restore-a-fixed-footer-across-all-pages-displaying-exactly-2026-quantumoney-all-rights-reserved-and-by-htgamers-remove-any-reference-to-caffeine-from-the-footer-and-from-all-user-facing-page-content",
+      "title": "Restore a fixed footer across all pages displaying exactly: '© 2026 Quantumoney. All rights reserved.' and 'By HTgamers'. Remove any reference to 'Caffeine' from the footer and from all user-facing page content.",
       "reqIds": [
         "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enforce-a-clean-simple-dark-layout-with-yellow-gold-accent-details-across-the-entire-app-no-gradients-no-glow-effects-no-decorative-overlays-typography-must-be-readable-this-is-the-baseline-visual-style-until-the-system-is-stable",
+      "title": "Enforce a clean, simple dark layout with yellow/gold accent details across the entire app. No gradients, no glow effects, no decorative overlays. Typography must be readable. This is the baseline visual style until the system is stable.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-restore-internet-identity-login-as-the-sole-authentication-method-login-must-work-end-to-end-clicking-login-opens-the-internet-identity-flow-and-on-success-the-user-s-principal-is-available-throughout-the-app-via-authcontext",
+      "title": "Restore Internet Identity login as the sole authentication method. Login must work end-to-end: clicking login opens the Internet Identity flow, and on success the user's Principal is available throughout the app via AuthContext.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-restore-the-profile-page-to-display-the-user-s-principal-id-qmy-balance-fetched-from-ledger-canister-5o54h-giaaa-aaaad-aentq-cai-icp-balance-and-current-xp-if-any-balance-is-unavailable-or-zero-display-0-never-hide-the-wallet-section",
+      "title": "Restore the /profile page to display: the user's Principal ID, QMY balance (fetched from Ledger canister 5o54h-giaaa-aaaad-aentq-cai), ICP balance, and current XP. If any balance is unavailable or zero, display 0 — never hide the wallet section.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-on-the-frontend-after-a-successful-first-login-call-the-welcome-bonus-endpoint-and-display-a-banner-modal-showing-1000-qmy-and-100-xp-received-this-should-only-appear-once-per-user",
+      "title": "On the frontend, after a successful first login, call the welcome bonus endpoint and display a banner/modal showing '+1000 QMY and +100 XP received'. This should only appear once per user.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-restore-the-map-page-with-a-fully-functional-leaflet-openstreetmap-2d-map-fetch-coin-locations-from-the-backend-and-display-them-as-markers-on-the-map-with-real-geographic-coordinates-the-map-must-load-without-errors",
+      "title": "Restore the /map page with a fully functional Leaflet + OpenStreetMap 2D map. Fetch coin locations from the backend and display them as markers on the map with real geographic coordinates. The map must load without errors.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-basic-coin-capture-mechanic-on-the-map-when-the-user-clicks-a-coin-marker-check-if-the-user-s-device-location-is-within-50-meters-if-yes-call-the-backend-to-capture-the-coin-award-xp-proportional-to-the-distance-traveled-since-the-last-capture-and-update-the-user-s-qmy-balance-if-the-user-is-more-than-50m-away-show-an-error-message",
+      "title": "Implement the basic coin capture mechanic on the map: when the user clicks a coin marker, check if the user's device location is within 50 meters. If yes, call the backend to capture the coin, award XP proportional to the distance traveled since the last capture, and update the user's QMY balance. If the user is more than 50m away, show an error message.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-temporarily-disable-or-hide-the-following-features-from-the-ui-and-routing-advanced-central-bank-dashboard-dao-voting-and-proposals-complex-vesting-schedules-public-token-burns-and-all-charts-graphs-these-routes-should-either-show-a-coming-soon-placeholder-or-be-removed-from-navigation-entirely",
+      "title": "Temporarily disable or hide the following features from the UI and routing: Advanced Central Bank dashboard, DAO voting and proposals, complex vesting schedules, public token burns, and all charts/graphs. These routes should either show a 'Coming Soon' placeholder or be removed from navigation entirely.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-simplify-the-bottom-navigation-bar-to-show-only-the-core-active-tabs-home-map-and-profile-remove-tabs-for-dao-banco-central-bank-ar-and-chat-until-those-features-are-restored",
+      "title": "Simplify the bottom navigation bar to show only the core active tabs: Home, Map, and Profile. Remove tabs for DAO, Banco (Central Bank), AR, and Chat until those features are restored.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-restore-a-basic-transaction-history-display-on-profile-showing-the-user-s-recent-qmy-coin-captures-date-amount-received-xp-gained-if-no-history-exists-show-an-empty-state-message-never-hide-the-section",
+      "title": "Restore a basic transaction history display on /profile showing the user's recent QMY coin captures (date, amount received, XP gained). If no history exists, show an empty state message — never hide the section.",
+      "reqIds": [
+        "REQ-15"
       ],
       "version": 1
     }
@@ -36,38 +114,78 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Replace floating coin images with 3D rendered QMY coins (real coin format) floating smoothly across a universe-style background",
+      "summary": "Clean UI: remove animated coins, 3D decorations, fix 'nav.' titles, restore dark/yellow layout, fixed footer (© 2026 Quantumoney / By HTgamers, no Caffeine references)",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Home page should have a luxury aesthetic",
+      "summary": "Restore core structure: Internet Identity login, profile, wallet, ICP/QMY balances, basic history, Leaflet map, XP system, first-login bonus",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Home page should scroll down so the top/title of the entry page is visible on load",
+      "summary": "Wallet/profile: connect to Ledger canister 5o54h-giaaa-aaaad-aentq-cai, show Principal, QMY balance, ICP balance, XP on /profile (show 0 if no balance)",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-4",
-      "summary": "Remove all references to 'Caffeine' from footers and throughout the app",
+      "summary": "Welcome bonus: +1000 QMY +100 XP on first real login, store flag in backend, never repeat",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Mandatory Leaflet + OpenStreetMap map showing geographically distributed QMY coins with real coordinates from Logic canister",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Basic game: user sees coins on map, can capture if within 50m, receives XP proportional to distance, updates QMY balance, no AR",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Temporarily disable: advanced Central Bank, DAO, complex vesting, public burns, charts",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-8",
-      "summary": "Remove all references to 'Caffeine' from the Footer component (Footer.tsx), Layout.tsx, and any other frontend files where the word 'Caffeine' appears as visible text, branding, or attribution. Replace or remove those references entirely so no end-user-facing text mentions Caffeine.",
+      "summary": "600M QMY distribution in geographic clusters per Gold Paper rules, stored in Logic canister, visible on map",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Restore the backend actor to store a per-user `welcomeBonusGranted` flag. On the first real login (authenticated Principal not previously seen), grant +1000 QMY and +100 XP. Set the flag so the bonus is never granted again to the same Principal.",
       "reqIds": [
-        "REQ-4"
+        "REQ-7"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Restore the backend to store and serve geographically distributed QMY coin locations. Initialize 600,000,000 QMY distributed across real-world geographic clusters (based on Gold Paper regional rules: major population centers across continents). Each coin cluster must have lat/lon coordinates, a QMY amount, and an ID. Expose a query endpoint to fetch all active coin locations.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Restore a basic XP system in the backend: each player profile stores a total XP value. Provide endpoints to add XP (used by coin capture and welcome bonus). XP must persist in stable storage.",
+      "reqIds": [
+        "REQ-12"
       ],
       "status": "pending"
     }
   ],
-  "gameProjectType": "none",
+  "gameProjectType": "2d",
   "projectName": "Quantumoney",
   "clarification_mode": "instant",
   "clarification_rounds": 0

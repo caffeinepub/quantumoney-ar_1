@@ -70,7 +70,6 @@ export interface ARSpotClaim {
     spotId: string;
     qtmAmount: bigint;
 }
-export type UserId = bigint;
 export interface QMYPurchaseRequest {
     tokensRequested: bigint;
     timestamp: bigint;
@@ -107,6 +106,7 @@ export enum Variant_coin_monster {
 }
 export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    claimWelcomeBonus(): Promise<[bigint, bigint]>;
     getARSpotClaims(): Promise<Array<ARSpotClaim>>;
     getARSpotDistributions(): Promise<Array<ARSpotDistribution>>;
     getCallerUserProfile(): Promise<PlayerProfile | null>;
@@ -117,8 +117,7 @@ export interface backendInterface {
     getPlayerByAddress(addr: Principal): Promise<PlayerProfile | null>;
     getPlayerDailyLimits(): Promise<DailyLimits>;
     getQMYPurchaseRequest(): Promise<QMYPurchaseRequest | null>;
-    getUserIdForCaller(): Promise<UserId>;
-    getUserProfile(userId: UserId): Promise<PlayerProfile | null>;
+    getUserProfile(user: Principal): Promise<PlayerProfile | null>;
     initializeAccessControl(): Promise<void>;
     isCallerAdmin(): Promise<boolean>;
     paymentCancel(sessionId: string): Promise<PaymentCancelResponse>;

@@ -1,10 +1,9 @@
 import { Actor, HttpAgent } from '@dfinity/agent';
-import { principalToAccountIdentifier } from './account';
+import { Principal } from '@dfinity/principal';
 
-// Carteira A — ICP Ledger (standard mainnet ICP ledger)
-const ICP_LEDGER_CANISTER_ID = '5o54h-giaaa-aaaad-aentq-cai';
+const ICP_LEDGER_CANISTER_ID = 'ryjl3-tyaaa-aaaaa-aaaba-cai';
 
-const idlFactory = ({ IDL }: any) => {
+const icpIdlFactory = ({ IDL }: { IDL: any }) => {
   const AccountIdentifier = IDL.Vec(IDL.Nat8);
   const Tokens = IDL.Record({ e8s: IDL.Nat64 });
   return IDL.Service({
@@ -16,39 +15,42 @@ const idlFactory = ({ IDL }: any) => {
   });
 };
 
+function principalToAccountId(principal: Principal): Uint8Array {
+  const principalBytes = principal.toUint8Array();
+  const padding = new Uint8Array(32 - principalBytes.length);
+  const accountBytes = new Uint8Array(32);
+  accountBytes.set(padding);
+  accountBytes.set(principalBytes, padding.length);
+  return accountBytes;
+}
+
 export class ICPLedgerClient {
+  private static instance: ICPLedgerClient;
   private actor: any;
 
-  constructor(agent: HttpAgent, canisterId: string = ICP_LEDGER_CANISTER_ID) {
-    this.actor = Actor.createActor(idlFactory, { agent, canisterId });
+  private constructor() {
+    const agent = new HttpAgent({ host: 'https://ic0.app' });
+    this.actor = Actor.createActor(icpIdlFactory, {
+      agent,
+      canisterId: ICP_LEDGER_CANISTER_ID,
+    });
+  }
+
+  static getInstance(): ICPLedgerClient {
+    if (!ICPLedgerClient.instance) {
+      ICPLedgerClient.instance = new ICPLedgerClient();
+    }
+    return ICPLedgerClient.instance;
   }
 
   async getBalance(principalId: string): Promise<bigint> {
     try {
-      const { Principal } = await import('@dfinity/principal');
       const principal = Principal.fromText(principalId);
-      const accountHex = principalToAccountIdentifier(principal as any);
-      const accountBytes = hexToBytes(accountHex);
-      const result = await this.actor.account_balance({ account: accountBytes });
+      const accountId = principalToAccountId(principal);
+      const result = await this.actor.account_balance({ account: accountId });
       return result.e8s as bigint;
     } catch {
-      return 0n;
+      return BigInt(0);
     }
   }
 }
-
-function hexToBytes(hex: string): Uint8Array {
-  const bytes = new Uint8Array(hex.length / 2);
-  for (let i = 0; i < hex.length; i += 2) {
-    bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
-  }
-  return bytes;
-}
-
-export function formatE8s(e8s: bigint): string {
-  const icp = Number(e8s) / 1e8;
-  return icp.toFixed(4);
-}
-
-// Keep legacy export for backward compatibility
-export { ICP_LEDGER_CANISTER_ID };

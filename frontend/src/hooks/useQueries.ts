@@ -1,12 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { PlayerProfile } from '../backend';
+import { PlayerProfile, MapMarker, ExternalBlob } from '../backend';
 
 export function useGetCallerUserProfile() {
   const { actor, isFetching: actorFetching } = useActor();
 
   const query = useQuery<PlayerProfile | null>({
-    queryKey: ['callerUserProfile'],
+    queryKey: ['currentUserProfile'],
     queryFn: async () => {
       if (!actor) throw new Error('Actor not available');
       return actor.getCallerUserProfile();
@@ -29,10 +29,10 @@ export function useSaveCallerUserProfile() {
   return useMutation({
     mutationFn: async (profile: PlayerProfile) => {
       if (!actor) throw new Error('Actor not available');
-      await actor.saveCallerUserProfile(profile);
+      return actor.saveCallerUserProfile(profile);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['callerUserProfile'] });
+      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
     },
   });
 }
@@ -42,39 +42,43 @@ export function useUpdateProfile() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ nickname, photoUrl }: { nickname: string; photoUrl: any | null }) => {
+    mutationFn: async ({ nickname, photoUrl }: { nickname: string; photoUrl?: ExternalBlob | null }) => {
       if (!actor) throw new Error('Actor not available');
-      await actor.updateProfile(nickname, photoUrl);
+      return actor.updateProfile(nickname, photoUrl ?? null);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['callerUserProfile'] });
+      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
     },
   });
 }
 
-export function useGetUserIdForCaller() {
-  const { actor, isFetching: actorFetching } = useActor();
+export function useClaimWelcomeBonus() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
 
-  return useQuery<bigint>({
-    queryKey: ['userIdForCaller'],
-    queryFn: async () => {
+  return useMutation({
+    mutationFn: async (_: undefined) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.getUserIdForCaller();
+      return actor.claimWelcomeBonus();
     },
-    enabled: !!actor && !actorFetching,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
+    },
   });
 }
 
 export function useGetMapMarkers() {
   const { actor, isFetching: actorFetching } = useActor();
 
-  return useQuery({
+  return useQuery<MapMarker[]>({
     queryKey: ['mapMarkers'],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getMapMarkers();
     },
     enabled: !!actor && !actorFetching,
+    refetchInterval: 30_000,
+    staleTime: 15_000,
   });
 }
 
@@ -88,7 +92,7 @@ export function useGetChatMessages() {
       return actor.getChatMessages();
     },
     enabled: !!actor && !actorFetching,
-    refetchInterval: 5000,
+    refetchInterval: 5_000,
   });
 }
 
@@ -99,7 +103,7 @@ export function useSendChatMessage() {
   return useMutation({
     mutationFn: async (content: string) => {
       if (!actor) throw new Error('Actor not available');
-      await actor.sendChatMessage(content);
+      return actor.sendChatMessage(content);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['chatMessages'] });

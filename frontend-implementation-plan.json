@@ -1,89 +1,428 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "3D QMY Coins, Luxury Home Page, Scroll-to-Title, Remove Caffeine References",
+  "title": "Full Functional Restoration — Quantumoney Core Rebuild (Frontend)",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Replace floating coin images with 3D rendered QMY coins using React Three Fiber",
+      "summary": "Remove all animated coin visuals, 3D decorative elements, and unnecessary visual overlays from all pages",
       "acceptanceCriteria": [
-        "No <img> tags or CSS background-image rules are used for the floating coins on the Home page",
-        "At least 5 QMY coins are rendered as 3D disc/coin meshes using React Three Fiber with a gold metallic PBR material",
-        "'QMY' text or embossed lettering is visible on the coin face",
-        "Coins float and drift smoothly across the space background with gentle rotation animations",
-        "The Three.js canvas overlays the existing SpaceBackground without breaking the rest of the page layout"
+        "No animated coin images appear on any page",
+        "No Three.js / React Three Fiber components render",
+        "SpaceBackground is removed from Layout",
+        "Pages load without any CSS or JS animation classes on decorative elements"
       ],
       "file_operations": [
         {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Remove SpaceBackground component from Layout wrapper. Keep Header, main content area, Footer, and CookieConsentBanner only."
+        },
+        {
+          "path": "frontend/src/components/space/SpaceBackground.tsx",
+          "operation": "delete",
+          "description": "Delete the CSS-animated space background component with stars, comets, meteorites, and planets."
+        },
+        {
           "path": "frontend/src/components/three/FloatingQMYCoins.tsx",
-          "operation": "create",
-          "description": "Create a React Three Fiber component that renders at least 5 realistic 3D QMY coin meshes. Each coin must be a disc/cylinder shape with 'QMY' embossed text on the face, using a gold metallic PBR material (MeshStandardMaterial with metalness ~0.8, roughness ~0.2, and gold color #FFD700). Implement smooth floating and drifting animations using useFrame for position updates and gentle rotation. Position coins at varied depths and locations to create a distributed 3D effect across the viewport."
+          "operation": "delete",
+          "description": "Delete the Three.js React component rendering animated 3D gold QMY coins."
+        },
+        {
+          "path": "frontend/src/components/quantum/QuantumUniverseScene.tsx",
+          "operation": "delete",
+          "description": "Delete the placeholder Three.js scene component."
         },
         {
           "path": "frontend/src/pages/HomePage.tsx",
           "operation": "modify",
-          "description": "Remove all existing <img> elements and CSS-based coin animations from the floating coins section. Import and integrate the new FloatingQMYCoins component wrapped in a Canvas from @react-three/fiber. Position the Canvas as an overlay layer above the SpaceBackground (using absolute positioning with appropriate z-index) while preserving the existing page layout and content. Ensure the Canvas is non-blocking (pointer-events: none) so underlying content remains interactive. Remove any references to frontend/public/assets/generated/icp-coin-gold.dim_128x128.png and frontend/public/assets/generated/qmy-coin-gold.dim_128x128.png used for floating coins."
+          "description": "Remove space background, animated floating coin bursts, and any FloatingQMYCoins or Three.js Canvas components. Keep hero section with logo and tagline, and feature grid only."
+        },
+        {
+          "path": "frontend/src/pages/ARGamePage.tsx",
+          "operation": "modify",
+          "description": "Remove React Three Fiber Canvas and 3D coin rendering logic. Keep only the device camera, geolocation, and backend map markers integration for future map-based implementation."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Remove or disable all CSS animation classes (@keyframes) related to decorative elements (floating, drifting, glow effects). Keep only essential layout and theme styling."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Apply luxury aesthetic to Home page with rich gold, deep black, champagne palette and glass-morphism design",
+      "summary": "Fix all page titles where the string 'nav.' appears as a prefix",
       "acceptanceCriteria": [
-        "Home page uses a dark luxury color palette (deep blacks, rich golds, champagne accents) throughout",
-        "Headings use the Cinzel serif font with gold color",
-        "Section cards or panels use glass-morphism or dark velvet surfaces with gold border accents",
-        "Gold glow/shimmer effects are applied to primary CTA buttons and key headings",
-        "Overall visual impression is premium and elegant, not generic or playful"
+        "No visible heading or tab label contains the prefix 'nav.'",
+        "All page titles render as readable text"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/HomePage.tsx",
+          "path": "frontend/src/contexts/LanguageContext.tsx",
           "operation": "modify",
-          "description": "Apply luxury aesthetic styling throughout the Home page. Use deep blacks (#0A0A0A, #1A1A1A) as base backgrounds. Apply Cinzel font to all headings with gold color (#FFD700). Wrap section content in cards with glass-morphism effect (backdrop-blur, semi-transparent black background with alpha 0.3-0.5, gold border-b or border accent). Add gold glow effects to primary CTA buttons using box-shadow with gold (#FFD700) at multiple layers for shimmer. Use champagne (#F5DEB3) for secondary accents. Apply refined spacing (larger gaps, generous padding) to create an exclusive, high-end feel. Ensure typography hierarchy emphasizes elegance with appropriate font weights and letter-spacing."
+          "description": "Audit all translation keys in the Portuguese and English dictionaries. Replace any keys prefixed with 'nav.' (e.g., 'nav.map', 'nav.profile') with clean, human-readable titles like 'Map', 'Profile', 'Mapa', 'Perfil'."
         },
         {
-          "path": "frontend/src/index.css",
+          "path": "frontend/src/components/BottomNav.tsx",
           "operation": "modify",
-          "description": "Add or update CSS custom properties and utility classes for the luxury aesthetic. Define --luxury-black (#0A0A0A), --luxury-gold (#FFD700), --luxury-champagne (#F5DEB3), --luxury-deep-black (#1A1A1A). Add .glass-morphism utility class with backdrop-filter: blur(10px), background: rgba(0,0,0,0.4), border: 1px solid rgba(255,215,0,0.3). Add .gold-glow utility with multi-layer box-shadow for shimmer effect. Ensure these styles complement existing space theme without breaking other pages."
+          "description": "Review tab labels and ensure they use translation keys without 'nav.' prefix. Update to use clean translation keys for Home, Map, AR, Profile, DAO, Banco, Chat."
+        },
+        {
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "modify",
+          "description": "Review desktop nav links and mobile menu items. Replace any 'nav.' prefixed translation keys with clean titles."
+        },
+        {
+          "path": "frontend/src/pages/MapPage.tsx",
+          "operation": "modify",
+          "description": "Ensure page heading uses a clean title like 'Map' or 'Mapa' without 'nav.' prefix from translations."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Implement auto-scroll on Home page load to reveal main title",
+      "summary": "Restore a fixed footer across all pages displaying exactly: '© 2026 Quantumoney. All rights reserved.' and 'By HTgamers'",
       "acceptanceCriteria": [
-        "On initial page load, the Home page auto-scrolls so the main hero title is at or near the top of the viewport",
-        "Any content above the title (e.g. a spacer or pre-hero element) is scrolled out of view automatically",
-        "The user can scroll back up to see content above the title",
-        "The scroll behavior is smooth, not instant/jarring"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/HomePage.tsx",
-          "operation": "modify",
-          "description": "Add a useEffect hook that runs once on component mount to implement auto-scroll behavior. Use a ref on the main hero title element. In the useEffect, after a brief delay (200-300ms to allow rendering), call scrollIntoView on the title ref with { behavior: 'smooth', block: 'start' } to smoothly scroll the title to the top of the viewport. Ensure this only runs on initial load by using an empty dependency array. Add a spacer div above the title (min-height: 40vh or similar) so there is content to scroll past, making the title the first prominent visible element after auto-scroll while still allowing users to scroll back up."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Remove all 'Caffeine' references from Footer and other frontend files",
-      "acceptanceCriteria": [
-        "The Footer component contains no visible 'Caffeine' text or branding",
-        "No other rendered page or component shows the word 'Caffeine' to end users",
-        "Any 'Powered by' or attribution lines that referenced Caffeine are removed or replaced with a neutral/Quantumoney attribution"
+        "Footer is fixed at the bottom on all pages",
+        "Footer text reads '© 2026 Quantumoney. All rights reserved.' and 'By HTgamers'",
+        "No page or footer contains the word 'Caffeine'"
       ],
       "file_operations": [
         {
           "path": "frontend/src/components/Footer.tsx",
           "operation": "modify",
-          "description": "Remove all occurrences of the word 'Caffeine' from visible text, branding, or attribution in the Footer component. If there is a 'Powered by Caffeine' or similar line, remove it entirely or replace with a neutral attribution like '© 2025 Quantumoney' or leave blank. Ensure no user-facing text in the Footer references Caffeine."
+          "description": "Update Footer component to display exactly '© 2026 Quantumoney. All rights reserved.' and 'By HTgamers' with gold styling. Remove any reference to 'Caffeine'."
         },
         {
           "path": "frontend/src/components/Layout.tsx",
           "operation": "modify",
-          "description": "Search for and remove any visible 'Caffeine' references in the Layout component. Check for any attribution text, comments rendered to DOM, or metadata that might display 'Caffeine'. If none exist, ensure the file remains unchanged."
+          "description": "Ensure Footer is rendered in Layout and positioned fixed at the bottom across all pages."
+        },
+        {
+          "path": "frontend/src/pages/AboutPage.tsx",
+          "operation": "modify",
+          "description": "Search for and remove any 'Caffeine' references in page content."
+        },
+        {
+          "path": "frontend/src/pages/HomePage.tsx",
+          "operation": "modify",
+          "description": "Search for and remove any 'Caffeine' references in page content."
+        },
+        {
+          "path": "frontend/src/pages/LandingPage.tsx",
+          "operation": "modify",
+          "description": "Search for and remove any 'Caffeine' references in page content."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Enforce a clean, simple dark layout with yellow/gold accent details across the entire app",
+      "acceptanceCriteria": [
+        "All pages use a dark background (#0a0a0a or equivalent)",
+        "Accent color is yellow/gold throughout",
+        "No animated or 3D background is present",
+        "UI is legible and consistent across all routes"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Set global body background to #0a0a0a or equivalent dark color. Ensure all CSS custom properties use yellow/gold accent colors. Remove gradient and glow effect classes."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Verify and enforce the custom color palette uses dark backgrounds and yellow/gold accents (gold-50 through gold-950). Remove any gradient configurations."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Ensure Layout wrapper applies dark background color class to the main content area."
+        },
+        {
+          "path": "frontend/src/components/Container.tsx",
+          "operation": "modify",
+          "description": "Verify Container applies consistent dark theming and does not introduce conflicting backgrounds."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Restore Internet Identity login as the sole authentication method",
+      "acceptanceCriteria": [
+        "Login button triggers Internet Identity authentication popup",
+        "After successful login, the user's Principal ID is accessible in AuthContext",
+        "Logout clears the session",
+        "Unauthenticated users are redirected or shown a login prompt on protected pages"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/LoginButton.tsx",
+          "operation": "modify",
+          "description": "Verify LoginButton correctly triggers Internet Identity login via useAuth hook and displays login/logout state with spinner. Remove profile error display until profile system is fully restored."
+        },
+        {
+          "path": "frontend/src/contexts/AuthContext.tsx",
+          "operation": "modify",
+          "description": "Ensure AuthContext correctly exposes principal ID, login status flags, and wraps useInternetIdentity login/logout logic. Verify the authorization component is used to initialize access control on login."
+        },
+        {
+          "path": "frontend/src/hooks/useInternetIdentity.ts",
+          "operation": "modify",
+          "description": "Verify Internet Identity authentication using @dfinity/auth-client works end-to-end, with login opening II popup and identity state persisting after success."
+        },
+        {
+          "path": "frontend/src/pages/ProfilePage.tsx",
+          "operation": "modify",
+          "description": "Ensure ProfilePage requires authentication and redirects or shows a login prompt if the user is not authenticated."
+        },
+        {
+          "path": "frontend/src/pages/Perfil.tsx",
+          "operation": "modify",
+          "description": "Ensure Perfil page requires authentication and shows a login prompt if the user is not authenticated."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Restore the /profile page to display: the user's Principal ID, QMY balance, ICP balance, and current XP",
+      "acceptanceCriteria": [
+        "/profile shows Principal ID for authenticated users",
+        "QMY balance is fetched from canister 5o54h-giaaa-aaaad-aentq-cai and displayed",
+        "ICP balance is displayed",
+        "XP is displayed",
+        "All values show '0' if the balance fetch returns empty or zero — the wallet section is always visible"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Perfil.tsx",
+          "operation": "modify",
+          "description": "Display the authenticated user's Principal ID using useInternetIdentity. Fetch QMY balance via useQMYLedger hook from canister 5o54h-giaaa-aaaad-aentq-cai, ICP balance via useICPLedger, and XP from backend profile via useProfile. Always show the wallet section even if balances are zero."
+        },
+        {
+          "path": "frontend/src/hooks/useQMYLedger.ts",
+          "operation": "modify",
+          "description": "Verify useQMYLedger hook fetches QMY balance from the correct canister ID (5o54h-giaaa-aaaad-aentq-cai) using ICRCLedgerClient and returns 0 if balance is unavailable."
+        },
+        {
+          "path": "frontend/src/hooks/useICPLedger.ts",
+          "operation": "modify",
+          "description": "Verify useICPLedger hook fetches ICP balance using ICPLedgerClient and returns 0 if balance is unavailable."
+        },
+        {
+          "path": "frontend/src/hooks/useProfile.ts",
+          "operation": "modify",
+          "description": "Verify useProfile hook fetches the current user's PlayerProfile including XP field from backend actor via getCallerUserProfile and handles null/missing profile gracefully."
+        },
+        {
+          "path": "frontend/src/components/profile/ARCoinBalance.tsx",
+          "operation": "modify",
+          "description": "Ensure ARCoinBalance card always displays the wallet section with available, locked, and bonus token categories showing 0 if no data is available."
+        },
+        {
+          "path": "frontend/src/lib/icrc/ledgerClient.ts",
+          "operation": "modify",
+          "description": "Verify ICRCLedgerClient uses canister ID 5o54h-giaaa-aaaad-aentq-cai for QMY ledger queries."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "On the frontend, after a successful first login, call the welcome bonus endpoint and display a banner/modal showing '+1000 QMY and +100 XP received'",
+      "acceptanceCriteria": [
+        "Welcome bonus banner/modal appears on first login",
+        "It shows +1000 QMY and +100 XP",
+        "It does not appear on subsequent logins",
+        "It can be dismissed by the user"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/WelcomeBonusBanner.tsx",
+          "operation": "modify",
+          "description": "Update WelcomeBonusBanner component to display +1000 QMY and +100 XP amounts with a close/dismiss button. Ensure it renders as a full-screen modal."
+        },
+        {
+          "path": "frontend/src/contexts/AuthContext.tsx",
+          "operation": "modify",
+          "description": "After successful first login, call the backend claimWelcomeBonus endpoint and set a flag/state to trigger WelcomeBonusBanner display. Store a flag in localStorage to prevent showing the banner on subsequent logins."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Conditionally render WelcomeBonusBanner in Layout based on AuthContext state (first login flag)."
+        },
+        {
+          "path": "frontend/src/hooks/useProfile.ts",
+          "operation": "modify",
+          "description": "Add a hook or mutation to call backend claimWelcomeBonus endpoint and handle the response (QMY and XP amounts)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "summary": "Restore the /map page with a fully functional Leaflet + OpenStreetMap 2D map",
+      "acceptanceCriteria": [
+        "Leaflet map renders on /map",
+        "OpenStreetMap tiles load",
+        "Coin markers appear at their real-world coordinates",
+        "Map loads without console errors"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/MapPage.tsx",
+          "operation": "modify",
+          "description": "Ensure MapPage renders a Leaflet map with OpenStreetMap tiles. Fetch coin locations from backend via useMapMarkers hook and display them as markers with custom SVG icons at their real geographic coordinates. Verify map initializes without errors."
+        },
+        {
+          "path": "frontend/src/hooks/useMapMarkers.ts",
+          "operation": "modify",
+          "description": "Verify useMapMarkers hook fetches map markers from backend actor via getMapMarkers with 30-second polling and 15-second stale time."
+        },
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Ensure Leaflet CSS and JS are loaded via CDN in the HTML entry point."
+        },
+        {
+          "path": "frontend/src/lib/map/mapDatasets.ts",
+          "operation": "modify",
+          "description": "Provide fallback static map markers if backend data is unavailable during initial development."
+        }
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "summary": "Implement the basic coin capture mechanic on the map",
+      "acceptanceCriteria": [
+        "Clicking a coin marker within 50m triggers a capture call to the backend",
+        "QMY balance increases after a successful capture",
+        "XP increases proportionally to distance",
+        "Clicking a marker more than 50m away shows 'Too far to capture' message",
+        "Captured coins are removed or marked as taken on the map"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/MapPage.tsx",
+          "operation": "modify",
+          "description": "Add click handlers to coin markers that: 1) Get user's current device location via useSharedLocation hook, 2) Calculate distance to coin using the distance utility, 3) If within 50m, call a backend capture endpoint (to be added in backend plan), 4) If >50m, show 'Too far to capture' toast/message, 5) On success, remove or mark the marker as captured and refresh balances."
+        },
+        {
+          "path": "frontend/src/hooks/useSharedLocation.ts",
+          "operation": "modify",
+          "description": "Verify useSharedLocation hook watches the device's geolocation and returns current position, loading state, and errors."
+        },
+        {
+          "path": "frontend/src/utils/distance.ts",
+          "operation": "modify",
+          "description": "Verify the Haversine distance calculation function returns distance in meters between two lat/lon coordinates."
+        },
+        {
+          "path": "frontend/src/hooks/useProfile.ts",
+          "operation": "modify",
+          "description": "Add a mutation hook to call a backend coin capture endpoint (captureCoin or similar) that accepts coin ID and user location, returning updated QMY balance and XP."
+        },
+        {
+          "path": "frontend/src/hooks/useMapMarkers.ts",
+          "operation": "modify",
+          "description": "Add logic to invalidate or refetch map markers after a successful coin capture to reflect the updated state."
+        }
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "summary": "Temporarily disable or hide the following features from the UI and routing: Advanced Central Bank dashboard, DAO voting and proposals, complex vesting schedules, public token burns, and all charts/graphs",
+      "acceptanceCriteria": [
+        "DAO pages are not accessible from main navigation",
+        "Central Bank advanced page is not accessible from main navigation",
+        "Complex vesting pages are not accessible from main navigation",
+        "Public burn pages are not accessible from main navigation",
+        "Chart components are not rendered on any active page",
+        "Bottom navigation only shows: Home, Map, Profile"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/BottomNav.tsx",
+          "operation": "modify",
+          "description": "Remove tabs for DAO, Banco (Central Bank), AR, and Chat from the bottom navigation bar. Keep only Home, Map, and Profile tabs visible."
+        },
+        {
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "modify",
+          "description": "Remove or comment out navigation links to DAO, Central Bank, AR, Chat, Vesting, Burn, and Chart pages from the desktop nav and mobile menu."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Comment out or remove route registrations for DAO pages (DAOPage, DAOProposalDetailPage, DAOCreateProposalPage), Central Bank (BancoCentral), Vesting (VestingQTM, VestingDeflationPage), Burn (QueimaDeflacao), and any chart/graph pages."
+        },
+        {
+          "path": "frontend/src/pages/BancoCentral.tsx",
+          "operation": "modify",
+          "description": "Add a 'Coming Soon' placeholder message to the Central Bank page or prevent navigation to it entirely."
+        },
+        {
+          "path": "frontend/src/pages/DAOPage.tsx",
+          "operation": "modify",
+          "description": "Replace page content with a 'Coming Soon' placeholder message."
+        },
+        {
+          "path": "frontend/src/pages/QueimaDeflacao.tsx",
+          "operation": "modify",
+          "description": "Replace page content with a 'Coming Soon' placeholder message."
+        },
+        {
+          "path": "frontend/src/components/central-bank/SupplyChartsSection.tsx",
+          "operation": "modify",
+          "description": "Prevent this chart component from rendering on any page by removing its usage or conditionally hiding it."
+        },
+        {
+          "path": "frontend/src/components/central-bank/VestingChart.tsx",
+          "operation": "modify",
+          "description": "Prevent this chart component from rendering on any page by removing its usage or conditionally hiding it."
+        }
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "summary": "Simplify the bottom navigation bar to show only the core active tabs: Home, Map, and Profile",
+      "acceptanceCriteria": [
+        "Bottom nav has exactly 3 tabs: Home, Map, Profile",
+        "Removed tabs do not appear",
+        "Active tab is highlighted in yellow/gold"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/BottomNav.tsx",
+          "operation": "modify",
+          "description": "Reduce the bottom navigation to exactly 3 tabs: Home, Map, and Profile. Remove AR, DAO, Banco, and Chat tabs. Ensure the active tab is highlighted with yellow/gold accent color."
+        }
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "summary": "Restore a basic transaction history display on /profile showing the user's recent QMY coin captures",
+      "acceptanceCriteria": [
+        "Transaction/capture history section is visible on /profile",
+        "Each entry shows date, QMY received, and XP gained",
+        "Empty state message is shown when no history exists"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Perfil.tsx",
+          "operation": "modify",
+          "description": "Add a transaction history section that displays recent QMY coin captures. Fetch capture history from backend (via a new query hook) and render each entry with date, QMY amount, and XP gained. Show 'No captures yet' empty state message when history is empty. Always display the section."
+        },
+        {
+          "path": "frontend/src/hooks/useProfile.ts",
+          "operation": "modify",
+          "description": "Add a query hook to fetch the user's capture/transaction history from backend actor (e.g., getCaptureHistory endpoint to be added in backend plan)."
+        },
+        {
+          "path": "frontend/src/components/wallet/QMYTransactionHistory.tsx",
+          "operation": "modify",
+          "description": "Update QMYTransactionHistory component to display capture history entries with date, QMY received, XP gained, and handle loading/error/empty states. Always render the section."
         }
       ]
     }

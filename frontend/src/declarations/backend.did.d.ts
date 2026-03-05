@@ -87,7 +87,6 @@ export interface QMYPurchaseRequest {
   'timestamp' : bigint,
   'buyer' : Principal,
 }
-export type UserId = bigint;
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
@@ -119,6 +118,7 @@ export interface _SERVICE {
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'claimWelcomeBonus' : ActorMethod<[], [bigint, bigint]>,
   'getARSpotClaims' : ActorMethod<[], Array<ARSpotClaim>>,
   'getARSpotDistributions' : ActorMethod<[], Array<ARSpotDistribution>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [PlayerProfile]>,
@@ -129,8 +129,7 @@ export interface _SERVICE {
   'getPlayerByAddress' : ActorMethod<[Principal], [] | [PlayerProfile]>,
   'getPlayerDailyLimits' : ActorMethod<[], DailyLimits>,
   'getQMYPurchaseRequest' : ActorMethod<[], [] | [QMYPurchaseRequest]>,
-  'getUserIdForCaller' : ActorMethod<[], UserId>,
-  'getUserProfile' : ActorMethod<[UserId], [] | [PlayerProfile]>,
+  'getUserProfile' : ActorMethod<[Principal], [] | [PlayerProfile]>,
   'initializeAccessControl' : ActorMethod<[], undefined>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'paymentCancel' : ActorMethod<[string], PaymentCancelResponse>,

@@ -152,7 +152,6 @@ export interface ARSpotClaim {
     spotId: string;
     qtmAmount: bigint;
 }
-export type UserId = bigint;
 export interface QMYPurchaseRequest {
     tokensRequested: bigint;
     timestamp: bigint;
@@ -199,6 +198,7 @@ export interface backendInterface {
     _caffeineStorageRefillCashier(refillInformation: _CaffeineStorageRefillInformation | null): Promise<_CaffeineStorageRefillResult>;
     _caffeineStorageUpdateGatewayPrincipals(): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    claimWelcomeBonus(): Promise<[bigint, bigint]>;
     getARSpotClaims(): Promise<Array<ARSpotClaim>>;
     getARSpotDistributions(): Promise<Array<ARSpotDistribution>>;
     getCallerUserProfile(): Promise<PlayerProfile | null>;
@@ -209,8 +209,7 @@ export interface backendInterface {
     getPlayerByAddress(addr: Principal): Promise<PlayerProfile | null>;
     getPlayerDailyLimits(): Promise<DailyLimits>;
     getQMYPurchaseRequest(): Promise<QMYPurchaseRequest | null>;
-    getUserIdForCaller(): Promise<UserId>;
-    getUserProfile(userId: UserId): Promise<PlayerProfile | null>;
+    getUserProfile(user: Principal): Promise<PlayerProfile | null>;
     initializeAccessControl(): Promise<void>;
     isCallerAdmin(): Promise<boolean>;
     paymentCancel(sessionId: string): Promise<PaymentCancelResponse>;
@@ -320,6 +319,26 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n8(this._uploadFile, this._downloadFile, arg1));
             return result;
+        }
+    }
+    async claimWelcomeBonus(): Promise<[bigint, bigint]> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.claimWelcomeBonus();
+                return [
+                    result[0],
+                    result[1]
+                ];
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.claimWelcomeBonus();
+            return [
+                result[0],
+                result[1]
+            ];
         }
     }
     async getARSpotClaims(): Promise<Array<ARSpotClaim>> {
@@ -462,21 +481,7 @@ export class Backend implements backendInterface {
             return from_candid_opt_n21(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getUserIdForCaller(): Promise<UserId> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getUserIdForCaller();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getUserIdForCaller();
-            return result;
-        }
-    }
-    async getUserProfile(arg0: UserId): Promise<PlayerProfile | null> {
+    async getUserProfile(arg0: Principal): Promise<PlayerProfile | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getUserProfile(arg0);

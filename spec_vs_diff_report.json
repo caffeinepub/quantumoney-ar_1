@@ -1,34 +1,169 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-27T18:31:29.390Z",
-  "summary": "All four requirements are substantially implemented. REQ-1 (3D coins via React Three Fiber) is addressed by the new FloatingQMYCoins.tsx with at least 5 coins, gold metallic material, QMY text, and float/drift animations. REQ-2 (luxury aesthetic) is addressed by luxury CSS classes in index.css and the redesigned HomePage.tsx. REQ-3 (scroll-to-title on load) is implemented via useEffect/scrollIntoView in HomePage.tsx. REQ-4 (remove Caffeine references) is reflected in the file-summaries noting no Caffeine references in index.html and footers. One minor concern: Footer.tsx is not shown directly in the diff, so Caffeine removal there cannot be fully confirmed from the diff alone.",
+  "generatedAt": "2026-03-01T22:19:08.692Z",
+  "summary": "The diff implements a substantial portion of the requirements, including removing animated/3D elements, simplifying navigation, restoring footer, fixing layout, implementing AuthContext with Internet Identity, welcome bonus banner, QMY/ICP balance hooks, bottom nav with 3 tabs, and basic profile page structure. However, several backend requirements and some frontend details are missing or incomplete.",
   "missing_requirements": [
     {
-      "id": "REQ-4",
-      "requirement": "Remove all references to 'Caffeine' from Footer.tsx, Layout.tsx, and any other frontend files",
-      "reason": "Footer.tsx and Layout.tsx are not shown as modified files in the diff. There is no direct evidence of those files being changed to remove Caffeine references, only an indirect note in the file summaries.",
+      "id": "REQ-3",
+      "requirement": "Footer text reads '© 2026 Quantumoney. All rights reserved.' — the exact English phrase required",
+      "reason": "The Footer.tsx shows '© 2026 Quantumoney. Todos os direitos reservados.' (Portuguese) instead of the exact required English text '© 2026 Quantumoney. All rights reserved.'",
       "evidence": [
-        "frontend/src/components/Footer.tsx",
-        "frontend/src/Layout.tsx"
+        "frontend/src/components/Footer.tsx"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "requirement": "QMY balance fetched from canister 5o54h-giaaa-aaaad-aentq-cai and displayed on /profile",
+      "reason": "The useQMYLedger hook references ICRCLedgerClient but the ICRCLedgerClient implementation is not shown in the diff, so it cannot be confirmed that it targets canister ID 5o54h-giaaa-aaaad-aentq-cai.",
+      "evidence": [
+        "frontend/src/hooks/useQMYLedger.ts"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "requirement": "Backend stores per-user welcomeBonusGranted flag, grants +1000 QMY and +100 XP on first login, persists via stable storage",
+      "reason": "The backend/main.mo is truncated. While a welcomeBonuses map exists, the actual Motoko claimWelcomeBonus logic, flag check, token/XP grant, and stable storage persistence are not visible.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "requirement": "Backend stores and serves 600,000,000 QMY distributed across at least 50 geographic coin cluster locations with lat/lon/amount/id in stable storage, with a query endpoint",
+      "reason": "The backend/main.mo is truncated and only shows generic MapMarker types. No initialization of 600M QMY across 50+ geographic clusters or a dedicated coin-location query endpoint is visible.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "requirement": "Map page fetches coin locations from backend and displays them as Leaflet markers at real geographic coordinates",
+      "reason": "MapPage is referenced in App.tsx but its implementation file is not shown in the diff. It cannot be confirmed whether the Leaflet map is implemented and fetches from the backend.",
+      "evidence": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "requirement": "Coin capture mechanic: within 50m triggers backend capture call, awards XP proportional to distance, updates QMY balance; more than 50m shows error; captured coins removed from map",
+      "reason": "MapPage implementation is not shown in the diff. No capture mechanic, distance calculation, or capture backend endpoint is visible.",
+      "evidence": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "requirement": "Backend XP system with addXP endpoint and stable storage persistence",
+      "reason": "While PlayerProfile in the truncated backend includes an xp field, the addXP endpoint implementation and stable storage persistence are not confirmed due to truncation.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "requirement": "Transaction/capture history section on /profile showing date, QMY received, XP gained per entry with empty state message",
+      "reason": "The Perfil/profile page implementation is not shown in the diff. The LanguageContext includes captureHistory translations suggesting intent, but the actual profile page history rendering is not confirmed.",
+      "evidence": [
+        "frontend/src/contexts/LanguageContext.tsx"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "requirement": "Welcome bonus only appears once per user — subsequent logins must not trigger it again",
+      "reason": "The WelcomeBonusBanner and triggerWelcomeBonus are implemented but there is no persistent check shown to prevent re-showing on subsequent logins. The logic to call the bonus endpoint only on first login is not visible in AuthContext.",
+      "evidence": [
+        "frontend/src/contexts/AuthContext.tsx",
+        "frontend/src/components/WelcomeBonusBanner.tsx"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Pre-hero section with a logo image, 'Scroll para descobrir' Portuguese text, and an animated bounce chevron arrow added above the hero title",
-      "reason": "The build request only requires a spacer/pre-hero element to enable scroll-into-view behavior. The specific logo image, Portuguese discovery text, and animated SVG chevron were not requested.",
+      "description": "CookieConsentBanner component with cookie consent logic",
+      "reason": "No cookie consent banner or related feature was requested in the build requirements.",
       "evidence": [
-        "frontend/src/pages/HomePage.tsx"
+        "frontend/src/components/CookieConsentBanner.tsx"
+      ]
+    },
+    {
+      "description": "Chat message hooks (useGetChatMessages, useSendChatMessage) retained in useQueries.ts",
+      "reason": "Real-time WebSocket chat is explicitly listed as a non-goal, yet chat query and mutation hooks remain in the codebase.",
+      "evidence": [
+        "frontend/src/hooks/useQueries.ts"
+      ]
+    },
+    {
+      "description": "Stripe integration retained in backend via import Stripe and StripeMixin",
+      "reason": "Stripe payments are explicitly listed as a non-goal and should not be present.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "AR spot claim types and maps (ARSpotClaim, ARSpotDistribution, arSpotClaims, arSpotDistributions) retained in backend",
+      "reason": "AR camera features are explicitly listed as a non-goal and should not be implemented.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Monster collection types (Monster, CapturedMonster, capturedMonsters in PlayerProfile) retained in backend",
+      "reason": "Monster collection system is explicitly listed as a non-goal.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "LoginButton component uses animate-spin CSS animation class on the Loader2 icon",
+      "reason": "REQ-1 prohibits CSS animation classes. The LoginButton uses animate-spin which violates the no-animations constraint.",
+      "evidence": [
+        "frontend/src/components/LoginButton.tsx"
       ]
     }
   ],
-  "confidence": 0.72,
+  "confidence": 0.62,
   "changed_files": [
+    "backend/main.mo",
     "frontend-file-summaries.txt",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/BottomNav.tsx",
+    "frontend/src/components/CookieConsentBanner.tsx",
+    "frontend/src/components/Footer.tsx",
+    "frontend/src/components/Header.tsx",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/components/LoginButton.tsx",
+    "frontend/src/components/WelcomeBonusBanner.tsx",
+    "frontend/src/components/quantum/QuantumUniverseScene.tsx",
+    "frontend/src/components/space/SpaceBackground.tsx",
     "frontend/src/components/three/FloatingQMYCoins.tsx",
+    "frontend/src/contexts/AuthContext.tsx",
+    "frontend/src/contexts/LanguageContext.tsx",
+    "frontend/src/hooks/useICPLedger.ts",
+    "frontend/src/hooks/useQMYLedger.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/hooks/useSharedLocation.ts",
     "frontend/src/index.css",
+    "frontend/src/lib/icp/ledgerClient.ts",
+    "frontend/src/lib/icrc/icrc.idl.ts",
+    "frontend/src/lib/icrc/ledgerClient.ts",
+    "frontend/src/pages/AboutPage.tsx",
+    "frontend/src/pages/Colecao.tsx",
+    "frontend/src/pages/DAOCreateProposalPage.tsx",
+    "frontend/src/pages/DAOPage.tsx",
+    "frontend/src/pages/DAOProposalDetailPage.tsx",
+    "frontend/src/pages/GameSystemsPage.tsx",
+    "frontend/src/pages/GoldPaper.tsx",
     "frontend/src/pages/HomePage.tsx",
+    "frontend/src/pages/LandingPage.tsx",
+    "frontend/src/pages/MapPage.tsx",
+    "frontend/src/pages/Perfil.tsx",
+    "frontend/src/pages/PreProposalDetailPage.tsx",
+    "frontend/src/pages/PreProposalsPage.tsx",
+    "frontend/src/pages/PublicChatPage.tsx",
+    "frontend/src/utils/distance.ts",
+    "frontend/tailwind.config.js",
     "project_state.json"
   ]
 }

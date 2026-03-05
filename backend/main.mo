@@ -15,10 +15,10 @@ import Iter "mo:core/Iter";
 
 
 
+
 actor {
   include MixinStorage();
 
-  type UserId = Nat;
   type Monster = {
     name : Text;
     energyBoost : Nat;
@@ -95,27 +95,18 @@ actor {
     timestamp : Int;
   };
 
-  type SuperUserRole = {
-    #admin;
-    #user;
-    #guest;
-  };
-
   let accessControlState = AccessControl.initState();
   let stripe = Stripe.init(accessControlState, "usd");
 
-  // Storage maps using UserId
-  let userProfiles = Map.empty<UserId, PlayerProfile>();
-  let dailyLimits = Map.empty<UserId, DailyLimits>();
-  let principalToUserId = Map.empty<Principal, UserId>();
-  var nextUserId : UserId = 1;
-
+  let userProfiles = Map.empty<Principal, PlayerProfile>();
+  let dailyLimits = Map.empty<Principal, DailyLimits>();
   let plantedCoins = Map.empty<Text, PlantedCoin>();
   let arSpotClaims = Map.empty<Text, ARSpotClaim>();
   let arSpotDistributions = Map.empty<Text, ARSpotDistribution>();
   let mapMarkers = Map.empty<Text, MapMarker>();
-  var qmyPurchaseRequests = Map.empty<Principal, QMYPurchaseRequest>();
+  let qmyPurchaseRequests = Map.empty<Principal, QMYPurchaseRequest>();
   let chatMessages = Map.empty<Nat, ChatMessage>();
+  let welcomeBonuses = Map.empty<Principal, Bool>();
 
   var fixedQmyPrice : Float = 0.02;
   var chatMessageCounter = 0;
@@ -140,32 +131,14 @@ actor {
     AccessControl.isAdmin(accessControlState, caller);
   };
 
-  // Helper 'get' that creates new user IDs for new callers.
-  private func getUserIdInternal(principal : Principal) : UserId {
-    switch (principalToUserId.get(principal)) {
-      case (?userId) { userId };
-      case (null) {
-        let newUserId = nextUserId;
-        principalToUserId.add(principal, newUserId);
-        nextUserId += 1;
-        newUserId;
-      };
-    };
-  };
-
-  // Helper for public calls to avoid accidental ID creation.
-  private func getCallerUserId(caller : Principal) : UserId {
-    getUserIdInternal(caller);
-  };
-
-  private func resetDailyLimitsIfNeeded(userId : UserId) {
+  private func resetDailyLimitsIfNeeded(caller : Principal) {
     let now = Time.now();
     let oneDayNanos : Int = 24 * 60 * 60 * 1_000_000_000;
 
-    switch (dailyLimits.get(userId)) {
+    switch (dailyLimits.get(caller)) {
       case (?limits) {
         if (now - limits.lastResetTime >= oneDayNanos) {
-          dailyLimits.add(userId, {
+          dailyLimits.add(caller, {
             plantsToday = 0;
             rescuesToday = 0;
             lastResetTime = now;
@@ -173,7 +146,7 @@ actor {
         };
       };
       case (null) {
-        dailyLimits.add(userId, {
+        dailyLimits.add(caller, {
           plantsToday = 0;
           rescuesToday = 0;
           lastResetTime = now;
@@ -182,33 +155,20 @@ actor {
     };
   };
 
-  private func calculateDistance(lat1 : Float, lon1 : Float, lat2 : Float, lon2 : Float) : Float {
-    let earthRadiusMeters : Float = 6371000.0;
-    let dLat = (lat2 - lat1) * 3.14159265359 / 180.0;
-    let dLon = (lon2 - lon1) * 3.14159265359 / 180.0;
-
-    let a = Float.sin(dLat / 2.0) * Float.sin(dLat / 2.0) +
-      Float.cos(lat1 * 3.14159265359 / 180.0) * Float.cos(lat2 * 3.14159265359 / 180.0) *
-      Float.sin(dLon / 2.0) * Float.sin(dLon / 2.0);
-
-    let c = 2.0 * Float.arctan2(Float.sqrt(a), Float.sqrt(1.0 - a));
-    earthRadiusMeters * c;
-  };
-
   // Get the caller's own profile — requires at least user role
   public query ({ caller }) func getCallerUserProfile() : async ?PlayerProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can view their profile");
     };
-    userProfiles.get(getCallerUserId(caller));
+    userProfiles.get(caller);
   };
 
-  // Get another user's profile by UserId — admin only
-  public query ({ caller }) func getUserProfile(userId : UserId) : async ?PlayerProfile {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
-      Runtime.trap("Unauthorized: Only admins can view other users' profiles");
+  // Get another user's profile by Principal — caller can view own profile; admins can view any
+  public query ({ caller }) func getUserProfile(user : Principal) : async ?PlayerProfile {
+    if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Can only view your own profile");
     };
-    userProfiles.get(userId);
+    userProfiles.get(user);
   };
 
   // Save the caller's own profile — requires at least user role
@@ -216,72 +176,128 @@ actor {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can save their profiles");
     };
-    userProfiles.add(getCallerUserId(caller), profile);
+    userProfiles.add(caller, profile);
   };
 
-  // Extension: Dedicated updateProfile method for nickname and photoUrl
+  // Dedicated updateProfile method for nickname and photoUrl — requires at least user role
   public shared ({ caller }) func updateProfile(nickname : Text, photoUrl : ?Storage.ExternalBlob) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can update their own profiles");
     };
 
-    let userId = getCallerUserId(caller);
-
-    switch (userProfiles.get(userId)) {
+    switch (userProfiles.get(caller)) {
       case (?existingProfile) {
         let updatedProfile : PlayerProfile = {
           existingProfile with
           nickname;
           photoUrl;
         };
-        userProfiles.add(userId, updatedProfile);
+        userProfiles.add(caller, updatedProfile);
       };
       case (null) {
         let newProfile : PlayerProfile = {
-          energy = 100; 
+          energy = 100;
           nickname;
           photoUrl;
-          availableTokens = 0; 
+          availableTokens = 0;
           plantedTokens = 0;
-          bonusTokens = 0; 
-          xp = 0; 
-          level = 1; 
-          registered = true; 
+          bonusTokens = 0;
+          xp = 0;
+          level = 1;
+          registered = true;
           capturedMonsters = [];
         };
-        userProfiles.add(userId, newProfile);
+        userProfiles.add(caller, newProfile);
       };
     };
   };
 
-  // Get the caller's own UserId — no auth required (public info about self)
-  public query ({ caller }) func getUserIdForCaller() : async UserId {
-    getCallerUserId(caller);
+  // Claim the one-time welcome bonus — requires at least user role.
+  // Anonymous/guest principals are explicitly rejected to prevent abuse.
+  // The bonus is recorded on-chain so it cannot be re-triggered by any
+  // client-side action (cache clear, logout/login, etc.).
+  public shared ({ caller }) func claimWelcomeBonus() : async (Nat, Nat) {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can claim the welcome bonus");
+    };
+
+    switch (welcomeBonuses.get(caller)) {
+      case (?true) {
+        Runtime.trap("You have already claimed the welcome bonus.");
+      };
+      case (_) {
+        let bonusQmy : Nat = 1000;
+        let bonusXp : Nat = 100;
+
+        // Record the bonus as claimed before updating the profile so that
+        // even if the profile update path traps, the bonus cannot be
+        // re-claimed (fail-safe: mark first, then apply).
+        welcomeBonuses.add(caller, true);
+
+        // Apply the bonus to the caller's profile, creating one if absent.
+        switch (userProfiles.get(caller)) {
+          case (?existingProfile) {
+            let updatedProfile : PlayerProfile = {
+              existingProfile with
+              availableTokens = existingProfile.availableTokens + bonusQmy;
+              bonusTokens = existingProfile.bonusTokens + bonusQmy;
+              xp = existingProfile.xp + bonusXp;
+            };
+            userProfiles.add(caller, updatedProfile);
+          };
+          case (null) {
+            let newProfile : PlayerProfile = {
+              energy = 100;
+              nickname = "";
+              photoUrl = null;
+              availableTokens = bonusQmy;
+              plantedTokens = 0;
+              bonusTokens = bonusQmy;
+              xp = bonusXp;
+              level = 1;
+              registered = true;
+              capturedMonsters = [];
+            };
+            userProfiles.add(caller, newProfile);
+          };
+        };
+
+        (bonusQmy, bonusXp);
+      };
+    };
   };
 
-  // Public game data reads — no auth required
-  public query ({ caller }) func getPlantedCoins() : async [PlantedCoin] {
+  // ── Public Game Data (no auth required) ───────────────────────────────────
+
+  public query func getPlantedCoins() : async [PlantedCoin] {
     plantedCoins.values().toArray();
   };
 
-  public query ({ caller }) func getARSpotClaims() : async [ARSpotClaim] {
+  public query func getARSpotClaims() : async [ARSpotClaim] {
     arSpotClaims.values().toArray();
   };
 
-  public query ({ caller }) func getARSpotDistributions() : async [ARSpotDistribution] {
+  public query func getARSpotDistributions() : async [ARSpotDistribution] {
     arSpotDistributions.values().toArray();
   };
 
-  public query ({ caller }) func getMapMarkers() : async [MapMarker] {
+  public query func getMapMarkers() : async [MapMarker] {
     mapMarkers.values().toArray();
   };
+
+  // Look up a player profile by their principal — no auth required (public game data)
+  public query func getPlayerByAddress(addr : Principal) : async ?PlayerProfile {
+    userProfiles.get(addr);
+  };
+
+  // ── Daily Limits ──────────────────────────────────────────────────────────
 
   // Get caller's own daily limits — requires at least user role
   public query ({ caller }) func getPlayerDailyLimits() : async DailyLimits {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can view daily limits");
     };
-    switch (dailyLimits.get(getCallerUserId(caller))) {
+    switch (dailyLimits.get(caller)) {
       case (?limits) { limits };
       case (null) {
         Runtime.trap("No daily limits found for this user");
@@ -294,12 +310,14 @@ actor {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can update daily limits");
     };
-    dailyLimits.add(getCallerUserId(caller), {
+    dailyLimits.add(caller, {
       plantsToday;
       rescuesToday;
       lastResetTime = Time.now();
     });
   };
+
+  // ── QMY Purchase Requests ─────────────────────────────────────────────────
 
   // Get caller's own QMY purchase request — requires at least user role
   public query ({ caller }) func getQMYPurchaseRequest() : async ?QMYPurchaseRequest {
@@ -309,16 +327,23 @@ actor {
     qmyPurchaseRequests.get(caller);
   };
 
-  // Submit a QMY purchase request — requires at least user role
+  // Submit a QMY purchase request — requires at least user role.
+  // The buyer field in the request must match the caller to prevent
+  // one user from submitting requests on behalf of another.
   public shared ({ caller }) func submitQMYPurchaseRequest(request : QMYPurchaseRequest) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can submit purchase requests");
     };
+    if (request.buyer != caller) {
+      Runtime.trap("Unauthorized: Purchase request buyer must match the caller");
+    };
     qmyPurchaseRequests.add(caller, request);
   };
 
+  // ── Chat ──────────────────────────────────────────────────────────────────
+
   // Read chat messages — no auth required (public chat)
-  public query ({ caller }) func getChatMessages() : async [ChatMessage] {
+  public query func getChatMessages() : async [ChatMessage] {
     chatMessages.values().toArray();
   };
 
@@ -327,7 +352,7 @@ actor {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can send chat messages");
     };
-    let senderName = switch (userProfiles.get(getCallerUserId(caller))) {
+    let senderName = switch (userProfiles.get(caller)) {
       case (?profile) { profile.nickname };
       case (null) { "Anonymous" };
     };
@@ -341,12 +366,5 @@ actor {
 
     chatMessageCounter += 1;
   };
-
-  // Look up a player profile by their principal — no auth required (public game data)
-  public query ({ caller }) func getPlayerByAddress(addr : Principal) : async ?PlayerProfile {
-    switch (principalToUserId.get(addr)) {
-      case (?userId) { userProfiles.get(userId) };
-      case (null) { null };
-    };
-  };
 };
+

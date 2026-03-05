@@ -90,7 +90,6 @@ export const QMYPurchaseRequest = IDL.Record({
   'timestamp' : IDL.Int,
   'buyer' : IDL.Principal,
 });
-export const UserId = IDL.Nat;
 export const PaymentCancelResponse = IDL.Record({
   'message' : IDL.Text,
   'sessionId' : IDL.Text,
@@ -133,6 +132,7 @@ export const idlService = IDL.Service({
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'claimWelcomeBonus' : IDL.Func([], [IDL.Nat, IDL.Nat], []),
   'getARSpotClaims' : IDL.Func([], [IDL.Vec(ARSpotClaim)], ['query']),
   'getARSpotDistributions' : IDL.Func(
       [],
@@ -155,8 +155,11 @@ export const idlService = IDL.Service({
       [IDL.Opt(QMYPurchaseRequest)],
       ['query'],
     ),
-  'getUserIdForCaller' : IDL.Func([], [UserId], ['query']),
-  'getUserProfile' : IDL.Func([UserId], [IDL.Opt(PlayerProfile)], ['query']),
+  'getUserProfile' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Opt(PlayerProfile)],
+      ['query'],
+    ),
   'initializeAccessControl' : IDL.Func([], [], []),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'paymentCancel' : IDL.Func([IDL.Text], [PaymentCancelResponse], []),
@@ -257,7 +260,6 @@ export const idlFactory = ({ IDL }) => {
     'timestamp' : IDL.Int,
     'buyer' : IDL.Principal,
   });
-  const UserId = IDL.Nat;
   const PaymentCancelResponse = IDL.Record({
     'message' : IDL.Text,
     'sessionId' : IDL.Text,
@@ -300,6 +302,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'claimWelcomeBonus' : IDL.Func([], [IDL.Nat, IDL.Nat], []),
     'getARSpotClaims' : IDL.Func([], [IDL.Vec(ARSpotClaim)], ['query']),
     'getARSpotDistributions' : IDL.Func(
         [],
@@ -322,8 +325,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(QMYPurchaseRequest)],
         ['query'],
       ),
-    'getUserIdForCaller' : IDL.Func([], [UserId], ['query']),
-    'getUserProfile' : IDL.Func([UserId], [IDL.Opt(PlayerProfile)], ['query']),
+    'getUserProfile' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Opt(PlayerProfile)],
+        ['query'],
+      ),
     'initializeAccessControl' : IDL.Func([], [], []),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'paymentCancel' : IDL.Func([IDL.Text], [PaymentCancelResponse], []),

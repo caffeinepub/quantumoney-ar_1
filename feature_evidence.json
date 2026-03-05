@@ -2,10 +2,14 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-replace-the-existing-floating-coin-image-animations-on-the-home-page-homepage-tsx-with-fully-3d-rendered-qmy-coins-using-react-three-fiber-three-js-each-coin-must-be-a-realistic-disc-coin-shape-with-qmy-embossed-or-inscribed-on-its-face-a-gold-metallic-material-with-specular-highlights-and-float-drift-smoothly-and-gently-across-the-space-background-with-subtle-rotation-remove-all-img-or-css-based-coin-image-elements-used-for-the-floating-coins",
-      "featureTitle": "Replace the existing floating coin image animations on the Home page (HomePage.tsx) with fully 3D rendered QMY coins using React Three Fiber / Three.js. Each coin must be a realistic disc/coin shape with 'QMY' embossed or inscribed on its face, a gold metallic material with specular highlights, and float/drift smoothly and gently across the space background with subtle rotation. Remove all <img> or CSS-based coin image elements used for the floating coins.",
+      "featureId": "feature-remove-all-animated-coin-visuals-3d-decorative-elements-including-floatingqmycoins-spacebackground-quantumuniversescene-and-any-three-js-react-three-fiber-components-and-unnecessary-visual-overlays-from-all-pages-the-ui-must-be-static-no-animations-until-the-system-is-fully-functional",
+      "featureTitle": "Remove all animated coin visuals, 3D decorative elements (including FloatingQMYCoins, SpaceBackground, QuantumUniverseScene, and any Three.js/React Three Fiber components), and unnecessary visual overlays from all pages. The UI must be static — no animations until the system is fully functional.",
       "files": [
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/components/quantum/QuantumUniverseScene.tsx",
+        "frontend/src/components/space/SpaceBackground.tsx",
         "frontend/src/components/three/FloatingQMYCoins.tsx",
+        "frontend/src/index.css",
         "frontend/src/pages/HomePage.tsx"
       ],
       "components": [
@@ -26,11 +30,13 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-redesign-the-home-page-homepage-tsx-to-have-a-luxury-aesthetic-apply-rich-gold-deep-black-and-champagne-color-palettes-elegant-serif-typography-cinzel-already-available-glass-morphism-or-dark-velvet-card-surfaces-subtle-gold-glow-effects-on-key-elements-and-refined-spacing-the-overall-feel-must-evoke-high-end-exclusivity-consistent-with-a-luxury-financial-token-brand",
-      "featureTitle": "Redesign the Home page (HomePage.tsx) to have a luxury aesthetic. Apply rich gold, deep black, and champagne color palettes, elegant serif typography (Cinzel already available), glass-morphism or dark velvet card surfaces, subtle gold glow effects on key elements, and refined spacing. The overall feel must evoke high-end exclusivity consistent with a luxury financial/token brand.",
+      "featureId": "feature-fix-all-page-titles-where-the-string-nav-appears-as-a-prefix-e-g-nav-map-nav-profile-replace-them-with-clean-human-readable-english-portuguese-titles",
+      "featureTitle": "Fix all page titles where the string 'nav.' appears as a prefix (e.g., 'nav.map', 'nav.profile') — replace them with clean, human-readable English/Portuguese titles.",
       "files": [
-        "frontend/src/index.css",
-        "frontend/src/pages/HomePage.tsx"
+        "frontend/src/components/BottomNav.tsx",
+        "frontend/src/components/Header.tsx",
+        "frontend/src/contexts/LanguageContext.tsx",
+        "frontend/src/pages/MapPage.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -50,10 +56,14 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-on-the-home-page-homepage-tsx-implement-a-scroll-down-behavior-on-initial-load-so-the-page-automatically-scrolls-downward-slightly-to-reveal-the-main-page-title-hero-heading-the-very-top-of-the-page-above-the-title-should-scroll-out-of-view-on-load-making-the-title-the-first-prominent-visible-element-while-still-allowing-the-user-to-scroll-back-up",
-      "featureTitle": "On the Home page (HomePage.tsx), implement a scroll-down behavior on initial load so the page automatically scrolls downward slightly to reveal the main page title/hero heading. The very top of the page (above the title) should scroll out of view on load, making the title the first prominent visible element, while still allowing the user to scroll back up.",
+      "featureId": "feature-restore-a-fixed-footer-across-all-pages-displaying-exactly-2026-quantumoney-all-rights-reserved-and-by-htgamers-remove-any-reference-to-caffeine-from-the-footer-and-from-all-user-facing-page-content",
+      "featureTitle": "Restore a fixed footer across all pages displaying exactly: '© 2026 Quantumoney. All rights reserved.' and 'By HTgamers'. Remove any reference to 'Caffeine' from the footer and from all user-facing page content.",
       "files": [
-        "frontend/src/pages/HomePage.tsx"
+        "frontend/src/components/Footer.tsx",
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/pages/AboutPage.tsx",
+        "frontend/src/pages/HomePage.tsx",
+        "frontend/src/pages/LandingPage.tsx"
       ],
       "components": [
         "camera@1.0.0",
@@ -69,6 +79,228 @@
       ],
       "testIds": [
         "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-enforce-a-clean-simple-dark-layout-with-yellow-gold-accent-details-across-the-entire-app-no-gradients-no-glow-effects-no-decorative-overlays-typography-must-be-readable-this-is-the-baseline-visual-style-until-the-system-is-stable",
+      "featureTitle": "Enforce a clean, simple dark layout with yellow/gold accent details across the entire app. No gradients, no glow effects, no decorative overlays. Typography must be readable. This is the baseline visual style until the system is stable.",
+      "files": [
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-restore-internet-identity-login-as-the-sole-authentication-method-login-must-work-end-to-end-clicking-login-opens-the-internet-identity-flow-and-on-success-the-user-s-principal-is-available-throughout-the-app-via-authcontext",
+      "featureTitle": "Restore Internet Identity login as the sole authentication method. Login must work end-to-end: clicking login opens the Internet Identity flow, and on success the user's Principal is available throughout the app via AuthContext.",
+      "files": [
+        "frontend/src/components/LoginButton.tsx",
+        "frontend/src/contexts/AuthContext.tsx",
+        "frontend/src/pages/Perfil.tsx"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-restore-the-profile-page-to-display-the-user-s-principal-id-qmy-balance-fetched-from-ledger-canister-5o54h-giaaa-aaaad-aentq-cai-icp-balance-and-current-xp-if-any-balance-is-unavailable-or-zero-display-0-never-hide-the-wallet-section",
+      "featureTitle": "Restore the /profile page to display: the user's Principal ID, QMY balance (fetched from Ledger canister 5o54h-giaaa-aaaad-aentq-cai), ICP balance, and current XP. If any balance is unavailable or zero, display 0 — never hide the wallet section.",
+      "files": [
+        "frontend/src/hooks/useICPLedger.ts",
+        "frontend/src/hooks/useQMYLedger.ts",
+        "frontend/src/lib/icrc/ledgerClient.ts",
+        "frontend/src/pages/Perfil.tsx"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-on-the-frontend-after-a-successful-first-login-call-the-welcome-bonus-endpoint-and-display-a-banner-modal-showing-1000-qmy-and-100-xp-received-this-should-only-appear-once-per-user",
+      "featureTitle": "On the frontend, after a successful first login, call the welcome bonus endpoint and display a banner/modal showing '+1000 QMY and +100 XP received'. This should only appear once per user.",
+      "files": [
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/components/WelcomeBonusBanner.tsx",
+        "frontend/src/contexts/AuthContext.tsx"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-8"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-restore-the-map-page-with-a-fully-functional-leaflet-openstreetmap-2d-map-fetch-coin-locations-from-the-backend-and-display-them-as-markers-on-the-map-with-real-geographic-coordinates-the-map-must-load-without-errors",
+      "featureTitle": "Restore the /map page with a fully functional Leaflet + OpenStreetMap 2D map. Fetch coin locations from the backend and display them as markers on the map with real geographic coordinates. The map must load without errors.",
+      "files": [
+        "frontend/index.html",
+        "frontend/src/pages/MapPage.tsx"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-10"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-the-basic-coin-capture-mechanic-on-the-map-when-the-user-clicks-a-coin-marker-check-if-the-user-s-device-location-is-within-50-meters-if-yes-call-the-backend-to-capture-the-coin-award-xp-proportional-to-the-distance-traveled-since-the-last-capture-and-update-the-user-s-qmy-balance-if-the-user-is-more-than-50m-away-show-an-error-message",
+      "featureTitle": "Implement the basic coin capture mechanic on the map: when the user clicks a coin marker, check if the user's device location is within 50 meters. If yes, call the backend to capture the coin, award XP proportional to the distance traveled since the last capture, and update the user's QMY balance. If the user is more than 50m away, show an error message.",
+      "files": [
+        "frontend/src/hooks/useSharedLocation.ts",
+        "frontend/src/pages/MapPage.tsx",
+        "frontend/src/utils/distance.ts"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-11"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-temporarily-disable-or-hide-the-following-features-from-the-ui-and-routing-advanced-central-bank-dashboard-dao-voting-and-proposals-complex-vesting-schedules-public-token-burns-and-all-charts-graphs-these-routes-should-either-show-a-coming-soon-placeholder-or-be-removed-from-navigation-entirely",
+      "featureTitle": "Temporarily disable or hide the following features from the UI and routing: Advanced Central Bank dashboard, DAO voting and proposals, complex vesting schedules, public token burns, and all charts/graphs. These routes should either show a 'Coming Soon' placeholder or be removed from navigation entirely.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/BottomNav.tsx",
+        "frontend/src/components/Header.tsx",
+        "frontend/src/pages/DAOPage.tsx"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-13"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-simplify-the-bottom-navigation-bar-to-show-only-the-core-active-tabs-home-map-and-profile-remove-tabs-for-dao-banco-central-bank-ar-and-chat-until-those-features-are-restored",
+      "featureTitle": "Simplify the bottom navigation bar to show only the core active tabs: Home, Map, and Profile. Remove tabs for DAO, Banco (Central Bank), AR, and Chat until those features are restored.",
+      "files": [
+        "frontend/src/components/BottomNav.tsx"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-14"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-restore-a-basic-transaction-history-display-on-profile-showing-the-user-s-recent-qmy-coin-captures-date-amount-received-xp-gained-if-no-history-exists-show-an-empty-state-message-never-hide-the-section",
+      "featureTitle": "Restore a basic transaction history display on /profile showing the user's recent QMY coin captures (date, amount received, XP gained). If no history exists, show an empty state message — never hide the section.",
+      "files": [
+        "frontend/src/pages/Perfil.tsx"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-15"
       ],
       "confidence": "high"
     }

@@ -1,71 +1,87 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useCallback, useState } from 'react';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useQueryClient } from '@tanstack/react-query';
 
 interface AuthContextValue {
-  identity: ReturnType<typeof useInternetIdentity>['identity'];
-  login: () => Promise<void>;
-  logout: () => Promise<void>;
-  loginStatus: string;
+  isAuthenticated: boolean;
   isLoggingIn: boolean;
-  isLoginError: boolean;
-  isLoginSuccess: boolean;
   isInitializing: boolean;
   principalId: string | null;
+  // Legacy compatibility fields
+  identity: ReturnType<typeof useInternetIdentity>['identity'];
+  loginStatus: string;
   noProfileError: string | null;
   clearNoProfileError: () => void;
+  login: () => Promise<void>;
+  logout: () => Promise<void>;
+  showWelcomeBonus: boolean;
+  welcomeBonusQmy: number;
+  welcomeBonusXp: number;
+  dismissWelcomeBonus: () => void;
+  triggerWelcomeBonus: (qmy: number, xp: number) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const { login: iiLogin, clear, loginStatus, identity, isInitializing, isLoggingIn, isLoginError, isLoginSuccess } = useInternetIdentity();
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const { login: iiLogin, clear, loginStatus, identity, isInitializing } = useInternetIdentity();
   const queryClient = useQueryClient();
-  const [noProfileError, setNoProfileError] = useState<string | null>(null);
+  const [showWelcomeBonus, setShowWelcomeBonus] = useState(false);
+  const [welcomeBonusQmy, setWelcomeBonusQmy] = useState(1000);
+  const [welcomeBonusXp, setWelcomeBonusXp] = useState(100);
 
-  const principalId = identity ? identity.getPrincipal().toString() : null;
+  const isAuthenticated = !!identity;
+  const isLoggingIn = loginStatus === 'logging-in';
+  const principalId = identity?.getPrincipal().toString() ?? null;
 
-  // When identity changes (login/logout), clear the no-profile error
-  useEffect(() => {
-    if (!identity) {
-      setNoProfileError(null);
-    }
-  }, [identity]);
-
-  const login = async () => {
+  const login = useCallback(async () => {
     try {
       await iiLogin();
-    } catch (error: any) {
-      console.error('Login error:', error);
-      if (error?.message === 'User is already authenticated') {
+    } catch (error: unknown) {
+      const err = error as Error;
+      if (err?.message === 'User is already authenticated') {
         await clear();
         setTimeout(() => iiLogin(), 300);
+      } else {
+        throw error;
       }
     }
-  };
+  }, [iiLogin, clear]);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     await clear();
     queryClient.clear();
-    setNoProfileError(null);
-  };
+  }, [clear, queryClient]);
 
-  const clearNoProfileError = () => setNoProfileError(null);
+  const triggerWelcomeBonus = useCallback((qmy: number, xp: number) => {
+    setWelcomeBonusQmy(qmy);
+    setWelcomeBonusXp(xp);
+    setShowWelcomeBonus(true);
+  }, []);
+
+  const dismissWelcomeBonus = useCallback(() => {
+    setShowWelcomeBonus(false);
+  }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        identity,
-        login,
-        logout,
-        loginStatus,
+        isAuthenticated,
         isLoggingIn,
-        isLoginError,
-        isLoginSuccess,
         isInitializing,
         principalId,
-        noProfileError,
-        clearNoProfileError,
+        // Legacy compatibility
+        identity,
+        loginStatus,
+        noProfileError: null,
+        clearNoProfileError: () => {},
+        login,
+        logout,
+        showWelcomeBonus,
+        welcomeBonusQmy,
+        welcomeBonusXp,
+        dismissWelcomeBonus,
+        triggerWelcomeBonus,
       }}
     >
       {children}
@@ -75,6 +91,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within an AuthProvider');
+  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
 }

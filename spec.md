@@ -1,12 +1,22 @@
 # Specification
 
 ## Summary
-**Goal:** Upgrade the Home page with 3D QMY coins, a luxury aesthetic, auto-scroll to the hero title on load, and remove all "Caffeine" references from the footer and layout.
+**Goal:** Perform a full functional restoration of the Quantumoney core — stripping all broken visual/animated elements and rebuilding the essential game loop: Internet Identity login, QMY/XP profile display, 2D map with coin markers, and basic coin capture mechanics.
 
 **Planned changes:**
-- Replace CSS/image-based floating coins on the Home page with 3D QMY coin meshes rendered via React Three Fiber, featuring gold metallic material, "QMY" embossing, and smooth floating/rotation animations layered over the existing SpaceBackground
-- Redesign the Home page with a luxury aesthetic: deep black and rich gold color palette, Cinzel serif headings in gold, glass-morphism or dark velvet card surfaces, gold glow effects on CTA buttons and key headings
-- On initial Home page load, auto-scroll smoothly so the main hero title is the first prominent visible element, with content above it scrolled out of view (user can still scroll back up)
-- Remove all visible "Caffeine" text and branding from Footer.tsx, Layout.tsx, and any other frontend files where it appears as rendered text
+- Remove all animated coin visuals, 3D decorative elements (FloatingQMYCoins, SpaceBackground, QuantumUniverseScene, Three.js/React Three Fiber components), and decorative overlays from all pages
+- Fix all page titles that incorrectly display the prefix "nav." — replace with clean readable English/Portuguese titles
+- Restore a fixed footer on all pages: "© 2026 Quantumoney. All rights reserved." and "By HTgamers"; remove all references to "Caffeine"
+- Enforce a clean, static dark layout (#0a0a0a background) with yellow/gold accents; no gradients, glow effects, or animations
+- Restore Internet Identity as the sole login method; Principal ID must be available app-wide via AuthContext after login
+- Restore /profile page showing: Principal ID, QMY balance (from canister 5o54h-giaaa-aaaad-aentq-cai), ICP balance, XP, and a capture history section (always visible, shows empty state if no history)
+- Add backend `claimWelcomeBonus` endpoint: grants +1000 QMY and +100 XP on first login per Principal; flag stored in stable storage; no-op on repeat calls
+- Show a dismissible welcome bonus banner/modal (+1000 QMY, +100 XP) on the frontend after first login only
+- Restore backend storage for 600,000,000 QMY distributed across at least 50 geographic coin clusters (lat/lon/amount/id) with a query endpoint; data persists in stable storage
+- Restore /map page with a functional Leaflet + OpenStreetMap 2D map displaying coin markers at real-world coordinates
+- Implement coin capture mechanic: clicking a marker within 50m calls the backend capture endpoint, awards QMY and proportional XP, removes the coin from the map; clicking a marker >50m away shows an error message
+- Restore basic XP system in the backend (per-player xp field, incremented by captures and welcome bonus, persists in stable storage)
+- Disable/hide DAO, advanced Central Bank, complex vesting, public burns, and all charts from navigation and routing (show "Coming Soon" or remove entirely)
+- Simplify bottom navigation to exactly 3 tabs: Home, Map, Profile (active tab highlighted in yellow/gold)
 
-**User-visible outcome:** The Home page displays elegant 3D gold QMY coins floating through space, presents a premium luxury look and feel, lands with the hero title in view on load, and no longer shows any "Caffeine" references in the footer or anywhere on-screen.
+**User-visible outcome:** Users can log in via Internet Identity, receive a one-time welcome bonus, view their QMY/ICP/XP balances and capture history on their profile, and explore a 2D world map to find and capture QMY coin clusters within 50 meters of their location.

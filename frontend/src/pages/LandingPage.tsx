@@ -1,124 +1,75 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Wallet, Repeat, Coins } from 'lucide-react';
-import { Link } from '@tanstack/react-router';
-import PageShell from '@/components/PageShell';
-import Container from '@/components/Container';
-import { PageTitle, SectionTitle } from '@/components/Typography';
+import React from 'react';
+import { useNavigate } from '@tanstack/react-router';
+import { Map, Coins, Star, Zap } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function LandingPage() {
+  const { t } = useLanguage();
+  const { isAuthenticated, login, isLoggingIn } = useAuth();
+  const navigate = useNavigate();
+
+  const handlePlay = async () => {
+    if (isAuthenticated) {
+      navigate({ to: '/map' });
+    } else {
+      await login();
+    }
+  };
+
   return (
-    <PageShell className="py-0">
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background with gradient overlay */}
-        <div 
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: 'url(/assets/generated/landing-hero-bg.dim_1920x1080.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/50 to-background"></div>
+    <div className="min-h-screen bg-background">
+      {/* Hero */}
+      <section className="flex flex-col items-center justify-center text-center px-4 py-20 min-h-[70vh]">
+        <div className="mb-6">
+          <Coins className="w-20 h-20 text-gold-400 mx-auto mb-4" />
         </div>
-
-        {/* Hero Content */}
-        <Container className="relative z-10 py-32 text-center">
-          {/* Logo */}
-          <div className="mb-12 flex justify-center animate-fade-in">
-            <img 
-              src="/assets/generated/quantumoney-ar-logo-transparent.dim_200x200.png" 
-              alt="Quantumoney Logo" 
-              className="w-32 h-32 md:w-48 md:h-48 drop-shadow-[0_0_40px_rgba(217,165,32,0.7)]"
-            />
-          </div>
-
-          {/* Main Title */}
-          <PageTitle className="mb-8 drop-shadow-[0_0_30px_rgba(217,165,32,0.6)] animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            Quantumoney
-          </PageTitle>
-
-          {/* Subtitle */}
-          <p className="text-xl md:text-2xl lg:text-3xl mb-16 text-muted-foreground max-w-4xl mx-auto leading-relaxed animate-fade-in" style={{ animationDelay: '0.4s' }}>
-            A quantum universe Web3 application powered by QMY on Internet Computer.
-          </p>
-
-          {/* CTA Button */}
-          <Link to="/">
-            <Button 
-              size="lg"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xl px-16 py-8 rounded-full shadow-gold hover:shadow-gold-lg transition-all duration-300 hover:scale-105 animate-fade-in"
-              style={{ animationDelay: '0.6s' }}
-            >
-              Enter Quantum Universe
-            </Button>
-          </Link>
-        </Container>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-8 h-12 border-2 border-primary rounded-full flex items-start justify-center p-2">
-            <div className="w-1.5 h-4 bg-primary rounded-full"></div>
-          </div>
+        <h1 className="text-4xl md:text-6xl font-cinzel font-bold text-gold-400 mb-4">
+          Quantumoney
+        </h1>
+        <p className="text-lg md:text-xl text-gray-300 font-rajdhani mb-8 max-w-xl">
+          {t('tagline')}
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <button
+            onClick={handlePlay}
+            disabled={isLoggingIn}
+            className="bg-gold-500 text-black px-8 py-3 font-rajdhani font-bold uppercase tracking-wide text-lg hover:bg-gold-400 transition-colors disabled:opacity-50"
+          >
+            {isLoggingIn ? t('loggingIn') : t('playNow')}
+          </button>
+          <button
+            onClick={() => navigate({ to: '/map' })}
+            className="border border-gold-500 text-gold-400 px-8 py-3 font-rajdhani font-bold uppercase tracking-wide text-lg hover:bg-gold-900/30 transition-colors"
+          >
+            {t('viewMap')}
+          </button>
         </div>
       </section>
 
-      {/* Featured Highlights Section */}
-      <section className="py-24 px-4 relative">
-        <Container>
-          <SectionTitle className="text-center mb-16">
-            Core Features
-          </SectionTitle>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Wallet */}
-            <Card className="glass-card border-primary/30 hover:border-primary/60 transition-all duration-300 hover:scale-105 hover:shadow-gold-subtle group">
-              <CardContent className="p-10 text-center space-y-6">
-                <div className="flex justify-center">
-                  <div className="w-28 h-28 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-all duration-300">
-                    <Wallet className="w-16 h-16 text-primary" />
-                  </div>
-                </div>
-                <h3 className="text-2xl font-serif font-bold text-primary">Wallet</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Manage your QMY and ICP balances with real-time updates and secure transfers.
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Swap */}
-            <Card className="glass-card border-primary/30 hover:border-primary/60 transition-all duration-300 hover:scale-105 hover:shadow-gold-subtle group">
-              <CardContent className="p-10 text-center space-y-6">
-                <div className="flex justify-center">
-                  <div className="w-28 h-28 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-all duration-300">
-                    <Repeat className="w-16 h-16 text-primary" />
-                  </div>
-                </div>
-                <h3 className="text-2xl font-serif font-bold text-primary">Swap</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Exchange QMY and ICP tokens seamlessly with decentralized trading.
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* QMY Token */}
-            <Card className="glass-card border-primary/30 hover:border-primary/60 transition-all duration-300 hover:scale-105 hover:shadow-gold-subtle group">
-              <CardContent className="p-10 text-center space-y-6">
-                <div className="flex justify-center">
-                  <div className="w-28 h-28 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-all duration-300">
-                    <Coins className="w-16 h-16 text-primary" />
-                  </div>
-                </div>
-                <h3 className="text-2xl font-serif font-bold text-primary">QMY Token</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Explore the native token powering the Quantumoney ecosystem.
-                </p>
-              </CardContent>
-            </Card>
+      {/* Features */}
+      <section className="px-4 py-16 max-w-4xl mx-auto">
+        <h2 className="text-2xl font-cinzel font-bold text-gold-400 text-center mb-10">
+          {t('features')}
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="border border-gold-700 bg-black/50 p-6 text-center">
+            <Coins className="w-10 h-10 text-gold-400 mx-auto mb-3" />
+            <h3 className="text-lg font-cinzel font-bold text-gold-400 mb-2">{t('captureCoins')}</h3>
+            <p className="text-gray-400 text-sm font-rajdhani">{t('captureCoinsDesc')}</p>
           </div>
-        </Container>
+          <div className="border border-gold-700 bg-black/50 p-6 text-center">
+            <Star className="w-10 h-10 text-gold-400 mx-auto mb-3" />
+            <h3 className="text-lg font-cinzel font-bold text-gold-400 mb-2">{t('earnXP')}</h3>
+            <p className="text-gray-400 text-sm font-rajdhani">{t('earnXPDesc')}</p>
+          </div>
+          <div className="border border-gold-700 bg-black/50 p-6 text-center">
+            <Zap className="w-10 h-10 text-gold-400 mx-auto mb-3" />
+            <h3 className="text-lg font-cinzel font-bold text-gold-400 mb-2">{t('wallet')}</h3>
+            <p className="text-gray-400 text-sm font-rajdhani">{t('walletDesc')}</p>
+          </div>
+        </div>
       </section>
-    </PageShell>
+    </div>
   );
 }

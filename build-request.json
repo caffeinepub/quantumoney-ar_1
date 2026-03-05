@@ -1,99 +1,329 @@
 {
   "kind": "build_request",
-  "title": "3D QMY Coins, Luxury Home Page, Scroll-to-Title, Remove Caffeine References",
+  "title": "Full Functional Restoration — Quantumoney Core Rebuild",
   "projectName": "Quantumoney",
-  "priority": "normal",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Replace the existing floating coin image animations on the Home page (HomePage.tsx) with fully 3D rendered QMY coins using React Three Fiber / Three.js. Each coin must be a realistic disc/coin shape with 'QMY' embossed or inscribed on its face, a gold metallic material with specular highlights, and float/drift smoothly and gently across the space background with subtle rotation. Remove all <img> or CSS-based coin image elements used for the floating coins.",
+      "text": "Remove all animated coin visuals, 3D decorative elements (including FloatingQMYCoins, SpaceBackground, QuantumUniverseScene, and any Three.js/React Three Fiber components), and unnecessary visual overlays from all pages. The UI must be static — no animations until the system is fully functional.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-6"
         ],
         "quotes": [
-          "Quero remover essas moedas flutuantes, essas moedas são imagens e eu não quero imagens, eu quero as moedas em 3D, em formato de moeda verdadeira QMY, moeda em formato coin 3D a flutuar suavemente pelo universo"
+          "Remover todas as imagens animadas de moedas.",
+          "Remover qualquer elemento decorativo 3D.",
+          "Nada animado até o sistema funcionar."
         ]
       },
       "acceptanceCriteria": [
-        "No <img> tags or CSS background-image rules are used for the floating coins on the Home page",
-        "At least 5 QMY coins are rendered as 3D disc/coin meshes using React Three Fiber with a gold metallic PBR material",
-        "'QMY' text or embossed lettering is visible on the coin face",
-        "Coins float and drift smoothly across the space background with gentle rotation animations",
-        "The Three.js canvas overlays the existing SpaceBackground without breaking the rest of the page layout"
+        "No animated coin images appear on any page",
+        "No Three.js / React Three Fiber components render",
+        "SpaceBackground is removed from Layout",
+        "Pages load without any CSS or JS animation classes on decorative elements"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Redesign the Home page (HomePage.tsx) to have a luxury aesthetic. Apply rich gold, deep black, and champagne color palettes, elegant serif typography (Cinzel already available), glass-morphism or dark velvet card surfaces, subtle gold glow effects on key elements, and refined spacing. The overall feel must evoke high-end exclusivity consistent with a luxury financial/token brand.",
+      "text": "Fix all page titles where the string 'nav.' appears as a prefix (e.g., 'nav.map', 'nav.profile') — replace them with clean, human-readable English/Portuguese titles.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-6"
         ],
         "quotes": [
-          "a página inicial quero a página com aspecto Luxury"
+          "Corrigir títulos onde aparece 'nav.' antes do texto."
         ]
       },
       "acceptanceCriteria": [
-        "Home page uses a dark luxury color palette (deep blacks, rich golds, champagne accents) throughout",
-        "Headings use the Cinzel serif font with gold color",
-        "Section cards or panels use glass-morphism or dark velvet surfaces with gold border accents",
-        "Gold glow/shimmer effects are applied to primary CTA buttons and key headings",
-        "Overall visual impression is premium and elegant, not generic or playful"
+        "No visible heading or tab label contains the prefix 'nav.'",
+        "All page titles render as readable text"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "On the Home page (HomePage.tsx), implement a scroll-down behavior on initial load so the page automatically scrolls downward slightly to reveal the main page title/hero heading. The very top of the page (above the title) should scroll out of view on load, making the title the first prominent visible element, while still allowing the user to scroll back up.",
+      "text": "Restore a fixed footer across all pages displaying exactly: '© 2026 Quantumoney. All rights reserved.' and 'By HTgamers'. Remove any reference to 'Caffeine' from the footer and from all user-facing page content.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-6"
         ],
         "quotes": [
-          "quero que a página desça para que o topo e título da página de entrada fique visível"
+          "Restaurar rodapé fixo com: © 2026 Quantumoney. Todos os direitos reservados. By HTgamers",
+          "Nenhuma referência a Caffeine em rodapés ou código."
         ]
       },
       "acceptanceCriteria": [
-        "On initial page load, the Home page auto-scrolls so the main hero title is at or near the top of the viewport",
-        "Any content above the title (e.g. a spacer or pre-hero element) is scrolled out of view automatically",
-        "The user can scroll back up to see content above the title",
-        "The scroll behavior is smooth, not instant/jarring"
+        "Footer is fixed at the bottom on all pages",
+        "Footer text reads '© 2026 Quantumoney. All rights reserved.' and 'By HTgamers'",
+        "No page or footer contains the word 'Caffeine'"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Remove all references to 'Caffeine' from the Footer component (Footer.tsx), Layout.tsx, and any other frontend files where the word 'Caffeine' appears as visible text, branding, or attribution. Replace or remove those references entirely so no end-user-facing text mentions Caffeine.",
+      "text": "Enforce a clean, simple dark layout with yellow/gold accent details across the entire app. No gradients, no glow effects, no decorative overlays. Typography must be readable. This is the baseline visual style until the system is stable.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-6"
         ],
         "quotes": [
-          "não quero referências à Caffeine nem palavras Caffeine nos rodapés"
+          "Layout deve ser simples, limpo, escuro com detalhes amarelos."
         ]
       },
       "acceptanceCriteria": [
-        "The Footer component contains no visible 'Caffeine' text or branding",
-        "No other rendered page or component shows the word 'Caffeine' to end users",
-        "Any 'Powered by' or attribution lines that referenced Caffeine are removed or replaced with a neutral/Quantumoney attribution"
+        "All pages use a dark background (#0a0a0a or equivalent)",
+        "Accent color is yellow/gold throughout",
+        "No animated or 3D background is present",
+        "UI is legible and consistent across all routes"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Restore Internet Identity login as the sole authentication method. Login must work end-to-end: clicking login opens the Internet Identity flow, and on success the user's Principal is available throughout the app via AuthContext.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "Login funcional via Internet Identity"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Login button triggers Internet Identity authentication popup",
+        "After successful login, the user's Principal ID is accessible in AuthContext",
+        "Logout clears the session",
+        "Unauthenticated users are redirected or shown a login prompt on protected pages"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Restore the /profile page to display: the user's Principal ID, QMY balance (fetched from Ledger canister 5o54h-giaaa-aaaad-aentq-cai), ICP balance, and current XP. If any balance is unavailable or zero, display 0 — never hide the wallet section.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "Ao entrar em /profile deve mostrar: Principal, Saldo QMY, Saldo ICP, XP atual",
+          "Se saldo não existir, mostrar 0 — não esconder a carteira."
+        ]
+      },
+      "acceptanceCriteria": [
+        "/profile shows Principal ID for authenticated users",
+        "QMY balance is fetched from canister 5o54h-giaaa-aaaad-aentq-cai and displayed",
+        "ICP balance is displayed",
+        "XP is displayed",
+        "All values show '0' if the balance fetch returns empty or zero — the wallet section is always visible"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Restore the backend actor to store a per-user `welcomeBonusGranted` flag. On the first real login (authenticated Principal not previously seen), grant +1000 QMY and +100 XP. Set the flag so the bonus is never granted again to the same Principal.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "No primeiro login real: +1000 QMY, +100 XP",
+          "Guardar flag no backend.",
+          "Não repetir."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend has a `claimWelcomeBonus` or equivalent endpoint",
+        "Calling it for the first time for a Principal adds +1000 QMY and +100 XP to their profile",
+        "Subsequent calls return an error or no-op without granting additional tokens",
+        "The flag persists across canister upgrades via stable storage"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "On the frontend, after a successful first login, call the welcome bonus endpoint and display a banner/modal showing '+1000 QMY and +100 XP received'. This should only appear once per user.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "Bónus entregue no primeiro login"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Welcome bonus banner/modal appears on first login",
+        "It shows +1000 QMY and +100 XP",
+        "It does not appear on subsequent logins",
+        "It can be dismissed by the user"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Restore the backend to store and serve geographically distributed QMY coin locations. Initialize 600,000,000 QMY distributed across real-world geographic clusters (based on Gold Paper regional rules: major population centers across continents). Each coin cluster must have lat/lon coordinates, a QMY amount, and an ID. Expose a query endpoint to fetch all active coin locations.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "600.000.000 QMY",
+          "Distribuídos em clusters geográficos",
+          "Regras baseadas no Gold Paper",
+          "Armazenado no canister Logic"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend stores at least 50 coin cluster locations with lat/lon/amount/id",
+        "Total QMY distributed across all clusters sums to 600,000,000",
+        "A query endpoint returns all active coin locations",
+        "Data is in stable storage and survives upgrades"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "text": "Restore the /map page with a fully functional Leaflet + OpenStreetMap 2D map. Fetch coin locations from the backend and display them as markers on the map with real geographic coordinates. The map must load without errors.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "Leaflet + OpenStreetMap",
+          "Mostrar: Moedas QMY distribuídas geograficamente",
+          "Coordenadas reais",
+          "Sem mapa → o jogo não existe."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Leaflet map renders on /map",
+        "OpenStreetMap tiles load",
+        "Coin markers appear at their real-world coordinates",
+        "Map loads without console errors"
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "text": "Implement the basic coin capture mechanic on the map: when the user clicks a coin marker, check if the user's device location is within 50 meters. If yes, call the backend to capture the coin, award XP proportional to the distance traveled since the last capture, and update the user's QMY balance. If the user is more than 50m away, show an error message.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "Utilizador vê moedas no mapa",
+          "Pode clicar e capturar se estiver a menos de 50m",
+          "Recebe XP proporcional à distância percorrida",
+          "Atualiza saldo QMY"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Clicking a coin marker within 50m triggers a capture call to the backend",
+        "QMY balance increases after a successful capture",
+        "XP increases proportionally to distance",
+        "Clicking a marker more than 50m away shows 'Too far to capture' message",
+        "Captured coins are removed or marked as taken on the map"
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "text": "Restore a basic XP system in the backend: each player profile stores a total XP value. Provide endpoints to add XP (used by coin capture and welcome bonus). XP must persist in stable storage.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "Sistema mínimo de XP"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Player profiles include an `xp` field",
+        "XP is incremented correctly via capture and bonus endpoints",
+        "XP persists across sessions and canister upgrades"
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "text": "Temporarily disable or hide the following features from the UI and routing: Advanced Central Bank dashboard, DAO voting and proposals, complex vesting schedules, public token burns, and all charts/graphs. These routes should either show a 'Coming Soon' placeholder or be removed from navigation entirely.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "Desativar temporariamente: Banco Central avançado, DAO, Vesting complexo, Queimas públicas, Gráficos"
+        ]
+      },
+      "acceptanceCriteria": [
+        "DAO pages are not accessible from main navigation",
+        "Central Bank advanced page is not accessible from main navigation",
+        "Complex vesting pages are not accessible from main navigation",
+        "Public burn pages are not accessible from main navigation",
+        "Chart components are not rendered on any active page",
+        "Bottom navigation only shows: Home, Map, Profile"
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "text": "Simplify the bottom navigation bar to show only the core active tabs: Home, Map, and Profile. Remove tabs for DAO, Banco (Central Bank), AR, and Chat until those features are restored.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "Nada além disso.",
+          "Só depois pensar em design."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Bottom nav has exactly 3 tabs: Home, Map, Profile",
+        "Removed tabs do not appear",
+        "Active tab is highlighted in yellow/gold"
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "text": "Restore a basic transaction history display on /profile showing the user's recent QMY coin captures (date, amount received, XP gained). If no history exists, show an empty state message — never hide the section.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "Histórico básico"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Transaction/capture history section is visible on /profile",
+        "Each entry shows date, QMY received, and XP gained",
+        "Empty state message is shown when no history exists"
       ]
     }
   ],
   "constraints": [
-    "Do not modify any files listed in frontend.immutablePaths",
-    "Do not change any pages or components other than HomePage.tsx, Footer.tsx, Layout.tsx, and the new 3D coin component",
-    "Do not alter the backend in any way",
-    "The SpaceBackground component must remain intact; the 3D coin canvas should layer on top of it"
+    "QMY Ledger canister ID must be exactly: 5o54h-giaaa-aaaad-aentq-cai — do not change or hardcode a different value",
+    "No reference to 'Caffeine' in any user-facing text, footer, or visible code comments",
+    "Do not implement AR features — 2D Leaflet map only",
+    "No animations or 3D components until core functionality is verified working",
+    "All Motoko logic must remain in a single main actor (backend/main.mo)",
+    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, useActor.ts, main.tsx, or frontend/src/components/ui"
   ],
   "nonGoals": [
-    "Redesigning any page other than the Home page",
-    "Adding new backend features or modifying data models",
-    "Changing the Header navigation or any other layout components beyond removing Caffeine references",
-    "Adding real-time or interactive coin click functionality",
-    "Modifying the AR game pages or profile pages"
+    "AR camera features",
+    "DAO governance and voting",
+    "Advanced Central Bank dashboard",
+    "Complex vesting schedules",
+    "Public token burn mechanics",
+    "Charts and analytics graphs",
+    "Swap functionality",
+    "Real-time WebSocket chat",
+    "Monster collection system",
+    "Stripe payments",
+    "Visual design improvements beyond the dark/yellow baseline"
   ],
   "imageRequirements": {
     "required": [],

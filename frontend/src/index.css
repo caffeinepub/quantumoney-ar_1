@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,36 +6,28 @@
 
 @layer base {
   :root {
-    --background: oklch(0.08 0.01 260);
-    --foreground: oklch(0.85 0.15 85);
-    --card: oklch(0.10 0.01 260 / 0.6);
-    --card-foreground: oklch(0.85 0.15 85);
-    --popover: oklch(0.10 0.01 260);
-    --popover-foreground: oklch(0.85 0.15 85);
-    --primary: oklch(0.82 0.18 85);
-    --primary-foreground: oklch(0.08 0.01 260);
-    --secondary: oklch(0.15 0.02 260);
-    --secondary-foreground: oklch(0.82 0.18 85);
-    --muted: oklch(0.15 0.02 260);
-    --muted-foreground: oklch(0.55 0.08 85);
-    --accent: oklch(0.82 0.18 85);
-    --accent-foreground: oklch(0.08 0.01 260);
+    --background: oklch(0.08 0.005 60);
+    --foreground: oklch(0.92 0.02 80);
+    --card: oklch(0.10 0.005 60);
+    --card-foreground: oklch(0.92 0.02 80);
+    --popover: oklch(0.10 0.005 60);
+    --popover-foreground: oklch(0.92 0.02 80);
+    --primary: oklch(0.75 0.15 80);
+    --primary-foreground: oklch(0.10 0.005 60);
+    --secondary: oklch(0.15 0.01 60);
+    --secondary-foreground: oklch(0.92 0.02 80);
+    --muted: oklch(0.15 0.01 60);
+    --muted-foreground: oklch(0.55 0.02 80);
+    --accent: oklch(0.75 0.15 80);
+    --accent-foreground: oklch(0.10 0.005 60);
     --destructive: oklch(0.55 0.22 25);
-    --destructive-foreground: oklch(0.95 0.02 85);
-    --border: oklch(0.82 0.18 85 / 0.25);
-    --input: oklch(0.82 0.18 85 / 0.15);
-    --ring: oklch(0.82 0.18 85 / 0.5);
+    --destructive-foreground: oklch(0.98 0.005 80);
+    --border: oklch(0.25 0.03 80);
+    --input: oklch(0.15 0.01 60);
+    --ring: oklch(0.75 0.15 80);
     --radius: 0px;
     --success: oklch(0.65 0.18 145);
-    --warning: oklch(0.82 0.18 85);
-
-    /* Luxury tokens */
-    --luxury-black: oklch(0.06 0.005 260);
-    --luxury-deep-black: oklch(0.09 0.008 260);
-    --luxury-gold: oklch(0.82 0.18 85);
-    --luxury-gold-bright: oklch(0.90 0.20 85);
-    --luxury-champagne: oklch(0.88 0.10 85);
-    --luxury-gold-dim: oklch(0.65 0.14 85);
+    --warning: oklch(0.75 0.15 80);
   }
 
   * {
@@ -50,177 +42,18 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Rajdhani', sans-serif;
-    background-color: oklch(0.06 0.01 260);
-    color: oklch(0.82 0.18 85);
-    min-height: 100dvh;
-    overflow-x: hidden;
+    background-color: #0a0a0a;
+    color: #e5e7eb;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    color: oklch(0.82 0.18 85);
     font-family: 'Cinzel', serif;
-  }
-
-  p, span, div, li, td, th, label, input, textarea, select, button {
-    color: inherit;
-  }
-
-  a {
-    color: oklch(0.82 0.18 85);
-    text-decoration: none;
-  }
-
-  a:hover {
-    color: oklch(0.92 0.18 85);
   }
 }
 
-@layer components {
-  /* ── Standard glass card ── */
-  .glass-card {
-    background: oklch(0.10 0.01 260 / 0.5);
-    border: 1px solid oklch(0.82 0.18 85 / 0.3);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
-
-  .glass-card:hover {
-    border-color: oklch(0.82 0.18 85 / 0.5);
-  }
-
-  /* ── Luxury glass card ── */
-  .luxury-glass-card {
-    background: oklch(0.09 0.01 260 / 0.55);
-    border: 1px solid oklch(0.82 0.18 85 / 0.28);
-    border-bottom: 2px solid oklch(0.82 0.18 85 / 0.5);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-  }
-
-  .luxury-glass-card:hover {
-    border-color: oklch(0.82 0.18 85 / 0.55);
-    border-bottom-color: oklch(0.90 0.20 85 / 0.8);
-    box-shadow:
-      0 0 20px oklch(0.82 0.18 85 / 0.12),
-      0 8px 32px oklch(0.04 0.01 260 / 0.6);
-    transform: translateY(-2px);
-  }
-
-  /* ── Luxury CTA button ── */
-  .luxury-cta-btn {
-    color: oklch(0.06 0.005 260);
-    background: linear-gradient(
-      135deg,
-      oklch(0.88 0.20 85) 0%,
-      oklch(0.78 0.18 85) 40%,
-      oklch(0.85 0.22 85) 70%,
-      oklch(0.75 0.16 85) 100%
-    );
-    border: 1px solid oklch(0.90 0.22 85 / 0.8);
-    box-shadow:
-      0 0 18px oklch(0.82 0.18 85 / 0.45),
-      0 0 40px oklch(0.82 0.18 85 / 0.20),
-      inset 0 1px 0 oklch(0.95 0.15 85 / 0.5);
-    transition: box-shadow 0.3s ease, transform 0.2s ease, filter 0.3s ease;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .luxury-cta-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      105deg,
-      transparent 30%,
-      oklch(0.98 0.05 85 / 0.35) 50%,
-      transparent 70%
-    );
-    transform: translateX(-100%);
-    transition: transform 0.6s ease;
-  }
-
-  .luxury-cta-btn:hover::before {
-    transform: translateX(100%);
-  }
-
-  .luxury-cta-btn:hover {
-    box-shadow:
-      0 0 28px oklch(0.82 0.18 85 / 0.65),
-      0 0 60px oklch(0.82 0.18 85 / 0.30),
-      inset 0 1px 0 oklch(0.95 0.15 85 / 0.6);
-    transform: translateY(-2px);
-    filter: brightness(1.08);
-  }
-
-  .luxury-cta-btn:active {
-    transform: translateY(0);
-  }
-
-  /* ── Luxury title glow ── */
-  .luxury-title-glow {
-    text-shadow:
-      0 0 20px oklch(0.82 0.18 85 / 0.5),
-      0 0 50px oklch(0.82 0.18 85 / 0.25),
-      0 2px 4px oklch(0.04 0.01 260 / 0.8);
-  }
-
-  /* ── Gold shimmer text animation ── */
-  .luxury-gold-shimmer {
-    background: linear-gradient(
-      90deg,
-      oklch(0.82 0.18 85) 0%,
-      oklch(0.95 0.22 85) 30%,
-      oklch(0.75 0.16 85) 50%,
-      oklch(0.92 0.20 85) 70%,
-      oklch(0.82 0.18 85) 100%
-    );
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gold-shimmer 4s linear infinite;
-    display: inline-block;
-  }
-
-  /* ── Luxury horizontal divider ── */
-  .luxury-divider {
-    width: 100%;
-    max-width: 480px;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      oklch(0.82 0.18 85 / 0.15) 15%,
-      oklch(0.82 0.18 85 / 0.6) 50%,
-      oklch(0.82 0.18 85 / 0.15) 85%,
-      transparent 100%
-    );
-    margin: 0 auto;
-  }
-
-  /* ── Luxury stat item ── */
-  .luxury-stat {
-    position: relative;
-    padding: 0 1.5rem;
-  }
-
-  .luxury-stat::after {
-    content: '◆';
-    position: absolute;
-    right: -0.5rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: oklch(0.82 0.18 85 / 0.25);
-    font-size: 0.5rem;
-  }
-
-  .luxury-stat:last-child::after {
-    display: none;
-  }
-
-  /* ── Font utilities ── */
+@layer utilities {
   .font-cinzel {
     font-family: 'Cinzel', serif;
   }
@@ -228,141 +61,48 @@
   .font-rajdhani {
     font-family: 'Rajdhani', sans-serif;
   }
-}
 
-/* ============================================================
-   KEYFRAME ANIMATIONS
-   ============================================================ */
-
-@keyframes gold-shimmer {
-  0% { background-position: 0% center; }
-  100% { background-position: 200% center; }
-}
-
-/* ============================================================
-   SPACE BACKGROUND ANIMATIONS
-   ============================================================ */
-
-.space-bg {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(ellipse at center, oklch(0.10 0.03 260) 0%, oklch(0.04 0.01 260) 100%);
-  overflow: hidden;
-  z-index: 0;
-}
-
-/* Stars */
-.star {
-  position: absolute;
-  background: oklch(0.95 0.05 85);
-  border-radius: 50%;
-  animation: twinkle var(--duration, 3s) ease-in-out infinite;
-  animation-delay: var(--delay, 0s);
-}
-
-@keyframes twinkle {
-  0%, 100% { opacity: 0.2; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.3); }
-}
-
-/* Planet */
-.planet {
-  position: absolute;
-  border-radius: 50%;
-  animation: planet-orbit 60s linear infinite;
-}
-
-@keyframes planet-orbit {
-  0% { transform: translateX(0) translateY(0); }
-  25% { transform: translateX(30px) translateY(-20px); }
-  50% { transform: translateX(0) translateY(-40px); }
-  75% { transform: translateX(-30px) translateY(-20px); }
-  100% { transform: translateX(0) translateY(0); }
-}
-
-/* Comet */
-.comet {
-  position: absolute;
-  width: 120px;
-  height: 2px;
-  background: linear-gradient(to right, transparent, oklch(0.95 0.15 85));
-  animation: comet-fly var(--duration, 8s) linear infinite;
-  animation-delay: var(--delay, 0s);
-  opacity: 0;
-}
-
-@keyframes comet-fly {
-  0% { transform: translateX(-200px) translateY(0) rotate(-30deg); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateX(calc(100vw + 200px)) translateY(200px) rotate(-30deg); opacity: 0; }
-}
-
-/* Meteorite */
-.meteorite {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background: oklch(0.90 0.15 85);
-  border-radius: 50%;
-  animation: meteorite-fall var(--duration, 5s) linear infinite;
-  animation-delay: var(--delay, 0s);
-  opacity: 0;
-}
-
-.meteorite::after {
-  content: '';
-  position: absolute;
-  right: 4px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 1px;
-  background: linear-gradient(to left, oklch(0.90 0.15 85), transparent);
-}
-
-@keyframes meteorite-fall {
-  0% { transform: translateX(100vw) translateY(-50px); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 0.8; }
-  100% { transform: translateX(-100px) translateY(100vh); opacity: 0; }
-}
-
-/* QMY Coin float animation (legacy) */
-@keyframes qmy-coin-float {
-  0% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-15px) rotate(5deg); }
-  100% { transform: translateY(0px) rotate(0deg); }
-}
-
-.qmy-coin-float {
-  animation: qmy-coin-float 3s ease-in-out infinite;
-}
-
-/* Coin grow-fade animation (kept for compatibility) */
-@keyframes coin-grow-fade {
-  0% {
-    transform: translate(-50%, -50%) scale(0.1);
-    opacity: 0;
-  }
-  20% {
-    opacity: 1;
-  }
-  70% {
-    transform: translate(-50%, -50%) scale(1.5);
-    opacity: 0.9;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(2.0);
-    opacity: 0;
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 }
 
-.coin-grow-fade {
-  animation: coin-grow-fade 3s ease-out forwards;
-  position: absolute;
-  left: 50%;
-  top: 50%;
+/* Leaflet map styles */
+.leaflet-container {
+  background: #1a1a1a !important;
+  font-family: 'Rajdhani', sans-serif !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: #111 !important;
+  border: 1px solid #D97706 !important;
+  border-radius: 0 !important;
+  color: #F59E0B !important;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.2) !important;
+}
+
+.leaflet-popup-tip {
+  background: #D97706 !important;
+}
+
+.leaflet-popup-close-button {
+  color: #F59E0B !important;
+}
+
+.leaflet-control-zoom a {
+  background: #111 !important;
+  color: #F59E0B !important;
+  border-color: #D97706 !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: #1a1a1a !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(0,0,0,0.7) !important;
+  color: #6B7280 !important;
+  font-size: 10px !important;
 }
 
 /* Scrollbar */
@@ -372,41 +112,14 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: oklch(0.08 0.01 260);
+  background: #0a0a0a;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: oklch(0.82 0.18 85 / 0.3);
-  border-radius: 3px;
+  background: #D97706;
+  border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.82 0.18 85 / 0.6);
-}
-
-/* Leaflet dark theme overrides */
-.leaflet-container {
-  background: oklch(0.08 0.01 260) !important;
-}
-
-.leaflet-popup-content-wrapper {
-  background: oklch(0.08 0.01 260) !important;
-  border: 1px solid oklch(0.82 0.18 85 / 0.4) !important;
-  color: oklch(0.82 0.18 85) !important;
-  border-radius: 0 !important;
-}
-
-.leaflet-popup-tip {
-  background: oklch(0.08 0.01 260) !important;
-}
-
-.leaflet-control-zoom a {
-  background: oklch(0.10 0.01 260) !important;
-  color: oklch(0.82 0.18 85) !important;
-  border-color: oklch(0.82 0.18 85 / 0.3) !important;
-}
-
-.leaflet-control-attribution {
-  background: oklch(0.08 0.01 260 / 0.8) !important;
-  color: oklch(0.55 0.08 85) !important;
+  background: #F59E0B;
 }

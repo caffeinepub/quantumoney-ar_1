@@ -1,40 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useGetChatMessages, useSendChatMessage } from './useQueries';
 
-interface LocalChatMessage {
-  authorName: string;
-  content: string;
-  timestamp: number;
-  id: string;
-}
+// Re-export the real backend-connected chat hooks
+export { useGetChatMessages as useGetMessages, useSendChatMessage as useSendMessage };
 
 export function usePublicChat() {
-  const [messages, setMessages] = useState<LocalChatMessage[]>([]);
-  const [isSending, setIsSending] = useState(false);
+  const { data: messages = [], isLoading, error } = useGetChatMessages();
+  const sendMutation = useSendChatMessage();
 
-  const sendMessage = async (authorName: string, content: string) => {
-    setIsSending(true);
-    
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    const newMessage: LocalChatMessage = {
-      authorName,
-      content,
-      timestamp: Date.now(),
-      id: `${Date.now()}_${Math.random()}`,
-    };
-
-    setMessages(prev => [...prev, newMessage]);
-    
-    setIsSending(false);
+  const sendMessage = async (content: string) => {
+    await sendMutation.mutateAsync(content);
   };
 
   return {
     messages,
-    isLoading: false,
-    isSending,
+    isLoading,
+    error,
     sendMessage,
-    loadMore: () => {},
-    hasMore: false,
-    isLoadingMore: false,
+    isSending: sendMutation.isPending,
   };
 }

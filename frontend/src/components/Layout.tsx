@@ -1,28 +1,32 @@
 import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
-import CookieConsentBanner from './CookieConsentBanner';
-import SpaceBackground from './space/SpaceBackground';
+import BottomNav from './BottomNav';
+import WelcomeBonusBanner from './WelcomeBonusBanner';
+import { useAuth } from '../contexts/AuthContext';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
-  return (
-    <div className="relative min-h-screen flex flex-col">
-      {/* Persistent space background */}
-      <SpaceBackground />
+  const { showWelcomeBonus, welcomeBonusQmy, welcomeBonusXp, dismissWelcomeBonus } = useAuth();
 
-      {/* Content layer */}
-      <div className="relative z-10 flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
-        <CookieConsentBanner />
-      </div>
+  return (
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
+      <Header />
+      <main className="flex-1 pt-16 pb-20">
+        {children}
+      </main>
+      <Footer />
+      <BottomNav />
+      {showWelcomeBonus && (
+        <WelcomeBonusBanner
+          qmy={welcomeBonusQmy}
+          xp={welcomeBonusXp}
+          onClose={dismissWelcomeBonus}
+        />
+      )}
     </div>
   );
 }

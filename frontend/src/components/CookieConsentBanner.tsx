@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Link } from '@tanstack/react-router';
 import { X, Cookie } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCookieConsent } from '@/hooks/useCookieConsent';
@@ -25,52 +24,51 @@ export default function CookieConsentBanner() {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 pb-safe animate-fade-in">
+    <div className="fixed bottom-20 left-0 right-0 z-50 p-4">
       <div className="container mx-auto max-w-4xl">
-        <div className="glass-card-elevated border border-primary/30 rounded-xl p-4 md:p-6 shadow-gold-subtle">
+        <div className="bg-black border border-gold-600 p-4 md:p-6 shadow-gold">
           <div className="flex items-start gap-3 md:gap-4">
             <div className="flex-shrink-0">
-              <Cookie className="w-6 h-6 md:w-8 md:h-8 text-primary" />
+              <Cookie className="w-6 h-6 md:w-8 md:h-8 text-gold-400" />
             </div>
-            
+
             <div className="flex-1 space-y-2 md:space-y-3">
-              <h3 className="text-base md:text-lg font-bold text-primary">Cookie Consent</h3>
-              <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">
-                We use cookies to enhance your experience, analyze site usage, and provide essential functionality. 
-                By clicking "Accept", you consent to our use of cookies. 
-                Learn more in our{' '}
-                <Link 
-                  to="/privacy" 
-                  className="text-primary hover:underline font-medium"
+              <h3 className="text-base md:text-lg font-cinzel font-bold text-gold-400">Cookies</h3>
+              <p className="text-xs md:text-sm text-gray-400 font-rajdhani leading-relaxed">
+                Usamos cookies para melhorar a tua experiência. Ao clicar em "Aceitar", consentes o uso de cookies.
+                Sabe mais na nossa{' '}
+                <a
+                  href="/privacy"
+                  className="text-gold-400 hover:underline font-medium"
                 >
-                  Privacy Policy
-                </Link>.
+                  Política de Privacidade
+                </a>.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-2 md:gap-3 pt-1 md:pt-2">
                 <Button
                   onClick={handleAccept}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm"
+                  className="bg-gold-500 hover:bg-gold-400 text-black font-rajdhani font-bold text-sm"
                   size="sm"
                 >
-                  Accept Cookies
+                  Aceitar
                 </Button>
-                <Link to="/privacy">
+                <a href="/privacy">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full sm:w-auto border-primary/40 text-primary hover:bg-primary/10 text-sm"
+                    className="w-full sm:w-auto border-gold-600 text-gold-400 hover:bg-gold-900/20 text-sm font-rajdhani"
                   >
-                    Learn More
+                    Saber Mais
                   </Button>
-                </Link>
+                </a>
               </div>
             </div>
 
             <button
               onClick={handleAccept}
-              className="flex-shrink-0 p-1 md:p-2 text-muted-foreground hover:text-primary transition-colors rounded-lg hover:bg-primary/5"
-              aria-label="Close"
+              className="flex-shrink-0 p-1 md:p-2 text-gray-500 hover:text-gold-400 transition-colors"
+              aria-label="Fechar"
             >
               <X className="w-4 h-4 md:w-5 md:h-5" />
             </button>
