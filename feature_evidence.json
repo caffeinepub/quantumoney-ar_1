@@ -1,4 +1,76 @@
 {
   "kind": "feature_evidence_report",
-  "features": []
+  "features": [
+    {
+      "featureId": "feature-replace-the-existing-floating-coin-image-animations-on-the-home-page-homepage-tsx-with-fully-3d-rendered-qmy-coins-using-react-three-fiber-three-js-each-coin-must-be-a-realistic-disc-coin-shape-with-qmy-embossed-or-inscribed-on-its-face-a-gold-metallic-material-with-specular-highlights-and-float-drift-smoothly-and-gently-across-the-space-background-with-subtle-rotation-remove-all-img-or-css-based-coin-image-elements-used-for-the-floating-coins",
+      "featureTitle": "Replace the existing floating coin image animations on the Home page (HomePage.tsx) with fully 3D rendered QMY coins using React Three Fiber / Three.js. Each coin must be a realistic disc/coin shape with 'QMY' embossed or inscribed on its face, a gold metallic material with specular highlights, and float/drift smoothly and gently across the space background with subtle rotation. Remove all <img> or CSS-based coin image elements used for the floating coins.",
+      "files": [
+        "frontend/src/components/three/FloatingQMYCoins.tsx",
+        "frontend/src/pages/HomePage.tsx"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-redesign-the-home-page-homepage-tsx-to-have-a-luxury-aesthetic-apply-rich-gold-deep-black-and-champagne-color-palettes-elegant-serif-typography-cinzel-already-available-glass-morphism-or-dark-velvet-card-surfaces-subtle-gold-glow-effects-on-key-elements-and-refined-spacing-the-overall-feel-must-evoke-high-end-exclusivity-consistent-with-a-luxury-financial-token-brand",
+      "featureTitle": "Redesign the Home page (HomePage.tsx) to have a luxury aesthetic. Apply rich gold, deep black, and champagne color palettes, elegant serif typography (Cinzel already available), glass-morphism or dark velvet card surfaces, subtle gold glow effects on key elements, and refined spacing. The overall feel must evoke high-end exclusivity consistent with a luxury financial/token brand.",
+      "files": [
+        "frontend/src/index.css",
+        "frontend/src/pages/HomePage.tsx"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-on-the-home-page-homepage-tsx-implement-a-scroll-down-behavior-on-initial-load-so-the-page-automatically-scrolls-downward-slightly-to-reveal-the-main-page-title-hero-heading-the-very-top-of-the-page-above-the-title-should-scroll-out-of-view-on-load-making-the-title-the-first-prominent-visible-element-while-still-allowing-the-user-to-scroll-back-up",
+      "featureTitle": "On the Home page (HomePage.tsx), implement a scroll-down behavior on initial load so the page automatically scrolls downward slightly to reveal the main page title/hero heading. The very top of the page (above the title) should scroll out of view on load, making the title the first prominent visible element, while still allowing the user to scroll back up.",
+      "files": [
+        "frontend/src/pages/HomePage.tsx"
+      ],
+      "components": [
+        "camera@1.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@3.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    }
+  ]
 }

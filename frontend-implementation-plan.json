@@ -1,120 +1,89 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix LanguageProvider Scope and Profile Synchronization Between Domains",
+  "title": "3D QMY Coins, Luxury Home Page, Scroll-to-Title, Remove Caffeine References",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Restructure the global provider hierarchy so that a single LanguageProvider wraps the entire application in the correct nesting order (AuthProvider → LanguageProvider → Router → App), ensuring all routes including Legal, Contact, Tokenomics, Privacy Policy, and Terms of Service are within scope and can access useLanguage without errors.",
+      "summary": "Replace floating coin images with 3D rendered QMY coins using React Three Fiber",
       "acceptanceCriteria": [
-        "Navigating to /legal, /contact, /tokenomics and all other routes produces no 'useLanguage must be used within a LanguageProvider' error in the browser console.",
-        "There is exactly one LanguageProvider instance in the entire component tree.",
-        "The LanguageProvider is a descendant of AuthProvider/InternetIdentityProvider and an ancestor of the Router and all route components.",
-        "Language switching works correctly on every page of the application."
+        "No <img> tags or CSS background-image rules are used for the floating coins on the Home page",
+        "At least 5 QMY coins are rendered as 3D disc/coin meshes using React Three Fiber with a gold metallic PBR material",
+        "'QMY' text or embossed lettering is visible on the coin face",
+        "Coins float and drift smoothly across the space background with gentle rotation animations",
+        "The Three.js canvas overlays the existing SpaceBackground without breaking the rest of the page layout"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/main.tsx",
-          "operation": "modify",
-          "description": "Restructure the provider hierarchy to nest LanguageProvider between InternetIdentityProvider and the RouterProvider. The required order must be: InternetIdentityProvider → LanguageProvider → RouterProvider. This ensures that all routes and components rendered by the router are descendants of LanguageProvider and can access the language context via useLanguage. Remove any conditional or partial LanguageProvider wrappers that may exist elsewhere. Verify that QueryClientProvider remains at the outermost level as currently implemented."
+          "path": "frontend/src/components/three/FloatingQMYCoins.tsx",
+          "operation": "create",
+          "description": "Create a React Three Fiber component that renders at least 5 realistic 3D QMY coin meshes. Each coin must be a disc/cylinder shape with 'QMY' embossed text on the face, using a gold metallic PBR material (MeshStandardMaterial with metalness ~0.8, roughness ~0.2, and gold color #FFD700). Implement smooth floating and drifting animations using useFrame for position updates and gentle rotation. Position coins at varied depths and locations to create a distributed 3D effect across the viewport."
         },
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/pages/HomePage.tsx",
           "operation": "modify",
-          "description": "Audit the App component and router configuration to ensure no duplicate LanguageProvider instances are created within the router tree. Remove any LanguageProvider wrappers from within the router outlet or Layout component. Confirm that all lazy-loaded route components rely solely on the global LanguageProvider defined in main.tsx. Ensure the Layout component does not introduce an additional LanguageProvider wrapper."
-        },
-        {
-          "path": "frontend/src/components/Layout.tsx",
-          "operation": "modify",
-          "description": "Remove any LanguageProvider wrapper from the Layout component if present. The Layout should only compose SpaceBackground, Header, Footer, and CookieConsentBanner without introducing provider logic. Ensure that child components (Header, Footer, CookieConsentBanner) can safely call useLanguage because they are already descendants of the global LanguageProvider established in main.tsx."
-        },
-        {
-          "path": "frontend/src/contexts/LanguageContext.tsx",
-          "operation": "modify",
-          "description": "Review the LanguageContext implementation to ensure the provider correctly exposes language state and translation functions. Verify that useLanguage throws a descriptive error if called outside the provider scope. Confirm localStorage persistence logic is robust and does not cause hydration issues. Add inline comments documenting the expected provider hierarchy for future maintainers."
+          "description": "Remove all existing <img> elements and CSS-based coin animations from the floating coins section. Import and integrate the new FloatingQMYCoins component wrapped in a Canvas from @react-three/fiber. Position the Canvas as an overlay layer above the SpaceBackground (using absolute positioning with appropriate z-index) while preserving the existing page layout and content. Ensure the Canvas is non-blocking (pointer-events: none) so underlying content remains interactive. Remove any references to frontend/public/assets/generated/icp-coin-gold.dim_128x128.png and frontend/public/assets/generated/qmy-coin-gold.dim_128x128.png used for floating coins."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Audit and enforce that all canister actor calls throughout the frontend use the hardcoded production canister IDs for Logic, Ledger, and Governance canisters, removing any environment-switching logic that could route requests to local, dev, or mock canisters so that both quantumoney.app and quantumoneyar.app connect to the same production ICP mainnet canisters.",
+      "summary": "Apply luxury aesthetic to Home page with rich gold, deep black, champagne palette and glass-morphism design",
       "acceptanceCriteria": [
-        "All actor/canister references in the frontend use the same hardcoded production canister IDs — no conditional dev/local/mock canister selection exists.",
-        "No mock data or simulated backend is used for profile, balance, or game state retrieval.",
-        "The same canister IDs are used regardless of which domain (quantumoney.app or quantumoneyar.app) is serving the frontend."
+        "Home page uses a dark luxury color palette (deep blacks, rich golds, champagne accents) throughout",
+        "Headings use the Cinzel serif font with gold color",
+        "Section cards or panels use glass-morphism or dark velvet surfaces with gold border accents",
+        "Gold glow/shimmer effects are applied to primary CTA buttons and key headings",
+        "Overall visual impression is premium and elegant, not generic or playful"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useActor.ts",
+          "path": "frontend/src/pages/HomePage.tsx",
           "operation": "modify",
-          "description": "Audit the actor initialization logic to confirm that canister IDs are hardcoded to production mainnet values without any environment variable or conditional switching. Remove any references to process.env variables or configuration files that could introduce dev/local canister IDs. Ensure the actor creation always targets the production Logic canister ID. Add inline comments documenting the production canister ID and asserting no environment-based routing exists. Verify the actor invalidation logic correctly refreshes queries when identity changes."
+          "description": "Apply luxury aesthetic styling throughout the Home page. Use deep blacks (#0A0A0A, #1A1A1A) as base backgrounds. Apply Cinzel font to all headings with gold color (#FFD700). Wrap section content in cards with glass-morphism effect (backdrop-blur, semi-transparent black background with alpha 0.3-0.5, gold border-b or border accent). Add gold glow effects to primary CTA buttons using box-shadow with gold (#FFD700) at multiple layers for shimmer. Use champagne (#F5DEB3) for secondary accents. Apply refined spacing (larger gaps, generous padding) to create an exclusive, high-end feel. Ensure typography hierarchy emphasizes elegance with appropriate font weights and letter-spacing."
         },
         {
-          "path": "frontend/src/lib/icp/ledgerClient.ts",
+          "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Verify that the ICPLedgerClient class uses the hardcoded production ICP Ledger canister ID for all balance queries. Remove any conditional logic that might route requests to a local replica or dev canister. Confirm that the canister ID is a constant string literal matching the production mainnet ICP Ledger. Add a comment asserting the production canister ID is fixed and cannot be overridden."
-        },
-        {
-          "path": "frontend/src/lib/icrc/ledgerClient.ts",
-          "operation": "modify",
-          "description": "Verify that the ICRCLedgerClient class uses the hardcoded production QMY (ICRC) Ledger canister ID for all balance and metadata queries. Remove any conditional logic or environment-based configuration that could introduce mock or dev canisters. Ensure the canister ID is a constant string literal matching the production mainnet QMY Ledger. Add a comment documenting the production canister ID."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Audit all backend query hooks (profile fetching, map markers, chat messages) to ensure they use the actor from useActor without any mock data fallbacks or conditional backend selection. Remove any logic that simulates backend responses or returns hardcoded data instead of calling the production canister. Confirm that profile, map, and chat queries always invoke real canister methods via the production actor."
-        },
-        {
-          "path": "frontend/src/hooks/useARGameData.ts",
-          "operation": "modify",
-          "description": "Verify that the AR game player profile query uses the actor from useActor to call the production Logic canister without any mock or simulated data. Remove any conditional logic that could return fake profile data or bypass the canister call. Ensure the query always fetches from the production backend using the authenticated principal."
-        },
-        {
-          "path": "frontend/src/hooks/useLuxuryBank.ts",
-          "operation": "modify",
-          "description": "Confirm that the luxury bank dashboard data aggregation queries the production actor for real token supply, distribution, and player metrics. Remove any simulated data sources or fallback mock responses. Ensure all data displayed in the Central Bank dashboard comes from production canister calls."
+          "description": "Add or update CSS custom properties and utility classes for the luxury aesthetic. Define --luxury-black (#0A0A0A), --luxury-gold (#FFD700), --luxury-champagne (#F5DEB3), --luxury-deep-black (#1A1A1A). Add .glass-morphism utility class with backdrop-filter: blur(10px), background: rgba(0,0,0,0.4), border: 1px solid rgba(255,215,0,0.3). Add .gold-glow utility with multi-layer box-shadow for shimmer effect. Ensure these styles complement existing space theme without breaking other pages."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Remove any automatic profile creation logic from the frontend so that if a user's Principal does not have an existing profile in the backend, the application displays a clear error or 'Profile not found' state instead of silently creating a new profile, and ensure the UserID used throughout the app is derived solely from the authenticated Internet Identity Principal without synthetic or fallback IDs.",
+      "summary": "Implement auto-scroll on Home page load to reveal main title",
       "acceptanceCriteria": [
-        "If the authenticated Principal has no profile in the backend, the profile page shows a clear 'Profile not found' message rather than creating a new profile automatically.",
-        "No auto-registration or default profile initialization is triggered on login.",
-        "The UserID displayed and used internally is always the Internet Identity Principal — no alternate or generated ID is used.",
-        "XP, QMY balance, inventory, and game state shown in the profile are fetched from the production backend using the Principal as the key."
+        "On initial page load, the Home page auto-scrolls so the main hero title is at or near the top of the viewport",
+        "Any content above the title (e.g. a spacer or pre-hero element) is scrolled out of view automatically",
+        "The user can scroll back up to see content above the title",
+        "The scroll behavior is smooth, not instant/jarring"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/pages/HomePage.tsx",
           "operation": "modify",
-          "description": "Remove any automatic profile creation or initialization logic from the saveCallerUserProfile mutation or other profile-related hooks. Ensure that profile save operations only update existing profiles and do not create new ones when a profile is missing. Modify the getCallerUserProfile query to explicitly handle null responses and propagate them to the UI without triggering profile creation. Add error handling that distinguishes between 'profile not found' and other backend errors."
+          "description": "Add a useEffect hook that runs once on component mount to implement auto-scroll behavior. Use a ref on the main hero title element. In the useEffect, after a brief delay (200-300ms to allow rendering), call scrollIntoView on the title ref with { behavior: 'smooth', block: 'start' } to smoothly scroll the title to the top of the viewport. Ensure this only runs on initial load by using an empty dependency array. Add a spacer div above the title (min-height: 40vh or similar) so there is content to scroll past, making the title the first prominent visible element after auto-scroll while still allowing users to scroll back up."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Remove all 'Caffeine' references from Footer and other frontend files",
+      "acceptanceCriteria": [
+        "The Footer component contains no visible 'Caffeine' text or branding",
+        "No other rendered page or component shows the word 'Caffeine' to end users",
+        "Any 'Powered by' or attribution lines that referenced Caffeine are removed or replaced with a neutral/Quantumoney attribution"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Footer.tsx",
+          "operation": "modify",
+          "description": "Remove all occurrences of the word 'Caffeine' from visible text, branding, or attribution in the Footer component. If there is a 'Powered by Caffeine' or similar line, remove it entirely or replace with a neutral attribution like '© 2025 Quantumoney' or leave blank. Ensure no user-facing text in the Footer references Caffeine."
         },
         {
-          "path": "frontend/src/pages/Perfil.tsx",
+          "path": "frontend/src/components/Layout.tsx",
           "operation": "modify",
-          "description": "Update the profile page UI to display a clear 'Profile not found' or 'No profile exists for this Principal' message when getCallerUserProfile returns null. Remove any automatic profile setup modal triggers or default profile initialization that might occur when a profile is missing. Ensure the page does not attempt to create a profile automatically on first visit. Display the authenticated Principal ID prominently when no profile exists, and provide instructions for the user (e.g., 'Contact support to register your profile')."
-        },
-        {
-          "path": "frontend/src/pages/ProfilePage.tsx",
-          "operation": "modify",
-          "description": "Update the AR profile page to handle null profile responses by showing a 'Profile not found' error state instead of initializing a default profile. Remove any logic that creates placeholder or empty profiles when the backend returns null. Ensure XP, level, tokens, and captured monsters are only displayed when fetched from the production backend. Display the Principal ID in the error state to help users verify their identity."
-        },
-        {
-          "path": "frontend/src/components/profile/useProfileModuleState.ts",
-          "operation": "modify",
-          "description": "Audit the profile module state derivation logic to ensure it does not trigger profile creation when isRegistered is false or userProfile is null. Remove any automatic registration or profile setup flows that might be invoked during state computation. Ensure the hook correctly distinguishes between 'not logged in', 'logged in but no profile', and 'logged in with profile' states without side effects."
-        },
-        {
-          "path": "frontend/src/hooks/useARGameData.ts",
-          "operation": "modify",
-          "description": "Ensure the AR game data hook returns null when the backend reports no profile for the authenticated Principal, and does not attempt to create a default or fallback profile. Remove any logic that initializes empty game state when the profile is missing. Add clear error handling that propagates 'profile not found' state to consuming components."
-        },
-        {
-          "path": "frontend/src/hooks/useInternetIdentity.ts",
-          "operation": "modify",
-          "description": "Verify that the Internet Identity hook does not trigger any profile creation or initialization side effects on login. Ensure the Principal ID returned by identity.getPrincipal() is used as-is throughout the app without any transformation or fallback ID generation. Remove any logic that creates synthetic UserIDs or alternate identifiers. Confirm that logout clears all cached profile data and does not leave orphaned profile references."
+          "description": "Search for and remove any visible 'Caffeine' references in the Layout component. Check for any attribution text, comments rendered to DOM, or metadata that might display 'Caffeine'. If none exist, ensure the file remains unchanged."
         }
       ]
     }

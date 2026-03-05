@@ -1,52 +1,68 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Quantumoney web app (quantumoney.app / quantumoneyar.app) built on Internet Computer Protocol. Fixing structural provider issues and profile synchronization between the two domains.",
+  "summary": "App with a luxury-style home page featuring 3D QMY coins floating in a universe background, animated hero section that scrolls down to reveal the page title, and no Caffeine references in footers.",
   "architectural_notes": [
-    "Provider hierarchy: AuthProvider → LanguageProvider → Router → App. No duplicate or nested providers allowed.",
-    "Both quantumoney.app and quantumoneyar.app must use identical Logic, Ledger, and Governance canister IDs in production.",
-    "UserID must be derived from the Internet Identity Principal — no auto-creation of profiles if backend profile does not exist."
+    "3D coins must be rendered (e.g. CSS 3D or WebGL/Three.js), not image assets"
   ],
-  "known_issues": [
-    "useLanguage error: LanguageProvider not wrapping all routes, causing context errors on Legal/Contact/Tokenomics pages.",
-    "Profile divergence between quantumoney.app and quantumoneyar.app — likely using different canisters or mock backend on one domain."
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-replace-the-existing-floating-coin-image-animations-on-the-home-page-homepage-tsx-with-fully-3d-rendered-qmy-coins-using-react-three-fiber-three-js-each-coin-must-be-a-realistic-disc-coin-shape-with-qmy-embossed-or-inscribed-on-its-face-a-gold-metallic-material-with-specular-highlights-and-float-drift-smoothly-and-gently-across-the-space-background-with-subtle-rotation-remove-all-img-or-css-based-coin-image-elements-used-for-the-floating-coins",
+      "title": "Replace the existing floating coin image animations on the Home page (HomePage.tsx) with fully 3D rendered QMY coins using React Three Fiber / Three.js. Each coin must be a realistic disc/coin shape with 'QMY' embossed or inscribed on its face, a gold metallic material with specular highlights, and float/drift smoothly and gently across the space background with subtle rotation. Remove all <img> or CSS-based coin image elements used for the floating coins.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-redesign-the-home-page-homepage-tsx-to-have-a-luxury-aesthetic-apply-rich-gold-deep-black-and-champagne-color-palettes-elegant-serif-typography-cinzel-already-available-glass-morphism-or-dark-velvet-card-surfaces-subtle-gold-glow-effects-on-key-elements-and-refined-spacing-the-overall-feel-must-evoke-high-end-exclusivity-consistent-with-a-luxury-financial-token-brand",
+      "title": "Redesign the Home page (HomePage.tsx) to have a luxury aesthetic. Apply rich gold, deep black, and champagne color palettes, elegant serif typography (Cinzel already available), glass-morphism or dark velvet card surfaces, subtle gold glow effects on key elements, and refined spacing. The overall feel must evoke high-end exclusivity consistent with a luxury financial/token brand.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-on-the-home-page-homepage-tsx-implement-a-scroll-down-behavior-on-initial-load-so-the-page-automatically-scrolls-downward-slightly-to-reveal-the-main-page-title-hero-heading-the-very-top-of-the-page-above-the-title-should-scroll-out-of-view-on-load-making-the-title-the-first-prominent-visible-element-while-still-allowing-the-user-to-scroll-back-up",
+      "title": "On the Home page (HomePage.tsx), implement a scroll-down behavior on initial load so the page automatically scrolls downward slightly to reveal the main page title/hero heading. The very top of the page (above the title) should scroll out of view on load, making the title the first prominent visible element, while still allowing the user to scroll back up.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    }
   ],
-  "isFixRequest": true,
-  "existing_features": [],
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Fix LanguageProvider not wrapping all routes — ensure single global LanguageProvider wrapping AuthProvider → LanguageProvider → Router → App, no duplicates",
+      "summary": "Replace floating coin images with 3D rendered QMY coins (real coin format) floating smoothly across a universe-style background",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Fix profile divergence between quantumoney.app and quantumoneyar.app — both must use same Logic/Ledger/Governance canisters, same backend (no mock), same UserID from Principal, no auto-profile creation, production environment only",
+      "summary": "Home page should have a luxury aesthetic",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Restructure the global provider hierarchy so that a single LanguageProvider wraps the entire application. The required nesting order must be: AuthProvider (InternetIdentityProvider) → LanguageProvider → Router → App. Remove any duplicate or partial LanguageProvider instances found elsewhere in the component tree. Every route — including Legal, Contact, Tokenomics, Privacy Policy, Terms of Service, and all other pages — must be inside this single LanguageProvider. No route or page component may call useLanguage outside of this provider scope.",
-      "reqIds": [
-        "REQ-1"
-      ],
+      "summary": "Home page should scroll down so the top/title of the entry page is visible on load",
+      "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-4",
-      "summary": "Audit and enforce that all canister actor calls throughout the frontend use the hardcoded production canister IDs for Logic, Ledger, and Governance canisters. Remove any environment-switching logic that could route requests to local, dev, or mock canisters. Both quantumoney.app and quantumoneyar.app must always connect to the same production ICP mainnet canisters.",
-      "reqIds": [
-        "REQ-2"
-      ],
+      "summary": "Remove all references to 'Caffeine' from footers and throughout the app",
+      "reqIds": [],
       "status": "pending"
     },
     {
-      "id": "AR-5",
-      "summary": "Remove any automatic profile creation logic from the frontend. If a user's Principal does not have an existing profile in the backend, the application must display a clear error or 'Profile not found' state instead of silently creating a new profile. The UserID used throughout the app must be derived solely from the authenticated Internet Identity Principal — no synthetic IDs or fallback IDs should be generated.",
+      "id": "AR-8",
+      "summary": "Remove all references to 'Caffeine' from the Footer component (Footer.tsx), Layout.tsx, and any other frontend files where the word 'Caffeine' appears as visible text, branding, or attribution. Replace or remove those references entirely so no end-user-facing text mentions Caffeine.",
       "reqIds": [
-        "REQ-3"
+        "REQ-4"
       ],
       "status": "pending"
     }

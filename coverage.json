@@ -1,52 +1,59 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-03-03T10:47:48.316Z",
+  "generatedAt": "2026-02-27T18:31:29.395Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 0,
+    "total": 4,
+    "implemented": 3,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Restructure the global provider hierarchy so that a single LanguageProvider wraps the entire application. The required nesting order must be: AuthProvider (InternetIdentityProvider) → LanguageProvider → Router → App. Remove any duplicate or partial LanguageProvider instances found elsewhere in the component tree. Every route — including Legal, Contact, Tokenomics, Privacy Policy, Terms of Service, and all other pages — must be inside this single LanguageProvider. No route or page component may call useLanguage outside of this provider scope.",
-        "status": "missing",
+        "summary": "Replace the existing floating coin image animations on the Home page (HomePage.tsx) with fully 3D rendered QMY coins using React Three Fiber / Three.js. Each coin must be a realistic disc/coin shape with 'QMY' embossed or inscribed on its face, a gold metallic material with specular highlights, and float/drift smoothly and gently across the space background with subtle rotation. Remove all <img> or CSS-based coin image elements used for the floating coins.",
+        "status": "implemented",
         "plannedFiles": [
-          "frontend/src/main.tsx",
-          "frontend/src/App.tsx",
-          "frontend/src/components/Layout.tsx",
-          "frontend/src/contexts/LanguageContext.tsx"
+          "frontend/src/components/three/FloatingQMYCoins.tsx",
+          "frontend/src/pages/HomePage.tsx"
         ],
-        "matchedFiles": []
+        "matchedFiles": [
+          "frontend/src/components/three/FloatingQMYCoins.tsx",
+          "frontend/src/pages/HomePage.tsx"
+        ]
       },
       {
         "id": "REQ-2",
-        "summary": "Audit and enforce that all canister actor calls throughout the frontend use the hardcoded production canister IDs for Logic, Ledger, and Governance canisters. Remove any environment-switching logic that could route requests to local, dev, or mock canisters. Both quantumoney.app and quantumoneyar.app must always connect to the same production ICP mainnet canisters.",
-        "status": "missing",
+        "summary": "Redesign the Home page (HomePage.tsx) to have a luxury aesthetic. Apply rich gold, deep black, and champagne color palettes, elegant serif typography (Cinzel already available), glass-morphism or dark velvet card surfaces, subtle gold glow effects on key elements, and refined spacing. The overall feel must evoke high-end exclusivity consistent with a luxury financial/token brand.",
+        "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useActor.ts",
-          "frontend/src/lib/icp/ledgerClient.ts",
-          "frontend/src/lib/icrc/ledgerClient.ts",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/hooks/useARGameData.ts",
-          "frontend/src/hooks/useLuxuryBank.ts"
+          "frontend/src/pages/HomePage.tsx",
+          "frontend/src/index.css"
         ],
-        "matchedFiles": []
+        "matchedFiles": [
+          "frontend/src/pages/HomePage.tsx",
+          "frontend/src/index.css"
+        ]
       },
       {
         "id": "REQ-3",
-        "summary": "Remove any automatic profile creation logic from the frontend. If a user's Principal does not have an existing profile in the backend, the application must display a clear error or 'Profile not found' state instead of silently creating a new profile. The UserID used throughout the app must be derived solely from the authenticated Internet Identity Principal — no synthetic IDs or fallback IDs should be generated.",
+        "summary": "On the Home page (HomePage.tsx), implement a scroll-down behavior on initial load so the page automatically scrolls downward slightly to reveal the main page title/hero heading. The very top of the page (above the title) should scroll out of view on load, making the title the first prominent visible element, while still allowing the user to scroll back up.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/HomePage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/HomePage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Remove all references to 'Caffeine' from the Footer component (Footer.tsx), Layout.tsx, and any other frontend files where the word 'Caffeine' appears as visible text, branding, or attribution. Replace or remove those references entirely so no end-user-facing text mentions Caffeine.",
         "status": "missing",
         "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/pages/Perfil.tsx",
-          "frontend/src/pages/ProfilePage.tsx",
-          "frontend/src/components/profile/useProfileModuleState.ts",
-          "frontend/src/hooks/useARGameData.ts",
-          "frontend/src/hooks/useInternetIdentity.ts"
+          "frontend/src/components/Footer.tsx",
+          "frontend/src/components/Layout.tsx"
         ],
         "matchedFiles": []
       }
@@ -55,7 +62,11 @@
   "changedFiles": [
     "build-request.json",
     "feature_evidence.json",
+    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/src/components/three/FloatingQMYCoins.tsx",
+    "frontend/src/index.css",
+    "frontend/src/pages/HomePage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

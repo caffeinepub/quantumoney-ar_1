@@ -1,85 +1,99 @@
 {
   "kind": "build_request",
-  "title": "Fix LanguageProvider Scope and Profile Synchronization Between Domains",
+  "title": "3D QMY Coins, Luxury Home Page, Scroll-to-Title, Remove Caffeine References",
   "projectName": "Quantumoney",
-  "priority": "high",
+  "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Restructure the global provider hierarchy so that a single LanguageProvider wraps the entire application. The required nesting order must be: AuthProvider (InternetIdentityProvider) → LanguageProvider → Router → App. Remove any duplicate or partial LanguageProvider instances found elsewhere in the component tree. Every route — including Legal, Contact, Tokenomics, Privacy Policy, Terms of Service, and all other pages — must be inside this single LanguageProvider. No route or page component may call useLanguage outside of this provider scope.",
+      "text": "Replace the existing floating coin image animations on the Home page (HomePage.tsx) with fully 3D rendered QMY coins using React Three Fiber / Three.js. Each coin must be a realistic disc/coin shape with 'QMY' embossed or inscribed on its face, a gold metallic material with specular highlights, and float/drift smoothly and gently across the space background with subtle rotation. Remove all <img> or CSS-based coin image elements used for the floating coins.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-4"
         ],
         "quotes": [
-          "Envolver TODAS as rotas dentro de LanguageProvider.",
-          "Apenas um LanguageProvider global.",
-          "Eliminar múltiplos providers duplicados.",
-          "AuthProvider → LanguageProvider → Router → App"
+          "Quero remover essas moedas flutuantes, essas moedas são imagens e eu não quero imagens, eu quero as moedas em 3D, em formato de moeda verdadeira QMY, moeda em formato coin 3D a flutuar suavemente pelo universo"
         ]
       },
       "acceptanceCriteria": [
-        "Navigating to /legal, /contact, /tokenomics and all other routes produces no 'useLanguage must be used within a LanguageProvider' error in the browser console.",
-        "There is exactly one LanguageProvider instance in the entire component tree.",
-        "The LanguageProvider is a descendant of AuthProvider/InternetIdentityProvider and an ancestor of the Router and all route components.",
-        "Language switching works correctly on every page of the application."
+        "No <img> tags or CSS background-image rules are used for the floating coins on the Home page",
+        "At least 5 QMY coins are rendered as 3D disc/coin meshes using React Three Fiber with a gold metallic PBR material",
+        "'QMY' text or embossed lettering is visible on the coin face",
+        "Coins float and drift smoothly across the space background with gentle rotation animations",
+        "The Three.js canvas overlays the existing SpaceBackground without breaking the rest of the page layout"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Audit and enforce that all canister actor calls throughout the frontend use the hardcoded production canister IDs for Logic, Ledger, and Governance canisters. Remove any environment-switching logic that could route requests to local, dev, or mock canisters. Both quantumoney.app and quantumoneyar.app must always connect to the same production ICP mainnet canisters.",
+      "text": "Redesign the Home page (HomePage.tsx) to have a luxury aesthetic. Apply rich gold, deep black, and champagne color palettes, elegant serif typography (Cinzel already available), glass-morphism or dark velvet card surfaces, subtle gold glow effects on key elements, and refined spacing. The overall feel must evoke high-end exclusivity consistent with a luxury financial/token brand.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-4"
         ],
         "quotes": [
-          "Confirmar que ambos utilizam exatamente os mesmos canisters: Logic, Ledger, Governance",
-          "Confirmar que ambos estão em ambiente production e não dev/local",
-          "Confirmar que ambos usam o mesmo backend e não mock"
+          "a página inicial quero a página com aspecto Luxury"
         ]
       },
       "acceptanceCriteria": [
-        "All actor/canister references in the frontend use the same hardcoded production canister IDs — no conditional dev/local/mock canister selection exists.",
-        "No mock data or simulated backend is used for profile, balance, or game state retrieval.",
-        "The same canister IDs are used regardless of which domain (quantumoney.app or quantumoneyar.app) is serving the frontend."
+        "Home page uses a dark luxury color palette (deep blacks, rich golds, champagne accents) throughout",
+        "Headings use the Cinzel serif font with gold color",
+        "Section cards or panels use glass-morphism or dark velvet surfaces with gold border accents",
+        "Gold glow/shimmer effects are applied to primary CTA buttons and key headings",
+        "Overall visual impression is premium and elegant, not generic or playful"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Remove any automatic profile creation logic from the frontend. If a user's Principal does not have an existing profile in the backend, the application must display a clear error or 'Profile not found' state instead of silently creating a new profile. The UserID used throughout the app must be derived solely from the authenticated Internet Identity Principal — no synthetic IDs or fallback IDs should be generated.",
+      "text": "On the Home page (HomePage.tsx), implement a scroll-down behavior on initial load so the page automatically scrolls downward slightly to reveal the main page title/hero heading. The very top of the page (above the title) should scroll out of view on load, making the title the first prominent visible element, while still allowing the user to scroll back up.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-4"
         ],
         "quotes": [
-          "Remover qualquer criação automática de perfil.",
-          "Se o perfil não existir no backend principal, mostrar erro em vez de criar novo.",
-          "Garantir que ambos usam o mesmo UserID interno derivado do Principal."
+          "quero que a página desça para que o topo e título da página de entrada fique visível"
         ]
       },
       "acceptanceCriteria": [
-        "If the authenticated Principal has no profile in the backend, the profile page shows a clear 'Profile not found' message rather than creating a new profile automatically.",
-        "No auto-registration or default profile initialization is triggered on login.",
-        "The UserID displayed and used internally is always the Internet Identity Principal — no alternate or generated ID is used.",
-        "XP, QMY balance, inventory, and game state shown in the profile are fetched from the production backend using the Principal as the key."
+        "On initial page load, the Home page auto-scrolls so the main hero title is at or near the top of the viewport",
+        "Any content above the title (e.g. a spacer or pre-hero element) is scrolled out of view automatically",
+        "The user can scroll back up to see content above the title",
+        "The scroll behavior is smooth, not instant/jarring"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Remove all references to 'Caffeine' from the Footer component (Footer.tsx), Layout.tsx, and any other frontend files where the word 'Caffeine' appears as visible text, branding, or attribution. Replace or remove those references entirely so no end-user-facing text mentions Caffeine.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "não quero referências à Caffeine nem palavras Caffeine nos rodapés"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The Footer component contains no visible 'Caffeine' text or branding",
+        "No other rendered page or component shows the word 'Caffeine' to end users",
+        "Any 'Powered by' or attribution lines that referenced Caffeine are removed or replaced with a neutral/Quantumoney attribution"
       ]
     }
   ],
   "constraints": [
-    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui.",
-    "Do not introduce any new provider types or context patterns — only restructure existing ones.",
-    "All canister IDs must remain as currently defined in production — do not change canister IDs.",
-    "Do not remove or alter existing page content or UI design."
+    "Do not modify any files listed in frontend.immutablePaths",
+    "Do not change any pages or components other than HomePage.tsx, Footer.tsx, Layout.tsx, and the new 3D coin component",
+    "Do not alter the backend in any way",
+    "The SpaceBackground component must remain intact; the 3D coin canvas should layer on top of it"
   ],
   "nonGoals": [
-    "Adding new pages or features.",
-    "Changing the visual design or theme.",
-    "Implementing real-time synchronization between domains.",
-    "Modifying backend Motoko logic.",
-    "Adding new canister integrations."
+    "Redesigning any page other than the Home page",
+    "Adding new backend features or modifying data models",
+    "Changing the Header navigation or any other layout components beyond removing Caffeine references",
+    "Adding real-time or interactive coin click functionality",
+    "Modifying the AR game pages or profile pages"
   ],
   "imageRequirements": {
     "required": [],
